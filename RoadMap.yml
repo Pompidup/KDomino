@@ -1,0 +1,35 @@
+1. Game setup
+    - Init the game state include the board and the players informations
+    - Randomly choose the first player
+
+2. Tile generation
+    - Define a set of tiles, each with two terrain types and a crown value
+    - Shuffle the tiles
+
+3. Turn mechanics
+    - Implement a turn system where players take turns placing their selected domino on their board
+    - Allow players to choose from a selection of 4 dominoes
+    - Allow players to rotate their dominoes
+    - Enforce the rules of domino placement
+
+4. Scoring
+    - Calculate the score for each player
+    - Determine the winner
+    - Calculate and update scores based on the connected terrain types in each kingdom
+    - Implement scoring bonuses, such as crowns on certain terrain types
+
+5. End of round
+    - End the round when all dominoes have been placed
+    - Update the starting player for the next round
+
+6. End of game
+    - End the game when all rounds have been played
+    - Determine the winner
+
+7. Game state
+    - Save the game state
+    - Load the game state
+
+8. Error handling
+    - Implement checks for invalid moves or rules violations
+    - Display error messages to the user
