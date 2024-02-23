@@ -1,5 +1,5 @@
-import { Domino } from "../entities/domino"
+import type { Domino } from "../entities/domino";
 
 export type DominoesRepository = {
-    getAll: () => Promise<Domino[]>
-}
+  getAll: () => Promise<Domino[]>;
+};

@@ -1,0 +1,26 @@
+import type { Game } from "../../entities/game.js";
+import type { GameDependencies } from "./game.js";
+
+const init = (dependencies: GameDependencies) => async (): Promise<Game> => {
+  const dominoes = await dependencies.dominoesRepository.getAll();
+  const id = dependencies.uuidMethod();
+
+  const state = {
+    id,
+    dominoes,
+    currentDominoes: [],
+    players: [],
+    kings: [],
+    turn: 0,
+    maxTurns: 0,
+    maxDominoes: 0,
+    dominoesPerTurn: 0,
+    order: {},
+  };
+
+  await dependencies.gamesRepository.create(state);
+
+  return state;
+};
+
+export { init };
