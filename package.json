@@ -7,8 +7,6 @@
   "scripts": {
     "lint": "tsc",
     "test": "node --loader ts-node/esm --enable-source-maps bin/test.ts",
-    "test:watch": "jest --watchAll",
-    "test:coverage": "jest --coverage",
     "build": "node build",
     "start": "node dist/index.js",
     "dev:tsc": "tsc --watch --preserveWatchOutput",
