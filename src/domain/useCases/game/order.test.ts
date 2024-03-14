@@ -1,30 +1,13 @@
-import { test } from "@japa/runner";
 import inMemoryDominoes from "../../../infrastructure/repositories/inMemoryDominoes.js";
-import inMemoryGamesRepository from "../../../infrastructure/repositories/inMemoryGames.js";
 import { order } from "./order.js";
-import type { GameDependencies } from "./game.js";
 import { rules } from "./game.js";
-import type { Game } from "../../entities/game.js";
+import type { Game, King, Player } from "../../entities/game.js";
 import type { Domino, RevealsDomino } from "../../entities/domino.js";
 import kingdom from "../../entities/kingdom.js";
+import { describe, test, expect } from "vitest";
 
-test.group("Game Order", (group) => {
-  let gamesRepository: ReturnType<typeof inMemoryGamesRepository>;
-  let dependencies: GameDependencies;
-
-  group.setup(async () => {
-    gamesRepository = inMemoryGamesRepository();
-    dependencies = {
-      dominoesRepository: inMemoryDominoes(),
-      gamesRepository,
-      uuidMethod: () => "uuid-test",
-      randomMethod: (array) => array,
-    };
-  });
-
-  test("should throw if not all dominoes have been picked", async ({
-    expect,
-  }) => {
+describe("Game Order", () => {
+  test("should throw if not all dominoes have been picked", async () => {
     // Arrange
     const setup = await helper().setupGame(
       2,
@@ -35,9 +18,7 @@ test.group("Game Order", (group) => {
     setup.kings[0]!.hasPick = false;
     setup.kings[0]!.turnEnded = false;
 
-    await gamesRepository.setup(setup);
-
-    const useCase = order(dependencies);
+    const useCase = order();
 
     const payload = {
       state: setup,
@@ -50,16 +31,14 @@ test.group("Game Order", (group) => {
     await expect(state).rejects.toThrow("Not all kings have played");
   });
 
-  test("should update order", async ({ expect }) => {
+  test("should update order", async () => {
     // Arrange
     const setup = await helper().setupGame(
       2,
       await inMemoryDominoes().getAll()
     );
 
-    await gamesRepository.setup(setup);
-
-    const useCase = order(dependencies);
+    const useCase = order();
 
     const payload = {
       state: setup,
@@ -105,12 +84,12 @@ const helper = () => {
       }
     );
 
-    const players = [];
+    const players: Player[] = [];
     for (let i = 0; i < nbPlayers; i++) {
       players.push({ id: `uuid-${i}`, name: `Player ${i}` });
     }
 
-    const kings = [];
+    const kings: King[] = [];
 
     if (nbPlayers === 2) {
       kings.push(

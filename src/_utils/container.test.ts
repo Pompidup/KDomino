@@ -1,4 +1,4 @@
-import { test } from "@japa/runner";
+import { describe, expect, test } from "vitest";
 import createContainer from "./container.js";
 
 type Logger = {
@@ -16,8 +16,8 @@ const secondLogger = (): Logger => ({
   error: (_message: string) => "Hello world error 2",
 });
 
-test.group("createContainer", () => {
-  test("should register a dependency and return test", ({ expect }) => {
+describe("createContainer", () => {
+  test("should register a dependency and return test", () => {
     // Arrange
     const container = createContainer();
 
@@ -31,9 +31,7 @@ test.group("createContainer", () => {
     expect(deps.error("Hello world")).toBe("Hello world error");
   });
 
-  test("should register a singleton dependency and return test", ({
-    expect,
-  }) => {
+  test("should register a singleton dependency and return test", () => {
     // Arrange
     const container = createContainer();
 
@@ -47,7 +45,7 @@ test.group("createContainer", () => {
     expect(deps.error("Hello world")).toBe("Hello world error");
   });
 
-  test("should replace depency if already exist", ({ expect }) => {
+  test("should replace depency if already exist", () => {
     // Arrange
     const container = createContainer();
     container.register<Logger>("logger", logger, false);
@@ -62,7 +60,7 @@ test.group("createContainer", () => {
     expect(deps.error("Hello world")).toBe("Hello world error 2");
   });
 
-  test("should not replace a singleton instance", ({ expect }) => {
+  test("should not replace a singleton instance", () => {
     // Arrange
     const container = createContainer();
     container.register<Logger>("logger", logger, true);
@@ -77,9 +75,7 @@ test.group("createContainer", () => {
     expect(deps.error("Hello world")).toBe("Hello world error");
   });
 
-  test("should not replace a singleton instance wtesth a normal instance", ({
-    expect,
-  }) => {
+  test("should not replace a singleton instance wtesth a normal instance", () => {
     // Arrange
     const container = createContainer();
     container.register<Logger>("logger", logger, true);
@@ -94,9 +90,7 @@ test.group("createContainer", () => {
     expect(deps.error("Hello world")).toBe("Hello world error");
   });
 
-  test("should replace a normal instance wtesth a singleton instance", ({
-    expect,
-  }) => {
+  test("should replace a normal instance wtesth a singleton instance", () => {
     // Arrange
     const container = createContainer();
     container.register<Logger>("logger", logger, false);
@@ -111,7 +105,7 @@ test.group("createContainer", () => {
     expect(deps.error("Hello world")).toBe("Hello world error 2");
   });
 
-  test("should throw an error when dependency is not found", ({ expect }) => {
+  test("should throw an error when dependency is not found", () => {
     // Arrange
     const container = createContainer();
 
@@ -122,7 +116,7 @@ test.group("createContainer", () => {
     expect(action).toThrow("Dependency logger not found");
   });
 
-  test("should reset the container", ({ expect }) => {
+  test("should reset the container", () => {
     // Arrange
     const container = createContainer();
     container.register<Logger>("logger", logger, false);
@@ -136,7 +130,7 @@ test.group("createContainer", () => {
     expect(action).toThrow("Dependency logger not found");
   });
 
-  test("should remove a specific dependency", ({ expect }) => {
+  test("should remove a specific dependency", () => {
     // Arrange
     const container = createContainer();
     container.register<Logger>("logger", logger, false);

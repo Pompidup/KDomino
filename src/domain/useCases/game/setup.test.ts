@@ -1,22 +1,17 @@
-import { test } from "@japa/runner";
-
 import inMemoryDominoes from "../../../infrastructure/repositories/inMemoryDominoes.js";
-import inMemoryGamesRepository from "../../../infrastructure/repositories/inMemoryGames.js";
 import { setup } from "./setup.js";
 import type { GameDependencies } from "./game.js";
 import type { Game } from "../../entities/game.js";
+import { describe, test, expect, beforeEach } from "vitest";
 
-test.group("Game Setup", (group) => {
-  let gamesRepository: ReturnType<typeof inMemoryGamesRepository>;
+describe("Game Setup", () => {
   let dependencies: GameDependencies;
   let state: Game;
   let useCase: ReturnType<typeof setup>;
 
-  group.each.setup(async () => {
-    gamesRepository = inMemoryGamesRepository();
+  beforeEach(async () => {
     dependencies = {
       dominoesRepository: inMemoryDominoes(),
-      gamesRepository,
       uuidMethod: () => "uuid-test",
       randomMethod: (array) => array,
     };
@@ -33,11 +28,10 @@ test.group("Game Setup", (group) => {
       order: {},
     };
 
-    await gamesRepository.setup(state);
     useCase = setup(dependencies);
   });
 
-  test("should add two players to the game", async ({ expect }) => {
+  test("should add two players to the game", async () => {
     // Arrange
     const payload = {
       state,
@@ -162,8 +156,6 @@ test.group("Game Setup", (group) => {
       order: {},
     };
 
-    gamesRepository.setup(state);
-
     useCase = setup(deps);
 
     const payload = {
@@ -232,8 +224,6 @@ test.group("Game Setup", (group) => {
       order: {},
     };
 
-    gamesRepository.setup(state);
-
     useCase = setup(deps);
 
     const payload = {
@@ -245,10 +235,10 @@ test.group("Game Setup", (group) => {
     const newState = await useCase(payload);
 
     // Assert
-    expect(newState.kings[0]?.order).toEqual(4);
-    expect(newState.kings[1]?.order).toEqual(3);
-    expect(newState.kings[2]?.order).toEqual(2);
-    expect(newState.kings[3]?.order).toEqual(1);
+    expect(newState.kings[0]?.order).toEqual(1);
+    expect(newState.kings[1]?.order).toEqual(2);
+    expect(newState.kings[2]?.order).toEqual(3);
+    expect(newState.kings[3]?.order).toEqual(4);
   });
 
   test("should random kings order for 3 players", async ({ expect }) => {
@@ -273,8 +263,6 @@ test.group("Game Setup", (group) => {
       order: {},
     };
 
-    gamesRepository.setup(state);
-
     useCase = setup(deps);
 
     const payload = {
@@ -290,8 +278,8 @@ test.group("Game Setup", (group) => {
     const newState = await useCase(payload);
 
     // Assert
-    expect(newState.kings[0]?.order).toEqual(3);
+    expect(newState.kings[0]?.order).toEqual(1);
     expect(newState.kings[1]?.order).toEqual(2);
-    expect(newState.kings[2]?.order).toEqual(1);
+    expect(newState.kings[2]?.order).toEqual(3);
   });
 });

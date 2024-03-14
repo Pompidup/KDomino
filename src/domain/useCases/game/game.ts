@@ -1,5 +1,4 @@
 import type { DominoesRepository } from "../../port/dominoesRepository.js";
-import type { GamesRepository } from "../../port/gamesRepository.js";
 import type { Position } from "../../entities/kingdom.js";
 import type { Game } from "../../entities/game.js";
 import { init } from "./init.js";
@@ -7,12 +6,12 @@ import { setup } from "./setup.js";
 import { startTurn } from "./startTurn.js";
 import { pick } from "./pick.js";
 import { place } from "./place.js";
-import { endTurn } from "./endTurn.js";
-import { firstTurn } from "./firstTurn.js";
+import { order } from "./order.js";
+import { draw } from "./draw.js";
+import { calculateScore } from "./scoring.js";
 
 export type GameDependencies = {
   dominoesRepository: DominoesRepository;
-  gamesRepository: GamesRepository;
   uuidMethod: () => string;
   randomMethod<T>(array: T[]): T[];
 };
@@ -59,12 +58,12 @@ const gameStep = (dependencies: GameDependencies) => {
   return {
     init: init(dependencies),
     setup: setup(dependencies),
-    getGame: (gameId: string) => dependencies.gamesRepository.get(gameId),
-    firstTurn: firstTurn(dependencies),
-    startTurn: startTurn(dependencies),
-    pick: pick(dependencies),
-    place: place(dependencies),
-    endTurn: endTurn(dependencies),
+    startTurn: startTurn(),
+    pick: pick(),
+    place: place(),
+    order: order(),
+    draw: draw(),
+    calculateScore: calculateScore(),
   };
 };
 

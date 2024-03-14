@@ -1,24 +1,12 @@
-import { test } from "@japa/runner";
+import { expect, test, beforeAll, describe } from "vitest";
 import inMemoryDominoes from "../../../infrastructure/repositories/inMemoryDominoes.js";
-import inMemoryGamesRepository from "../../../infrastructure/repositories/inMemoryGames.js";
 import { draw } from "./draw.js";
-import type { GameDependencies } from "./game.js";
 import type { Game } from "../../entities/game.js";
 
-test.group("Game Draw", (group) => {
-  let gamesRepository: ReturnType<typeof inMemoryGamesRepository>;
-  let dependencies: GameDependencies;
+describe("Game Draw", () => {
   let state: Game;
 
-  group.setup(async () => {
-    gamesRepository = inMemoryGamesRepository();
-    dependencies = {
-      dominoesRepository: inMemoryDominoes(),
-      gamesRepository,
-      uuidMethod: () => "uuid-test",
-      randomMethod: (array) => array,
-    };
-
+  beforeAll(async () => {
     const dominoes = await inMemoryDominoes().getAll();
     const currentDominoes = dominoes.splice(0, 4);
 
@@ -43,11 +31,9 @@ test.group("Game Draw", (group) => {
     };
   });
 
-  test("should draw dominoes", async ({ expect }) => {
+  test("should draw dominoes", async () => {
     // Arrange
-    await gamesRepository.setup(state);
-
-    const useCase = draw(dependencies);
+    const useCase = draw();
 
     const payload = {
       state,

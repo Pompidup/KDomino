@@ -1,7 +1,6 @@
 import type { Game } from "../../entities/game.js";
 import type { RevealsDomino } from "../../entities/domino.js";
 import {
-  type GameDependencies,
   type PlayerActionPayload,
   type CustomError,
   checkValidityDomino,
@@ -9,7 +8,7 @@ import {
 } from "./game.js";
 
 const pick =
-  (dependencies: GameDependencies) =>
+  () =>
   async (payload: PlayerActionPayload<"pick">): Promise<Game> => {
     const { kingId, data } = payload;
     const { state, dominoPick } = data;
@@ -41,7 +40,6 @@ const pick =
     }
 
     // update currentDominoes
-
     const updatedCurrentDominoes = currentDominoes.map((domino) => {
       if (domino.domino.number === dominoPick) {
         domino.picked = true;
@@ -68,8 +66,6 @@ const pick =
       currentDominoes: updatedCurrentDominoes,
       kings: updatedKings,
     };
-
-    await dependencies.gamesRepository.update(updatedState);
 
     return updatedState;
   };

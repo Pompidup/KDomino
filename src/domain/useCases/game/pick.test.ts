@@ -1,37 +1,20 @@
-import { test } from "@japa/runner";
-
 import inMemoryDominoes from "../../../infrastructure/repositories/inMemoryDominoes.js";
-import inMemoryGamesRepository from "../../../infrastructure/repositories/inMemoryGames.js";
 import { pick } from "./pick.js";
-import { type GameDependencies, playerAction, rules } from "./game.js";
-import type { Game } from "../../entities/game.js";
+import { playerAction, rules } from "./game.js";
+import type { Game, King, Player } from "../../entities/game.js";
 import type { Domino, RevealsDomino } from "../../entities/domino.js";
 import kingdom from "../../entities/kingdom.js";
+import { describe, test, expect } from "vitest";
 
-test.group("Game Pick", (group) => {
-  let gamesRepository: ReturnType<typeof inMemoryGamesRepository>;
-  let dependencies: GameDependencies;
-
-  group.setup(async () => {
-    gamesRepository = inMemoryGamesRepository();
-    dependencies = {
-      dominoesRepository: inMemoryDominoes(),
-      gamesRepository,
-      uuidMethod: () => "uuid-test",
-      randomMethod: (array) => array,
-    };
-  });
-
-  test("should save player choice", async ({ expect }) => {
+describe("Game Pick", () => {
+  test("should save player choice", async () => {
     // Arrange
     const setup = await helper().setupGame(
       2,
       await inMemoryDominoes().getAll()
     );
 
-    await gamesRepository.setup(setup);
-
-    const useCase = pick(dependencies);
+    const useCase = pick();
 
     const payload = {
       kingId: "uuid-1",
@@ -52,16 +35,14 @@ test.group("Game Pick", (group) => {
     expect(state.kings[0]!.turnEnded).toEqual(true);
   });
 
-  test("should throw if it is not the player turn", async ({ expect }) => {
+  test("should throw if it is not the player turn", async () => {
     // Arrange
     const setup = await helper().setupGame(
       2,
       await inMemoryDominoes().getAll()
     );
 
-    await gamesRepository.setup(setup);
-
-    const useCase = pick(dependencies);
+    const useCase = pick();
 
     const payload = {
       kingId: "uuid-2",
@@ -79,18 +60,14 @@ test.group("Game Pick", (group) => {
     await expect(action).rejects.toThrow("It is not your turn");
   });
 
-  test("should throw if the player choose an invalid domino", async ({
-    expect,
-  }) => {
+  test("should throw if the player choose an invalid domino", async () => {
     // Arrange
     const setup = await helper().setupGame(
       2,
       await inMemoryDominoes().getAll()
     );
 
-    await gamesRepository.setup(setup);
-
-    const useCase = pick(dependencies);
+    const useCase = pick();
 
     const payload = {
       kingId: "uuid-1",
@@ -108,9 +85,7 @@ test.group("Game Pick", (group) => {
     await expect(action).rejects.toThrow("Domino not found");
   });
 
-  test("should throw if player choose an already picked domino", async ({
-    expect,
-  }) => {
+  test("should throw if player choose an already picked domino", async () => {
     // Arrange
     const setup = await helper().setupGame(
       2,
@@ -119,9 +94,7 @@ test.group("Game Pick", (group) => {
     setup.currentDominoes[0]!.picked = true;
     setup.currentDominoes[0]!.kingId = "uuid-1";
 
-    await gamesRepository.setup(setup);
-
-    const useCase = pick(dependencies);
+    const useCase = pick();
 
     const payload = {
       kingId: "uuid-2",
@@ -162,12 +135,12 @@ const helper = () => {
       }
     );
 
-    const players = [];
+    const players: Player[] = [];
     for (let i = 0; i < nbPlayers; i++) {
       players.push({ id: `uuid-${i}`, name: `Player ${i}` });
     }
 
-    const kings = [];
+    const kings: King[] = [];
 
     if (nbPlayers === 2) {
       kings.push(

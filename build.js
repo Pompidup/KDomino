@@ -8,6 +8,7 @@ const option = {
   sourcemap: true,
   platform: "node",
   entryPoints: ["./src/index.ts"],
+  packages: "external",
   minify: true,
 };
 

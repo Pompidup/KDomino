@@ -8,7 +8,7 @@
     "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true,
     "baseUrl": "./src",
-    "types": ["node", "jest"],
+    "types": ["node"],
     "resolveJsonModule": true,
     "target": "es2022",
     "verbatimModuleSyntax": true,
@@ -21,5 +21,6 @@
     "lib": ["es2022"],
     "emitDeclarationOnly": true
   },
-  "include": ["src/**/*", "bin"]
+  "include": ["./src/**/*", "bin"],
+  "exclude": ["node_modules", "dist", "**/*.test.ts"]
 }

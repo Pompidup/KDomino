@@ -18,8 +18,6 @@ const init = (dependencies: GameDependencies) => async (): Promise<Game> => {
     order: {},
   };
 
-  await dependencies.gamesRepository.create(state);
-
   return state;
 };
 

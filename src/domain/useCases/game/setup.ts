@@ -1,4 +1,4 @@
-import type { Game } from "../../entities/game.js";
+import type { Game, King, Player } from "../../entities/game.js";
 import kingdom from "../../entities/kingdom.js";
 import { type GameDependencies, rules } from "./game.js";
 
@@ -25,54 +25,50 @@ const setup =
     }
 
     const { dominoes } = state;
-    const { randomMethod, uuidMethod, gamesRepository } = dependencies;
+    const { randomMethod, uuidMethod } = dependencies;
     const { maxDominoes, dominoesPerTurn, maxTurns } = rules[players.length]!;
     const shuffledDominoes = randomMethod(dominoes);
     shuffledDominoes.splice(maxDominoes);
-    //const currentDominoes = drawDominoes(shuffledDominoes, dominoesPerTurn);
 
-    const newPlayers = players.map((player) => {
+    const newPlayers: Player[] = players.map((player) => {
       return {
         ...player,
+        kingdom: kingdom.createKingdomWithCastle(),
         id: uuidMethod(),
       };
     });
 
-    let newKings;
+    let newKings: King[];
     if (newPlayers.length === 2) {
       newKings = [
         {
           id: uuidMethod(),
-          playerId: newPlayers[0]!.id,
+          playerId: newPlayers[0]!.id!,
           order: 1,
-          kingdom: kingdom.createKingdomWithCastle(),
           turnEnded: false,
           hasPick: false,
           hasPlace: false,
         },
         {
           id: uuidMethod(),
-          playerId: newPlayers[0]!.id,
+          playerId: newPlayers[0]!.id!,
           order: 2,
-          kingdom: kingdom.createKingdomWithCastle(),
           turnEnded: false,
           hasPick: false,
           hasPlace: false,
         },
         {
           id: uuidMethod(),
-          playerId: newPlayers[1]!.id,
+          playerId: newPlayers[1]!.id!,
           order: 3,
-          kingdom: kingdom.createKingdomWithCastle(),
           turnEnded: false,
           hasPick: false,
           hasPlace: false,
         },
         {
           id: uuidMethod(),
-          playerId: newPlayers[1]!.id,
+          playerId: newPlayers[1]!.id!,
           order: 4,
-          kingdom: kingdom.createKingdomWithCastle(),
           turnEnded: false,
           hasPick: false,
           hasPlace: false,
@@ -82,9 +78,8 @@ const setup =
       newKings = newPlayers.map((player, index) => {
         return {
           id: uuidMethod(),
-          playerId: player.id,
+          playerId: player.id!,
           order: index + 1,
-          kingdom: kingdom.createKingdomWithCastle(),
           turnEnded: false,
           hasPick: false,
           hasPlace: false,
@@ -98,17 +93,18 @@ const setup =
       king.order = index + 1;
     });
 
+    kingsWithOrder.sort((a, b) => a.order - b.order);
+
     const newState = {
       ...state,
       dominoes: shuffledDominoes,
       players: newPlayers,
-      kings: newKings,
+      kings: kingsWithOrder,
       maxTurns,
       maxDominoes,
       dominoesPerTurn,
+      turn: 0,
     };
-
-    await gamesRepository.update(newState);
 
     return newState;
   };

@@ -163,7 +163,12 @@ const placeDomino = (
     throw new Error("Invalid placement (no adjacent)");
   }
 
-  if (!hasValidAdjacent(adjacentTiles, [firstTile.tile, secondTile.tile])) {
+  const hasValidAdjacentTiles = hasValidAdjacent(adjacentTiles, [
+    firstTile.tile,
+    secondTile.tile,
+  ]);
+
+  if (!hasValidAdjacentTiles) {
     throw new Error("Invalid placement (no valid adjacent)");
   }
 
@@ -179,6 +184,7 @@ const placeTiles = (
     kingdom
   );
 };
+
 const isFreePlace = (
   kingdom: Kingdom,
   firstPosition: Position,
@@ -215,6 +221,21 @@ const isAdjacent = (
     { x: xSecondPosition + 1, y: ySecondPosition },
     { x: xSecondPosition, y: ySecondPosition + 1 },
   ];
+
+  // Remove firstPosition and secondPosition from adjacentTilesKeys
+  adjacentTilesKeys.splice(
+    adjacentTilesKeys.findIndex((pos) => {
+      return pos.x === xFirstPosition && pos.y === yFirstPosition;
+    }),
+    1
+  );
+
+  adjacentTilesKeys.splice(
+    adjacentTilesKeys.findIndex((pos) => {
+      return pos.x === xSecondPosition && pos.y === ySecondPosition;
+    }),
+    1
+  );
 
   adjacentTilesKeys.forEach((key) => {
     const tile = getTile(kingdom, key);

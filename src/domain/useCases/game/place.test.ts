@@ -1,44 +1,28 @@
-import { test } from "@japa/runner";
-import inMemoryGamesRepository from "../../../infrastructure/repositories/inMemoryGames.js";
 import inMemoryDominoes from "../../../infrastructure/repositories/inMemoryDominoes.js";
 import { place } from "./place.js";
 import kingdom, {
   type Orientation,
   type Rotation,
 } from "../../entities/kingdom.js";
-import { type GameDependencies, playerAction, rules } from "./game.js";
+import { playerAction, rules } from "./game.js";
 import type {
   Domino,
   EmptyTile,
   RevealsDomino,
   Tile,
 } from "../../entities/domino.js";
-import type { Game } from "../../entities/game.js";
+import type { Game, King, Player } from "../../entities/game.js";
+import { describe, test, expect } from "vitest";
 
-test.group("Game Place", (group) => {
-  let gamesRepository: ReturnType<typeof inMemoryGamesRepository>;
-  let dependencies: GameDependencies;
-
-  group.each.setup(async () => {
-    gamesRepository = inMemoryGamesRepository();
-    dependencies = {
-      dominoesRepository: inMemoryDominoes(),
-      gamesRepository,
-      uuidMethod: () => "uuid-test",
-      randomMethod: (array) => array,
-    };
-  });
-
-  test("should add domino to kingdom", async ({ expect }) => {
+describe("Game Place", () => {
+  test("should add domino to kingdom", async () => {
     // Arrange
     const setup = await helper().setupGame(
       2,
       await inMemoryDominoes().getAll()
     );
 
-    await gamesRepository.setup(setup);
-
-    const useCase = place(dependencies);
+    const useCase = place();
 
     const payload = {
       kingId: "uuid-4",
@@ -55,74 +39,71 @@ test.group("Game Place", (group) => {
     };
 
     // Act
-    displayGrid(setup.kings[3]!.kingdom);
     const state = await useCase(payload);
 
     const expectedKingdom = kingdom.createKingdomWithCastle();
 
-    expectedKingdom[3]![4] = {
-      type: setup.currentDominoes[3]!.domino.left.type,
-      crowns: setup.currentDominoes[3]!.domino.left.crowns,
+    expectedKingdom[3][4] = {
+      type: setup.currentDominoes[3].domino.left.type,
+      crowns: setup.currentDominoes[3].domino.left.crowns,
     };
 
-    expectedKingdom[3]![5] = {
-      type: setup.currentDominoes[3]!.domino.right.type,
-      crowns: setup.currentDominoes[3]!.domino.right.crowns,
+    expectedKingdom[3][5] = {
+      type: setup.currentDominoes[3].domino.right.type,
+      crowns: setup.currentDominoes[3].domino.right.crowns,
     };
 
     // Assert
-    expect(state.kings[3]!.kingdom).toEqual(expectedKingdom);
-    expect(state.kings[3]!.hasPlace).toEqual(true);
-    expect(state.kings[3]!.turnEnded).toEqual(false);
+    expect(state.players[1].kingdom).toEqual(expectedKingdom);
+    expect(state.kings[3].hasPlace).toEqual(true);
+    expect(state.kings[3].turnEnded).toEqual(false);
   });
 
-  // test("should throw if not fit grid", async ({ expect }) => {
-  //   // Arrange
-  //   const setup = await helper().setupGame(
-  //     2,
-  //     await inMemoryDominoes().getAll()
-  //   );
+  test("should throw if not fit grid", async () => {
+    // Arrange
+    const setup = await helper().setupGame(
+      2,
+      await inMemoryDominoes().getAll()
+    );
 
-  //   setup.kings[3]!.kingdom[4]![5] = {
-  //     type: "wheat",
-  //     crowns: 0,
-  //   };
-  //   setup.kings[3]!.kingdom[4]![6] = {
-  //     type: "wheat",
-  //     crowns: 1,
-  //   };
-  //   setup.kings[3]!.kingdom[4]![7] = {
-  //     type: "wheat",
-  //     crowns: 2,
-  //   };
-  //   setup.kings[3]!.kingdom[5]![7] = {
-  //     type: "wheat",
-  //     crowns: 3,
-  //   };
+    setup.players[1].kingdom[4][5] = {
+      type: "wheat",
+      crowns: 0,
+    };
+    setup.players[1].kingdom[4][6] = {
+      type: "wheat",
+      crowns: 1,
+    };
+    setup.players[1].kingdom[4][7] = {
+      type: "wheat",
+      crowns: 2,
+    };
+    setup.players[1].kingdom[5][7] = {
+      type: "wheat",
+      crowns: 3,
+    };
 
-  //   await gamesRepository.setup(setup);
+    const useCase = place();
 
-  //   const useCase = place(dependencies);
+    const payload = {
+      kingId: setup.kings[3].id,
+      action: playerAction.place,
+      data: {
+        state: setup,
+        position: {
+          x: 4,
+          y: 8,
+        },
+        orientation: <Orientation>"horizontal",
+        rotation: <Rotation>180,
+      },
+    };
+    // Act
+    const state = useCase(payload);
 
-  //   const payload = {
-  //     kingId: setup.kings[3]!.id,
-  //     action: playerAction.place,
-  //     data: {
-  //       state: setup,
-  //       position: {
-  //         x: 4,
-  //         y: 8,
-  //       },
-  //       orientation: <Orientation>"horizontal",
-  //       rotation: <Rotation>180,
-  //     },
-  //   };
-  //   // Act
-  //   const state = useCase(payload);
-
-  //   // Assert
-  //   expect(state).rejects.toThrow("Invalid placement (not fit into the grid)");
-  // });
+    // Assert
+    expect(state).rejects.toThrow("Invalid placement (not fit into the grid)");
+  });
 });
 
 const helper = () => {
@@ -147,63 +128,60 @@ const helper = () => {
       }
     );
 
-    const players = [];
+    const players: Player[] = [];
     for (let i = 0; i < nbPlayers; i++) {
-      players.push({ id: `uuid-${i}`, name: `Player ${i}` });
+      players.push({
+        id: `uuid-${i}`,
+        name: `Player ${i}`,
+        kingdom: kingdom.createKingdomWithCastle(),
+      });
     }
 
-    const kings = [];
+    const kings: King[] = [];
 
     if (nbPlayers === 2) {
-      kings.push(
-        {
-          id: "uuid-1",
-          playerId: "uuid-1",
-          order: 1,
-          kingdom: kingdom.createKingdomWithCastle(),
-          turnEnded: false,
-          hasPick: false,
-          hasPlace: false,
-          dominoPicked: currentDominoes[0],
-        },
-        {
-          id: "uuid-2",
-          playerId: "uuid-1",
-          order: 2,
-          kingdom: kingdom.createKingdomWithCastle(),
-          turnEnded: false,
-          hasPick: false,
-          hasPlace: false,
-          dominoPicked: currentDominoes[1],
-        },
-        {
-          id: "uuid-3",
-          playerId: "uuid-2",
-          order: 3,
-          kingdom: kingdom.createKingdomWithCastle(),
-          turnEnded: false,
-          hasPick: false,
-          hasPlace: false,
-          dominoPickeds: currentDominoes[2],
-        },
-        {
-          id: "uuid-4",
-          playerId: "uuid-2",
-          order: 4,
-          kingdom: kingdom.createKingdomWithCastle(),
-          turnEnded: false,
-          hasPick: false,
-          hasPlace: false,
-          dominoPicked: currentDominoes[3],
-        }
-      );
+      kings.push({
+        id: `uuid-1`,
+        playerId: `uuid-0`,
+        order: 1,
+        turnEnded: false,
+        hasPick: false,
+        hasPlace: false,
+        dominoPicked: currentDominoes[0],
+      });
+      kings.push({
+        id: `uuid-2`,
+        playerId: `uuid-0`,
+        order: 2,
+        turnEnded: false,
+        hasPick: false,
+        hasPlace: false,
+        dominoPicked: currentDominoes[1],
+      });
+      kings.push({
+        id: `uuid-3`,
+        playerId: `uuid-1`,
+        order: 3,
+        turnEnded: false,
+        hasPick: false,
+        hasPlace: false,
+        dominoPicked: currentDominoes[2],
+      });
+      kings.push({
+        id: `uuid-4`,
+        playerId: `uuid-1`,
+        order: 4,
+        turnEnded: false,
+        hasPick: false,
+        hasPlace: false,
+        dominoPicked: currentDominoes[3],
+      });
     } else {
       for (let i = 0; i < nbPlayers; i++) {
         kings.push({
           id: `uuid-${i + 1}`,
-          playerId: `uuid-${i + 1}`,
+          playerId: `uuid-${i}`,
           order: i + 1,
-          kingdom: kingdom.createKingdomWithCastle(),
           turnEnded: false,
           hasPick: false,
           hasPlace: false,

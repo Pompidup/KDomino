@@ -1,18 +1,16 @@
-import { test } from "@japa/runner";
 import inMemoryDominoes from "../../../infrastructure/repositories/inMemoryDominoes.js";
-import inMemoryGamesRepository from "../../../infrastructure/repositories/inMemoryGames.js";
 import { init } from "./init.js";
 import type { GameDependencies } from "./game.js";
+import { describe, expect, test } from "vitest";
 
-test.group("Game Init", () => {
+describe("Game Init", () => {
   const dependencies: GameDependencies = {
     dominoesRepository: inMemoryDominoes(),
-    gamesRepository: inMemoryGamesRepository(),
     uuidMethod: () => "uuid-test",
     randomMethod: (array) => array,
   };
 
-  test("should init a game", async ({ expect }) => {
+  test("should init a game", async () => {
     // Arrange
     const useCase = init(dependencies);
 

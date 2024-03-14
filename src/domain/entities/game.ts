@@ -5,7 +5,6 @@ export type King = {
   id: string;
   playerId: string;
   order: number;
-  kingdom: Kingdom;
   turnEnded: boolean;
   hasPick: boolean;
   hasPlace: boolean;
@@ -15,6 +14,7 @@ export type King = {
 export type Player = {
   id?: string;
   name: string;
+  kingdom: Kingdom;
 };
 
 export type Game = {
