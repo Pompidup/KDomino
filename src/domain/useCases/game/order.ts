@@ -1,11 +1,10 @@
 import type { Game } from "../../entities/game.js";
 
-type OrderPayload = {
+type DefinePlayerOrderPayload = {
   state: Game;
 };
 
-// Rename for more explicit like definePlayerOrder
-const order = () => async (payload: OrderPayload) => {
+const definePlayerOrder = (payload: DefinePlayerOrderPayload): Game => {
   const { state } = payload;
   const { kings, currentDominoes } = state;
 
@@ -40,4 +39,4 @@ const order = () => async (payload: OrderPayload) => {
   return newState;
 };
 
-export { order };
+export { definePlayerOrder };

@@ -1,6 +1,7 @@
+import type { Game } from "../../entities/game.js";
 import type { PlayerActionPayload } from "./game.js";
 
-const pass = (payload: PlayerActionPayload<"pass">) => {
+const pass = (payload: PlayerActionPayload<"pass">): Game => {
   const { kingId, data } = payload;
   const { state } = data;
 

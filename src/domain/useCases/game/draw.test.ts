@@ -1,6 +1,6 @@
 import { expect, test, beforeAll, describe } from "vitest";
 import inMemoryDominoes from "../../../infrastructure/repositories/inMemoryDominoes.js";
-import { draw } from "./draw.js";
+import { draw as useCase } from "./draw.js";
 import type { Game } from "../../entities/game.js";
 
 describe("Game Draw", () => {
@@ -33,14 +33,12 @@ describe("Game Draw", () => {
 
   test("should draw dominoes", async () => {
     // Arrange
-    const useCase = draw();
-
     const payload = {
       state,
     };
 
     // Act
-    const newState = await useCase(payload);
+    const newState = useCase(payload);
 
     // Assert
     expect(newState.dominoes.length).toEqual(40);

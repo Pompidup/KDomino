@@ -4,7 +4,7 @@ type DrawPayload = {
   state: Game;
 };
 
-const draw = () => async (payload: DrawPayload) => {
+const draw = (payload: DrawPayload): Game => {
   const { state } = payload;
 
   const dominoesCopy = [...state.dominoes];

@@ -5,9 +5,9 @@ import inMemoryDominoes from "../../../infrastructure/repositories/inMemoryDomin
 import { pass } from "./pass.js";
 
 describe("Game Pass", () => {
-  test("should pass turn", async () => {
+  test("should pass turn", () => {
     // Arrange
-    const setup = helper().setupGame(2, await inMemoryDominoes().getAll());
+    const setup = helper().setupGame(2, inMemoryDominoes().getAll());
 
     const payload: PlayerActionPayload<"pass"> = {
       kingId: setup.kings[0].id,

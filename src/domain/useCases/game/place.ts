@@ -1,7 +1,8 @@
+import type { Game } from "../../entities/game.js";
 import kingdom from "../../entities/kingdom.js";
 import type { PlayerActionPayload } from "./game.js";
 
-const place = () => async (payload: PlayerActionPayload<"place">) => {
+const place = (payload: PlayerActionPayload<"place">): Game => {
   const { kingId, data } = payload;
   const { state, position, orientation, rotation } = data;
 

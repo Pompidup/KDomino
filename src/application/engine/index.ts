@@ -44,18 +44,18 @@ const gameEngine = () => {
     pick,
     place,
     pass,
-    order,
+    definePlayerOrder,
     draw,
     calculateScore,
   } = gameStep(dependencies);
 
-  const start = async (players: { name: string }[]): Promise<Resp> => {
-    const initState = await init();
-    const setupState = await setup({
+  const start = (players: { name: string }[]): Resp => {
+    const initState = init();
+    const setupState = setup({
       state: initState,
       players,
     });
-    const drawState = await draw({ state: setupState });
+    const drawState = draw({ state: setupState });
 
     return {
       nextKing: drawState.kings[0]!.id,
@@ -64,7 +64,7 @@ const gameEngine = () => {
     };
   };
 
-  const passTurn = async (game: Game, kingId: string): Promise<Resp> => {
+  const passTurn = (game: Game, kingId: string): Resp => {
     const updatedGame = pass({
       kingId,
       action: "pass",
@@ -73,19 +73,19 @@ const gameEngine = () => {
       },
     });
 
-    const resp = await defineNextAction(updatedGame, "pass", kingId);
+    const resp = defineNextAction(updatedGame, "pass", kingId);
 
     return resp;
   };
 
-  const placeDomino = async (
+  const placeDomino = (
     game: Game,
     kingId: string,
     position: Position,
     orientation: Orientation,
     rotation: Rotation
-  ): Promise<Resp> => {
-    const updatedGame = await place({
+  ): Resp => {
+    const updatedGame = place({
       kingId,
       action: "place",
       data: {
@@ -96,17 +96,13 @@ const gameEngine = () => {
       },
     });
 
-    const resp = await defineNextAction(updatedGame, "place", kingId);
+    const resp = defineNextAction(updatedGame, "place", kingId);
 
     return resp;
   };
 
-  const pickDomino = async (
-    game: Game,
-    kingId: string,
-    dominoPick: number
-  ): Promise<Resp> => {
-    const updatedGame = await pick({
+  const pickDomino = (game: Game, kingId: string, dominoPick: number): Resp => {
+    const updatedGame = pick({
       kingId,
       action: "pick",
       data: {
@@ -115,15 +111,15 @@ const gameEngine = () => {
       },
     });
 
-    const resp = await defineNextAction(updatedGame, "pick", kingId);
+    const resp = defineNextAction(updatedGame, "pick", kingId);
 
     return resp;
   };
 
-  const prepareNextTurn = async (game: Game): Promise<Game> => {
-    const updatedOrder = await order({ state: game });
-    const updateDraw = await draw({ state: updatedOrder });
-    const updateTurn = await startTurn({ state: updateDraw });
+  const prepareNextTurn = (game: Game): Game => {
+    const updatedOrder = definePlayerOrder({ state: game });
+    const updateDraw = draw({ state: updatedOrder });
+    const updateTurn = startTurn({ state: updateDraw });
 
     if (updateTurn.game.turn > updateTurn.game.maxTurns) {
       throw new Error("Game is over");
@@ -132,17 +128,17 @@ const gameEngine = () => {
     return updateTurn.game;
   };
 
-  const defineNextAction = async (
+  const defineNextAction = (
     game: Game,
     currentAction: string,
     currentKingId: string
-  ): Promise<Resp> => {
+  ): Resp => {
     const { kings, turn } = game;
 
     if (turn === 0) {
       const nextKing = kings.find((king) => !king.hasPick);
       if (!nextKing) {
-        const newState = await prepareNextTurn(game);
+        const newState = prepareNextTurn(game);
         return {
           nextKing: newState.kings[0]!.id,
           nextAction: "place",
@@ -182,7 +178,7 @@ const gameEngine = () => {
     const allKingsHavePicked = kings.every((king) => king.hasPick);
 
     if (allKingsHavePicked) {
-      const newState = await prepareNextTurn(game);
+      const newState = prepareNextTurn(game);
       return {
         nextKing: newState.order["1"]!,
         nextAction: "place",
@@ -199,7 +195,7 @@ const gameEngine = () => {
     };
   };
 
-  const endGame = async (game: Game): Promise<GameResult> => {
+  const endGame = (game: Game): GameResult => {
     const players = game.players;
     const scores: ScoreResult[] = [];
 
@@ -232,10 +228,7 @@ const gameEngine = () => {
 export default gameEngine;
 
 // TODO
-// V Add pass action
-// remove useless higher order functions
 // Add rules step
 // Add error handling
-// V Refactor test helpers
 // Refactor game.js
 // Manage env for injection of dependencies (uuid, random, etc.)

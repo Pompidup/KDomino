@@ -9,7 +9,7 @@ describe("Game Setup", () => {
   let state: Game;
   let useCase: ReturnType<typeof setup>;
 
-  beforeEach(async () => {
+  beforeEach(() => {
     dependencies = {
       dominoesRepository: inMemoryDominoes(),
       uuidMethod: () => "uuid-test",
@@ -17,7 +17,7 @@ describe("Game Setup", () => {
     };
     state = {
       id: "uuid-test",
-      dominoes: await inMemoryDominoes().getAll(),
+      dominoes: inMemoryDominoes().getAll(),
       currentDominoes: [],
       players: [],
       kings: [],
@@ -31,7 +31,7 @@ describe("Game Setup", () => {
     useCase = setup(dependencies);
   });
 
-  test("should add two players to the game", async () => {
+  test("should add two players to the game", () => {
     // Arrange
     const payload = {
       state,
@@ -39,15 +39,13 @@ describe("Game Setup", () => {
     };
 
     // Act
-    const newState = await useCase(payload);
+    const newState = useCase(payload);
 
     // Assert
     expect(newState.players.length).toEqual(2);
   });
 
-  test("should throw an error if there are less than 2 players", async ({
-    expect,
-  }) => {
+  test("should throw an error if there are less than 2 players", () => {
     // Arrange
     const payload = {
       state,
@@ -55,13 +53,11 @@ describe("Game Setup", () => {
     };
 
     // Act
-    const newState = useCase(payload);
-
     // Assert
-    await expect(newState).rejects.toThrow("There must be at least 2 players");
+    expect(() => useCase(payload)).toThrow("There must be at least 2 players");
   });
 
-  test("should define rules for 2 players", async ({ expect }) => {
+  test("should define rules for 2 players", () => {
     // Arrange
     const payload = {
       state,
@@ -69,7 +65,7 @@ describe("Game Setup", () => {
     };
 
     // Act
-    const newState = await useCase(payload);
+    const newState = useCase(payload);
 
     // Assert
     expect(newState.maxDominoes).toEqual(24);
@@ -82,7 +78,7 @@ describe("Game Setup", () => {
     expect(newState.kings.length).toEqual(4);
   });
 
-  test("should define rules for 3 players", async ({ expect }) => {
+  test("should define rules for 3 players", () => {
     // Arrange
     const payload = {
       state,
@@ -94,7 +90,7 @@ describe("Game Setup", () => {
     };
 
     // Act
-    const newState = await useCase(payload);
+    const newState = useCase(payload);
 
     // Assert
     expect(newState.maxDominoes).toEqual(36);
@@ -107,7 +103,7 @@ describe("Game Setup", () => {
     expect(newState.kings.length).toEqual(3);
   });
 
-  test("should define rules for 4 players", async ({ expect }) => {
+  test("should define rules for 4 players", () => {
     // Arrange
     const payload = {
       state,
@@ -120,7 +116,7 @@ describe("Game Setup", () => {
     };
 
     // Act
-    const newState = await useCase(payload);
+    const newState = useCase(payload);
 
     // Assert
     expect(newState.maxDominoes).toEqual(48);
@@ -134,7 +130,7 @@ describe("Game Setup", () => {
     expect(newState.kings.length).toEqual(4);
   });
 
-  test("should shuffle dominoes", async ({ expect }) => {
+  test("should shuffle dominoes", () => {
     // Arrange
     const deps = {
       ...dependencies,
@@ -145,7 +141,7 @@ describe("Game Setup", () => {
 
     state = {
       id,
-      dominoes: await inMemoryDominoes().getAll(),
+      dominoes: inMemoryDominoes().getAll(),
       currentDominoes: [],
       players: [],
       kings: [],
@@ -169,7 +165,7 @@ describe("Game Setup", () => {
     };
 
     // Act
-    const newState = await useCase(payload);
+    const newState = useCase(payload);
 
     // Assert
     expect(newState.dominoes[0]).toEqual({
@@ -185,7 +181,7 @@ describe("Game Setup", () => {
     });
   });
 
-  test("should setup players kings", async ({ expect }) => {
+  test("should setup players kings", () => {
     // Arrange
     const payload = {
       state,
@@ -193,7 +189,7 @@ describe("Game Setup", () => {
     };
 
     // Act
-    const newState = await useCase(payload);
+    const newState = useCase(payload);
 
     // Assert
     expect(newState.kings[0]?.playerId).toEqual(newState.players[0]?.id);
@@ -202,7 +198,7 @@ describe("Game Setup", () => {
     expect(newState.kings[3]?.playerId).toEqual(newState.players[1]?.id);
   });
 
-  test("should random kings order for 2 players", async ({ expect }) => {
+  test("should random kings order for 2 players", () => {
     // Arrange
     const id = `uuid-${Math.random()}`;
 
@@ -213,7 +209,7 @@ describe("Game Setup", () => {
 
     state = {
       id,
-      dominoes: await inMemoryDominoes().getAll(),
+      dominoes: inMemoryDominoes().getAll(),
       currentDominoes: [],
       players: [],
       kings: [],
@@ -232,7 +228,7 @@ describe("Game Setup", () => {
     };
 
     // Act
-    const newState = await useCase(payload);
+    const newState = useCase(payload);
 
     // Assert
     expect(newState.kings[0]?.order).toEqual(1);
@@ -241,7 +237,7 @@ describe("Game Setup", () => {
     expect(newState.kings[3]?.order).toEqual(4);
   });
 
-  test("should random kings order for 3 players", async ({ expect }) => {
+  test("should random kings order for 3 players", () => {
     // Arrange
     const id = `uuid-${Math.random()}`;
 
@@ -252,7 +248,7 @@ describe("Game Setup", () => {
 
     state = {
       id,
-      dominoes: await inMemoryDominoes().getAll(),
+      dominoes: inMemoryDominoes().getAll(),
       currentDominoes: [],
       players: [],
       kings: [],
@@ -275,7 +271,7 @@ describe("Game Setup", () => {
     };
 
     // Act
-    const newState = await useCase(payload);
+    const newState = useCase(payload);
 
     // Assert
     expect(newState.kings[0]?.order).toEqual(1);

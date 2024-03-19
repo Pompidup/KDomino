@@ -1,5 +1,5 @@
 import inMemoryDominoes from "../../../infrastructure/repositories/inMemoryDominoes.js";
-import { place } from "./place.js";
+import { place as useCase } from "./place.js";
 import kingdom, {
   type Orientation,
   type Rotation,
@@ -9,16 +9,14 @@ import { describe, test, expect } from "vitest";
 import helper from "../../../utils/testHelpers.js";
 
 describe("Game Place", () => {
-  test("should add domino to kingdom", async () => {
+  test("should add domino to kingdom", () => {
     // Arrange
     const setup = helper().setupGame(
       2,
-      await inMemoryDominoes().getAll(),
+      inMemoryDominoes().getAll(),
       true,
       false
     );
-
-    const useCase = place();
 
     const payload = {
       kingId: "uuid-4",
@@ -35,7 +33,7 @@ describe("Game Place", () => {
     };
 
     // Act
-    const state = await useCase(payload);
+    const state = useCase(payload);
 
     const expectedKingdom = kingdom.createKingdomWithCastle();
 
@@ -55,11 +53,11 @@ describe("Game Place", () => {
     expect(state.kings[3].turnEnded).toEqual(false);
   });
 
-  test("should throw if not fit grid", async () => {
+  test("should throw if not fit grid", () => {
     // Arrange
     const setup = helper().setupGame(
       2,
-      await inMemoryDominoes().getAll(),
+      inMemoryDominoes().getAll(),
       true,
       false
     );
@@ -81,8 +79,6 @@ describe("Game Place", () => {
       crowns: 3,
     };
 
-    const useCase = place();
-
     const payload = {
       kingId: setup.kings[3].id,
       action: playerAction.place,
@@ -97,9 +93,9 @@ describe("Game Place", () => {
       },
     };
     // Act
-    const state = useCase(payload);
-
     // Assert
-    expect(state).rejects.toThrow("Invalid placement (not fit into the grid)");
+    expect(() => useCase(payload)).toThrow(
+      "Invalid placement (not fit into the grid)"
+    );
   });
 });

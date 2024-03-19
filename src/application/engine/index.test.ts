@@ -2,7 +2,6 @@ import { beforeAll, describe, expect, test } from "vitest";
 import gameEngine from "./index.js";
 import type { Resp } from "./index.js";
 import { Orientation, Rotation } from "../../domain/entities/kingdom.js";
-import { EmptyTile, Tile } from "../../domain/entities/domino.js";
 
 describe("gameEngine", () => {
   let engine: ReturnType<typeof gameEngine>;
@@ -12,12 +11,12 @@ describe("gameEngine", () => {
   });
 
   let result: Resp;
-  test("should play a game with 2 players", async () => {
+  test("should play a game with 2 players", () => {
     /**
      * Turn 0 / Setup
      **/
     const players = [{ name: "Player  1" }, { name: "Player  2" }];
-    result = await engine.start(players);
+    result = engine.start(players);
 
     expect(result).toHaveProperty("nextKing");
     expect(result).toHaveProperty("nextAction", "pick");
@@ -32,14 +31,14 @@ describe("gameEngine", () => {
     /**
      * Turn 0
      **/
-    let newResult = await engine.pickDomino(game, kingId, dominoPick);
+    let newResult = engine.pickDomino(game, kingId, dominoPick);
 
     expect(newResult).toHaveProperty("nextKing");
     expect(newResult).toHaveProperty("nextAction", "pick");
     expect(newResult).toHaveProperty("game");
     expect(newResult.nextKing).toEqual(result.game.kings[1].id);
     expect(newResult.game.turn).toEqual(0);
-    newResult = await engine.pickDomino(
+    newResult = engine.pickDomino(
       game,
       newResult.nextKing,
       newResult.game.currentDominoes[1]!.domino.number
@@ -51,7 +50,7 @@ describe("gameEngine", () => {
     expect(newResult.nextKing).toEqual(result.game.kings[2].id);
     expect(newResult.game.turn).toEqual(0);
 
-    newResult = await engine.pickDomino(
+    newResult = engine.pickDomino(
       game,
       newResult.nextKing,
       newResult.game.currentDominoes[2]!.domino.number
@@ -63,7 +62,7 @@ describe("gameEngine", () => {
     expect(newResult.nextKing).toEqual(result.game.kings[3].id);
     expect(newResult.game.turn).toEqual(0);
 
-    newResult = await engine.pickDomino(
+    newResult = engine.pickDomino(
       game,
       newResult.nextKing,
       newResult.game.currentDominoes[3]!.domino.number
@@ -81,7 +80,7 @@ describe("gameEngine", () => {
     let orientation = <Orientation>"horizontal";
     let rotation = <Rotation>0;
 
-    newResult = await engine.placeDomino(
+    newResult = engine.placeDomino(
       newResult.game,
       newResult.nextKing,
       { x: 5, y: 4 },
@@ -92,13 +91,13 @@ describe("gameEngine", () => {
     expect(newResult.nextAction).toEqual("pick");
     expect(newResult.nextKing).toEqual(newResult.nextKing);
 
-    newResult = await engine.pickDomino(
+    newResult = engine.pickDomino(
       newResult.game,
       newResult.nextKing,
       newResult.game.currentDominoes[0].domino.number
     );
 
-    newResult = await engine.placeDomino(
+    newResult = engine.placeDomino(
       newResult.game,
       newResult.nextKing,
       { x: 5, y: 5 },
@@ -109,13 +108,13 @@ describe("gameEngine", () => {
     expect(newResult.nextAction).toEqual("pick");
     expect(newResult.nextKing).toEqual(newResult.nextKing);
 
-    newResult = await engine.pickDomino(
+    newResult = engine.pickDomino(
       newResult.game,
       newResult.nextKing,
       newResult.game.currentDominoes[1].domino.number
     );
 
-    newResult = await engine.placeDomino(
+    newResult = engine.placeDomino(
       newResult.game,
       newResult.nextKing,
       { x: 5, y: 4 },
@@ -126,13 +125,13 @@ describe("gameEngine", () => {
     expect(newResult.nextAction).toEqual("pick");
     expect(newResult.nextKing).toEqual(newResult.nextKing);
 
-    newResult = await engine.pickDomino(
+    newResult = engine.pickDomino(
       newResult.game,
       newResult.nextKing,
       newResult.game.currentDominoes[2].domino.number
     );
 
-    newResult = await engine.placeDomino(
+    newResult = engine.placeDomino(
       newResult.game,
       newResult.nextKing,
       { x: 5, y: 5 },
@@ -143,7 +142,7 @@ describe("gameEngine", () => {
     expect(newResult.nextAction).toEqual("pick");
     expect(newResult.nextKing).toEqual(newResult.nextKing);
 
-    newResult = await engine.pickDomino(
+    newResult = engine.pickDomino(
       newResult.game,
       newResult.nextKing,
       newResult.game.currentDominoes[3].domino.number
@@ -157,7 +156,7 @@ describe("gameEngine", () => {
     orientation = "horizontal";
     rotation = 0;
 
-    newResult = await engine.placeDomino(
+    newResult = engine.placeDomino(
       newResult.game,
       newResult.nextKing,
       { x: 4, y: 3 },
@@ -168,13 +167,13 @@ describe("gameEngine", () => {
     expect(newResult.nextAction).toEqual("pick");
     expect(newResult.nextKing).toEqual(newResult.nextKing);
 
-    newResult = await engine.pickDomino(
+    newResult = engine.pickDomino(
       newResult.game,
       newResult.nextKing,
       newResult.game.currentDominoes[0].domino.number
     );
 
-    newResult = await engine.placeDomino(
+    newResult = engine.placeDomino(
       newResult.game,
       newResult.nextKing,
       { x: 6, y: 2 },
@@ -185,13 +184,13 @@ describe("gameEngine", () => {
     expect(newResult.nextAction).toEqual("pick");
     expect(newResult.nextKing).toEqual(newResult.nextKing);
 
-    newResult = await engine.pickDomino(
+    newResult = engine.pickDomino(
       newResult.game,
       newResult.nextKing,
       newResult.game.currentDominoes[1].domino.number
     );
 
-    newResult = await engine.placeDomino(
+    newResult = engine.placeDomino(
       newResult.game,
       newResult.nextKing,
       { x: 4, y: 3 },
@@ -202,13 +201,13 @@ describe("gameEngine", () => {
     expect(newResult.nextAction).toEqual("pick");
     expect(newResult.nextKing).toEqual(newResult.nextKing);
 
-    newResult = await engine.pickDomino(
+    newResult = engine.pickDomino(
       newResult.game,
       newResult.nextKing,
       newResult.game.currentDominoes[2].domino.number
     );
 
-    newResult = await engine.placeDomino(
+    newResult = engine.placeDomino(
       newResult.game,
       newResult.nextKing,
       { x: 6, y: 2 },
@@ -219,7 +218,7 @@ describe("gameEngine", () => {
     expect(newResult.nextAction).toEqual("pick");
     expect(newResult.nextKing).toEqual(newResult.nextKing);
 
-    newResult = await engine.pickDomino(
+    newResult = engine.pickDomino(
       newResult.game,
       newResult.nextKing,
       newResult.game.currentDominoes[3].domino.number
@@ -233,7 +232,7 @@ describe("gameEngine", () => {
     orientation = "horizontal";
     rotation = 0;
 
-    newResult = await engine.placeDomino(
+    newResult = engine.placeDomino(
       newResult.game,
       newResult.nextKing,
       { x: 4, y: 5 },
@@ -244,13 +243,13 @@ describe("gameEngine", () => {
     expect(newResult.nextAction).toEqual("pick");
     expect(newResult.nextKing).toEqual(newResult.nextKing);
 
-    newResult = await engine.pickDomino(
+    newResult = engine.pickDomino(
       newResult.game,
       newResult.nextKing,
       newResult.game.currentDominoes[0].domino.number
     );
 
-    newResult = await engine.placeDomino(
+    newResult = engine.placeDomino(
       newResult.game,
       newResult.nextKing,
       { x: 2, y: 4 },
@@ -261,13 +260,13 @@ describe("gameEngine", () => {
     expect(newResult.nextAction).toEqual("pick");
     expect(newResult.nextKing).toEqual(newResult.nextKing);
 
-    newResult = await engine.pickDomino(
+    newResult = engine.pickDomino(
       newResult.game,
       newResult.nextKing,
       newResult.game.currentDominoes[1].domino.number
     );
 
-    newResult = await engine.placeDomino(
+    newResult = engine.placeDomino(
       newResult.game,
       newResult.nextKing,
       { x: 4, y: 5 },
@@ -278,13 +277,13 @@ describe("gameEngine", () => {
     expect(newResult.nextAction).toEqual("pick");
     expect(newResult.nextKing).toEqual(newResult.nextKing);
 
-    newResult = await engine.pickDomino(
+    newResult = engine.pickDomino(
       newResult.game,
       newResult.nextKing,
       newResult.game.currentDominoes[2].domino.number
     );
 
-    newResult = await engine.placeDomino(
+    newResult = engine.placeDomino(
       newResult.game,
       newResult.nextKing,
       { x: 2, y: 4 },
@@ -295,7 +294,7 @@ describe("gameEngine", () => {
     expect(newResult.nextAction).toEqual("pick");
     expect(newResult.nextKing).toEqual(newResult.nextKing);
 
-    newResult = await engine.pickDomino(
+    newResult = engine.pickDomino(
       newResult.game,
       newResult.nextKing,
       newResult.game.currentDominoes[3].domino.number
@@ -309,7 +308,7 @@ describe("gameEngine", () => {
     orientation = "horizontal";
     rotation = 0;
 
-    newResult = await engine.placeDomino(
+    newResult = engine.placeDomino(
       newResult.game,
       newResult.nextKing,
       { x: 4, y: 2 },
@@ -320,13 +319,13 @@ describe("gameEngine", () => {
     expect(newResult.nextAction).toEqual("pick");
     expect(newResult.nextKing).toEqual(newResult.nextKing);
 
-    newResult = await engine.pickDomino(
+    newResult = engine.pickDomino(
       newResult.game,
       newResult.nextKing,
       newResult.game.currentDominoes[0].domino.number
     );
 
-    newResult = await engine.placeDomino(
+    newResult = engine.placeDomino(
       newResult.game,
       newResult.nextKing,
       { x: 5, y: 6 },
@@ -337,13 +336,13 @@ describe("gameEngine", () => {
     expect(newResult.nextAction).toEqual("pick");
     expect(newResult.nextKing).toEqual(newResult.nextKing);
 
-    newResult = await engine.pickDomino(
+    newResult = engine.pickDomino(
       newResult.game,
       newResult.nextKing,
       newResult.game.currentDominoes[1].domino.number
     );
 
-    newResult = await engine.placeDomino(
+    newResult = engine.placeDomino(
       newResult.game,
       newResult.nextKing,
       { x: 2, y: 6 },
@@ -354,13 +353,13 @@ describe("gameEngine", () => {
     expect(newResult.nextAction).toEqual("pick");
     expect(newResult.nextKing).toEqual(newResult.nextKing);
 
-    newResult = await engine.pickDomino(
+    newResult = engine.pickDomino(
       newResult.game,
       newResult.nextKing,
       newResult.game.currentDominoes[2].domino.number
     );
 
-    newResult = await engine.placeDomino(
+    newResult = engine.placeDomino(
       newResult.game,
       newResult.nextKing,
       { x: 2, y: 5 },
@@ -371,7 +370,7 @@ describe("gameEngine", () => {
     expect(newResult.nextAction).toEqual("pick");
     expect(newResult.nextKing).toEqual(newResult.nextKing);
 
-    newResult = await engine.pickDomino(
+    newResult = engine.pickDomino(
       newResult.game,
       newResult.nextKing,
       newResult.game.currentDominoes[3].domino.number
@@ -383,7 +382,7 @@ describe("gameEngine", () => {
      * Turn 5
      **/
 
-    newResult = await engine.placeDomino(
+    newResult = engine.placeDomino(
       newResult.game,
       newResult.nextKing,
       { x: 3, y: 2 },
@@ -394,13 +393,13 @@ describe("gameEngine", () => {
     expect(newResult.nextAction).toEqual("pick");
     expect(newResult.nextKing).toEqual(newResult.nextKing);
 
-    newResult = await engine.pickDomino(
+    newResult = engine.pickDomino(
       newResult.game,
       newResult.nextKing,
       newResult.game.currentDominoes[0].domino.number
     );
 
-    newResult = await engine.placeDomino(
+    newResult = engine.placeDomino(
       newResult.game,
       newResult.nextKing,
       { x: 2, y: 2 },
@@ -411,13 +410,13 @@ describe("gameEngine", () => {
     expect(newResult.nextAction).toEqual("pick");
     expect(newResult.nextKing).toEqual(newResult.nextKing);
 
-    newResult = await engine.pickDomino(
+    newResult = engine.pickDomino(
       newResult.game,
       newResult.nextKing,
       newResult.game.currentDominoes[1].domino.number
     );
 
-    newResult = await engine.placeDomino(
+    newResult = engine.placeDomino(
       newResult.game,
       newResult.nextKing,
       { x: 5, y: 6 },
@@ -428,13 +427,13 @@ describe("gameEngine", () => {
     expect(newResult.nextAction).toEqual("pick");
     expect(newResult.nextKing).toEqual(newResult.nextKing);
 
-    newResult = await engine.pickDomino(
+    newResult = engine.pickDomino(
       newResult.game,
       newResult.nextKing,
       newResult.game.currentDominoes[2].domino.number
     );
 
-    newResult = await engine.placeDomino(
+    newResult = engine.placeDomino(
       newResult.game,
       newResult.nextKing,
       { x: 4, y: 2 },
@@ -445,7 +444,7 @@ describe("gameEngine", () => {
     expect(newResult.nextAction).toEqual("pick");
     expect(newResult.nextKing).toEqual(newResult.nextKing);
 
-    newResult = await engine.pickDomino(
+    newResult = engine.pickDomino(
       newResult.game,
       newResult.nextKing,
       newResult.game.currentDominoes[3].domino.number
@@ -456,7 +455,7 @@ describe("gameEngine", () => {
     /**
      * Turn 6
      **/
-    newResult = await engine.placeDomino(
+    newResult = engine.placeDomino(
       newResult.game,
       newResult.nextKing,
       { x: 2, y: 5 },
@@ -467,7 +466,7 @@ describe("gameEngine", () => {
     expect(newResult.nextAction).toEqual("place");
     expect(newResult.nextKing).toEqual(newResult.game.kings[1].id);
 
-    newResult = await engine.placeDomino(
+    newResult = engine.placeDomino(
       newResult.game,
       newResult.nextKing,
       { x: 3, y: 5 },
@@ -478,7 +477,7 @@ describe("gameEngine", () => {
     expect(newResult.nextAction).toEqual("place");
     expect(newResult.nextKing).toEqual(newResult.game.kings[2].id);
 
-    newResult = await engine.placeDomino(
+    newResult = engine.placeDomino(
       newResult.game,
       newResult.nextKing,
       { x: 3, y: 2 },
@@ -489,7 +488,7 @@ describe("gameEngine", () => {
     expect(newResult.nextAction).toEqual("place");
     expect(newResult.nextKing).toEqual(newResult.game.kings[3].id);
 
-    newResult = await engine.placeDomino(
+    newResult = engine.placeDomino(
       newResult.game,
       newResult.nextKing,
       { x: 2, y: 2 },
@@ -500,7 +499,7 @@ describe("gameEngine", () => {
     expect(newResult.nextAction).toEqual("end");
     expect(newResult.game.turn).toEqual(6);
 
-    const finalResult = await engine.endGame(newResult.game);
+    const finalResult = engine.endGame(newResult.game);
 
     expect(finalResult.result).toEqual([
       {

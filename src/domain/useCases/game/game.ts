@@ -6,7 +6,7 @@ import { setup } from "./setup.js";
 import { startTurn } from "./startTurn.js";
 import { pick } from "./pick.js";
 import { place } from "./place.js";
-import { order } from "./order.js";
+import { definePlayerOrder } from "./order.js";
 import { draw } from "./draw.js";
 import { calculateScore } from "./scoring.js";
 import { pass } from "./pass.js";
@@ -59,13 +59,13 @@ const gameStep = (dependencies: GameDependencies) => {
   return {
     init: init(dependencies),
     setup: setup(dependencies),
-    startTurn: startTurn(),
-    pick: pick(),
-    place: place(),
+    startTurn,
+    pick,
+    place,
     pass,
-    order: order(),
-    draw: draw(),
-    calculateScore: calculateScore(),
+    definePlayerOrder,
+    draw,
+    calculateScore,
   };
 };
 

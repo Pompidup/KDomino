@@ -9,7 +9,7 @@ type SetupPayload = {
 
 const setup =
   (dependencies: GameDependencies) =>
-  async (payload: SetupPayload): Promise<Game> => {
+  (payload: SetupPayload): Game => {
     const { state, players } = payload;
 
     if (!players) {

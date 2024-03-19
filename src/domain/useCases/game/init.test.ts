@@ -10,12 +10,12 @@ describe("Game Init", () => {
     randomMethod: (array) => array,
   };
 
-  test("should init a game", async () => {
+  test("should init a game", () => {
     // Arrange
     const useCase = init(dependencies);
 
     // Act
-    const game = await useCase();
+    const game = useCase();
 
     // Assert
     expect(game.dominoes.length).toBe(48);

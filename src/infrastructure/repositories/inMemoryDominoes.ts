@@ -20,7 +20,7 @@ const inMemoryDominoes = (): DominoesRepository => {
   });
 
   return {
-    getAll: async () => {
+    getAll: () => {
       return dominoes;
     },
   };

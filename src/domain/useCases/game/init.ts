@@ -1,8 +1,8 @@
 import type { Game } from "../../entities/game.js";
 import type { GameDependencies } from "./game.js";
 
-const init = (dependencies: GameDependencies) => async (): Promise<Game> => {
-  const dominoes = await dependencies.dominoesRepository.getAll();
+const init = (dependencies: GameDependencies) => (): Game => {
+  const dominoes = dependencies.dominoesRepository.getAll();
   const id = dependencies.uuidMethod();
 
   const state = {

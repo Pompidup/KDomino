@@ -1,13 +1,8 @@
-import { beforeAll, describe, expect, test } from "vitest";
+import { describe, expect, test } from "vitest";
 import { Kingdom } from "../../entities/kingdom.js";
-import { calculateScore } from "./scoring.js";
+import { calculateScore as useCase } from "./scoring.js";
 
 describe("Game Scoring", async () => {
-  let usecase: ReturnType<typeof calculateScore>;
-  beforeAll(() => {
-    usecase = calculateScore();
-  });
-
   test("should calculate score for a kingdom of full wheat and no crowns", () => {
     // Arrange
     const kingdom: Kingdom = [
@@ -113,7 +108,7 @@ describe("Game Scoring", async () => {
     ];
 
     // Act
-    const result = usecase(kingdom);
+    const result = useCase(kingdom);
 
     // Assert
     expect(result).toEqual({ score: 0, maxPropertiesSize: 24, totalCrowns: 0 });
@@ -224,7 +219,7 @@ describe("Game Scoring", async () => {
     ];
 
     // Act
-    const result = usecase(kingdom);
+    const result = useCase(kingdom);
 
     // Assert
     expect(result).toEqual({
@@ -339,7 +334,7 @@ describe("Game Scoring", async () => {
     ];
 
     // Act
-    const result = usecase(kingdom);
+    const result = useCase(kingdom);
 
     // Assert
     expect(result).toEqual({
@@ -454,7 +449,7 @@ describe("Game Scoring", async () => {
     ];
 
     // Act
-    const result = usecase(kingdom);
+    const result = useCase(kingdom);
 
     // Assert
     expect(result).toEqual({ score: 24, maxPropertiesSize: 5, totalCrowns: 6 });
@@ -565,7 +560,7 @@ describe("Game Scoring", async () => {
     ];
 
     // Act
-    const result = usecase(kingdom);
+    const result = useCase(kingdom);
 
     // Assert
     expect(result).toEqual({ score: 34, maxPropertiesSize: 5, totalCrowns: 8 });
@@ -676,7 +671,7 @@ describe("Game Scoring", async () => {
     ];
 
     // Act
-    const result = usecase(kingdom);
+    const result = useCase(kingdom);
 
     // Assert
     expect(result).toEqual({ score: 0, maxPropertiesSize: 0, totalCrowns: 0 });

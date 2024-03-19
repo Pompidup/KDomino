@@ -1,5 +1,5 @@
 import inMemoryDominoes from "../../../infrastructure/repositories/inMemoryDominoes.js";
-import { order } from "./order.js";
+import { definePlayerOrder as useCase } from "./order.js";
 import { describe, test, expect } from "vitest";
 import helper from "../../../utils/testHelpers.js";
 
@@ -8,7 +8,7 @@ describe("Game Order", () => {
     // Arrange
     const setup = helper().setupGame(
       2,
-      await inMemoryDominoes().getAll(),
+      inMemoryDominoes().getAll(),
       false,
       true
     );
@@ -17,7 +17,23 @@ describe("Game Order", () => {
     setup.kings[0]!.hasPick = false;
     setup.kings[0]!.turnEnded = false;
 
-    const useCase = order();
+    const payload = {
+      state: setup,
+    };
+
+    // Act
+    // Assert
+    expect(() => useCase(payload)).toThrow("Not all kings have played");
+  });
+
+  test("should update order", async () => {
+    // Arrange
+    const setup = helper().setupGame(
+      2,
+      inMemoryDominoes().getAll(),
+      false,
+      true
+    );
 
     const payload = {
       state: setup,
@@ -25,28 +41,6 @@ describe("Game Order", () => {
 
     // Act
     const state = useCase(payload);
-
-    // Assert
-    await expect(state).rejects.toThrow("Not all kings have played");
-  });
-
-  test("should update order", async () => {
-    // Arrange
-    const setup = helper().setupGame(
-      2,
-      await inMemoryDominoes().getAll(),
-      false,
-      true
-    );
-
-    const useCase = order();
-
-    const payload = {
-      state: setup,
-    };
-
-    // Act
-    const state = await useCase(payload);
 
     // Assert
     expect(state.order).toEqual({
