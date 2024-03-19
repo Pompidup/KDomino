@@ -8,7 +8,11 @@ import type {
 import gameStep, {
   type GameDependencies,
 } from "../../domain/useCases/game/game.js";
-import type { Score } from "../../domain/useCases/game/scoring.js";
+import {
+  result,
+  type FinalResult,
+  type ScoreResult,
+} from "../../domain/useCases/game/result.js";
 
 export type Resp = {
   nextKing: string;
@@ -16,15 +20,8 @@ export type Resp = {
   game: Game;
 };
 
-type ScoreResult = {
-  playerId: string;
-  playerName: string;
-  score: Score;
-};
-
 export type GameResult = {
-  winner: string;
-  scores: ScoreResult[];
+  result: FinalResult[];
   game: Game;
 };
 
@@ -40,8 +37,17 @@ const gameEngine = () => {
     randomMethod: (array) => array,
   };
 
-  const { init, setup, startTurn, pick, place, order, draw, calculateScore } =
-    gameStep(dependencies);
+  const {
+    init,
+    setup,
+    startTurn,
+    pick,
+    place,
+    pass,
+    order,
+    draw,
+    calculateScore,
+  } = gameStep(dependencies);
 
   const start = async (players: { name: string }[]): Promise<Resp> => {
     const initState = await init();
@@ -56,6 +62,20 @@ const gameEngine = () => {
       nextAction: "pick",
       game: drawState,
     };
+  };
+
+  const passTurn = async (game: Game, kingId: string): Promise<Resp> => {
+    const updatedGame = pass({
+      kingId,
+      action: "pass",
+      data: {
+        state: game,
+      },
+    });
+
+    const resp = await defineNextAction(updatedGame, "pass", kingId);
+
+    return resp;
   };
 
   const placeDomino = async (
@@ -136,7 +156,7 @@ const gameEngine = () => {
       };
     }
 
-    if (currentAction === "place") {
+    if (currentAction === "place" || currentAction === "pass") {
       if (game.turn === game.maxTurns) {
         const nextKing = kings.find((king) => !king.hasPlace);
         if (!nextKing) {
@@ -188,28 +208,21 @@ const gameEngine = () => {
       scores.push({
         playerId: player.id!,
         playerName: player.name,
-        score,
+        details: score,
       });
     }
 
-    const sortedScores = scores.sort((a, b) => b.score.score - a.score.score);
-
-    //Temporary defined winner here
-    // TODO check if there is tie
-    // if tie check the maxPropertiesSize
-    // if tie check the totalCrowns
-    // else tie
-    const winner = sortedScores[0]!.playerName;
+    const finalResult = result(scores);
 
     return {
-      winner: winner,
-      scores: sortedScores,
+      result: finalResult,
       game,
     };
   };
 
   return {
     start,
+    pass: passTurn,
     placeDomino,
     pickDomino,
     endGame,
@@ -219,8 +232,10 @@ const gameEngine = () => {
 export default gameEngine;
 
 // TODO
+// V Add pass action
+// remove useless higher order functions
 // Add rules step
 // Add error handling
-// Refactor test helpers
+// V Refactor test helpers
 // Refactor game.js
 // Manage env for injection of dependencies (uuid, random, etc.)

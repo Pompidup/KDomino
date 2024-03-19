@@ -502,30 +502,27 @@ describe("gameEngine", () => {
 
     const finalResult = await engine.endGame(newResult.game);
 
-    expect(finalResult).toHaveProperty("winner");
-    expect(finalResult).toHaveProperty("scores");
-    expect(finalResult).toHaveProperty("game");
-    expect(finalResult.winner).toEqual("Player  2");
-    expect(finalResult.scores[0].score.score).toEqual(8);
-    expect(finalResult.scores[1].score.score).toEqual(4);
+    expect(finalResult.result).toEqual([
+      {
+        position: 1,
+        playerId: expect.any(String),
+        playerName: "Player  2",
+        details: {
+          score: 8,
+          maxPropertiesSize: 5,
+          totalCrowns: 4,
+        },
+      },
+      {
+        position: 2,
+        playerId: expect.any(String),
+        playerName: "Player  1",
+        details: {
+          score: 4,
+          maxPropertiesSize: 7,
+          totalCrowns: 2,
+        },
+      },
+    ]);
   });
 });
-
-const displayGrid = (grid: (Tile | EmptyTile)[][]) => {
-  const display = grid
-    .map((row) => {
-      return row
-        .map((cell) => {
-          if (cell) {
-            const type = cell.type.toUpperCase(); // Use the first character of the type, capitalized
-            const crowns = cell.crowns;
-            return `[${type}${crowns}]`;
-          }
-          return "[00]"; // Represent empty cells with [00]
-        })
-        .join(""); // Join the cells in the row without any separators
-    })
-    .join("\n"); // Join the rows with a newline character
-
-  console.log(display);
-};

@@ -9,6 +9,7 @@ import { place } from "./place.js";
 import { order } from "./order.js";
 import { draw } from "./draw.js";
 import { calculateScore } from "./scoring.js";
+import { pass } from "./pass.js";
 
 export type GameDependencies = {
   dominoesRepository: DominoesRepository;
@@ -61,6 +62,7 @@ const gameStep = (dependencies: GameDependencies) => {
     startTurn: startTurn(),
     pick: pick(),
     place: place(),
+    pass,
     order: order(),
     draw: draw(),
     calculateScore: calculateScore(),
