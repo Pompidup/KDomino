@@ -1,5 +1,5 @@
 import inMemoryDominoes from "../../infrastructure/repositories/inMemoryDominoes.js";
-import type { Game } from "../../domain/entities/game.js";
+import { availableMode, type Game } from "../../domain/entities/game.js";
 import type {
   Orientation,
   Position,
@@ -49,10 +49,28 @@ const gameEngine = () => {
     calculateScore,
   } = gameStep(dependencies);
 
-  const start = (players: { name: string }[]): Resp => {
-    const initState = init();
+  /**
+   * WIP
+   **/
+  const getMode = () => {
+    return availableMode;
+  };
+
+  const setMode = (mode: string, game: Game) => {
+    return game;
+  };
+
+  const getRules = (mode: string) => {
+    return [];
+  };
+
+  const setRules = (rules: string[], game: Game) => {
+    return game;
+  };
+
+  const start = (game: Game, players: { name: string }[]): Resp => {
     const setupState = setup({
-      state: initState,
+      state: game,
       players,
     });
     const drawState = draw({ state: setupState });
@@ -217,6 +235,11 @@ const gameEngine = () => {
   };
 
   return {
+    init,
+    getMode,
+    setMode,
+    getRules,
+    setRules,
     start,
     pass: passTurn,
     placeDomino,
@@ -232,3 +255,4 @@ export default gameEngine;
 // Add error handling
 // Refactor game.js
 // Manage env for injection of dependencies (uuid, random, etc.)
+// Add variant available (queendomino, giant extension, dragonomino, etc.)

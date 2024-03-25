@@ -12,11 +12,16 @@ describe("gameEngine", () => {
 
   let result: Resp;
   test("should play a game with 2 players", () => {
+    const mode = engine.getMode();
+    console.log("mode", mode);
+
+    const initialState = engine.init();
+
     /**
      * Turn 0 / Setup
      **/
     const players = [{ name: "Player  1" }, { name: "Player  2" }];
-    result = engine.start(players);
+    result = engine.start(initialState, players);
 
     expect(result).toHaveProperty("nextKing");
     expect(result).toHaveProperty("nextAction", "pick");

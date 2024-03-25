@@ -17,6 +17,19 @@ export type Player = {
   kingdom: Kingdom;
 };
 
+export const availableMode = ["Classic"] as const;
+export type AvailableMode = (typeof availableMode)[number];
+export const isValidMode = (mode: string): mode is AvailableMode => {
+  return availableMode.includes(mode as AvailableMode);
+};
+
+export type Rule = {
+  name: string;
+  description: string;
+  mode: AvailableMode[];
+  playersLimit?: number;
+};
+
 export type Game = {
   id: string;
   dominoes: Domino[];
@@ -28,4 +41,5 @@ export type Game = {
   maxDominoes: number;
   dominoesPerTurn: number;
   order: Record<number, string>;
+  rules?: Rule[];
 };
