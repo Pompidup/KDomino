@@ -17,6 +17,9 @@
     "test": "vitest",
     "coverage": "vitest --coverage --config ./vitest.config.ts",
     "build": "tsup",
+    "bump:major": "npm version major",
+    "bump:minor": "npm version minor",
+    "bump:patch": "npm version patch",
     "pub": "pnpm build && npm login && npm publish --access public"
   },
   "keywords": [
