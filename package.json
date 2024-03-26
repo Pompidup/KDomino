@@ -16,7 +16,7 @@
     "lint": "tsc",
     "test": "vitest",
     "coverage": "vitest --coverage --config ./vitest.config.ts", 
-    "build": "node build.js",
+    "build": "node build.js && tsc --emitDeclarationOnly --outDir dist",
     "start": "node dist/index.js"
   },
   "keywords": [
