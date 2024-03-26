@@ -1,6 +1,6 @@
 {
   "name": "@pompidup/kingdomino-engine",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "A simple engine for the game Kingdomino",
   "main": "./dist/index.js",
   "type": "module",
@@ -16,7 +16,8 @@
     "lint": "tsc",
     "test": "vitest",
     "coverage": "vitest --coverage --config ./vitest.config.ts",
-    "build": "tsup"
+    "build": "tsup",
+    "pub": "pnpm build && npm login && npm publish --access public"
   },
   "keywords": [
     "kingdomino",
