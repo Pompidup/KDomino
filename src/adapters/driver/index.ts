@@ -35,8 +35,13 @@ export type GameResult = {
  **/
 
 const gameEngine = () => {
-  loadEnvFile();
   let dependencies: GameDependencies;
+  try {
+    loadEnvFile();
+  } catch (error) {
+    console.log("No .env file found. Using default configuration.");
+  }
+
   if (
     process.env.NODE_ENV === "development" ||
     process.env.NODE_ENV === "test"
