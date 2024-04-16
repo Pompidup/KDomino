@@ -3,3 +3,5 @@ node_modules
 .lh
 /coverage
 .DS_Store
+.env
+.vscode

@@ -1,12 +1,14 @@
-import type { Game, King, Player } from "../domain/entities/game.js";
+import type { Game } from "../hexagon/internal/entities/game.js";
+import type { Lord } from "../hexagon/internal/entities/lord.js";
+import type { Player } from "../hexagon/internal/entities/player.js";
 import type {
   Domino,
   EmptyTile,
   RevealsDomino,
   Tile,
-} from "../domain/entities/domino.js";
-import { rules } from "../domain/useCases/game/game.js";
-import kingdom from "../domain/entities/kingdom.js";
+} from "../hexagon/internal/entities/domino.js";
+import { rules } from "../hexagon/internal/services/game.js";
+import kingdom from "../hexagon/internal/entities/kingdom.js";
 
 const helper = () => {
   const setupGame = (
@@ -23,11 +25,11 @@ const helper = () => {
     const currentDominoes = deck.splice(0, rules[nbPlayers]!.dominoesPerTurn);
     const formatedCurrentDominoes: RevealsDomino[] = currentDominoes.map(
       (domino, index) => {
-        const kingId = `uuid-${5 - (index + 1)}`;
+        const lordId = `uuid-${5 - (index + 1)}`;
         return {
           domino: domino,
           picked: turnCompleted || firstPick ? true : false,
-          kingId: turnCompleted || firstPick ? kingId : null,
+          lordId: turnCompleted || firstPick ? lordId : null,
           position: index + 1,
         };
       }
@@ -42,10 +44,10 @@ const helper = () => {
       });
     }
 
-    const kings: King[] = [];
+    const lords: Lord[] = [];
 
     if (nbPlayers === 2) {
-      kings.push({
+      lords.push({
         id: `uuid-1`,
         playerId: `uuid-0`,
         order: 1,
@@ -55,7 +57,7 @@ const helper = () => {
         dominoPicked:
           turnCompleted || firstPick ? currentDominoes[0] : undefined,
       });
-      kings.push({
+      lords.push({
         id: `uuid-2`,
         playerId: `uuid-0`,
         order: 2,
@@ -65,7 +67,7 @@ const helper = () => {
         dominoPicked:
           turnCompleted || firstPick ? currentDominoes[1] : undefined,
       });
-      kings.push({
+      lords.push({
         id: `uuid-3`,
         playerId: `uuid-1`,
         order: 3,
@@ -75,7 +77,7 @@ const helper = () => {
         dominoPicked:
           turnCompleted || firstPick ? currentDominoes[2] : undefined,
       });
-      kings.push({
+      lords.push({
         id: `uuid-4`,
         playerId: `uuid-1`,
         order: 4,
@@ -87,7 +89,7 @@ const helper = () => {
       });
     } else {
       for (let i = 0; i < nbPlayers; i++) {
-        kings.push({
+        lords.push({
           id: `uuid-${i + 1}`,
           playerId: `uuid-${i}`,
           order: i + 1,
@@ -105,7 +107,7 @@ const helper = () => {
       dominoes: deck,
       currentDominoes: formatedCurrentDominoes,
       players,
-      kings,
+      lords,
       turn: turnCompleted ? 1 : 0,
       maxTurns: rules[nbPlayers]!.maxTurns,
       maxDominoes: rules[nbPlayers]!.maxDominoes,

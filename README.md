@@ -4,6 +4,10 @@
 
 This is under development. The goal is to create a simple and lightweight TypeScript engine designed to facilitate the gameplay of Kingdomino. It provides the core logic for managing game states, rules, and player interactions, making it easy to integrate into any application that requires a Kingdomino game engine.
 
+## Requirements
+
+- Node v20.6.0 or higher
+
 ## Features
 
 - **Game State Management**: Efficiently manage game states, including player turns, game rules, and game progression.
@@ -34,7 +38,7 @@ pnpm add @pompidup/kingdomino-engine
 
 The Kingdomino Engine is designed to be easy to use and integrate into any application. Below are some examples of how you can use the engine to create a new game, add players, and start playing.
 
-Each method returns an updated game state object, which contains the current state of the game, including the board, players, and dominoes. In return you will receive too the nextKing (the next player to play) and the nextAction (the next action to be performed by the next player).
+Each method returns an updated game state object, which contains the current state of the game, including the board, players, and dominoes. In return you will receive too the nextLord (the next player to play) and the nextAction (the next action to be performed by the next player).
 
 **It's your responsibility to save and pass the updated game state to the next method call.**
 
@@ -71,19 +75,19 @@ Incoming...
 Players can perform actions like pick domino, placing domino, and passing turns.
 
 - Pick Domino:
-  You can pick a domino by passing the kingId and the number of the domino you want to pick.
+  You can pick a domino by passing the lordId and the number of the domino you want to pick.
 
 ```typescript
-gameState = engine.pickDomino(gameState, "kingId", 12);
+gameState = engine.pickDomino(gameState, "lordId", 12);
 ```
 
 - Place Domino:
-  You can place a domino by passing the kingId, the position where you want to place the domino, the orientation (horizontal or vertical), and the rotation (if you want to switch left and right tile you can pass 180 else 0).
+  You can place a domino by passing the lordId, the position where you want to place the domino, the orientation (horizontal or vertical), and the rotation (if you want to switch left and right tile you can pass 180 else 0).
 
 ```typescript
 gameState = engine.placeDomino(
   gameState,
-  "kingId",
+  "lordId",
   { x: 0, y: 0 },
   "horizontal",
   0
@@ -94,7 +98,7 @@ gameState = engine.placeDomino(
   If you can not place a domino you can pass your turn.
 
 ```typescript
-gameState = engine.passTurn(gameState, "kingId");
+gameState = engine.passTurn(gameState, "lordId");
 ```
 
 ### Scoring

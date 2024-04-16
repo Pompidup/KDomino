@@ -1,3 +1,3 @@
-import gameEngine from "./application/engine/index.js";
+import gameEngine from "./adapters/driver/index.js";
 
 export default gameEngine;
