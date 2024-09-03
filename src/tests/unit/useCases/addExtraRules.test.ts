@@ -1,12 +1,12 @@
-import { unwrap } from "../../utils/testHelpers.js";
+import { unwrap } from "../../../utils/testHelpers.js";
 import { describe, test, expect } from "vitest";
-import { addExtraRulesUseCase } from "../../core/useCases/addExtraRules.js";
-import { GameMode } from "../../core/domain/types/mode.js";
-import { Domino } from "../../core/domain/types/domino.js";
-import { createGameBuilder } from "../builder/game.js";
-import { err } from "../../utils/result.js";
-import { RuleRepository } from "../../core/portServerside/ruleRepository.js";
-import { NextStep } from "../../core/domain/types/game.js";
+import { addExtraRulesUseCase } from "../../../core/useCases/addExtraRules.js";
+import { GameMode } from "../../../core/domain/types/mode.js";
+import { Domino } from "../../../core/domain/types/domino.js";
+import { createGameBuilder } from "../../builder/game.js";
+import { err } from "../../../utils/result.js";
+import { RuleRepository } from "../../../core/portServerside/ruleRepository.js";
+import { NextStep } from "../../../core/domain/types/game.js";
 
 describe("Add extra rules", () => {
   const mode: GameMode = {

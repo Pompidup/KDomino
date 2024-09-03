@@ -1,11 +1,11 @@
-import { getResultUseCase } from "../../core/useCases/getResult.js";
+import { getResultUseCase } from "../../../core/useCases/getResult.js";
 import { describe, test, expect } from "vitest";
-import { Kingdom } from "../../core/domain/types/kingdom.js";
-import { createPlayerBuilder } from "../builder/player.js";
-import { createGameBuilder } from "../builder/game.js";
-import { unwrap } from "../../utils/testHelpers.js";
-import { NextStep } from "../../core/domain/types/game.js";
-import { ExtraRule } from "../../core/domain/types/rule.js";
+import { Kingdom } from "../../../core/domain/types/kingdom.js";
+import { createPlayerBuilder } from "../../builder/player.js";
+import { createGameBuilder } from "../../builder/game.js";
+import { unwrap } from "../../../utils/testHelpers.js";
+import { NextStep } from "../../../core/domain/types/game.js";
+import { ExtraRule } from "../../../core/domain/types/rule.js";
 
 describe("Get result of a game", () => {
   test("should calculate score for a kingdom of full wheat and no crowns", () => {

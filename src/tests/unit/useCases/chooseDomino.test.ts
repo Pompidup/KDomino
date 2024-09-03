@@ -1,9 +1,9 @@
-import { chooseDominoUseCase } from "../../core/useCases/chooseDomino.js";
-import { unwrap } from "../../utils/testHelpers.js";
+import { chooseDominoUseCase } from "../../../core/useCases/chooseDomino.js";
+import { unwrap } from "../../../utils/testHelpers.js";
 import { describe, test, expect } from "vitest";
-import { Domino } from "../../core/domain/types/domino.js";
-import { createGameBuilder } from "../builder/game.js";
-import { err } from "../../utils/result.js";
+import { Domino } from "../../../core/domain/types/domino.js";
+import { createGameBuilder } from "../../builder/game.js";
+import { err } from "../../../utils/result.js";
 
 describe("Choose Domino", () => {
   test("should save player choice", async () => {

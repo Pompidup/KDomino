@@ -1,9 +1,9 @@
-import { placeDominoUseCase } from "../../core/useCases/placeDomino.js";
+import { placeDominoUseCase } from "../../../core/useCases/placeDomino.js";
 import { describe, test, expect } from "vitest";
-import { unwrap } from "../../utils/testHelpers.js";
-import { createGameBuilder } from "../builder/game.js";
-import { err } from "../../utils/result.js";
-import { NextAction } from "../../core/domain/types/game.js";
+import { unwrap } from "../../../utils/testHelpers.js";
+import { createGameBuilder } from "../../builder/game.js";
+import { err } from "../../../utils/result.js";
+import { NextAction } from "../../../core/domain/types/game.js";
 
 describe("Game Place", () => {
   test("should place a domino", () => {

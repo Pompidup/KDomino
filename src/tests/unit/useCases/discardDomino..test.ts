@@ -1,9 +1,9 @@
 import { describe, expect, test } from "vitest";
-import { discardDominoUseCase } from "../../core/useCases/discardDomino.js";
-import { createGameBuilder } from "../builder/game.js";
-import { unwrap } from "../../utils/testHelpers.js";
-import { err } from "../../utils/result.js";
-import { NextAction } from "../../core/domain/types/game.js";
+import { discardDominoUseCase } from "../../../core/useCases/discardDomino.js";
+import { createGameBuilder } from "../../builder/game.js";
+import { unwrap } from "../../../utils/testHelpers.js";
+import { err } from "../../../utils/result.js";
+import { NextAction } from "../../../core/domain/types/game.js";
 
 describe("Game Pass", () => {
   test("should pass turn and next action will be pickDomino", () => {

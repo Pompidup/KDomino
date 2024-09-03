@@ -1,18 +1,18 @@
-import { addPlayersUseCase } from "../../core/useCases/addPlayers.js";
-import { createGameBuilder } from "../builder/game.js";
+import { addPlayersUseCase } from "../../../core/useCases/addPlayers.js";
+import { createGameBuilder } from "../../builder/game.js";
 import { describe, test, expect } from "vitest";
 import {
   Game,
   NextStep,
   Players,
   Rules,
-} from "../../core/domain/types/index.js";
+} from "../../../core/domain/types/index.js";
 import {
   createEmptyKingdom,
   placeCastle,
-} from "../../core/domain/entities/kingdom.js";
-import { unwrap } from "../../utils/testHelpers.js";
-import { err } from "../../utils/result.js";
+} from "../../../core/domain/entities/kingdom.js";
+import { unwrap } from "../../../utils/testHelpers.js";
+import { err } from "../../../utils/result.js";
 
 describe("Add players", () => {
   const extraRules = [

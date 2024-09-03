@@ -1,10 +1,10 @@
 import { describe, test, expect } from "vitest";
-import jsonDominoes from "../../adapterServerside/jsonDominoes.js";
-import jsonModes from "../../adapterServerside/jsonModes.js";
-import { createGameUseCase } from "../../core/useCases/createGame.js";
-import { GameMode } from "../../core/domain/types/mode.js";
-import { unwrap } from "../../utils/testHelpers.js";
-import { NextStep } from "../../core/domain/types/game.js";
+import jsonDominoes from "../../../adapterServerside/jsonDominoes.js";
+import jsonModes from "../../../adapterServerside/jsonModes.js";
+import { createGameUseCase } from "../../../core/useCases/createGame.js";
+import { GameMode } from "../../../core/domain/types/mode.js";
+import { unwrap } from "../../../utils/testHelpers.js";
+import { NextStep } from "../../../core/domain/types/game.js";
 
 describe("Create game", () => {
   test("should create a new game", () => {
