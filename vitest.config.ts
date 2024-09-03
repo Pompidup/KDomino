@@ -2,9 +2,11 @@ import { configDefaults, defineConfig } from "vitest/config";
 
 export default defineConfig({
   test: {
-    exclude: [...configDefaults.exclude, "build.js"],
+    exclude: [...configDefaults.exclude],
     coverage: {
-      exclude: ["build.js", "src/utils/testHelpers.ts"],
+      provider: "v8",
+      reporter: ["text", "json", "html"],
+      exclude: ["src/utils/testHelpers.ts", "node_modules/", "dist/"],
     },
   },
 });
