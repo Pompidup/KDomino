@@ -1,7 +1,7 @@
-import type { GetExtraRulesCommand } from "../commands/getExtraRulesCommand.js";
-import { isErr } from "../../utils/result.js";
 import type { ExtraRule } from "../../core/domain/types/rule.js";
 import type { GetExtraRulesUseCase } from "../../core/useCases/getExtraRules.js";
+import { isErr } from "../../utils/result.js";
+import type { GetExtraRulesCommand } from "../commands/getExtraRulesCommand.js";
 
 type GetExtraRulesHandler = (command: GetExtraRulesCommand) => ExtraRule[];
 

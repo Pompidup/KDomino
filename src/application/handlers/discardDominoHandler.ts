@@ -1,11 +1,11 @@
-import type { DiscardDominoCommand } from "../commands/discardDominoCommand.js";
-import type { DiscardDominoUseCase } from "../../core/useCases/discardDomino.js";
-import { isErr } from "../../utils/result.js";
 import {
   isGameWithNextAction,
   type GameWithNextAction,
   type GameWithNextStep,
 } from "../../core/domain/types/game.js";
+import type { DiscardDominoUseCase } from "../../core/useCases/discardDomino.js";
+import { isErr } from "../../utils/result.js";
+import type { DiscardDominoCommand } from "../commands/discardDominoCommand.js";
 
 type DiscardDominoHandler = (
   command: DiscardDominoCommand

@@ -1,7 +1,7 @@
-import { isErr } from "../../utils/result.js";
 import type { Game, NextStep } from "../../core/domain/types/game.js";
-import type { AddExtraRulesCommand } from "../commands/addExtraRulesCommand.js";
 import type { AddExtraRulesUseCase } from "../../core/useCases/addExtraRules.js";
+import { isErr } from "../../utils/result.js";
+import type { AddExtraRulesCommand } from "../commands/addExtraRulesCommand.js";
 
 type AddExtraRulesHandler = (
   command: AddExtraRulesCommand

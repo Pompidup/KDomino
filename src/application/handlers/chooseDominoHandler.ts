@@ -1,7 +1,7 @@
-import type { ChooseDominoCommand } from "../commands/chooseDominoCommand.js";
 import type { GameWithNextAction } from "../../core/domain/types/game.js";
 import type { ChooseDominoUseCase } from "../../core/useCases/chooseDomino.js";
 import { isErr } from "../../utils/result.js";
+import type { ChooseDominoCommand } from "../commands/chooseDominoCommand.js";
 
 type ChooseDominoHandler = (command: ChooseDominoCommand) => GameWithNextAction;
 

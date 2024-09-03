@@ -1,12 +1,12 @@
-import type { PlaceDominoCommand } from "../commands/placeDominoCommand.js";
 import {
   isGameWithNextAction,
   type Game,
   type GameWithNextAction,
   type GameWithNextStep,
 } from "../../core/domain/types/game.js";
-import { isErr } from "../../utils/result.js";
 import type { PlaceDominoUseCase } from "../../core/useCases/placeDomino.js";
+import { isErr } from "../../utils/result.js";
+import type { PlaceDominoCommand } from "../commands/placeDominoCommand.js";
 
 type PlaceDominoHandler = (
   command: PlaceDominoCommand

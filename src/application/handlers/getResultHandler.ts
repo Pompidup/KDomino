@@ -1,7 +1,7 @@
-import type { GetResultCommand } from "../commands/getResultCommand.js";
 import type { GameWithResults } from "../../core/domain/types/game.js";
-import { isErr } from "../../utils/result.js";
 import type { GetResultUseCase } from "../../core/useCases/getResult.js";
+import { isErr } from "../../utils/result.js";
+import type { GetResultCommand } from "../commands/getResultCommand.js";
 
 type GetResultHandler = (command: GetResultCommand) => GameWithResults;
 

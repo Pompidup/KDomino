@@ -1,7 +1,7 @@
-import type { AddPlayersCommand } from "../commands/addPlayersCommand.js";
 import type { Game, NextStep } from "../../core/domain/types/game.js";
-import { isErr } from "../../utils/result.js";
 import type { AddPlayersUseCase } from "../../core/useCases/addPlayers.js";
+import { isErr } from "../../utils/result.js";
+import type { AddPlayersCommand } from "../commands/addPlayersCommand.js";
 
 type AddPlayersHandler = (
   command: AddPlayersCommand

@@ -1,7 +1,7 @@
-import { isErr } from "./../../utils/result";
 import type { Game, NextStep } from "../../core/domain/types/game.js";
-import type { CreateGameCommand } from "../commands/createGameCommand.js";
 import type { CreateGameUseCase } from "../../core/useCases/createGame.js";
+import type { CreateGameCommand } from "../commands/createGameCommand.js";
+import { isErr } from "./../../utils/result.js";
 
 type CreateGameHandler = (
   command: CreateGameCommand

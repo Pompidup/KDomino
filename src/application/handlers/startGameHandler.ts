@@ -1,7 +1,7 @@
-import type { StartGameCommand } from "../commands/startGameCommand.js";
 import type { Game, NextAction } from "../../core/domain/types/game.js";
-import { isErr } from "../../utils/result.js";
 import type { StartGameUseCase } from "../../core/useCases/startGame.js";
+import { isErr } from "../../utils/result.js";
+import type { StartGameCommand } from "../commands/startGameCommand.js";
 
 type StartGameHandler = (
   command: StartGameCommand
