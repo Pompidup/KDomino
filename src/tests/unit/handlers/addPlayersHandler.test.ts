@@ -1,11 +1,11 @@
-import { addPlayersHandler } from "./../../../application/handlers/addPlayersHandler.js";
-import { AddPlayersCommand } from "./../../../application/commands/addPlayersCommand.js";
-import { NextStep } from "../../../core/domain/types/game.js";
+import { addPlayersHandler } from "@application/handlers/addPlayersHandler.js";
+import type { AddPlayersCommand } from "@application/commands/addPlayersCommand.js";
+import type { NextStep } from "@core/domain/types/game.js";
 import { createGameBuilder } from "../../builder/game.js";
-import { AddPlayersUseCase } from "./../../../core/useCases/addPlayers.js";
+import type { AddPlayersUseCase } from "@core/useCases/addPlayers.js";
 import { describe, expect, test } from "vitest";
-import { err, ok } from "../../../utils/result.js";
-import { Kingdom } from "../../../core/domain/types/kingdom.js";
+import { err, ok } from "@utils/result.js";
+import type { Kingdom } from "@core/domain/types/kingdom.js";
 
 describe("AddPlayersHandler", () => {
   test("should throw error if next action is not addPlayers", () => {

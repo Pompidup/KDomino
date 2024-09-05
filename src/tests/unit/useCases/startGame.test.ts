@@ -1,8 +1,8 @@
 import { describe, test, expect } from "vitest";
-import { startGameUseCase } from "../../../core/useCases/startGame.js";
-import { unwrap } from "../../../utils/testHelpers.js";
+import { startGameUseCase } from "@core/useCases/startGame.js";
+import { unwrap } from "@utils/testHelpers.js";
 import { createGameBuilder } from "../../builder/game.js";
-import { NextStep } from "../../../core/domain/types/game.js";
+import type { NextStep } from "@core/domain/types/game.js";
 
 describe("Start game", () => {
   test("should defined next player and action", () => {

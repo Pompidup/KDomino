@@ -1,9 +1,9 @@
-import { addExtraRulesHandler } from "../../../application/handlers/addExtraRulesHandler.js";
-import { NextStep } from "../../../core/domain/types/game.js";
-import { AddExtraRulesUseCase } from "../../../core/useCases/addExtraRules.js";
-import { err, ok } from "../../../utils/result.js";
+import { addExtraRulesHandler } from "@application/handlers/addExtraRulesHandler.js";
+import type { NextStep } from "@core/domain/types/game.js";
+import type { AddExtraRulesUseCase } from "@core/useCases/addExtraRules.js";
+import { err, ok } from "@utils/result.js";
 import { createGameBuilder } from "../../builder/game.js";
-import { AddExtraRulesCommand } from "./../../../application/commands/addExtraRulesCommand.js";
+import type { AddExtraRulesCommand } from "@application/commands/addExtraRulesCommand.js";
 import { describe, expect, test } from "vitest";
 
 describe("AddExtraRulesHandler", () => {
@@ -56,7 +56,7 @@ describe("AddExtraRulesHandler", () => {
         ...game,
         rules: {
           ...game.rules,
-          extra: [{ name: extraRules[0], description: "desc", mode: [] }],
+          extra: extraRules.map((rule) => ({ name: rule, description: "desc", mode: [] })),
         },
         nextAction: { type: "step", step: "addPlayers" },
       });

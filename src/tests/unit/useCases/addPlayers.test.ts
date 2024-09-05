@@ -1,18 +1,17 @@
-import { addPlayersUseCase } from "../../../core/useCases/addPlayers.js";
+import { addPlayersUseCase } from "@core/useCases/addPlayers.js";
 import { createGameBuilder } from "../../builder/game.js";
 import { describe, test, expect } from "vitest";
-import {
-  Game,
+import type {
   NextStep,
   Players,
   Rules,
-} from "../../../core/domain/types/index.js";
+} from "@core/domain/types/index.js";
 import {
   createEmptyKingdom,
   placeCastle,
-} from "../../../core/domain/entities/kingdom.js";
-import { unwrap } from "../../../utils/testHelpers.js";
-import { err } from "../../../utils/result.js";
+} from "@core/domain/entities/kingdom.js";
+import { unwrap } from "@utils/testHelpers.js";
+import { err } from "@utils/result.js";
 
 describe("Add players", () => {
   const extraRules = [
@@ -94,7 +93,7 @@ describe("Add players", () => {
     ];
     const dependencies = {
       uuidMethod: () => "uuid-test",
-      shuffleMethod: (dominoes) => dominoes,
+      shuffleMethod: (dominoes: any[]) => dominoes,
       ruleRepository: inMemoryRepo,
     };
 
@@ -118,7 +117,7 @@ describe("Add players", () => {
     const payload = ["Player 1"];
     const dependencies = {
       uuidMethod: () => "uuid-test",
-      shuffleMethod: (dominoes) => dominoes,
+      shuffleMethod: (dominoes: any[]) => dominoes,
       ruleRepository: inMemoryRepo,
     };
 
@@ -145,7 +144,7 @@ describe("Add players", () => {
     ];
     const dependencies = {
       uuidMethod: () => "uuid-test",
-      shuffleMethod: (dominoes) => dominoes,
+      shuffleMethod: (dominoes: any[]) => dominoes,
       ruleRepository: inMemoryRepo,
     };
 
@@ -166,7 +165,7 @@ describe("Add players", () => {
     const payload = ["Pl", "Player 2"];
     const dependencies = {
       uuidMethod: () => "uuid-test",
-      shuffleMethod: (dominoes) => dominoes,
+      shuffleMethod: (dominoes: any[]) => dominoes,
       ruleRepository: inMemoryRepo,
     };
 

@@ -3,10 +3,10 @@ import {
   type ExtraRule,
   type Game,
   type NextStep,
-} from "../domain/types/index.js";
-import { isErr, ok, type Result } from "../../utils/result.js";
-import type { RuleRepository } from "../portServerside/ruleRepository.js";
-import { toExtraRule } from "../domain/entities/rule.js";
+} from "@core/domain/types/index.js";
+import { isErr, ok, type Result } from "@utils/result.js";
+import type { RuleRepository } from "@core/portServerside/ruleRepository.js";
+import { toExtraRule } from "@core/domain/entities/rule.js";
 
 export type AddExtraRulesUseCase = (
   game: Game & { nextAction: NextStep },

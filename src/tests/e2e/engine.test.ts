@@ -1,5 +1,5 @@
 import { createGameEngine } from "./../../index.js";
-import type { GameEngine } from "./../../core/portUserside/engine.js";
+import type { GameEngine } from "@core/portUserside/engine.js";
 import { beforeAll, describe, expect, test } from "vitest";
 
 describe("Engine", () => {
@@ -144,7 +144,7 @@ describe("Engine", () => {
     expect(startedGame.lords).toHaveLength(4);
     expect(startedGame.nextAction).toEqual({
       type: "action",
-      nextLord: startedGame.lords[0].id,
+      nextLord: startedGame.lords[0]!.id,
       nextAction: "pickDomino",
     });
     expect(startedGame.turn).toEqual(0);
@@ -160,7 +160,7 @@ describe("Engine", () => {
     const startedGame = engine.startGame({ game: gameWithPlayers });
 
     const firstLordId = startedGame.nextAction.nextLord;
-    const firstDomino = startedGame.currentDominoes[0].domino;
+    const firstDomino = startedGame.currentDominoes[0]!.domino;
 
     // Act
     const gameWithChosenDomino = engine.chooseDomino({
@@ -170,11 +170,11 @@ describe("Engine", () => {
     });
 
     // Assert
-    expect(gameWithChosenDomino.currentDominoes[0].picked).toBeTruthy();
-    expect(gameWithChosenDomino.currentDominoes[0].lordId).toEqual(firstLordId);
+    expect(gameWithChosenDomino.currentDominoes[0]!.picked).toBeTruthy();
+    expect(gameWithChosenDomino.currentDominoes[0]!.lordId).toEqual(firstLordId);
     expect(gameWithChosenDomino.nextAction).toEqual({
       type: "action",
-      nextLord: startedGame.lords[1].id,
+      nextLord: startedGame.lords[1]!.id,
       nextAction: "pickDomino",
     });
   });
@@ -190,7 +190,7 @@ describe("Engine", () => {
     let gameWithChosenDomino = startedGame;
     for (let i = 0; i < 4; i++) {
       const lordId = gameWithChosenDomino.nextAction.nextLord;
-      const domino = gameWithChosenDomino.currentDominoes[i].domino;
+      const domino = gameWithChosenDomino.currentDominoes[i]!.domino;
       gameWithChosenDomino = engine.chooseDomino({
         game: gameWithChosenDomino,
         lordId: lordId,
@@ -207,7 +207,7 @@ describe("Engine", () => {
     // Assert
     expect(gameWithDiscardedDomino.nextAction).toEqual({
       type: "action",
-      nextLord: gameWithChosenDomino.lords[0].id,
+      nextLord: gameWithChosenDomino.lords[0]!.id,
       nextAction: "pickDomino",
     });
   });
@@ -223,7 +223,7 @@ describe("Engine", () => {
     let gameWithChosenDomino = startedGame;
     for (let i = 0; i < 4; i++) {
       const lordId = gameWithChosenDomino.nextAction.nextLord;
-      const domino = gameWithChosenDomino.currentDominoes[i].domino;
+      const domino = gameWithChosenDomino.currentDominoes[i]!.domino;
       gameWithChosenDomino = engine.chooseDomino({
         game: gameWithChosenDomino,
         lordId: lordId,
@@ -246,10 +246,10 @@ describe("Engine", () => {
       (lord) => lord.id === lordId
     );
     const playerIndex = gameWithPlacedDomino.players.findIndex(
-      (player) => player.id === gameWithPlacedDomino.lords[lordIndex].playerId
+      (player) => player.id === gameWithPlacedDomino.lords[lordIndex]!.playerId
     );
     const player = gameWithPlacedDomino.players[playerIndex];
-    const domino = gameWithPlacedDomino.lords[lordIndex].dominoPicked;
+    const domino = gameWithPlacedDomino.lords[lordIndex]!.dominoPicked;
 
     // Assert
     expect(gameWithPlacedDomino.nextAction).toEqual({
@@ -257,8 +257,8 @@ describe("Engine", () => {
       nextLord: lordId,
       nextAction: "pickDomino",
     });
-    expect(gameWithPlacedDomino.lords[0].hasPlace).toBeTruthy();
-    expect(player.kingdom[4][5]).toEqual(domino!.right);
-    expect(player.kingdom[5][5]).toEqual(domino!.left);
+    expect(gameWithPlacedDomino.lords[0]!.hasPlace).toBeTruthy();
+    expect(player!.kingdom[4]![5]).toEqual(domino!.right);
+    expect(player!.kingdom[5]![5]).toEqual(domino!.left);
   });
 });

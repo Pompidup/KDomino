@@ -1,12 +1,12 @@
 import { describe, expect, test } from "vitest";
-import type { DiscardDominoCommand } from "../../../application/commands/discardDominoCommand.js";
-import { discardDominoHandler } from "../../../application/handlers/discardDominoHandler.js";
-import {
+import type { DiscardDominoCommand } from "@application/commands/discardDominoCommand.js";
+import { discardDominoHandler } from "@application/handlers/discardDominoHandler.js";
+import type {
   NextAction,
-  type GameWithNextStep,
-} from "../../../core/domain/types/game.js";
-import type { DiscardDominoUseCase } from "../../../core/useCases/discardDomino.js";
-import { err, ok } from "../../../utils/result.js";
+  GameWithNextStep,
+} from "@core/domain/types/game.js";
+import type { DiscardDominoUseCase } from "@core/useCases/discardDomino.js";
+import { err, ok } from "@utils/result.js";
 import { createGameBuilder } from "../../builder/game.js";
 
 describe("discardDominoHandler", () => {

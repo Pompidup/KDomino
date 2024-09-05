@@ -1,7 +1,7 @@
-import type { Domino, Ground } from "../core/domain/types/domino.js";
+import type { Domino, Ground } from "@core/domain/types/domino.js";
+import type { GameMode } from "@core/domain/types/mode.js";
+import type { DominoesRepository } from "@core/portServerside/dominoesRepository.js";
 import dominoesJson from "../datasources/dominoes.json" assert { type: "json" };
-import type { DominoesRepository } from "../core/portServerside/dominoesRepository.js";
-import type { GameMode } from "../core/domain/types/mode.js";
 
 const jsonDominoes = (): DominoesRepository => {
   const dominoes: Record<string, Domino[]> = {};

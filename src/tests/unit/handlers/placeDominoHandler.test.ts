@@ -1,14 +1,14 @@
 import { describe, expect, test } from "vitest";
-import {
+import type {
   GameWithNextAction,
   GameWithNextStep,
   NextAction,
-} from "../../../core/domain/types/game.js";
-import type { PlaceDominoUseCase } from "../../../core/useCases/placeDomino.js";
+} from "@core/domain/types/game.js";
+import type { PlaceDominoUseCase } from "@core/useCases/placeDomino.js";
 import { createGameBuilder } from "../../builder/game.js";
-import { err, ok } from "../../../utils/result.js";
-import type { PlaceDominoCommand } from "../../../application/commands/placeDominoCommand.js";
-import { placeDominoHandler } from "../../../application/handlers/placeDominoHandler.js";
+import { err, ok } from "@utils/result.js";
+import type { PlaceDominoCommand } from "@application/commands/placeDominoCommand.js";
+import { placeDominoHandler } from "@application/handlers/placeDominoHandler.js";
 
 describe("placeDominoHandler", () => {
   test("should throw an error if the next action is not 'placeDomino'", () => {

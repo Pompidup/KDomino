@@ -1,10 +1,13 @@
-import type { Game, NextStep, Players } from "../domain/types/index.js";
-import type { UuidMethod } from "../portServerside/uuidMethod.js";
-import type { ShuffleMethod } from "../portServerside/shuffleMethod.js";
-import { ok, err, type Result, isErr } from "../../utils/result.js";
-import { createPlayer } from "../domain/entities/player.js";
-import { createEmptyKingdom, placeCastle } from "../domain/entities/kingdom.js";
-import type { RuleRepository } from "../portServerside/ruleRepository.js";
+import {
+  createEmptyKingdom,
+  placeCastle,
+} from "@core/domain/entities/kingdom.js";
+import { createPlayer } from "@core/domain/entities/player.js";
+import type { Game, NextStep, Players } from "@core/domain/types/index.js";
+import type { RuleRepository } from "@core/portServerside/ruleRepository.js";
+import type { ShuffleMethod } from "@core/portServerside/shuffleMethod.js";
+import type { UuidMethod } from "@core/portServerside/uuidMethod.js";
+import { err, isErr, ok, type Result } from "@utils/result.js";
 
 export type AddPlayersUseCase = (
   game: Game & { nextAction: NextStep },

@@ -4,7 +4,7 @@ import {
   type Game,
   type GameMode,
   type NextStep,
-} from "../types/index.js";
+} from "@core/domain/types/index.js";
 
 export const create = (payload: {
   id: string;

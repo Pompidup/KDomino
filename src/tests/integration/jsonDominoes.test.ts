@@ -1,6 +1,6 @@
 import { describe, test, expect } from "vitest";
-import jsonDominoes from "../../adapterServerside/jsonDominoes";
-import { GameMode } from "../../core/domain/types";
+import jsonDominoes from "@adapter/jsonDominoes";
+import type { GameMode } from "@core/domain/types/mode";
 
 describe("jsonDominoes", () => {
   test("should return dominoes for a given game mode", () => {

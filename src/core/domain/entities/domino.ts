@@ -5,7 +5,7 @@ import {
   type EmptyTile,
   type Ground,
   type Tile,
-} from "../types/domino.js";
+} from "@core/domain/types/domino.js";
 
 const isGround = (ground: any): ground is Ground => {
   return GROUND.includes(ground);

@@ -1,11 +1,11 @@
+import type { AddPlayersCommand } from "@application/commands/addPlayersCommand.js";
 import {
   InvalidStepError,
   StepExecutionError,
-} from "../../core/domain/errors/domainErrors.js";
-import type { GameWithNextStep } from "../../core/domain/types/game.js";
-import type { AddPlayersUseCase } from "../../core/useCases/addPlayers.js";
-import { isErr } from "../../utils/result.js";
-import type { AddPlayersCommand } from "../commands/addPlayersCommand.js";
+} from "@core/domain/errors/domainErrors.js";
+import type { GameWithNextStep } from "@core/domain/types/game.js";
+import type { AddPlayersUseCase } from "@core/useCases/addPlayers.js";
+import { isErr } from "@utils/result.js";
 
 type AddPlayersHandler = (command: AddPlayersCommand) => GameWithNextStep;
 

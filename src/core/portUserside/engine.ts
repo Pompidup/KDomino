@@ -1,20 +1,20 @@
-import type { GameMode } from "../domain/types/mode.js";
 import type {
+  GameMode,
   GameWithNextAction,
   GameWithNextStep,
   GameWithResults,
-} from "../domain/types/game.js";
-import type { ExtraRule } from "../domain/types/rule.js";
-import type { GetModesCommand } from "../../application/commands/getModesCommand.js";
-import type { GetExtraRulesCommand } from "../../application/commands/getExtraRulesCommand.js";
-import type { CreateGameCommand } from "../../application/commands/createGameCommand.js";
-import type { AddPlayersCommand } from "../../application/commands/addPlayersCommand.js";
-import type { AddExtraRulesCommand } from "../../application/commands/addExtraRulesCommand.js";
-import type { StartGameCommand } from "../../application/commands/startGameCommand.js";
-import type { ChooseDominoCommand } from "../../application/commands/chooseDominoCommand.js";
-import type { PlaceDominoCommand } from "../../application/commands/placeDominoCommand.js";
-import type { DiscardDominoCommand } from "../../application/commands/discardDominoCommand.js";
-import type { GetResultCommand } from "../../application/commands/getResultCommand.js";
+  ExtraRule,
+} from "@core/domain/types/index.js";
+import type { GetModesCommand } from "@application/commands/getModesCommand.js";
+import type { GetExtraRulesCommand } from "@application/commands/getExtraRulesCommand.js";
+import type { CreateGameCommand } from "@application/commands/createGameCommand.js";
+import type { AddPlayersCommand } from "@application/commands/addPlayersCommand.js";
+import type { AddExtraRulesCommand } from "@application/commands/addExtraRulesCommand.js";
+import type { StartGameCommand } from "@application/commands/startGameCommand.js";
+import type { ChooseDominoCommand } from "@application/commands/chooseDominoCommand.js";
+import type { PlaceDominoCommand } from "@application/commands/placeDominoCommand.js";
+import type { DiscardDominoCommand } from "@application/commands/discardDominoCommand.js";
+import type { GetResultCommand } from "@application/commands/getResultCommand.js";
 
 export type GameEngine = {
   getModes: (command: GetModesCommand) => GameMode[];

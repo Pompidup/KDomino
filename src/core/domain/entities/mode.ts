@@ -1,5 +1,5 @@
-import { err, ok, type Result } from "../../../utils/result.js";
-import type { GameMode } from "../types/mode.js";
+import { err, ok, type Result } from "@utils/result.js";
+import type { GameMode } from "@core/domain/types/mode.js";
 
 const findMode = (
   mode: string,

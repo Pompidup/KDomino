@@ -1,6 +1,6 @@
-import type { GameMode } from "../domain/types/mode.js";
-import { ok, type Result } from "../../utils/result.js";
-import type { ModeRepository } from "core/portServerside/modeRepository.js";
+import type { GameMode } from "@core/domain/types/mode.js";
+import type { ModeRepository } from "@core/portServerside/modeRepository.js";
+import { ok, type Result } from "@utils/result.js";
 
 export type GetModesUseCase = () => Result<GameMode[]>;
 

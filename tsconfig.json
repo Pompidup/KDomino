@@ -7,7 +7,7 @@
     "esModuleInterop": true,
     "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true,
-    "baseUrl": "./src",
+    "baseUrl": ".",
     "types": ["node"],
     "resolveJsonModule": true,
     "target": "es2022",
@@ -19,8 +19,14 @@
     "moduleResolution": "Bundler",
     "module": "ESNext",
     "lib": ["es2022"],
-    "emitDeclarationOnly": true
+    "emitDeclarationOnly": true,
+    "paths": {
+      "@core/*": ["./src/core/*"],
+      "@application/*": ["./src/application/*"],
+      "@adapter/*": ["./src/adapterServerside/*"],
+      "@utils/*": ["./src/utils/*"]
+    }
   },
   "include": ["./src/**/*"],
-  "exclude": ["node_modules", "dist", "**/*.test.ts"]
+  "exclude": ["node_modules", "dist"]
 }

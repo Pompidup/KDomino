@@ -1,4 +1,4 @@
-import type { ExtraRule, Rules } from "../domain/types/rule.js";
+import type { ExtraRule, Rules } from "@core/domain/types/rule.js";
 
 export type RuleRepository = {
   getAll: () => Rules;

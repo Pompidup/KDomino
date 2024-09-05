@@ -1,15 +1,15 @@
+import type { PlaceDominoCommand } from "@application/commands/placeDominoCommand.js";
 import {
   ActionExecutionError,
   InvalidStepError,
-} from "../../core/domain/errors/domainErrors.js";
+} from "@core/domain/errors/domainErrors.js";
 import {
   isGameWithNextAction,
   type GameWithNextAction,
   type GameWithNextStep,
-} from "../../core/domain/types/game.js";
-import type { PlaceDominoUseCase } from "../../core/useCases/placeDomino.js";
-import { isErr } from "../../utils/result.js";
-import type { PlaceDominoCommand } from "../commands/placeDominoCommand.js";
+} from "@core/domain/types/game.js";
+import type { PlaceDominoUseCase } from "@core/useCases/placeDomino.js";
+import { isErr } from "@utils/result.js";
 
 type PlaceDominoHandler = (
   command: PlaceDominoCommand

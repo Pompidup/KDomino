@@ -1,10 +1,10 @@
-import { err, isErr, ok, type Result } from "../../utils/result.js";
-import type { Game, NextStep } from "../domain/types/game.js";
-import { create } from "../domain/entities/game.js";
-import type { ModeRepository } from "../portServerside/modeRepository.js";
-import type { DominoesRepository } from "core/portServerside/dominoesRepository.js";
-import type { UuidMethod } from "../portServerside/uuidMethod.js";
-import { createMode } from "../domain/entities/mode.js";
+import { create } from "@core/domain/entities/game.js";
+import { createMode } from "@core/domain/entities/mode.js";
+import type { Game, NextStep } from "@core/domain/types/game.js";
+import type { DominoesRepository } from "@core/portServerside/dominoesRepository.js";
+import type { ModeRepository } from "@core/portServerside/modeRepository.js";
+import type { UuidMethod } from "@core/portServerside/uuidMethod.js";
+import { err, isErr, ok, type Result } from "@utils/result.js";
 
 export type CreateGameUseCase = (
   mode: string

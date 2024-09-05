@@ -1,10 +1,10 @@
-import type { UuidMethod } from "../portServerside/uuidMethod.js";
-import { ok, type Result } from "../../utils/result.js";
-import type { Game, NextAction, NextStep } from "../domain/types/game.js";
-import type { ShuffleMethod } from "../portServerside/shuffleMethod.js";
-import type { Lord } from "../domain/types/lord.js";
-import { createLord } from "../domain/entities/lord";
-import { playerActions } from "../domain/types/player.js";
+import { createLord } from "@core/domain/entities/lord";
+import type { Game, NextAction, NextStep } from "@core/domain/types/game.js";
+import type { Lord } from "@core/domain/types/lord.js";
+import { playerActions } from "@core/domain/types/player.js";
+import type { ShuffleMethod } from "@core/portServerside/shuffleMethod.js";
+import type { UuidMethod } from "@core/portServerside/uuidMethod.js";
+import { ok, type Result } from "@utils/result.js";
 
 export type StartGameUseCase = (
   game: Game & { nextAction: NextStep }

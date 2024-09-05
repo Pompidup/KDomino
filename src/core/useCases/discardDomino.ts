@@ -1,17 +1,17 @@
 import {
+  allLordsHavePlayed,
+  canPass,
+  nextLordWithAction,
+} from "@core/domain/entities/lord.js";
+import {
   gameSteps,
   type GameResult,
   type GameWithNextAction,
   type GameWithNextStep,
   type NextAction,
   type NextStep,
-} from "../domain/types/game.js";
-import {
-  canPass,
-  nextLordWithAction,
-  allLordsHavePlayed,
-} from "../domain/entities/lord.js";
-import { err, ok } from "../../utils/result.js";
+} from "@core/domain/types/game.js";
+import { err, ok } from "@utils/result.js";
 
 export type DiscardDominoUseCase = (
   game: GameWithNextAction,

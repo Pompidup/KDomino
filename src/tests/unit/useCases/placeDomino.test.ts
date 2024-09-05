@@ -1,9 +1,9 @@
-import { placeDominoUseCase } from "../../../core/useCases/placeDomino.js";
+import { placeDominoUseCase } from "@core/useCases/placeDomino.js";
 import { describe, test, expect } from "vitest";
-import { unwrap } from "../../../utils/testHelpers.js";
+import { unwrap } from "@utils/testHelpers.js";
 import { createGameBuilder } from "../../builder/game.js";
-import { err } from "../../../utils/result.js";
-import { NextAction } from "../../../core/domain/types/game.js";
+import { err } from "@utils/result.js";
+import type { NextAction } from "@core/domain/types/game.js";
 
 describe("Game Place", () => {
   test("should place a domino", () => {
@@ -16,7 +16,7 @@ describe("Game Place", () => {
       })
       .build();
 
-    game.lords[0].dominoPicked = game.dominoes[0];
+    game.lords[0]!.dominoPicked = game.dominoes[0];
 
     const result = placeDominoUseCase(
       game,
@@ -28,9 +28,9 @@ describe("Game Place", () => {
 
     const updatedGame = unwrap(result);
 
-    expect(updatedGame.players[0].kingdom[4][5]).toEqual(game.dominoes[0].left);
-    expect(updatedGame.players[0].kingdom[4][6]).toEqual(
-      game.dominoes[0].right
+    expect(updatedGame.players[0]!.kingdom[4]![5]).toEqual(game.dominoes[0]!.left);
+    expect(updatedGame.players[0]!.kingdom[4]![6]).toEqual(
+      game.dominoes[0]!.right
     );
   });
 
@@ -79,7 +79,7 @@ describe("Game Place", () => {
       })
       .build();
 
-    game.lords[0].hasPick = true;
+    game.lords[0]!.hasPick = true;
 
     const result = placeDominoUseCase(
       game,
@@ -102,7 +102,7 @@ describe("Game Place", () => {
       })
       .build();
 
-    game.lords[0].dominoPicked = game.dominoes[0];
+    game.lords[0]!.dominoPicked = game.dominoes[0];
 
     const result = placeDominoUseCase(
       game,
@@ -125,9 +125,9 @@ describe("Game Place", () => {
       })
       .build();
 
-    game.players[0].kingdom[4][5] = game.dominoes[0].left;
+    game.players[0]!.kingdom[4]![5] = game.dominoes[0]!.left;
 
-    game.lords[0].dominoPicked = game.dominoes[0];
+    game.lords[0]!.dominoPicked = game.dominoes[0];
 
     const result = placeDominoUseCase(
       game,
@@ -150,7 +150,7 @@ describe("Game Place", () => {
       })
       .build();
 
-    game.lords[0].dominoPicked = game.dominoes[0];
+    game.lords[0]!.dominoPicked = game.dominoes[0];
 
     const result = placeDominoUseCase(
       game,
@@ -173,9 +173,9 @@ describe("Game Place", () => {
       })
       .build();
 
-    game.players[0].kingdom[4][4] = { type: "forest", crowns: 1 };
+    game.players[0]!.kingdom[4]![4] = { type: "forest", crowns: 1 };
 
-    game.lords[0].dominoPicked = game.dominoes[0];
+    game.lords[0]!.dominoPicked = game.dominoes[0];
 
     const result = placeDominoUseCase(
       game,
@@ -198,13 +198,13 @@ describe("Game Place", () => {
       })
       .build();
 
-    game.lords[0].dominoPicked = game.dominoes[0];
+    game.lords[0]!.dominoPicked = game.dominoes[0];
 
     const updatedGame = unwrap(
       placeDominoUseCase(game, "lord1-id", { x: 5, y: 4 }, "horizontal", 0)
     );
 
-    expect(updatedGame.lords[0].hasPlace).toBe(true);
+    expect(updatedGame.lords[0]!.hasPlace).toBe(true);
   });
 
   test("should update next action to pick domino", () => {
@@ -217,7 +217,7 @@ describe("Game Place", () => {
       })
       .build();
 
-    game.lords[0].dominoPicked = game.dominoes[0];
+    game.lords[0]!.dominoPicked = game.dominoes[0];
 
     const updatedGame = unwrap(
       placeDominoUseCase(game, "lord1-id", { x: 5, y: 4 }, "horizontal", 0)
@@ -242,7 +242,7 @@ describe("Game Place", () => {
       .build();
     false;
 
-    game.lords[0].dominoPicked = game.dominoes[0];
+    game.lords[0]!.dominoPicked = game.dominoes[0];
 
     // Act
     const updatedGame = unwrap(
@@ -250,7 +250,7 @@ describe("Game Place", () => {
     );
 
     // Assert
-    expect(updatedGame.lords[0].turnEnded).toBe(true);
+    expect(updatedGame.lords[0]!.turnEnded).toBe(true);
     expect((updatedGame.nextAction as NextAction).nextLord).toBe("lord2-id");
   });
 
@@ -283,12 +283,12 @@ describe("Game Place", () => {
         lord.hasPick = true;
         lord.hasPlace = true;
         lord.turnEnded = true;
-        lord.dominoPicked = revealsDomino[index].domino;
+        lord.dominoPicked = revealsDomino[index]!.domino;
       } else {
         lord.hasPick = false;
         lord.hasPlace = false;
         lord.turnEnded = false;
-        lord.dominoPicked = revealsDomino[index].domino;
+        lord.dominoPicked = revealsDomino[index]!.domino;
       }
     });
 
@@ -296,7 +296,7 @@ describe("Game Place", () => {
     const updatedGame = unwrap(
       placeDominoUseCase(
         initialGame,
-        initialGame.lords[3].id,
+        initialGame.lords[3]!.id,
         { x: 5, y: 4 },
         "horizontal",
         0

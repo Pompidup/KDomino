@@ -1,11 +1,11 @@
+import type { AddExtraRulesCommand } from "@application/commands/addExtraRulesCommand.js";
 import {
   InvalidStepError,
   StepExecutionError,
-} from "../../core/domain/errors/domainErrors.js";
-import type { Game, NextStep } from "../../core/domain/types/game.js";
-import type { AddExtraRulesUseCase } from "../../core/useCases/addExtraRules.js";
-import { isErr } from "../../utils/result.js";
-import type { AddExtraRulesCommand } from "../commands/addExtraRulesCommand.js";
+} from "@core/domain/errors/domainErrors.js";
+import type { Game, NextStep } from "@core/domain/types/game.js";
+import type { AddExtraRulesUseCase } from "@core/useCases/addExtraRules.js";
+import { isErr } from "@utils/result.js";
 
 type AddExtraRulesHandler = (
   command: AddExtraRulesCommand

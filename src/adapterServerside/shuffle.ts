@@ -1,4 +1,4 @@
-import type { ShuffleMethod } from "../core/portServerside/shuffleMethod.js";
+import type { ShuffleMethod } from "@core/portServerside/shuffleMethod.js";
 
 export const shuffleMethod: ShuffleMethod = <T>(array: T[]) => {
   for (let i = array.length - 1; i > 0; i--) {

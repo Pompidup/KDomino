@@ -3,7 +3,7 @@ import type {
   Orientation,
   Position,
   Rotation,
-} from "../../core/domain/types/index.js";
+} from "@core/domain/types/index.js";
 
 export type PlaceDominoCommand = {
   game: GameWithNextAction;

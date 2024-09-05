@@ -1,12 +1,12 @@
 import { describe, expect, test } from "vitest";
-import type { GetResultCommand } from "../../../application/commands/getResultCommand.js";
-import { getResultHandler } from "../../../application/handlers/getResultHandler.js";
-import {
+import type { GetResultCommand } from "@application/commands/getResultCommand.js";
+import { getResultHandler } from "@application/handlers/getResultHandler.js";
+import type {
   NextStep,
-  type GameWithResults,
-} from "../../../core/domain/types/game.js";
-import type { GetResultUseCase } from "../../../core/useCases/getResult.js";
-import { err, ok } from "../../../utils/result.js";
+  GameWithResults,
+} from "@core/domain/types/game.js";
+import type { GetResultUseCase } from "@core/useCases/getResult.js";
+import { err, ok } from "@utils/result.js";
 import { createGameBuilder } from "./../../builder/game.js";
 
 describe("getResultHandler", () => {

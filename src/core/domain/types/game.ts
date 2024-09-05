@@ -1,4 +1,4 @@
-import type { Result } from "./../../../utils/result";
+import type { Result } from "@utils/result.js";
 import type { Domino, RevealsDomino } from "./domino.js";
 import type { Lord } from "./lord.js";
 import type { GameMode } from "./mode.js";

@@ -1,14 +1,14 @@
+import {
+  checkCastleIsInMiddle,
+  countDominoes,
+} from "@core/domain/entities/kingdom.js";
 import type {
   FinalResult,
   GameWithNextStep,
   GameWithResults,
   ScoreResult,
-} from "../domain/types/index.js";
-import { ok, type Result } from "../../utils/result.js";
-import {
-  checkCastleIsInMiddle,
-  countDominoes,
-} from "../domain/entities/kingdom.js";
+} from "@core/domain/types/index.js";
+import { ok, type Result } from "@utils/result.js";
 
 type Property = {
   type: string;

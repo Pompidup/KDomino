@@ -1,5 +1,5 @@
-import type { ExtraRule } from "../types/rule.js";
-import { ok, err, type Result } from "../../../utils/result.js";
+import type { ExtraRule } from "@core/domain/types/rule.js";
+import { ok, err, type Result } from "@utils/result.js";
 
 export const getAvailablesExtraRules = (
   extraRules: ExtraRule[],

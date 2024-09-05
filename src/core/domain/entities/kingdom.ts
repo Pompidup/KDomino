@@ -1,6 +1,3 @@
-import { isOk } from "../../../utils/result.js";
-import { err, isErr, ok, type Result } from "../../../utils/result.js";
-import { createTile } from "./domino.js";
 import {
   GRIDSIZE,
   type Domino,
@@ -10,7 +7,9 @@ import {
   type Position,
   type Rotation,
   type Tile,
-} from "../types/index.js";
+} from "@core/domain/types/index.js";
+import { err, isErr, isOk, ok, type Result } from "@utils/result.js";
+import { createTile } from "./domino.js";
 
 export const createEmptyKingdom = (): Kingdom => {
   const emptyTile = createTile("empty");

@@ -1,8 +1,8 @@
-import { err, type Result } from "../../utils/result.js";
-import type { ExtraRule } from "../domain/types/rule.js";
-import { getAvailablesExtraRules } from "../domain/entities/rule.js";
-import type { GameMode } from "../domain/types/mode.js";
-import type { RuleRepository } from "../portServerside/ruleRepository.js";
+import { getAvailablesExtraRules } from "@core/domain/entities/rule.js";
+import type { GameMode } from "@core/domain/types/mode.js";
+import type { ExtraRule } from "@core/domain/types/rule.js";
+import type { RuleRepository } from "@core/portServerside/ruleRepository.js";
+import { err, type Result } from "@utils/result.js";
 
 export type GetExtraRulesUseCase = (
   mode: GameMode["name"],

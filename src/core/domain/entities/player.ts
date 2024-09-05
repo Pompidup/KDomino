@@ -1,6 +1,6 @@
-import { type Result, err, ok, isErr } from "../../../utils/result.js";
-import type { PlayerPayload, Player } from "../types/player.js";
-import type { Kingdom } from "../types/kingdom.js";
+import { type Result, err, ok, isErr } from "@utils/result.js";
+import type { Player } from "@core/domain/types/player.js";
+import type { Kingdom } from "@core/domain/types/kingdom.js";
 
 const MINPLAYERSNAMELENGTH = 3;
 

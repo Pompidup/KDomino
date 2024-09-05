@@ -1,14 +1,12 @@
 import {
-  nextLordWithAction,
-  resetLordsActions,
-} from "./../domain/entities/lord.js";
-import { type GameWithNextAction } from "../domain/types/game.js";
-import { err, ok, type Result } from "../../utils/result.js";
-import {
   allLordsHavePlayed,
   canPick,
+  nextLordWithAction,
+  resetLordsActions,
   updateLordOrder,
-} from "../domain/entities/lord.js";
+} from "@core/domain/entities/lord.js";
+import type { GameWithNextAction } from "@core/domain/types/game.js";
+import { err, ok, type Result } from "@utils/result.js";
 
 export type ChooseDominoUseCase = (
   game: GameWithNextAction,

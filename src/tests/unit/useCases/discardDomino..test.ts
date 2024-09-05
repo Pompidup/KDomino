@@ -1,9 +1,9 @@
 import { describe, expect, test } from "vitest";
-import { discardDominoUseCase } from "../../../core/useCases/discardDomino.js";
+import { discardDominoUseCase } from "@core/useCases/discardDomino.js";
 import { createGameBuilder } from "../../builder/game.js";
-import { unwrap } from "../../../utils/testHelpers.js";
-import { err } from "../../../utils/result.js";
-import { NextAction } from "../../../core/domain/types/game.js";
+import { unwrap } from "@utils/testHelpers.js";
+import { err } from "@utils/result.js";
+import type { NextAction } from "@core/domain/types/game.js";
 
 describe("Game Pass", () => {
   test("should pass turn and next action will be pickDomino", () => {
@@ -22,9 +22,9 @@ describe("Game Pass", () => {
 
     // Assert
     const unwrapResult = unwrap(result);
-    expect(unwrapResult.lords[0].turnEnded).toBe(false);
-    expect(unwrapResult.lords[0].hasPick).toBe(false);
-    expect(unwrapResult.lords[0].hasPlace).toBe(true);
+    expect(unwrapResult.lords[0]?.turnEnded).toBe(false);
+    expect(unwrapResult.lords[0]?.hasPick).toBe(false);
+    expect(unwrapResult.lords[0]?.hasPlace).toBe(true);
     expect(unwrapResult.nextAction).toEqual({
       type: "action",
       nextLord: "lord1-id",
@@ -49,9 +49,9 @@ describe("Game Pass", () => {
 
     // Assert
     const unwrapResult = unwrap(result);
-    expect(unwrapResult.lords[0].turnEnded).toBe(true);
-    expect(unwrapResult.lords[0].hasPick).toBe(false);
-    expect(unwrapResult.lords[0].hasPlace).toBe(true);
+    expect(unwrapResult.lords[0]?.turnEnded).toBe(true);
+    expect(unwrapResult.lords[0]?.hasPick).toBe(false);
+    expect(unwrapResult.lords[0]?.hasPlace).toBe(true);
     expect(unwrapResult.nextAction).toEqual({
       type: "action",
       nextLord: "lord2-id",
@@ -88,9 +88,9 @@ describe("Game Pass", () => {
 
     // Assert
     const unwrapResult = unwrap(result);
-    expect(unwrapResult.lords[3].turnEnded).toBe(true);
-    expect(unwrapResult.lords[3].hasPick).toBe(false);
-    expect(unwrapResult.lords[3].hasPlace).toBe(true);
+    expect(unwrapResult.lords[3]?.turnEnded).toBe(true);
+    expect(unwrapResult.lords[3]?.hasPick).toBe(false);
+    expect(unwrapResult.lords[3]?.hasPlace).toBe(true);
     expect(unwrapResult.nextAction).toEqual({
       type: "step",
       step: "result",
@@ -139,7 +139,7 @@ describe("Game Pass", () => {
       })
       .build();
 
-    initialGame.lords[0].hasPlace = true;
+    initialGame.lords[0]!.hasPlace = true;
 
     // Act
     const result = discardDominoUseCase(initialGame, "lord1-id");

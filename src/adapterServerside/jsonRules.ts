@@ -1,6 +1,6 @@
-import type { Rules } from "../core/domain/types/rule.js";
+import type { Rules } from "@core/domain/types/rule.js";
+import type { RuleRepository } from "@core/portServerside/ruleRepository.js";
 import rulesJson from "../datasources/rules.json" assert { type: "json" };
-import type { RuleRepository } from "../core/portServerside/ruleRepository.js";
 
 const jsonRules = (): RuleRepository => {
   const rules: Rules = {

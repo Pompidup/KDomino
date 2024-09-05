@@ -1,11 +1,11 @@
+import type { GetResultCommand } from "@application/commands/getResultCommand.js";
 import {
   InvalidStepError,
   NotFoundError,
-} from "../../core/domain/errors/domainErrors.js";
-import type { GameWithResults } from "../../core/domain/types/game.js";
-import type { GetResultUseCase } from "../../core/useCases/getResult.js";
-import { isErr } from "../../utils/result.js";
-import type { GetResultCommand } from "../commands/getResultCommand.js";
+} from "@core/domain/errors/domainErrors.js";
+import type { GameWithResults } from "@core/domain/types/game.js";
+import type { GetResultUseCase } from "@core/useCases/getResult.js";
+import { isErr } from "@utils/result.js";
 
 type GetResultHandler = (command: GetResultCommand) => GameWithResults;
 

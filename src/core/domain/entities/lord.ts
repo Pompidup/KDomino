@@ -1,6 +1,6 @@
-import type { NextAction } from "../types/game.js";
-import type { Lord } from "../types/lord.js";
-import { playerActions, type PlayerActions } from "../types/player.js";
+import type { NextAction } from "@core/domain/types/game.js";
+import type { Lord } from "@core/domain/types/lord.js";
+import { playerActions } from "@core/domain/types/player.js";
 
 export const createLord = (id: string, playerId: string): Lord => {
   return {

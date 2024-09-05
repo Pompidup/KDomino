@@ -1,11 +1,11 @@
+import type { StartGameCommand } from "@application/commands/startGameCommand.js";
 import {
   InvalidStepError,
   StepExecutionError,
-} from "../../core/domain/errors/domainErrors.js";
-import type { GameWithNextAction } from "../../core/domain/types/game.js";
-import type { StartGameUseCase } from "../../core/useCases/startGame.js";
-import { isErr } from "../../utils/result.js";
-import type { StartGameCommand } from "../commands/startGameCommand.js";
+} from "@core/domain/errors/domainErrors.js";
+import type { GameWithNextAction } from "@core/domain/types/game.js";
+import type { StartGameUseCase } from "@core/useCases/startGame.js";
+import { isErr } from "@utils/result.js";
 
 type StartGameHandler = (command: StartGameCommand) => GameWithNextAction;
 

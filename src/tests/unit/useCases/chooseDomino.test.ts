@@ -1,9 +1,9 @@
-import { chooseDominoUseCase } from "../../../core/useCases/chooseDomino.js";
-import { unwrap } from "../../../utils/testHelpers.js";
+import { chooseDominoUseCase } from "@core/useCases/chooseDomino";
+import { unwrap } from "@utils/testHelpers.js";
 import { describe, test, expect } from "vitest";
-import { Domino } from "../../../core/domain/types/domino.js";
+import type { Domino } from "@core/domain/types/domino.js";
 import { createGameBuilder } from "../../builder/game.js";
-import { err } from "../../../utils/result.js";
+import { err } from "@utils/result.js";
 
 describe("Choose Domino", () => {
   test("should save player choice", async () => {
@@ -54,13 +54,13 @@ describe("Choose Domino", () => {
       })
       .build();
 
-    initialGame.lords[0].hasPlace = true;
+    initialGame.lords[0]!.hasPlace = true;
 
     // Act
     const result = chooseDominoUseCase(
       initialGame,
-      initialGame.lords[0].id,
-      revealsDomino[0].domino.number
+      initialGame.lords[0]!.id,
+      revealsDomino[0]!.domino.number
     );
 
     // Assert
@@ -82,11 +82,11 @@ describe("Choose Domino", () => {
       })
       .build();
 
-    initialGame.lords[0].hasPick = true;
-    initialGame.lords[0].turnEnded = false;
+    initialGame.lords[0]!.hasPick = true;
+    initialGame.lords[0]!.turnEnded = false;
 
     // Act
-    const result = chooseDominoUseCase(initialGame, initialGame.lords[0].id, 1);
+    const result = chooseDominoUseCase(initialGame, initialGame.lords[0]!.id, 1);
 
     // Assert
     expect(result).toEqual(err("Lord can't pick"));
@@ -102,10 +102,10 @@ describe("Choose Domino", () => {
         nextAction: "pickDomino",
       })
       .build();
-    initialGame.lords[0].hasPlace = true;
+    initialGame.lords[0]!.hasPlace = true;
 
     // Act
-    const result = chooseDominoUseCase(initialGame, initialGame.lords[0].id, 3);
+    const result = chooseDominoUseCase(initialGame, initialGame.lords[0]!.id, 3);
 
     // Assert
     expect(result).toEqual(err("Domino not found"));
@@ -159,13 +159,13 @@ describe("Choose Domino", () => {
       })
       .build();
 
-    initialGame.lords[0].hasPlace = true;
+    initialGame.lords[0]!.hasPlace = true;
 
     // Act
     const result = chooseDominoUseCase(
       initialGame,
-      initialGame.lords[0].id,
-      revealsDomino[0].domino.number
+      initialGame.lords[0]!.id,
+      revealsDomino[0]!.domino.number
     );
 
     // Assert
@@ -209,7 +209,7 @@ describe("Choose Domino", () => {
         lord.hasPick = true;
         lord.hasPlace = true;
         lord.turnEnded = true;
-        lord.dominoPicked = revealsDomino[index].domino;
+        lord.dominoPicked = revealsDomino[index]!.domino;
       } else {
         lord.hasPick = false;
         lord.hasPlace = true;
@@ -220,8 +220,8 @@ describe("Choose Domino", () => {
     // Act
     const result = chooseDominoUseCase(
       initialGame,
-      initialGame.lords[3].id,
-      revealsDomino[3].domino.number
+      initialGame.lords[3]!.id,
+      revealsDomino[3]!.domino.number
     );
 
     // Assert

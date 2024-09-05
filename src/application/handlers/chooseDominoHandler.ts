@@ -1,11 +1,11 @@
+import type { ChooseDominoCommand } from "@application/commands/chooseDominoCommand.js";
 import {
   ActionExecutionError,
   InvalidStepError,
-} from "../../core/domain/errors/domainErrors.js";
-import type { GameWithNextAction } from "../../core/domain/types/game.js";
-import type { ChooseDominoUseCase } from "../../core/useCases/chooseDomino.js";
-import { isErr } from "../../utils/result.js";
-import type { ChooseDominoCommand } from "../commands/chooseDominoCommand.js";
+} from "@core/domain/errors/domainErrors.js";
+import type { GameWithNextAction } from "@core/domain/types/game.js";
+import type { ChooseDominoUseCase } from "@core/useCases/chooseDomino.js";
+import { isErr } from "@utils/result.js";
 
 type ChooseDominoHandler = (command: ChooseDominoCommand) => GameWithNextAction;
 
