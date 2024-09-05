@@ -27,7 +27,7 @@ describe("AddPlayersHandler", () => {
     const act = () => addPlayersHandler(useCase)(command);
 
     // Assert
-    expect(act).toThrowError("Invalid next action");
+    expect(act).toThrowError("Required game with addPlayers step");
   });
 
   test("should return useCase error", () => {

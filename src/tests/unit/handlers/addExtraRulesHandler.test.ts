@@ -26,7 +26,7 @@ describe("AddExtraRulesHandler", () => {
     const act = () => addExtraRulesHandler(useCase)(command);
 
     // Assert
-    expect(act).toThrowError("Invalid next action");
+    expect(act).toThrowError("Required game with options step");
   });
 
   test("should return useCase error", () => {

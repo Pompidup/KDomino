@@ -28,7 +28,7 @@ describe("discardDominoHandler", () => {
     const act = () => handler(command);
 
     // Assert
-    expect(act).toThrowError("Invalid next action");
+    expect(act).toThrowError("Required game with placeDomino action");
   });
 
   test("should throw an error if the use case returns an error", () => {

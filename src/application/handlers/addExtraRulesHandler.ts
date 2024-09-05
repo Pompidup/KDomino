@@ -1,3 +1,7 @@
+import {
+  InvalidStepError,
+  StepExecutionError,
+} from "../../core/domain/errors/domainErrors.js";
 import type { Game, NextStep } from "../../core/domain/types/game.js";
 import type { AddExtraRulesUseCase } from "../../core/useCases/addExtraRules.js";
 import { isErr } from "../../utils/result.js";
@@ -13,13 +17,13 @@ export const addExtraRulesHandler =
     const { game, extraRules } = command;
 
     if (game.nextAction.step !== "options") {
-      throw new Error("Invalid next action");
+      throw new InvalidStepError("Required game with options step");
     }
 
     const result = useCase(game, extraRules);
 
     if (isErr(result)) {
-      throw new Error(result.error);
+      throw new StepExecutionError(result.error);
     }
     return result.value;
   };

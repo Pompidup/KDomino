@@ -33,7 +33,7 @@ describe("chooseDominoHandler", () => {
     const act = () => handler(command);
 
     // Assert
-    expect(act).toThrowError("Invalid next action");
+    expect(act).toThrowError("Required game with pickDomino action");
   });
 
   test("should return the result value if useCase is succed", () => {

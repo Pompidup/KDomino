@@ -1,3 +1,4 @@
+import { NotFoundError } from "../../core/domain/errors/domainErrors.js";
 import type { ExtraRule } from "../../core/domain/types/rule.js";
 import type { GetExtraRulesUseCase } from "../../core/useCases/getExtraRules.js";
 import { isErr } from "../../utils/result.js";
@@ -12,7 +13,7 @@ export const getExtraRulesHandler =
     const result = getExtraRulesUseCase(mode, players);
 
     if (isErr(result)) {
-      throw new Error(result.error);
+      throw new NotFoundError(result.error);
     }
 
     return result.value;

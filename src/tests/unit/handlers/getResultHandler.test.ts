@@ -30,7 +30,7 @@ describe("getResultHandler", () => {
     const act = () => handler(command);
 
     // Assert
-    expect(act).toThrowError("Invalid next step");
+    expect(act).toThrowError("Required game with result step");
   });
 
   test("should throw an error if the use case returns an error", () => {

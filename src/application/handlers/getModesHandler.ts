@@ -1,3 +1,4 @@
+import { NotFoundError } from "../../core/domain/errors/domainErrors.js";
 import type { GameMode } from "../../core/domain/types/mode.js";
 import type { GetModesUseCase } from "../../core/useCases/getModes.js";
 import { isErr } from "../../utils/result.js";
@@ -11,7 +12,7 @@ export const getModesHandler =
     const result = getModeUseCase();
 
     if (isErr(result)) {
-      throw new Error(result.error);
+      throw new NotFoundError(result.error);
     }
 
     return result.value;

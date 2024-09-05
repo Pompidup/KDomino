@@ -10,7 +10,7 @@ import type { StartGameCommand } from "../../../application/commands/startGameCo
 import { startGameHandler } from "../../../application/handlers/startGameHandler.js";
 
 describe("startGameHandler", () => {
-  test("should throw an error if the next action step is not 'start'", () => {
+  test("should throw an error if the next action step is not 'start' or 'options'", () => {
     // Arrange
     const mockUseCase: StartGameUseCase = () => {
       throw new Error("This should not be called");
@@ -27,7 +27,7 @@ describe("startGameHandler", () => {
     const act = () => handler(command);
 
     // Assert
-    expect(act).toThrowError("Invalid next action");
+    expect(act).toThrowError("Required game with start step or options step");
   });
 
   test("should call the use case and return the result if the next action step is 'start'", () => {
@@ -35,6 +35,33 @@ describe("startGameHandler", () => {
 
     const game = createGameBuilder<NextStep>()
       .withNextAction({ type: "step", step: "start" })
+      .build();
+
+    const expectedGame: GameWithNextAction = {
+      ...game,
+      nextAction: {
+        type: "action",
+        nextLord: "nextLord",
+        nextAction: "pickDomino",
+      },
+    };
+
+    const mockUseCase: StartGameUseCase = () => ok(expectedGame);
+    const handler = startGameHandler(mockUseCase);
+    const command: StartGameCommand = { game };
+
+    // Act
+    const result = handler(command);
+
+    // Assert
+    expect(result).toEqual(expectedGame);
+  });
+
+  test("should call the use case and return the result if the next action step is 'options'", () => {
+    // Arrange
+
+    const game = createGameBuilder<NextStep>()
+      .withNextAction({ type: "step", step: "options" })
       .build();
 
     const expectedGame: GameWithNextAction = {

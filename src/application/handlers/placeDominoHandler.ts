@@ -1,6 +1,9 @@
 import {
+  ActionExecutionError,
+  InvalidStepError,
+} from "../../core/domain/errors/domainErrors.js";
+import {
   isGameWithNextAction,
-  type Game,
   type GameWithNextAction,
   type GameWithNextStep,
 } from "../../core/domain/types/game.js";
@@ -18,13 +21,13 @@ export const placeDominoHandler =
     const { game, lordId, position, orientation, rotation } = command;
 
     if (game.nextAction.nextAction !== "placeDomino") {
-      throw new Error("Invalid next action");
+      throw new InvalidStepError("Required game with placeDomino step");
     }
 
     const result = useCase(game, lordId, position, orientation, rotation);
 
     if (isErr(result)) {
-      throw new Error(result.error);
+      throw new ActionExecutionError(result.error);
     }
 
     if (isGameWithNextAction(result.value)) {

@@ -36,7 +36,7 @@ describe("placeDominoHandler", () => {
     const act = () => handler(command);
 
     // Assert
-    expect(act).toThrowError("Invalid next action");
+    expect(act).toThrowError("Required game with placeDomino step");
   });
 
   test("should throw an error if the result is an error", () => {

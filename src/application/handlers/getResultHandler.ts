@@ -1,3 +1,7 @@
+import {
+  InvalidStepError,
+  NotFoundError,
+} from "../../core/domain/errors/domainErrors.js";
 import type { GameWithResults } from "../../core/domain/types/game.js";
 import type { GetResultUseCase } from "../../core/useCases/getResult.js";
 import { isErr } from "../../utils/result.js";
@@ -11,13 +15,13 @@ export const getResultHandler =
     const { game } = command;
 
     if (game.nextAction.step !== "result") {
-      throw new Error("Invalid next step");
+      throw new InvalidStepError("Required game with result step");
     }
 
     const result = useCase(game);
 
     if (isErr(result)) {
-      throw new Error(result.error);
+      throw new NotFoundError(result.error);
     }
 
     return result.value;
