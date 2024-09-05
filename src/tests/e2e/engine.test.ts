@@ -171,7 +171,9 @@ describe("Engine", () => {
 
     // Assert
     expect(gameWithChosenDomino.currentDominoes[0]!.picked).toBeTruthy();
-    expect(gameWithChosenDomino.currentDominoes[0]!.lordId).toEqual(firstLordId);
+    expect(gameWithChosenDomino.currentDominoes[0]!.lordId).toEqual(
+      firstLordId
+    );
     expect(gameWithChosenDomino.nextAction).toEqual({
       type: "action",
       nextLord: startedGame.lords[1]!.id,

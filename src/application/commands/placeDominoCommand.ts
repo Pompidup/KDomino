@@ -1,12 +1,12 @@
 import type {
-  GameWithNextAction,
+  GameState,
   Orientation,
   Position,
   Rotation,
 } from "@core/domain/types/index.js";
 
 export type PlaceDominoCommand = {
-  game: GameWithNextAction;
+  game: GameState;
   lordId: string;
   position: Position;
   orientation: Orientation;

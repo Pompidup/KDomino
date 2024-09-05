@@ -1,6 +1,6 @@
-import type { GameWithNextAction } from "@core/domain/types/game.js";
+import type { GameState } from "@core/domain/types/game.js";
 
 export type DiscardDominoCommand = {
-  game: GameWithNextAction;
+  game: GameState;
   lordId: string;
 };

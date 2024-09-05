@@ -1,9 +1,10 @@
 import type {
   GameMode,
-  GameWithNextAction,
-  GameWithNextStep,
   GameWithResults,
   ExtraRule,
+  GameState,
+  GameWithNextAction,
+  GameWithNextStep,
 } from "@core/domain/types/index.js";
 import type { GetModesCommand } from "@application/commands/getModesCommand.js";
 import type { GetExtraRulesCommand } from "@application/commands/getExtraRulesCommand.js";
@@ -24,11 +25,7 @@ export type GameEngine = {
   addExtraRules: (command: AddExtraRulesCommand) => GameWithNextStep;
   startGame: (command: StartGameCommand) => GameWithNextAction;
   chooseDomino: (command: ChooseDominoCommand) => GameWithNextAction;
-  placeDomino: (
-    command: PlaceDominoCommand
-  ) => GameWithNextAction | GameWithNextStep;
-  discardDomino: (
-    command: DiscardDominoCommand
-  ) => GameWithNextAction | GameWithNextStep;
+  placeDomino: (command: PlaceDominoCommand) => GameState;
+  discardDomino: (command: DiscardDominoCommand) => GameState;
   getResults: (command: GetResultCommand) => GameWithResults;
 };

@@ -1,16 +1,15 @@
 import {
   gameSteps,
   type Domino,
-  type Game,
   type GameMode,
-  type NextStep,
+  type GameWithNextStep,
 } from "@core/domain/types/index.js";
 
 export const create = (payload: {
   id: string;
   mode: GameMode;
   dominoes: Domino[];
-}): Game & { nextAction: NextStep } => {
+}): GameWithNextStep => {
   const { id, mode, dominoes } = payload;
   return {
     id,

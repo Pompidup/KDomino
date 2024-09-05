@@ -1,3 +1,3 @@
-import type { Game, NextStep } from "@core/domain/types/game.js";
+import type { GameState } from "@core/domain/types/game.js";
 
-export type StartGameCommand = { game: Game & { nextAction: NextStep } };
+export type StartGameCommand = { game: GameState };

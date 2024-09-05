@@ -40,12 +40,19 @@ export type NextStep = {
 
 export type GameWithNextAction = Game & { nextAction: NextAction };
 export type GameWithNextStep = Game & { nextAction: NextStep };
-export type GameResult = Result<GameWithNextAction | GameWithNextStep>;
+export type GameState = GameWithNextAction | GameWithNextStep;
+export type GameStateResult = Result<GameState>;
 
 export const isGameWithNextAction = (
   game: GameWithNextAction | GameWithNextStep
 ): game is GameWithNextAction => {
   return game.nextAction.type === "action";
+};
+
+export const isGameWithNextStep = (
+  game: GameWithNextAction | GameWithNextStep
+): game is GameWithNextStep => {
+  return game.nextAction.type === "step";
 };
 
 export type Score = {

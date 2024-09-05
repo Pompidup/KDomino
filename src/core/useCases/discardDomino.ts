@@ -5,9 +5,9 @@ import {
 } from "@core/domain/entities/lord.js";
 import {
   gameSteps,
-  type GameResult,
+  type GameState,
+  type GameStateResult,
   type GameWithNextAction,
-  type GameWithNextStep,
   type NextAction,
   type NextStep,
 } from "@core/domain/types/game.js";
@@ -16,7 +16,7 @@ import { err, ok } from "@utils/result.js";
 export type DiscardDominoUseCase = (
   game: GameWithNextAction,
   lordId: string
-) => GameResult;
+) => GameStateResult;
 
 export const discardDominoUseCase: DiscardDominoUseCase = (game, lordId) => {
   const nextAction = game.nextAction;
@@ -59,7 +59,7 @@ export const discardDominoUseCase: DiscardDominoUseCase = (game, lordId) => {
     return lord;
   });
 
-  let updatedGame: GameWithNextAction | GameWithNextStep;
+  let updatedGame: GameState;
 
   const resultStep: NextStep = {
     type: "step",

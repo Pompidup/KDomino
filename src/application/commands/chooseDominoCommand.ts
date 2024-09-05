@@ -1,7 +1,7 @@
-import type { GameWithNextAction } from "@core/domain/types/game.js";
+import type { GameState } from "@core/domain/types/game.js";
 
 export type ChooseDominoCommand = {
-  game: GameWithNextAction;
+  game: GameState;
   dominoPick: number;
   lordId: string;
 };

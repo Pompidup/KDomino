@@ -3,7 +3,10 @@ import {
   InvalidStepError,
   StepExecutionError,
 } from "@core/domain/errors/domainErrors.js";
-import type { GameWithNextStep } from "@core/domain/types/game.js";
+import {
+  isGameWithNextStep,
+  type GameWithNextStep,
+} from "@core/domain/types/game.js";
 import type { AddPlayersUseCase } from "@core/useCases/addPlayers.js";
 import { isErr } from "@utils/result.js";
 
@@ -13,6 +16,10 @@ export const addPlayersHandler =
   (useCase: AddPlayersUseCase): AddPlayersHandler =>
   (command: AddPlayersCommand) => {
     const { game, players } = command;
+
+    if (!isGameWithNextStep(game)) {
+      throw new InvalidStepError("Required game with nextAction type: 'step'");
+    }
 
     if (game.nextAction.step !== "addPlayers") {
       throw new InvalidStepError("Required game with addPlayers step");

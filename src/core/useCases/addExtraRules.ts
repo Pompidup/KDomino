@@ -1,7 +1,7 @@
 import {
   gameSteps,
   type ExtraRule,
-  type Game,
+  type GameWithNextStep,
   type NextStep,
 } from "@core/domain/types/index.js";
 import { isErr, ok, type Result } from "@utils/result.js";
@@ -9,9 +9,9 @@ import type { RuleRepository } from "@core/portServerside/ruleRepository.js";
 import { toExtraRule } from "@core/domain/entities/rule.js";
 
 export type AddExtraRulesUseCase = (
-  game: Game & { nextAction: NextStep },
+  game: GameWithNextStep,
   rules: string[]
-) => Result<Game & { nextAction: NextStep }>;
+) => Result<GameWithNextStep>;
 
 export const addExtraRulesUseCase =
   (deps: { ruleRepository: RuleRepository }): AddExtraRulesUseCase =>
@@ -41,7 +41,7 @@ export const addExtraRulesUseCase =
       step: gameSteps.start,
     };
 
-    const updatedGame: Game & { nextAction: NextStep } = {
+    const updatedGame: GameWithNextStep = {
       ...game,
       rules: updatedRules,
       nextAction: next,

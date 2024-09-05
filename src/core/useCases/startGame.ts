@@ -1,5 +1,9 @@
 import { createLord } from "@core/domain/entities/lord";
-import type { Game, NextAction, NextStep } from "@core/domain/types/game.js";
+import type {
+  GameWithNextAction,
+  GameWithNextStep,
+  NextAction,
+} from "@core/domain/types/game.js";
 import type { Lord } from "@core/domain/types/lord.js";
 import { playerActions } from "@core/domain/types/player.js";
 import type { ShuffleMethod } from "@core/portServerside/shuffleMethod.js";
@@ -7,8 +11,8 @@ import type { UuidMethod } from "@core/portServerside/uuidMethod.js";
 import { ok, type Result } from "@utils/result.js";
 
 export type StartGameUseCase = (
-  game: Game & { nextAction: NextStep }
-) => Result<Game & { nextAction: NextAction }>;
+  game: GameWithNextStep
+) => Result<GameWithNextAction>;
 
 export const startGameUseCase =
   (deps: {
@@ -46,7 +50,7 @@ export const startGameUseCase =
       nextAction: playerActions.pickDomino,
     };
 
-    const newState: Game & { nextAction: NextAction } = {
+    const newState: GameWithNextAction = {
       ...game,
       lords: shuffledLords,
       nextAction,

@@ -1,14 +1,12 @@
 import { create } from "@core/domain/entities/game.js";
 import { createMode } from "@core/domain/entities/mode.js";
-import type { Game, NextStep } from "@core/domain/types/game.js";
+import type { GameWithNextStep } from "@core/domain/types/game.js";
 import type { DominoesRepository } from "@core/portServerside/dominoesRepository.js";
 import type { ModeRepository } from "@core/portServerside/modeRepository.js";
 import type { UuidMethod } from "@core/portServerside/uuidMethod.js";
 import { err, isErr, ok, type Result } from "@utils/result.js";
 
-export type CreateGameUseCase = (
-  mode: string
-) => Result<Game & { nextAction: NextStep }>;
+export type CreateGameUseCase = (mode: string) => Result<GameWithNextStep>;
 
 export const createGameUseCase =
   (deps: {

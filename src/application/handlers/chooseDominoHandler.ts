@@ -3,7 +3,10 @@ import {
   ActionExecutionError,
   InvalidStepError,
 } from "@core/domain/errors/domainErrors.js";
-import type { GameWithNextAction } from "@core/domain/types/game.js";
+import {
+  isGameWithNextAction,
+  type GameWithNextAction,
+} from "@core/domain/types/game.js";
 import type { ChooseDominoUseCase } from "@core/useCases/chooseDomino.js";
 import { isErr } from "@utils/result.js";
 
@@ -13,6 +16,12 @@ export const chooseDominoHandler =
   (useCase: ChooseDominoUseCase): ChooseDominoHandler =>
   (command: ChooseDominoCommand) => {
     const { game, lordId, dominoPick } = command;
+
+    if (!isGameWithNextAction(game)) {
+      throw new InvalidStepError(
+        "Required game with nextAction type: 'action'"
+      );
+    }
 
     if (game.nextAction.nextAction !== "pickDomino") {
       throw new InvalidStepError("Required game with pickDomino action");

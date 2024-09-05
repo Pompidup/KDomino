@@ -3,16 +3,20 @@ import {
   placeCastle,
 } from "@core/domain/entities/kingdom.js";
 import { createPlayer } from "@core/domain/entities/player.js";
-import type { Game, NextStep, Players } from "@core/domain/types/index.js";
+import type {
+  GameWithNextStep,
+  NextStep,
+  Players,
+} from "@core/domain/types/index.js";
 import type { RuleRepository } from "@core/portServerside/ruleRepository.js";
 import type { ShuffleMethod } from "@core/portServerside/shuffleMethod.js";
 import type { UuidMethod } from "@core/portServerside/uuidMethod.js";
 import { err, isErr, ok, type Result } from "@utils/result.js";
 
 export type AddPlayersUseCase = (
-  game: Game & { nextAction: NextStep },
+  game: GameWithNextStep,
   players: string[]
-) => Result<Game & { nextAction: NextStep }>;
+) => Result<GameWithNextStep>;
 
 export const addPlayersUseCase =
   (deps: {
@@ -60,7 +64,7 @@ export const addPlayersUseCase =
       step: "options",
     };
 
-    const updatedGame: Game & { nextAction: NextStep } = {
+    const updatedGame: GameWithNextStep = {
       ...game,
       players: newPlayers,
       dominoes: splicedDominoes,

@@ -1,9 +1,9 @@
 import { err, isErr, ok } from "@utils/result.js";
 import {
   gameSteps,
-  type GameResult,
+  type GameState,
+  type GameStateResult,
   type GameWithNextAction,
-  type GameWithNextStep,
   type NextAction,
   type NextStep,
 } from "@core/domain/types/game.js";
@@ -25,7 +25,7 @@ export type PlaceDominoUseCase = (
   position: Position,
   orientation: Orientation,
   rotation: Rotation
-) => GameResult;
+) => GameStateResult;
 
 export const placeDominoUseCase: PlaceDominoUseCase = (
   game,
@@ -102,7 +102,7 @@ export const placeDominoUseCase: PlaceDominoUseCase = (
     return lord;
   });
 
-  let updatedGame: GameWithNextAction | GameWithNextStep;
+  let updatedGame: GameState;
 
   const resultStep: NextStep = {
     type: "step",
