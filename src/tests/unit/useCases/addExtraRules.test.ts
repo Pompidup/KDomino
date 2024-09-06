@@ -1,4 +1,4 @@
-import { unwrap } from "../../../utils/testHelpers.js";
+import { unwrap } from "@utils/result.js";
 import { describe, test, expect } from "vitest";
 import { addExtraRulesUseCase } from "@core/useCases/addExtraRules.js";
 import type { GameMode } from "@core/domain/types/mode.js";

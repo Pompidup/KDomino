@@ -3,7 +3,7 @@ import jsonDominoes from "@adapter/jsonDominoes.js";
 import jsonModes from "@adapter/jsonModes.js";
 import { createGameUseCase } from "@core/useCases/createGame.js";
 import type { GameMode } from "@core/domain/types/mode.js";
-import { unwrap } from "@utils/testHelpers.js";
+import { unwrap } from "@utils/result.js";
 import type { NextStep } from "@core/domain/types/game.js";
 
 describe("Create game", () => {

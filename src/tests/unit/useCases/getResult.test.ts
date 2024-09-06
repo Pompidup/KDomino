@@ -3,7 +3,7 @@ import { describe, test, expect } from "vitest";
 import type { Kingdom } from "@core/domain/types/kingdom.js";
 import { createPlayerBuilder } from "../../builder/player.js";
 import { createGameBuilder } from "../../builder/game.js";
-import { unwrap } from "@utils/testHelpers.js";
+import { unwrap } from "@utils/result.js";
 import type { NextStep } from "@core/domain/types/game.js";
 import type { ExtraRule } from "@core/domain/types/rule.js";
 

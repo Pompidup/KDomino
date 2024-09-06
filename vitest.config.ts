@@ -11,7 +11,7 @@ export default defineConfig({
     coverage: {
       provider: "v8",
       reporter: ["text", "json", "html"],
-      exclude: ["src/utils/testHelpers.ts", "node_modules/", "dist/"],
+      exclude: ["node_modules/", "dist/"],
     },
   },
   resolve: {

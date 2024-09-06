@@ -13,9 +13,6 @@ import { getModesHandler } from "@application/handlers/getModesHandler.js";
 import { getResultHandler } from "@application/handlers/getResultHandler.js";
 import { placeDominoHandler } from "@application/handlers/placeDominoHandler.js";
 import { startGameHandler } from "@application/handlers/startGameHandler.js";
-import type { DominoesRepository } from "@core/portServerside/dominoesRepository.js";
-import type { ModeRepository } from "@core/portServerside/modeRepository.js";
-import type { RuleRepository } from "@core/portServerside/ruleRepository.js";
 import type { ShuffleMethod } from "@core/portServerside/shuffleMethod.js";
 import type { UuidMethod } from "@core/portServerside/uuidMethod.js";
 import { addExtraRulesUseCase } from "@core/useCases/addExtraRules.js";
@@ -30,17 +27,14 @@ import { placeDominoUseCase } from "@core/useCases/placeDomino.js";
 import { startGameUseCase } from "@core/useCases/startGame.js";
 
 export type EngineConfig = {
-  modeRepository?: ModeRepository;
-  dominoesRepository?: DominoesRepository;
-  ruleRepository?: RuleRepository;
   uuidMethod?: UuidMethod;
   shuffleMethod?: ShuffleMethod;
 };
 
 export const configureEngine = (config: Partial<EngineConfig>) => {
-  const modeRepository = config.modeRepository || jsonModes();
-  const dominoesRepository = config.dominoesRepository || jsonDominoes();
-  const ruleRepository = config.ruleRepository || jsonRules();
+  const modeRepository = jsonModes();
+  const dominoesRepository = jsonDominoes();
+  const ruleRepository = jsonRules();
   const uuid = config.uuidMethod || uuidMethod;
   const shuffle = config.shuffleMethod || shuffleMethod;
 

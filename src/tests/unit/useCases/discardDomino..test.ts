@@ -1,7 +1,7 @@
 import { describe, expect, test } from "vitest";
 import { discardDominoUseCase } from "@core/useCases/discardDomino.js";
 import { createGameBuilder } from "../../builder/game.js";
-import { unwrap } from "@utils/testHelpers.js";
+import { unwrap } from "@utils/result.js";
 import { err } from "@utils/result.js";
 import type { NextAction } from "@core/domain/types/game.js";
 

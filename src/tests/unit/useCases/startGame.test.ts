@@ -1,6 +1,6 @@
 import { describe, test, expect } from "vitest";
 import { startGameUseCase } from "@core/useCases/startGame.js";
-import { unwrap } from "@utils/testHelpers.js";
+import { unwrap } from "@utils/result.js";
 import { createGameBuilder } from "../../builder/game.js";
 import type { NextStep } from "@core/domain/types/game.js";
 

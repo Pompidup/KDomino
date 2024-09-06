@@ -1,6 +1,6 @@
 import { placeDominoUseCase } from "@core/useCases/placeDomino.js";
 import { describe, test, expect } from "vitest";
-import { unwrap } from "@utils/testHelpers.js";
+import { unwrap } from "@utils/result.js";
 import { createGameBuilder } from "../../builder/game.js";
 import { err } from "@utils/result.js";
 import type { NextAction } from "@core/domain/types/game.js";
@@ -28,7 +28,9 @@ describe("Game Place", () => {
 
     const updatedGame = unwrap(result);
 
-    expect(updatedGame.players[0]!.kingdom[4]![5]).toEqual(game.dominoes[0]!.left);
+    expect(updatedGame.players[0]!.kingdom[4]![5]).toEqual(
+      game.dominoes[0]!.left
+    );
     expect(updatedGame.players[0]!.kingdom[4]![6]).toEqual(
       game.dominoes[0]!.right
     );

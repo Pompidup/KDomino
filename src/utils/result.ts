@@ -17,3 +17,10 @@ export const isOk = <T>(result: Result<T>): result is Ok<T> =>
   result.tag === "Ok";
 export const isErr = <T>(result: Result<T>): result is Err =>
   result.tag === "Err";
+
+export const unwrap = <T>(result: Ok<T> | Err): T => {
+  if (result.tag === "Err") {
+    throw result.error;
+  }
+  return result.value;
+};

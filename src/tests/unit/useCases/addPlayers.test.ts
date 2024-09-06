@@ -1,16 +1,12 @@
 import { addPlayersUseCase } from "@core/useCases/addPlayers.js";
 import { createGameBuilder } from "../../builder/game.js";
 import { describe, test, expect } from "vitest";
-import type {
-  NextStep,
-  Players,
-  Rules,
-} from "@core/domain/types/index.js";
+import type { NextStep, Players, Rules } from "@core/domain/types/index.js";
 import {
   createEmptyKingdom,
   placeCastle,
 } from "@core/domain/entities/kingdom.js";
-import { unwrap } from "@utils/testHelpers.js";
+import { unwrap } from "@utils/result.js";
 import { err } from "@utils/result.js";
 
 describe("Add players", () => {
