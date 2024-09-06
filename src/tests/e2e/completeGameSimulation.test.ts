@@ -1,89 +1,86 @@
-// import { createGameEngine } from '../index';
-// import { isGameWithNextAction, isGameOver } from '../core/domain/types/game';
-// import { ok } from '../core/shared/result';
+import { createGameEngine } from "../../index.js";
+import {
+  isGameWithNextAction,
+  type GameState,
+} from "@core/domain/types/game.js";
+import { describe, expect, test } from "vitest";
+import { displayGrid } from "../helper.js";
 
-// describe('Full Game Simulation', () => {
-//   it('should simulate a complete 2-player game', () => {
-//     const engine = createGameEngine({});
-//     const players = ['Alice', 'Bob'];
-//     let game;
+describe("Full Game Simulation", () => {
+  test("should simulate a complete 2-player game", () => {
+    const engine = createGameEngine({
+      shuffleMethod: (array) => array,
+    });
+    const players = ["Alice", "Bob"];
+    let game: GameState;
 
-//     // Create game
-//     const createGameResult = engine.createGame({ mode: 'standard' });
-//     expect(createGameResult.isOk()).toBe(true);
-//     game = createGameResult.unwrap();
+    // Create game
+    game = engine.createGame({ mode: "Classic" });
 
-//     // Add players
-//     const addPlayersResult = engine.addPlayers({ game, players });
-//     expect(addPlayersResult.isOk()).toBe(true);
-//     game = addPlayersResult.unwrap();
+    // Add players
+    game = engine.addPlayers({ game, players });
 
-//     // Start game
-//     const startGameResult = engine.startGame({ game });
-//     expect(startGameResult.isOk()).toBe(true);
-//     game = startGameResult.unwrap();
+    // Start game
+    game = engine.startGame({ game });
 
-//     // Simulate turns until the game is over
-//     while (isGameWithNextAction(game)) {
-//       const currentPlayer = game.currentLord;
+    // Simulate turns until the game is over
+    while (isGameWithNextAction(game)) {
+      for (let i = 0; i < 4; i++) {
+        const allLordIds = game.lords.map((lord) => lord.id);
+        const positions = [
+          { x: 5, y: 4 },
+          { x: 2, y: 4 },
+          { x: 4, y: 3 },
+          { x: 4, y: 5 },
+        ];
 
-//       // Choose domino
-//       const chooseDominoResult = engine.chooseDomino({
-//         game,
-//         lordId: currentPlayer,
-//         dominoPick: 1, // Always choose the first available domino for simplicity
-//       });
-//       expect(chooseDominoResult.isOk()).toBe(true);
-//       game = chooseDominoResult.unwrap();
+        if (!isGameWithNextAction(game)) break;
 
-//       if (!isGameWithNextAction(game)) break; // Game might end after choosing
+        let currentLordId = game.nextAction.nextLord;
+        let nextAction = game.nextAction.nextAction;
 
-//       // Place domino (or discard if can't place)
-//       const placeDominoResult = engine.placeDomino({
-//         game,
-//         lordId: currentPlayer,
-//         position: { x: 0, y: 0 }, // Always try to place at (0,0) for simplicity
-//         orientation: 'horizontal',
-//         rotation: 0,
-//       });
+        if (nextAction == "placeDomino") {
+          if (game.turn === 1) {
+            if (allLordIds.includes(currentLordId)) {
+              game = engine.placeDomino({
+                game,
+                lordId: currentLordId,
+                position: positions[i]!,
+                orientation: "horizontal",
+                rotation: 0,
+              });
+              allLordIds.splice(allLordIds.indexOf(currentLordId), 1);
+            }
+          } else {
+            game = engine.discardDomino({
+              game,
+              lordId: currentLordId,
+            });
+          }
+        }
 
-//       if (placeDominoResult.isOk()) {
-//         game = placeDominoResult.unwrap();
-//       } else {
-//         // If placement failed, discard the domino
-//         const discardDominoResult = engine.discardDomino({
-//           game,
-//           lordId: currentPlayer,
-//         });
-//         expect(discardDominoResult.isOk()).toBe(true);
-//         game = discardDominoResult.unwrap();
-//       }
-//     }
+        if (!isGameWithNextAction(game)) break;
 
-//     // Assert that the game is over
-//     expect(isGameOver(game)).toBe(true);
+        currentLordId = game.nextAction.nextLord;
+        nextAction = game.nextAction.nextAction;
 
-//     // Get results
-//     const getResultsResult = engine.getResults({ game });
-//     expect(getResultsResult.isOk()).toBe(true);
-//     const results = getResultsResult.unwrap();
+        if (nextAction == "pickDomino") {
+          game = engine.chooseDomino({
+            game,
+            lordId: currentLordId,
+            dominoPick: game.currentDominoes[i]!.domino.number,
+          });
+        }
+      }
+    }
 
-//     // Assert that we have results for both players
-//     expect(results.length).toBe(2);
-//     expect(results.map(r => r.lordId).sort()).toEqual(players.sort());
+    // Get results
+    const gameResult = engine.getResults({ game });
 
-//     // Assert that scores are numbers
-//     results.forEach(result => {
-//       expect(typeof result.score).toBe('number');
-//     });
+    // Assert that we have results for both players
+    expect(gameResult.result.length).toBe(2);
 
-//     // Assert that we have a winner (or a tie)
-//     const scores = results.map(r => r.score);
-//     const maxScore = Math.max(...scores);
-//     const winners = results.filter(r => r.score === maxScore);
-//     expect(winners.length).toBeGreaterThanOrEqual(1);
-
-//     console.log('Game Results:', results);
-//     console.log('Winner(s):', winners.map(w => w.lordId).join(', '));
-//   });
-// });
+    displayGrid(gameResult.players[0]!.kingdom);
+    displayGrid(gameResult.players[1]!.kingdom);
+  });
+});
