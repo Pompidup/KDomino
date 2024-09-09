@@ -10,7 +10,7 @@ export default defineConfig({
     exclude: [...configDefaults.exclude],
     coverage: {
       provider: "v8",
-      reporter: ["text", "json", "html"],
+      reporter: ["json-summary"],
       exclude: ["node_modules/", "dist/"],
     },
   },

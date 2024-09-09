@@ -1,6 +1,11 @@
 # Kingdomino Engine
 
 [![Node.js CI](https://github.com/Pompidup/KDomino/actions/workflows/node.js.yml/badge.svg?branch=main)](https://github.com/Pompidup/KDomino/actions/workflows/node.js.yml)
+![Branches](./badges/coverage-branches.svg)
+![Functions](./badges/coverage-functions.svg)
+![Lines](./badges/coverage-lines.svg)
+![Statements](./badges/coverage-statements.svg)
+![Coverage total](./badges/coverage-total.svg)
 
 ## Overview
 
