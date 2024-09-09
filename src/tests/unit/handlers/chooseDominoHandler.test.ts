@@ -1,12 +1,15 @@
 import { describe, expect, test } from "vitest";
-import type { ChooseDominoCommand } from "../../../application/commands/chooseDominoCommand.js";
-import { chooseDominoHandler } from "../../../application/handlers/chooseDominoHandler.js";
-import type { NextAction } from "../../../core/domain/types/game.js";
-import type { ChooseDominoUseCase } from "../../../core/useCases/chooseDomino.js";
-import { err, ok } from "../../../utils/result.js";
+import type { ChooseDominoCommand } from "@application/commands/chooseDominoCommand.js";
+import { chooseDominoHandler } from "@application/handlers/chooseDominoHandler.js";
+import type { NextAction } from "@core/domain/types/game.js";
+import type { ChooseDominoUseCase } from "@core/useCases/chooseDomino.js";
+import { err, ok } from "@utils/result.js";
 import { createGameBuilder } from "../../builder/game.js";
+import { winstonLogger } from "@adapter/winstonLogger.js";
 
 describe("chooseDominoHandler", () => {
+  const logger = winstonLogger(false);
+
   test("should throw an error if the next action is not 'pickDomino'", () => {
     // Arrange
     const game = createGameBuilder<NextAction>()
@@ -27,7 +30,7 @@ describe("chooseDominoHandler", () => {
       throw new Error("This should not be called");
     };
 
-    const handler = chooseDominoHandler(mockUseCase);
+    const handler = chooseDominoHandler(logger, mockUseCase);
 
     // Act
     const act = () => handler(command);
@@ -54,7 +57,7 @@ describe("chooseDominoHandler", () => {
 
     const mockUseCase: ChooseDominoUseCase = () => ok(game);
 
-    const handler = chooseDominoHandler(mockUseCase);
+    const handler = chooseDominoHandler(logger, mockUseCase);
 
     // Act
     const result = handler(command);
@@ -81,7 +84,7 @@ describe("chooseDominoHandler", () => {
 
     const mockUseCase: ChooseDominoUseCase = () => err("useCase error");
 
-    const handler = chooseDominoHandler(mockUseCase);
+    const handler = chooseDominoHandler(logger, mockUseCase);
 
     // Act
     const act = () => handler(command);

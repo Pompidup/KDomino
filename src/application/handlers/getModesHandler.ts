@@ -1,3 +1,4 @@
+import type { Logger } from "@core/portServerside/logger.js";
 import type { GetModesCommand } from "@application/commands/getModesCommand.js";
 import { NotFoundError } from "@core/domain/errors/domainErrors.js";
 import type { GameMode } from "@core/domain/types/mode.js";
@@ -7,13 +8,16 @@ import { isErr } from "@utils/result.js";
 type GetModesHandler = (command: GetModesCommand) => GameMode[];
 
 export const getModesHandler =
-  (getModeUseCase: GetModesUseCase): GetModesHandler =>
+  (logger: Logger, useCase: GetModesUseCase): GetModesHandler =>
   (_command: GetModesCommand) => {
-    const result = getModeUseCase();
+    logger.info("Getting modes");
+    const result = useCase();
 
     if (isErr(result)) {
+      logger.error(`Error getting modes: ${result.error}`);
       throw new NotFoundError(result.error);
     }
 
+    logger.info(`Modes retrieved: ${result.value}`);
     return result.value;
   };

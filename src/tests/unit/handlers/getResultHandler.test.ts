@@ -1,15 +1,15 @@
 import { describe, expect, test } from "vitest";
 import type { GetResultCommand } from "@application/commands/getResultCommand.js";
 import { getResultHandler } from "@application/handlers/getResultHandler.js";
-import type {
-  NextStep,
-  GameWithResults,
-} from "@core/domain/types/game.js";
+import type { NextStep, GameWithResults } from "@core/domain/types/game.js";
 import type { GetResultUseCase } from "@core/useCases/getResult.js";
 import { err, ok } from "@utils/result.js";
 import { createGameBuilder } from "./../../builder/game.js";
+import { winstonLogger } from "@adapter/winstonLogger.js";
 
 describe("getResultHandler", () => {
+  const logger = winstonLogger(false);
+
   test("should throw an error if the next action step is not 'result'", () => {
     // Arrange
     const game = createGameBuilder<NextStep>()
@@ -20,7 +20,7 @@ describe("getResultHandler", () => {
       throw new Error("This should not be called");
     };
 
-    const handler = getResultHandler(mockUseCase);
+    const handler = getResultHandler(logger, mockUseCase);
 
     const command: GetResultCommand = {
       game,
@@ -40,7 +40,7 @@ describe("getResultHandler", () => {
       .build();
 
     const mockUseCase: GetResultUseCase = () => err("use case failed");
-    const handler = getResultHandler(mockUseCase);
+    const handler = getResultHandler(logger, mockUseCase);
 
     const command: GetResultCommand = {
       game,
@@ -66,7 +66,7 @@ describe("getResultHandler", () => {
 
     const mockUseCase: GetResultUseCase = () => ok(expectedResult);
 
-    const handler = getResultHandler(mockUseCase);
+    const handler = getResultHandler(logger, mockUseCase);
 
     const command: GetResultCommand = {
       game,

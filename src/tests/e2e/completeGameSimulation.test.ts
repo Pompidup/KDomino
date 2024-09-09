@@ -4,12 +4,12 @@ import {
   type GameState,
 } from "@core/domain/types/game.js";
 import { describe, expect, test } from "vitest";
-import { displayGrid } from "../helper.js";
 
 describe("Full Game Simulation", () => {
   test("should simulate a complete 2-player game", () => {
     const engine = createGameEngine({
       shuffleMethod: (array) => array,
+      logging: true,
     });
     const players = ["Alice", "Bob"];
     let game: GameState;
@@ -79,8 +79,5 @@ describe("Full Game Simulation", () => {
 
     // Assert that we have results for both players
     expect(gameResult.result.length).toBe(2);
-
-    displayGrid(gameResult.players[0]!.kingdom);
-    displayGrid(gameResult.players[1]!.kingdom);
   });
 });

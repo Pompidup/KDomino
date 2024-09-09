@@ -5,8 +5,11 @@ import { err, ok } from "@utils/result.js";
 import { createGameBuilder } from "../../builder/game.js";
 import type { AddExtraRulesCommand } from "@application/commands/addExtraRulesCommand.js";
 import { describe, expect, test } from "vitest";
+import { winstonLogger } from "@adapter/winstonLogger.js";
 
 describe("AddExtraRulesHandler", () => {
+  const logger = winstonLogger(false);
+
   test("should throw error if next action is not options", () => {
     // Arrange
     const useCase: AddExtraRulesUseCase = () => {
@@ -23,7 +26,7 @@ describe("AddExtraRulesHandler", () => {
     };
 
     // Act
-    const act = () => addExtraRulesHandler(useCase)(command);
+    const act = () => addExtraRulesHandler(logger, useCase)(command);
 
     // Assert
     expect(act).toThrowError("Required game with options step");
@@ -43,7 +46,7 @@ describe("AddExtraRulesHandler", () => {
     };
 
     // Act
-    const act = () => addExtraRulesHandler(useCase)(command);
+    const act = () => addExtraRulesHandler(logger, useCase)(command);
 
     // Assert
     expect(act).toThrowError("useCase error");
@@ -56,7 +59,11 @@ describe("AddExtraRulesHandler", () => {
         ...game,
         rules: {
           ...game.rules,
-          extra: extraRules.map((rule) => ({ name: rule, description: "desc", mode: [] })),
+          extra: extraRules.map((rule) => ({
+            name: rule,
+            description: "desc",
+            mode: [],
+          })),
         },
         nextAction: { type: "step", step: "addPlayers" },
       });
@@ -72,7 +79,7 @@ describe("AddExtraRulesHandler", () => {
     };
 
     // Act
-    const result = addExtraRulesHandler(useCase)(command);
+    const result = addExtraRulesHandler(logger, useCase)(command);
 
     // Assert
     expect(result).toEqual({

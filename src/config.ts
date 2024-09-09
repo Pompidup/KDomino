@@ -3,6 +3,7 @@ import jsonModes from "@adapter/jsonModes.js";
 import jsonRules from "@adapter/jsonRules.js";
 import { shuffleMethod } from "@adapter/shuffle.js";
 import { uuidMethod } from "@adapter/uuid.js";
+import { winstonLogger } from "@adapter/winstonLogger.js";
 import { addExtraRulesHandler } from "@application/handlers/addExtraRulesHandler.js";
 import { addPlayersHandler } from "@application/handlers/addPlayersHandler.js";
 import { chooseDominoHandler } from "@application/handlers/chooseDominoHandler.js";
@@ -29,6 +30,7 @@ import { startGameUseCase } from "@core/useCases/startGame.js";
 export type EngineConfig = {
   uuidMethod?: UuidMethod;
   shuffleMethod?: ShuffleMethod;
+  logging?: boolean;
 };
 
 export const configureEngine = (config: Partial<EngineConfig>) => {
@@ -37,20 +39,27 @@ export const configureEngine = (config: Partial<EngineConfig>) => {
   const ruleRepository = jsonRules();
   const uuid = config.uuidMethod || uuidMethod;
   const shuffle = config.shuffleMethod || shuffleMethod;
+  const logger = config.logging ? winstonLogger(true) : winstonLogger(false);
 
   return {
     createGameHandler: createGameHandler(
+      logger,
       createGameUseCase({
         modeRepository,
         dominoesRepository,
         uuidMethod: uuid,
       })
     ),
-    getModesHandler: getModesHandler(getModesUseCase({ modeRepository })),
+    getModesHandler: getModesHandler(
+      logger,
+      getModesUseCase({ modeRepository })
+    ),
     getExtraRulesHandler: getExtraRulesHandler(
+      logger,
       getExtraRulesUseCase({ ruleRepository })
     ),
     addPlayersHandler: addPlayersHandler(
+      logger,
       addPlayersUseCase({
         uuidMethod: uuid,
         shuffleMethod: shuffle,
@@ -58,14 +67,16 @@ export const configureEngine = (config: Partial<EngineConfig>) => {
       })
     ),
     addExtraRulesHandler: addExtraRulesHandler(
+      logger,
       addExtraRulesUseCase({ ruleRepository })
     ),
     startGameHandler: startGameHandler(
+      logger,
       startGameUseCase({ uuidMethod: uuid, shuffleMethod: shuffle })
     ),
-    chooseDominoHandler: chooseDominoHandler(chooseDominoUseCase),
-    placeDominoHandler: placeDominoHandler(placeDominoUseCase),
-    discardDominoHandler: discardDominoHandler(discardDominoUseCase),
-    getResultHandler: getResultHandler(getResultUseCase),
+    chooseDominoHandler: chooseDominoHandler(logger, chooseDominoUseCase),
+    placeDominoHandler: placeDominoHandler(logger, placeDominoUseCase),
+    discardDominoHandler: discardDominoHandler(logger, discardDominoUseCase),
+    getResultHandler: getResultHandler(logger, getResultUseCase),
   };
 };

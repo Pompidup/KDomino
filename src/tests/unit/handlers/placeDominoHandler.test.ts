@@ -9,14 +9,17 @@ import { createGameBuilder } from "../../builder/game.js";
 import { err, ok } from "@utils/result.js";
 import type { PlaceDominoCommand } from "@application/commands/placeDominoCommand.js";
 import { placeDominoHandler } from "@application/handlers/placeDominoHandler.js";
+import { winstonLogger } from "@adapter/winstonLogger.js";
 
 describe("placeDominoHandler", () => {
+  const logger = winstonLogger(false);
+
   test("should throw an error if the next action is not 'placeDomino'", () => {
     // Arrange
     const mockUseCase: PlaceDominoUseCase = () => {
       throw new Error("This should not be called");
     };
-    const handler = placeDominoHandler(mockUseCase);
+    const handler = placeDominoHandler(logger, mockUseCase);
     const game = createGameBuilder<NextAction>()
       .withNextAction({
         type: "action",
@@ -42,7 +45,7 @@ describe("placeDominoHandler", () => {
   test("should throw an error if the result is an error", () => {
     // Arrange
     const mockUseCase: PlaceDominoUseCase = () => err("use case failed");
-    const handler = placeDominoHandler(mockUseCase);
+    const handler = placeDominoHandler(logger, mockUseCase);
     const game = createGameBuilder<NextAction>()
       .withNextAction({
         type: "action",
@@ -92,7 +95,7 @@ describe("placeDominoHandler", () => {
       rotation: 0,
     };
     const mockUseCase: PlaceDominoUseCase = () => ok(expectedGame);
-    const handler = placeDominoHandler(mockUseCase);
+    const handler = placeDominoHandler(logger, mockUseCase);
 
     // Act
     const result = handler(command);
@@ -128,7 +131,7 @@ describe("placeDominoHandler", () => {
       rotation: 0,
     };
     const mockUseCase: PlaceDominoUseCase = () => ok(expectedGame);
-    const handler = placeDominoHandler(mockUseCase);
+    const handler = placeDominoHandler(logger, mockUseCase);
 
     // Act
     const result = handler(command);

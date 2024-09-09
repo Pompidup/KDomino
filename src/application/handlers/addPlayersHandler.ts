@@ -1,3 +1,4 @@
+import type { Logger } from "@core/portServerside/logger.js";
 import type { AddPlayersCommand } from "@application/commands/addPlayersCommand.js";
 import {
   InvalidStepError,
@@ -13,23 +14,31 @@ import { isErr } from "@utils/result.js";
 type AddPlayersHandler = (command: AddPlayersCommand) => GameWithNextStep;
 
 export const addPlayersHandler =
-  (useCase: AddPlayersUseCase): AddPlayersHandler =>
+  (logger: Logger, useCase: AddPlayersUseCase): AddPlayersHandler =>
   (command: AddPlayersCommand) => {
     const { game, players } = command;
 
+    logger.info(`Adding players to game: ${game.id}`);
+
     if (!isGameWithNextStep(game)) {
+      logger.error("Invalid game with nextAction type: 'step'");
       throw new InvalidStepError("Required game with nextAction type: 'step'");
     }
 
     if (game.nextAction.step !== "addPlayers") {
+      logger.error(
+        `Required game with addPlayers step but got: ${game.nextAction.step}`
+      );
       throw new InvalidStepError("Required game with addPlayers step");
     }
 
     const result = useCase(game, players);
 
     if (isErr(result)) {
+      logger.error(`Error adding players: ${result.error}`);
       throw new StepExecutionError(result.error);
     }
 
+    logger.info(`Players added to game: ${game.id}`);
     return result.value;
   };

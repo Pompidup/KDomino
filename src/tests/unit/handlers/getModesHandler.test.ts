@@ -1,11 +1,13 @@
 import { describe, expect, test } from "vitest";
-import type { GetModesCommand } from "../../../application/commands/getModesCommand.js";
-import { getModesHandler } from "../../../application/handlers/getModesHandler.js";
-import type { GameMode } from "../../../core/domain/types/mode.js";
-import type { GetModesUseCase } from "../../../core/useCases/getModes.js";
-import { err, ok } from "../../../utils/result.js";
+import type { GetModesCommand } from "@application/commands/getModesCommand.js";
+import { getModesHandler } from "@application/handlers/getModesHandler.js";
+import type { GameMode } from "@core/domain/types/mode.js";
+import type { GetModesUseCase } from "@core/useCases/getModes.js";
+import { err, ok } from "@utils/result.js";
+import { winstonLogger } from "@adapter/winstonLogger.js";
 
 describe("getModesHandler", () => {
+  const logger = winstonLogger(false);
   test("should return game modes when use case succeeds", () => {
     // Arrange
     const mockGameModes: GameMode[] = [
@@ -16,7 +18,7 @@ describe("getModesHandler", () => {
     const mockGetModesUseCase: GetModesUseCase = () => ok(mockGameModes);
 
     const command: GetModesCommand = {};
-    const handler = getModesHandler(mockGetModesUseCase);
+    const handler = getModesHandler(logger, mockGetModesUseCase);
 
     // Act
     const result = handler(command);
@@ -30,7 +32,7 @@ describe("getModesHandler", () => {
     const mockGetModesUseCase: GetModesUseCase = () => err("Use case failed");
 
     const command: GetModesCommand = {};
-    const handler = getModesHandler(mockGetModesUseCase);
+    const handler = getModesHandler(logger, mockGetModesUseCase);
 
     // Act
     const act = () => handler(command);

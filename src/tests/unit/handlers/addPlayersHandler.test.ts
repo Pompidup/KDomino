@@ -6,8 +6,11 @@ import type { AddPlayersUseCase } from "@core/useCases/addPlayers.js";
 import { describe, expect, test } from "vitest";
 import { err, ok } from "@utils/result.js";
 import type { Kingdom } from "@core/domain/types/kingdom.js";
+import { winstonLogger } from "@adapter/winstonLogger.js";
 
 describe("AddPlayersHandler", () => {
+  const logger = winstonLogger(false);
+
   test("should throw error if next action is not addPlayers", () => {
     // Arrange
     const useCase: AddPlayersUseCase = () => {
@@ -24,7 +27,7 @@ describe("AddPlayersHandler", () => {
     };
 
     // Act
-    const act = () => addPlayersHandler(useCase)(command);
+    const act = () => addPlayersHandler(logger, useCase)(command);
 
     // Assert
     expect(act).toThrowError("Required game with addPlayers step");
@@ -44,7 +47,7 @@ describe("AddPlayersHandler", () => {
     };
 
     // Act
-    const act = () => addPlayersHandler(useCase)(command);
+    const act = () => addPlayersHandler(logger, useCase)(command);
 
     // Assert
     expect(act).toThrowError("useCase error");
@@ -76,7 +79,7 @@ describe("AddPlayersHandler", () => {
     };
 
     // Act
-    const result = addPlayersHandler(useCase)(command);
+    const result = addPlayersHandler(logger, useCase)(command);
 
     // Assert
     expect(result.players).toEqual([

@@ -1,10 +1,11 @@
+import { winstonLogger } from "@adapter/winstonLogger.js";
 import { describe, expect, test } from "vitest";
-import type { CreateGameCommand } from "../../../application/commands/createGameCommand.js";
-import { createGameHandler } from "../../../application/handlers/createGameHandler.js";
-import type { NextStep } from "../../../core/domain/types/game.js";
-import type { CreateGameUseCase } from "../../../core/useCases/createGame.js";
+import type { CreateGameCommand } from "@application/commands/createGameCommand.js";
+import { createGameHandler } from "@application/handlers/createGameHandler.js";
+import type { NextStep } from "@core/domain/types/game.js";
+import type { CreateGameUseCase } from "@core/useCases/createGame.js";
 import { createGameBuilder } from "../../builder/game.js";
-import { err, ok } from "./../../../utils/result.js";
+import { err, ok } from "@utils/result.js";
 
 describe("createGameHandler", () => {
   test("should return game and next action when use case succeeds", () => {
@@ -15,7 +16,7 @@ describe("createGameHandler", () => {
 
     const game = createGameBuilder<NextStep>().build();
     const mockUseCase: CreateGameUseCase = () => ok(game);
-    const handler = createGameHandler(mockUseCase);
+    const handler = createGameHandler(winstonLogger(false), mockUseCase);
 
     // Act
     const result = handler(command);
@@ -31,7 +32,7 @@ describe("createGameHandler", () => {
     };
 
     const mockUseCase: CreateGameUseCase = () => err("Use case failed");
-    const handler = createGameHandler(mockUseCase);
+    const handler = createGameHandler(winstonLogger(false), mockUseCase);
 
     // Act
     const act = () => handler(command);
