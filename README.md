@@ -213,6 +213,7 @@ type GameEngine = {
   placeDomino: (command: PlaceDominoCommand) => GameState;
   discardDomino: (command: DiscardDominoCommand) => GameState;
   getResults: (command: GetResultCommand) => GameWithResults;
+  calculateScore: (command: CalculateScoreCommand) => Score;
 };
 ```
 
@@ -297,6 +298,10 @@ Allows a player to discard a domino if they cannot place it.
 #### getResults(command: GetResultCommand): GameWithResults
 
 Calculates and returns the final game results.
+
+#### calculateScore(command: CalculateScoreCommand): Score
+
+Calculates and returns the score of a kingdom.
 
 ## Advanced Usage
 
