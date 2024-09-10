@@ -180,6 +180,12 @@ You can get the results by calling the `getResults` method:
 gameState = engine.getResults({ game: gameState });
 ```
 
+You have the possibility to get the results at any time of a kingdom, you can use `calculateScore` method:
+
+```typescript
+const score = engine.calculateScore({ kingdom: gameState.players[0].kingdom });
+```
+
 ## Extra Rules
 
 The engine supports extra rules that can modify gameplay. Some examples include:

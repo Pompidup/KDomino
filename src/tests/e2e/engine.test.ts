@@ -263,4 +263,26 @@ describe("Engine", () => {
     expect(player!.kingdom[4]![5]).toEqual(domino!.right);
     expect(player!.kingdom[5]![5]).toEqual(domino!.left);
   });
+
+  test("should be able to calculate score", () => {
+    // Arrange
+    const newGame = engine.createGame({ mode: "Classic" });
+    const gameWithPlayers = engine.addPlayers({
+      game: newGame,
+      players: ["player1", "player2"],
+    });
+    const startedGame = engine.startGame({ game: gameWithPlayers });
+
+    // Act
+    const score = engine.calculateScore({
+      kingdom: startedGame.players[0]!.kingdom,
+    });
+
+    // Assert
+    expect(score).toEqual({
+      points: 0,
+      maxPropertiesSize: 0,
+      totalCrowns: 0,
+    });
+  });
 });

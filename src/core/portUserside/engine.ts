@@ -5,6 +5,7 @@ import type {
   GameState,
   GameWithNextAction,
   GameWithNextStep,
+  Score,
 } from "@core/domain/types/index.js";
 import type { GetModesCommand } from "@application/commands/getModesCommand.js";
 import type { GetExtraRulesCommand } from "@application/commands/getExtraRulesCommand.js";
@@ -16,6 +17,7 @@ import type { ChooseDominoCommand } from "@application/commands/chooseDominoComm
 import type { PlaceDominoCommand } from "@application/commands/placeDominoCommand.js";
 import type { DiscardDominoCommand } from "@application/commands/discardDominoCommand.js";
 import type { GetResultCommand } from "@application/commands/getResultCommand.js";
+import type { CalculateScoreCommand } from "@application/commands/calculateScoreCommand.js";
 
 export type GameEngine = {
   getModes: (command: GetModesCommand) => GameMode[];
@@ -28,4 +30,5 @@ export type GameEngine = {
   placeDomino: (command: PlaceDominoCommand) => GameState;
   discardDomino: (command: DiscardDominoCommand) => GameState;
   getResults: (command: GetResultCommand) => GameWithResults;
+  calculateScore: (command: CalculateScoreCommand) => Score;
 };

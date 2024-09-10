@@ -14,6 +14,7 @@ import { getModesHandler } from "@application/handlers/getModesHandler.js";
 import { getResultHandler } from "@application/handlers/getResultHandler.js";
 import { placeDominoHandler } from "@application/handlers/placeDominoHandler.js";
 import { startGameHandler } from "@application/handlers/startGameHandler.js";
+import { calculateScoreHandler } from "@application/handlers/calculateScoreHandler.js";
 import type { ShuffleMethod } from "@core/portServerside/shuffleMethod.js";
 import type { UuidMethod } from "@core/portServerside/uuidMethod.js";
 import { addExtraRulesUseCase } from "@core/useCases/addExtraRules.js";
@@ -26,6 +27,7 @@ import { getModesUseCase } from "@core/useCases/getModes.js";
 import { getResultUseCase } from "@core/useCases/getResult.js";
 import { placeDominoUseCase } from "@core/useCases/placeDomino.js";
 import { startGameUseCase } from "@core/useCases/startGame.js";
+import { calculateScoreUseCase } from "@core/useCases/calculateScore.js";
 
 export type EngineConfig = {
   uuidMethod?: UuidMethod;
@@ -77,6 +79,10 @@ export const configureEngine = (config: Partial<EngineConfig>) => {
     chooseDominoHandler: chooseDominoHandler(logger, chooseDominoUseCase),
     placeDominoHandler: placeDominoHandler(logger, placeDominoUseCase),
     discardDominoHandler: discardDominoHandler(logger, discardDominoUseCase),
-    getResultHandler: getResultHandler(logger, getResultUseCase),
+    getResultHandler: getResultHandler(logger, {
+      getResultUseCase,
+      calculateScoreUseCase,
+    }),
+    calculateScoreHandler: calculateScoreHandler(logger, calculateScoreUseCase),
   };
 };

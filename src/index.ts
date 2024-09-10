@@ -13,6 +13,7 @@ export const createGameEngine = (config: Partial<EngineConfig>): GameEngine => {
     placeDominoHandler,
     discardDominoHandler,
     getResultHandler,
+    calculateScoreHandler,
   } = configureEngine(config);
 
   return {
@@ -26,5 +27,6 @@ export const createGameEngine = (config: Partial<EngineConfig>): GameEngine => {
     placeDomino: (command) => placeDominoHandler(command),
     discardDomino: (command) => discardDominoHandler(command),
     getResults: (command) => getResultHandler(command),
+    calculateScore: (command) => calculateScoreHandler(command),
   };
 };
