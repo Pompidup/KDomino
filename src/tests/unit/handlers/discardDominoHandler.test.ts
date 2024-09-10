@@ -1,7 +1,11 @@
 import { describe, expect, test } from "vitest";
 import type { DiscardDominoCommand } from "@application/commands/discardDominoCommand.js";
 import { discardDominoHandler } from "@application/handlers/discardDominoHandler.js";
-import type { NextAction, GameWithNextStep } from "@core/domain/types/game.js";
+import type {
+  NextAction,
+  GameWithNextStep,
+  NextStep,
+} from "@core/domain/types/game.js";
 import type { DiscardDominoUseCase } from "@core/useCases/discardDomino.js";
 import { err, ok } from "@utils/result.js";
 import { createGameBuilder } from "../../builder/game.js";
@@ -9,6 +13,29 @@ import { winstonLogger } from "@adapter/winstonLogger.js";
 
 describe("discardDominoHandler", () => {
   const logger = winstonLogger(false);
+
+  test("should throw an error if the game is not with next action", () => {
+    // Arrange
+    const game = createGameBuilder<NextStep>()
+      .withNextAction({ type: "step", step: "options" })
+      .build();
+
+    const command: DiscardDominoCommand = {
+      game,
+      lordId: "lord1",
+    };
+
+    const mockUseCase: DiscardDominoUseCase = () => {
+      throw new Error("This should not be called");
+    };
+    const handler = discardDominoHandler(logger, mockUseCase);
+
+    // Act
+    const act = () => handler(command);
+
+    // Assert
+    expect(act).toThrowError("Required game with nextAction type: 'action'");
+  });
 
   test("should throw an error if the next action is not 'placeDomino'", () => {
     // Arrange

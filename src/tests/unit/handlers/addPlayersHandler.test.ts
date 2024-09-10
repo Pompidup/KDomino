@@ -1,6 +1,6 @@
 import { addPlayersHandler } from "@application/handlers/addPlayersHandler.js";
 import type { AddPlayersCommand } from "@application/commands/addPlayersCommand.js";
-import type { NextStep } from "@core/domain/types/game.js";
+import type { NextAction, NextStep } from "@core/domain/types/game.js";
 import { createGameBuilder } from "../../builder/game.js";
 import type { AddPlayersUseCase } from "@core/useCases/addPlayers.js";
 import { describe, expect, test } from "vitest";
@@ -10,6 +10,26 @@ import { winstonLogger } from "@adapter/winstonLogger.js";
 
 describe("AddPlayersHandler", () => {
   const logger = winstonLogger(false);
+
+  test("should throw error if game is not with next step", () => {
+    // Arrange
+    const useCase: AddPlayersUseCase = () => {
+      throw new Error("This should not be called");
+    };
+
+    const game = createGameBuilder<NextAction>().build();
+
+    const command: AddPlayersCommand = {
+      game,
+      players: ["player1"],
+    };
+
+    // Act
+    const act = () => addPlayersHandler(logger, useCase)(command);
+
+    // Assert
+    expect(act).toThrowError("Required game with nextAction type: 'step'");
+  });
 
   test("should throw error if next action is not addPlayers", () => {
     // Arrange

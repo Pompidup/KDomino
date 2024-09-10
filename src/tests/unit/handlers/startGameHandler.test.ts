@@ -1,5 +1,9 @@
 import { describe, expect, test } from "vitest";
-import type { GameWithNextAction, NextStep } from "@core/domain/types/game.js";
+import type {
+  GameWithNextAction,
+  NextAction,
+  NextStep,
+} from "@core/domain/types/game.js";
 import type { StartGameUseCase } from "@core/useCases/startGame.js";
 import { createGameBuilder } from "../../builder/game.js";
 import { err, ok } from "@utils/result.js";
@@ -9,6 +13,24 @@ import { winstonLogger } from "@adapter/winstonLogger.js";
 
 describe("startGameHandler", () => {
   const logger = winstonLogger(false);
+
+  test("should throw an error if the game is not with next step", () => {
+    // Arrange
+    const mockUseCase: StartGameUseCase = () => {
+      throw new Error("This should not be called");
+    };
+    const handler = startGameHandler(logger, mockUseCase);
+
+    const game = createGameBuilder<NextAction>().build();
+
+    const command: StartGameCommand = { game };
+
+    // Act
+    const act = () => handler(command);
+
+    // Assert
+    expect(act).toThrowError("Required game with nextAction type: 'step'");
+  });
 
   test("should throw an error if the next action step is not 'start' or 'options'", () => {
     // Arrange

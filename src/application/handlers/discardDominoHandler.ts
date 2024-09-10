@@ -20,7 +20,9 @@ export const discardDominoHandler =
     logger.info(`Discarding domino for lord: ${lordId} in game: ${game.id}`);
 
     if (!isGameWithNextAction(game)) {
-      logger.error("Invalid game with nextAction type: 'action'");
+      logger.error(
+        `Invalid game, required nextAction type: 'action' but got: ${game.nextAction.type}`
+      );
       throw new InvalidStepError(
         "Required game with nextAction type: 'action'"
       );

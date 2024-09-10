@@ -3,6 +3,7 @@ import type {
   GameWithNextAction,
   GameWithNextStep,
   NextAction,
+  NextStep,
 } from "@core/domain/types/game.js";
 import type { PlaceDominoUseCase } from "@core/useCases/placeDomino.js";
 import { createGameBuilder } from "../../builder/game.js";
@@ -13,6 +14,33 @@ import { winstonLogger } from "@adapter/winstonLogger.js";
 
 describe("placeDominoHandler", () => {
   const logger = winstonLogger(false);
+
+  test("should throw an error if the game is not with next action", () => {
+    // Arrange
+    const mockUseCase: PlaceDominoUseCase = () => {
+      throw new Error("This should not be called");
+    };
+
+    const handler = placeDominoHandler(logger, mockUseCase);
+
+    const game = createGameBuilder<NextStep>()
+      .withNextAction({ type: "step", step: "options" })
+      .build();
+
+    const command: PlaceDominoCommand = {
+      game,
+      lordId: "lord1",
+      position: { x: 0, y: 0 },
+      orientation: "horizontal",
+      rotation: 0,
+    };
+
+    // Act
+    const act = () => handler(command);
+
+    // Assert
+    expect(act).toThrowError("Required game with nextAction type: 'action'");
+  });
 
   test("should throw an error if the next action is not 'placeDomino'", () => {
     // Arrange

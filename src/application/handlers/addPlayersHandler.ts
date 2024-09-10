@@ -21,7 +21,9 @@ export const addPlayersHandler =
     logger.info(`Adding players to game: ${game.id}`);
 
     if (!isGameWithNextStep(game)) {
-      logger.error("Invalid game with nextAction type: 'step'");
+      logger.error(
+        `Invalid game, required nextAction type: 'step' but got: ${game.nextAction.type}`
+      );
       throw new InvalidStepError("Required game with nextAction type: 'step'");
     }
 
