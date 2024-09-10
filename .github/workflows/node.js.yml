@@ -8,6 +8,8 @@ on:
     branches: ["main"]
   pull_request:
     branches: ["main"]
+  release:
+    types: [published]
 
 jobs:
   build:
@@ -19,23 +21,39 @@ jobs:
         # See supported Node.js release schedule at https://nodejs.org/en/about/releases/
 
     steps:
-      - uses: actions/checkout@v3
-      - uses: pnpm/action-setup@v3
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v4
+        name: Install pnpm
         with:
-          version: 8
-      - name: Use Node.js ${{ matrix.node-version }}
-        uses: actions/setup-node@v3
+          version: 9
+          run_install: false
+
+      - name: Install Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v4
         with:
           node-version: ${{ matrix.node-version }}
           cache: "pnpm"
+          registry-url: "https://registry.npmjs.org"
+
       - name: Install dependencies
-        run: pnpm install
+        run: pnpm install --frozen-lockfile
+
       - name: Build
         run: pnpm build
+
       - name: Run test
         run: pnpm coverage
+
       - name: Generating coverage badges
         uses: jpb06/coverage-badges-action@latest
         with:
           branches: main
           badges-icon: vitest
+
+      - name: Publish package
+        shell: bash
+        run: pnpm publish --access public --no-git-checks
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
