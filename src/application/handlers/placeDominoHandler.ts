@@ -16,11 +16,11 @@ type PlaceDominoHandler = (command: PlaceDominoCommand) => GameState;
 export const placeDominoHandler =
   (logger: Logger, useCase: PlaceDominoUseCase): PlaceDominoHandler =>
   (command: PlaceDominoCommand) => {
-    const { game, lordId, position, orientation, rotation } = command;
+    const { game, lordId, position, rotation } = command;
     logger.info(
       `Placing domino: ${lordId} in position: ${JSON.stringify(
         position
-      )} with orientation: ${orientation} and rotation: ${rotation} in game: ${
+      )} with rotation: ${rotation} in game: ${
         game.id
       }`
     );
@@ -41,7 +41,7 @@ export const placeDominoHandler =
       throw new InvalidStepError("Required game with placeDomino step");
     }
 
-    const result = useCase(game, lordId, position, orientation, rotation);
+    const result = useCase(game, lordId, position, rotation);
 
     if (isErr(result)) {
       logger.error(`Error placing domino: ${result.error}`);
@@ -52,7 +52,7 @@ export const placeDominoHandler =
       logger.info(
         `Domino placed: ${lordId} in position: ${JSON.stringify(
           position
-        )} with orientation: ${orientation} and rotation: ${rotation} in game: ${
+        )} with rotation: ${rotation} in game: ${
           game.id
         }`
       );
@@ -62,7 +62,7 @@ export const placeDominoHandler =
     logger.info(
       `Domino placed: ${lordId} in position: ${JSON.stringify(
         position
-      )} with orientation: ${orientation} and rotation: ${rotation} in game: ${
+      )} with rotation: ${rotation} in game: ${
         game.id
       }`
     );

@@ -46,7 +46,6 @@ describe("Full Game Simulation", () => {
                 game,
                 lordId: currentLordId,
                 position: positions[i]!,
-                orientation: "horizontal",
                 rotation: 0,
               });
               allLordIds.splice(allLordIds.indexOf(currentLordId), 1);

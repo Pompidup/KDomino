@@ -22,7 +22,6 @@ describe("Game Place", () => {
       game,
       "lord1-id",
       { x: 5, y: 4 },
-      "horizontal",
       0
     );
 
@@ -43,7 +42,6 @@ describe("Game Place", () => {
       game,
       "lord1-id",
       { x: 5, y: 4 },
-      "horizontal",
       0
     );
 
@@ -64,7 +62,6 @@ describe("Game Place", () => {
       game,
       "lord1-id",
       { x: 5, y: 4 },
-      "horizontal",
       0
     );
 
@@ -87,7 +84,6 @@ describe("Game Place", () => {
       game,
       "lord1-id",
       { x: 5, y: 4 },
-      "horizontal",
       0
     );
 
@@ -110,7 +106,6 @@ describe("Game Place", () => {
       game,
       "lord1-id",
       { x: 10, y: 4 },
-      "horizontal",
       0
     );
 
@@ -135,7 +130,6 @@ describe("Game Place", () => {
       game,
       "lord1-id",
       { x: 4, y: 4 },
-      "horizontal",
       0
     );
 
@@ -158,7 +152,6 @@ describe("Game Place", () => {
       game,
       "lord1-id",
       { x: 5, y: 5 },
-      "horizontal",
       0
     );
 
@@ -183,7 +176,6 @@ describe("Game Place", () => {
       game,
       "lord1-id",
       { x: 5, y: 4 },
-      "horizontal",
       0
     );
 
@@ -203,7 +195,7 @@ describe("Game Place", () => {
     game.lords[0]!.dominoPicked = game.dominoes[0];
 
     const updatedGame = unwrap(
-      placeDominoUseCase(game, "lord1-id", { x: 5, y: 4 }, "horizontal", 0)
+      placeDominoUseCase(game, "lord1-id", { x: 5, y: 4 }, 0)
     );
 
     expect(updatedGame.lords[0]!.hasPlace).toBe(true);
@@ -222,7 +214,7 @@ describe("Game Place", () => {
     game.lords[0]!.dominoPicked = game.dominoes[0];
 
     const updatedGame = unwrap(
-      placeDominoUseCase(game, "lord1-id", { x: 5, y: 4 }, "horizontal", 0)
+      placeDominoUseCase(game, "lord1-id", { x: 5, y: 4 }, 0)
     );
 
     expect(updatedGame.nextAction.type).toBe("action");
@@ -248,7 +240,7 @@ describe("Game Place", () => {
 
     // Act
     const updatedGame = unwrap(
-      placeDominoUseCase(game, "lord1-id", { x: 5, y: 4 }, "horizontal", 0)
+      placeDominoUseCase(game, "lord1-id", { x: 5, y: 4 }, 0)
     );
 
     // Assert
@@ -300,7 +292,6 @@ describe("Game Place", () => {
         initialGame,
         initialGame.lords[3]!.id,
         { x: 5, y: 4 },
-        "horizontal",
         0
       )
     );

@@ -1,6 +1,6 @@
-import { createGameEngine } from "./../../index.js";
-import type { GameEngine } from "@core/portUserside/engine.js";
-import { beforeAll, describe, expect, test } from "vitest";
+import {createGameEngine} from "../../index";
+import type {GameEngine} from "@core/portUserside/engine.js";
+import {beforeAll, describe, expect, test} from "vitest";
 
 describe("Engine", () => {
   let engine: GameEngine;
@@ -63,9 +63,8 @@ describe("Engine", () => {
 
   test("should be able to get extra rules", () => {
     // Arrange
-    const newGame = engine.createGame({ mode: "Classic" });
-
-    // Act
+    engine.createGame({ mode: "Classic" });
+// Act
     const extraRules = engine.getExtraRules({ mode: "Classic", players: 2 });
 
     // Assert
@@ -188,8 +187,7 @@ describe("Engine", () => {
       game: newGame,
       players: ["player1", "player2"],
     });
-    const startedGame = engine.startGame({ game: gameWithPlayers });
-    let gameWithChosenDomino = startedGame;
+    let gameWithChosenDomino = engine.startGame({game: gameWithPlayers});
     for (let i = 0; i < 4; i++) {
       const lordId = gameWithChosenDomino.nextAction.nextLord;
       const domino = gameWithChosenDomino.currentDominoes[i]!.domino;
@@ -221,8 +219,7 @@ describe("Engine", () => {
       game: newGame,
       players: ["player1", "player2"],
     });
-    const startedGame = engine.startGame({ game: gameWithPlayers });
-    let gameWithChosenDomino = startedGame;
+    let gameWithChosenDomino = engine.startGame({game: gameWithPlayers});
     for (let i = 0; i < 4; i++) {
       const lordId = gameWithChosenDomino.nextAction.nextLord;
       const domino = gameWithChosenDomino.currentDominoes[i]!.domino;
@@ -240,8 +237,7 @@ describe("Engine", () => {
       game: gameWithChosenDomino,
       lordId: lordId,
       position: { x: 5, y: 4 },
-      orientation: "vertical",
-      rotation: 180,
+      rotation: 270,
     });
 
     const lordIndex = gameWithPlacedDomino.lords.findIndex(

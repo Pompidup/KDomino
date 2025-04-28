@@ -7,9 +7,41 @@
 ![Statements](./badges/coverage-statements.svg)
 ![Coverage total](./badges/coverage-total.svg)
 
+A simple, lightweight TypeScript engine for the Kingdomino board game.
+
+## Table of Contents
+
+- [Overview](#overview)
+- [Requirements](#requirements)
+- [Features](#features)
+- [Installation](#installation)
+- [Usage](#usage)
+  - [Basic Setup](#basic-setup)
+  - [Options for GameEngine](#options-for-gameengine)
+  - [Adding Players](#adding-players)
+  - [Getting Available Game Modes](#getting-available-game-modes)
+  - [Getting Available Extra Rules](#getting-available-extra-rules)
+  - [Setting Up Extra Rules](#setting-up-extra-rules)
+  - [Starting the Game](#starting-the-game)
+  - [Player Actions](#player-actions)
+  - [Game Flow](#game-flow)
+  - [Scoring](#scoring)
+- [Complete Game Example](#complete-game-example)
+- [Extra Rules](#extra-rules)
+- [API Documentation](#api-documentation)
+  - [Key Types and Interfaces](#key-types-and-interfaces)
+  - [Methods](#methods)
+- [Development](#development)
+  - [Setup](#setup)
+  - [Testing](#testing)
+  - [Building](#building)
+- [Contributing](#contributing)
+
 ## Overview
 
 This is a simple and lightweight TypeScript engine designed to facilitate the gameplay of Kingdomino. It provides the core logic for managing game states, rules, and player interactions, making it easy to integrate into any application that requires a Kingdomino game engine.
+
+Kingdomino is a tile-placement game where players build kingdoms by connecting domino-like tiles with different terrains. This engine handles all the game logic, allowing you to focus on building the user interface and experience.
 
 ## Requirements
 
@@ -22,6 +54,8 @@ This is a simple and lightweight TypeScript engine designed to facilitate the ga
 - **Player Interaction**: Simplify player interactions, including drawing tiles, placing dominoes, and scoring.
 - **Extra Rules Support**: Implement and manage additional game rules for enhanced gameplay.
 - **Multiple Game Modes**: Support for different game modes, including Classic and potentially others.
+- **Scoring System**: Automatic calculation of scores based on kingdom layouts and rule sets.
+- **Typescript Support**: Full TypeScript support with comprehensive type definitions.
 
 ## Installation
 
@@ -141,7 +175,6 @@ gameState = engine.placeDomino({
   game: gameState,
   lordId: "lordId",
   position: { x: 0, y: 0 },
-  orientation: "horizontal",
   rotation: 0,
 });
 ```
@@ -186,12 +219,81 @@ You have the possibility to get the results at any time of a kingdom, you can us
 const score = engine.calculateScore({ kingdom: gameState.players[0].kingdom });
 ```
 
+## Complete Game Example
+
+Here's a complete example of how to simulate a game from start to finish:
+
+```typescript
+import { createGameEngine, isGameWithNextAction } from "@pompidup/kingdomino-engine";
+
+// Create the game engine
+const engine = createGameEngine({
+  logging: true,
+  // Optional: provide custom shuffle method
+  shuffleMethod: (array) => array,
+});
+
+// Create a new game with Classic mode
+let game = engine.createGame({ mode: "Classic" });
+
+// Add players
+const players = ["Alice", "Bob"];
+game = engine.addPlayers({ game, players });
+
+// Start the game
+game = engine.startGame({ game });
+
+// Game loop - continue until there are no more actions
+while (isGameWithNextAction(game)) {
+  const currentLordId = game.nextAction.nextLord;
+  const nextAction = game.nextAction.nextAction;
+
+  // Handle different actions
+  if (nextAction === "pickDomino") {
+    // Choose a domino from the available ones
+    const dominoToChoose = game.currentDominoes[0].domino.number;
+    game = engine.chooseDomino({
+      game,
+      lordId: currentLordId,
+      dominoPick: dominoToChoose,
+    });
+  } else if (nextAction === "placeDomino") {
+    // Try to place the domino
+    try {
+      game = engine.placeDomino({
+        game,
+        lordId: currentLordId,
+        position: { x: 0, y: 0 }, // Position to place the domino
+        rotation: 0, // Rotation of the domino (0, 90, 180, 270)
+      });
+    } catch (error) {
+      // If placement fails, discard the domino
+      game = engine.discardDomino({
+        game,
+        lordId: currentLordId,
+      });
+    }
+  }
+}
+
+// Get the final results
+const gameResult = engine.getResults({ game });
+console.log("Game results:", gameResult.result);
+```
+
 ## Extra Rules
 
 The engine supports extra rules that can modify gameplay. Some examples include:
 
 - **The Middle Kingdom**: Gain 10 additional points if your castle is in the middle of the kingdom.
 - **Harmony**: Gain 5 additional points if your kingdom is complete (no discarded dominoes).
+
+You can get all available extra rules for a specific game mode and number of players:
+
+```typescript
+const extraRules = engine.getExtraRules({ mode: "Classic", players: 2 });
+console.log("Available extra rules:", extraRules);
+```
 
 ## API Documentation
 
@@ -302,6 +404,57 @@ Calculates and returns the final game results.
 #### calculateScore(command: CalculateScoreCommand): Score
 
 Calculates and returns the score of a kingdom.
+
+## Development
+
+### Setup
+
+To set up the project for development:
+
+1. Clone the repository:
+   ```bash
+   git clone https://github.com/Pompidup/KDomino.git
+   cd KDomino
+   ```
+
+2. Install dependencies:
+   ```bash
+   pnpm install
+   ```
+
+### Testing
+
+The project uses Vitest for testing. To run the tests:
+
+```bash
+# Run all tests
+pnpm test
+
+# Run tests with coverage
+pnpm coverage
+```
+
+### Building
+
+To build the project:
+
+```bash
+pnpm build
+```
+
+## Contributing
+
+Contributions are welcome! Here's how you can contribute:
+
+1. Fork the repository
+2. Create a new branch (`git checkout -b feature/your-feature-name`)
+3. Make your changes
+4. Run tests to ensure everything works (`pnpm test`)
+5. Commit your changes (`git commit -m 'Add some feature'`)
+6. Push to the branch (`git push origin feature/your-feature-name`)
+7. Open a Pull Request
+
+Please make sure your code follows the existing style and includes appropriate tests.
 
 ## Advanced Usage
 

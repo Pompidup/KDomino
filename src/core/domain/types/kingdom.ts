@@ -5,9 +5,7 @@ export type Position = {
   y: number; // rows
 };
 
-export type Orientation = "vertical" | "horizontal";
-
-export type Rotation = 0 | 180;
+export type Rotation = 0 | 90 | 180 | 270;
 
 export type Kingdom = (Tile | EmptyTile)[][];
 

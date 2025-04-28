@@ -1,4 +1,4 @@
-import type { GameEngine } from "./core/portUserside/engine.js";
+import type { GameEngine } from "@core/portUserside/engine";
 import { configureEngine, type EngineConfig } from "./config.js";
 
 export * from "@application/commands/index.js";

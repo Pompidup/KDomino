@@ -1,23 +1,20 @@
 import {
-  GRIDSIZE,
   type Domino,
   type EmptyTile,
+  GRIDSIZE,
   type Kingdom,
-  type Orientation,
   type Position,
   type Rotation,
   type Tile,
 } from "@core/domain/types/index.js";
-import { err, isErr, isOk, ok, type Result } from "@utils/result.js";
-import { createTile } from "./domino.js";
+import {err, isErr, isOk, ok, type Result} from "@utils/result.js";
+import {createTile} from "./domino.js";
 
 export const createEmptyKingdom = (): Kingdom => {
   const emptyTile = createTile("empty");
-  const grid = Array.from({ length: GRIDSIZE }, () =>
-    Array.from({ length: GRIDSIZE }, () => emptyTile)
+  return Array.from({length: GRIDSIZE}, () =>
+      Array.from({length: GRIDSIZE}, () => emptyTile)
   );
-
-  return grid;
 };
 
 export const placeCastle = (kingdom: Kingdom): Kingdom => {
@@ -50,7 +47,6 @@ export const getTile = (
 
 export const calculateDominoPosition = (
   position: Position,
-  orientation: Orientation,
   rotation: Rotation,
   domino: Domino
 ): [{ tile: Tile; position: Position }, { tile: Tile; position: Position }] => {
@@ -63,8 +59,8 @@ export const calculateDominoPosition = (
     position: Position;
   };
 
-  if (orientation === "horizontal") {
-    if (rotation === 0) {
+  switch (rotation) {
+    case 0: // horizontal, left to right
       firstTile = {
         tile: domino.left,
         position: {
@@ -79,7 +75,24 @@ export const calculateDominoPosition = (
           y: position.y,
         },
       };
-    } else {
+      break;
+    case 90: // vertical, top to bottom
+      firstTile = {
+        tile: domino.left,
+        position: {
+          x: position.x,
+          y: position.y,
+        },
+      };
+      secondTile = {
+        tile: domino.right,
+        position: {
+          x: position.x,
+          y: position.y + 1,
+        },
+      };
+      break;
+    case 180: // horizontal, right to left
       firstTile = {
         tile: domino.right,
         position: {
@@ -94,24 +107,8 @@ export const calculateDominoPosition = (
           y: position.y,
         },
       };
-    }
-  } else {
-    if (rotation === 0) {
-      firstTile = {
-        tile: domino.left,
-        position: {
-          x: position.x,
-          y: position.y,
-        },
-      };
-      secondTile = {
-        tile: domino.right,
-        position: {
-          x: position.x,
-          y: position.y + 1,
-        },
-      };
-    } else {
+      break;
+    case 270: // vertical, bottom to top
       firstTile = {
         tile: domino.right,
         position: {
@@ -126,7 +123,7 @@ export const calculateDominoPosition = (
           y: position.y + 1,
         },
       };
-    }
+      break;
   }
 
   return [firstTile, secondTile];
@@ -135,13 +132,11 @@ export const calculateDominoPosition = (
 export const placeDomino = (
   kingdom: Kingdom,
   position: Position,
-  orientation: Orientation,
   rotation: Rotation,
   domino: Domino
 ): Result<Kingdom> => {
   const [firstTile, secondTile] = calculateDominoPosition(
     position,
-    orientation,
     rotation,
     domino
   );
@@ -320,8 +315,8 @@ export const checkCastleIsInMiddle = (kingdom: Kingdom): boolean => {
 
 export const countDominoes = (kingdom: Kingdom): number => {
   const notEmpties = kingdom.flat().filter((tile) => tile.type !== "empty");
-  const totalDominoes = (notEmpties.length - 1) / 2; // -1 because the castle is not a domino
-  return totalDominoes;
+   // -1 because the castle is not a domino
+  return (notEmpties.length - 1) / 2;
 };
 
 const deepCopyKingdom = (kingdom: Kingdom): Kingdom => {

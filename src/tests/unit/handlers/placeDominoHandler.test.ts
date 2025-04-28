@@ -31,7 +31,6 @@ describe("placeDominoHandler", () => {
       game,
       lordId: "lord1",
       position: { x: 0, y: 0 },
-      orientation: "horizontal",
       rotation: 0,
     };
 
@@ -59,7 +58,6 @@ describe("placeDominoHandler", () => {
       game,
       lordId: "lord1",
       position: { x: 0, y: 0 },
-      orientation: "horizontal",
       rotation: 0,
     };
 
@@ -85,7 +83,6 @@ describe("placeDominoHandler", () => {
       game,
       lordId: "lord1",
       position: { x: 0, y: 0 },
-      orientation: "horizontal",
       rotation: 0,
     };
 
@@ -119,7 +116,6 @@ describe("placeDominoHandler", () => {
       game,
       lordId: "lord1",
       position: { x: 0, y: 0 },
-      orientation: "horizontal",
       rotation: 0,
     };
     const mockUseCase: PlaceDominoUseCase = () => ok(expectedGame);
@@ -155,7 +151,6 @@ describe("placeDominoHandler", () => {
       game,
       lordId: "lord1",
       position: { x: 0, y: 0 },
-      orientation: "horizontal",
       rotation: 0,
     };
     const mockUseCase: PlaceDominoUseCase = () => ok(expectedGame);

@@ -14,7 +14,6 @@ import {
 } from "@core/domain/entities/lord.js";
 import { placeDomino } from "@core/domain/entities/kingdom.js";
 import type {
-  Orientation,
   Position,
   Rotation,
 } from "@core/domain/types/kingdom.js";
@@ -23,7 +22,6 @@ export type PlaceDominoUseCase = (
   game: GameWithNextAction,
   lordId: string,
   position: Position,
-  orientation: Orientation,
   rotation: Rotation
 ) => GameStateResult;
 
@@ -31,7 +29,6 @@ export const placeDominoUseCase: PlaceDominoUseCase = (
   game,
   lordId,
   position,
-  orientation,
   rotation
 ) => {
   const nextAction = game.nextAction;
@@ -65,7 +62,6 @@ export const placeDominoUseCase: PlaceDominoUseCase = (
   const updatedKingdom = placeDomino(
     currentPlayer.kingdom,
     position,
-    orientation,
     rotation,
     domino
   );
