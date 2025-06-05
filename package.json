@@ -41,7 +41,7 @@
     "tsup": "^8.2.4",
     "typescript": "^5.5.4",
     "vite-tsconfig-paths": "^5.0.1",
-    "vitest": "^2.0.5"
+    "vitest": "^2.1.9"
   },
   "dependencies": {
     "winston": "^3.14.2"

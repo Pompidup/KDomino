@@ -5,6 +5,7 @@ export type Player = {
   id: string;
   name: string;
   kingdom: Kingdom;
+  isAI: boolean;
 };
 
 export type PlayerPayload = {

@@ -1,4 +1,5 @@
 import {
+import {
   allLordsHavePlayed,
   canPick,
   nextLordWithAction,
@@ -7,50 +8,69 @@ import {
 } from "@core/domain/entities/lord.js";
 import type { GameWithNextAction } from "@core/domain/types/game.js";
 import { err, ok, type Result } from "@utils/result.js";
+import { chooseDominoAI } from "../ai/decisions.js";
 
 export type ChooseDominoUseCase = (
   game: GameWithNextAction,
   lordId: string,
-  dominoPick: number
+  dominoPick?: number // Made optional as AI will provide it
 ) => Result<GameWithNextAction>;
 
 export const chooseDominoUseCase: ChooseDominoUseCase = (
   game,
   lordId,
-  dominoPick
+  dominoPick // Human player's pick
 ) => {
-  const currentLord = game.lords.find(
-    (lord) => lord.id === game.nextAction.nextLord
-  );
+  const player = game.players.find((p) => p.id === game.nextAction.nextLord);
 
-  if (!currentLord) {
-    return err("Lord not found");
+  if (!player) {
+    return err("Player not found (current turn player)");
   }
 
-  if (currentLord.id !== lordId) {
-    return err("Not your turn");
+  // The lordId parameter must match the player whose turn it is
+  if (player.id !== lordId) {
+    return err("Not your turn (lordId does not match current player)");
+  }
+
+  const currentLord = game.lords.find((lord) => lord.id === player.id);
+
+  if (!currentLord) {
+    // This should ideally not happen if player was found and IDs match
+    return err("Lord properties not found for the current player");
   }
 
   if (!canPick(currentLord)) {
     return err("Lord can't pick");
   }
 
-  // Check if dominoPick is valid choice
+  let chosenDominoNumber: number | null | undefined = dominoPick;
+
+  if (player.isAI) {
+    chosenDominoNumber = chooseDominoAI(game, player.id);
+    if (chosenDominoNumber === null) {
+      return err("AI failed to choose a domino");
+    }
+  } else if (chosenDominoNumber === undefined) {
+    // If not AI and dominoPick is not provided, it's an error.
+    return err("Domino pick not provided for human player");
+  }
+
+  // Check if chosenDominoNumber is valid choice
   const selectedDomino = game.currentDominoes.find(
-    (domino) => domino.domino.number === dominoPick
+    (domino) => domino.domino.number === chosenDominoNumber
   );
 
   if (!selectedDomino) {
-    return err("Domino not found");
+    return err(`Domino with number ${chosenDominoNumber} not found`);
   }
 
   if (selectedDomino.picked) {
-    return err("Domino already picked");
+    return err(`Domino ${chosenDominoNumber} already picked`);
   }
 
   // update currentDominoes
   const updatedCurrentDominoes = game.currentDominoes.map((domino) => {
-    if (domino.domino.number === dominoPick) {
+    if (domino.domino.number === chosenDominoNumber) {
       domino.picked = true;
       domino.lordId = currentLord.id;
     }

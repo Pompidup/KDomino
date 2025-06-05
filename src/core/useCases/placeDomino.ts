@@ -15,54 +15,71 @@ import {
 import { placeDomino } from "@core/domain/entities/kingdom.js";
 import type {
   Position,
+  Position,
   Rotation,
 } from "@core/domain/types/kingdom.js";
+import { placeDominoAI } from "../ai/decisions.js";
+import type { Placement } from "@core/domain/types/placement.js";
 
 export type PlaceDominoUseCase = (
   game: GameWithNextAction,
   lordId: string,
-  position: Position,
-  rotation: Rotation
+  position?: Position, // Optional for AI
+  rotation?: Rotation // Optional for AI
 ) => GameStateResult;
 
 export const placeDominoUseCase: PlaceDominoUseCase = (
   game,
   lordId,
-  position,
-  rotation
+  position, // Human player's position
+  rotation // Human player's rotation
 ) => {
   const nextAction = game.nextAction;
 
-  const currentLord = game.lords.find(
-    (lord) => lord.id === nextAction.nextLord
+  const currentTurnPlayer = game.players.find(
+    (p) => p.id === nextAction.nextLord
   );
 
-  if (!currentLord) {
-    return err("Lord not found");
+  if (!currentTurnPlayer) {
+    return err("Current turn player not found");
   }
 
-  if (currentLord.id !== lordId) {
-    return err("Not your turn");
+  // lordId must match the current turn player
+  if (currentTurnPlayer.id !== lordId) {
+    return err("Not your turn (lordId does not match current player)");
+  }
+
+  const currentLord = game.lords.find((l) => l.id === currentTurnPlayer.id);
+
+  if (!currentLord) {
+    return err("Lord properties not found for the current player");
   }
 
   if (!canPlaceAndDominoPickedIsDefined(currentLord)) {
-    return err("Lord can't place");
+    return err("Lord can't place or no domino picked");
   }
 
   const domino = currentLord.dominoPicked;
+  let chosenPlacement: Placement | null | undefined;
 
-  const currentPlayer = game.players.find(
-    (player) => player.id === currentLord.playerId
-  );
-
-  if (!currentPlayer) {
-    return err("Player not found");
+  if (currentTurnPlayer.isAI) {
+    chosenPlacement = placeDominoAI(game, currentTurnPlayer.id);
+    if (!chosenPlacement) {
+      // This might indicate a pass is needed, or an error in AI logic if a placement was expected.
+      // For now, consider it an error if AI fails to provide a placement.
+      return err("AI failed to decide on a placement");
+    }
+  } else {
+    if (!position || rotation === undefined) {
+      return err("Position or rotation not provided for human player");
+    }
+    chosenPlacement = { position, rotation };
   }
 
   const updatedKingdom = placeDomino(
-    currentPlayer.kingdom,
-    position,
-    rotation,
+    currentTurnPlayer.kingdom,
+    chosenPlacement.position,
+    chosenPlacement.rotation,
     domino
   );
 
@@ -70,11 +87,11 @@ export const placeDominoUseCase: PlaceDominoUseCase = (
     return updatedKingdom;
   }
 
-  const updatedPlayers = game.players.map((player) => {
-    if (player.id === currentPlayer.id) {
-      player.kingdom = updatedKingdom.value;
+  const updatedPlayers = game.players.map((p) => {
+    if (p.id === currentTurnPlayer.id) {
+      return { ...p, kingdom: updatedKingdom.value };
     }
-    return player;
+    return p;
   });
 
   const maxTurns = game.rules.basic.maxTurns;
