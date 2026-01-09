@@ -1,6 +1,29 @@
 import type { Logger } from "@core/portServerside/logger.js";
 import winston from "winston";
 
+/**
+ * Creates a Winston-based logger for advanced logging needs.
+ *
+ * **Note:** Winston is an optional peer dependency. To use this logger,
+ * you must install winston separately:
+ *
+ * ```bash
+ * npm install winston
+ * ```
+ *
+ * @example
+ * ```typescript
+ * import { createGameEngine } from '@pompidup/kingdomino-engine';
+ * import { winstonLogger } from '@pompidup/kingdomino-engine/adapters';
+ *
+ * const engine = createGameEngine({
+ *   logger: winstonLogger(true)
+ * });
+ * ```
+ *
+ * @param isLoggingEnabled - Whether logging is enabled
+ * @returns A Logger instance using Winston
+ */
 export const winstonLogger = (isLoggingEnabled: boolean): Logger => {
   const myFormat = winston.format.printf(
     ({ level, message, label, timestamp }) => {
@@ -26,13 +49,11 @@ export const winstonLogger = (isLoggingEnabled: boolean): Logger => {
       if (isLoggingEnabled) {
         logger.info(message);
       }
-      return void 0;
     },
     error: (message: string) => {
       if (isLoggingEnabled) {
         logger.error(message);
       }
-      return void 0;
     },
   };
 };
