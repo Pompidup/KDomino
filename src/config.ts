@@ -3,7 +3,7 @@ import jsonModes from "@adapter/jsonModes.js";
 import jsonRules from "@adapter/jsonRules.js";
 import { shuffleMethod } from "@adapter/shuffle.js";
 import { uuidMethod } from "@adapter/uuid.js";
-import { winstonLogger } from "@adapter/winstonLogger.js";
+import { consoleLogger, silentLogger } from "@adapter/consoleLogger.js";
 import { addExtraRulesHandler } from "@application/handlers/addExtraRulesHandler.js";
 import { addPlayersHandler } from "@application/handlers/addPlayersHandler.js";
 import { chooseDominoHandler } from "@application/handlers/chooseDominoHandler.js";
@@ -15,8 +15,15 @@ import { getResultHandler } from "@application/handlers/getResultHandler.js";
 import { placeDominoHandler } from "@application/handlers/placeDominoHandler.js";
 import { startGameHandler } from "@application/handlers/startGameHandler.js";
 import { calculateScoreHandler } from "@application/handlers/calculateScoreHandler.js";
+import { getValidPlacementsHandler } from "@application/handlers/getValidPlacementsHandler.js";
+import { canPlaceDominoHandler } from "@application/handlers/canPlaceDominoHandler.js";
+import {
+  serializeGameHandler,
+  deserializeGameHandler,
+} from "@application/handlers/serializeGameHandler.js";
 import type { ShuffleMethod } from "@core/portServerside/shuffleMethod.js";
 import type { UuidMethod } from "@core/portServerside/uuidMethod.js";
+import type { Logger } from "@core/portServerside/logger.js";
 import { addExtraRulesUseCase } from "@core/useCases/addExtraRules.js";
 import { addPlayersUseCase } from "@core/useCases/addPlayers.js";
 import { chooseDominoUseCase } from "@core/useCases/chooseDomino.js";
@@ -29,10 +36,18 @@ import { placeDominoUseCase } from "@core/useCases/placeDomino.js";
 import { startGameUseCase } from "@core/useCases/startGame.js";
 import { calculateScoreUseCase } from "@core/useCases/calculateScore.js";
 
+/**
+ * Configuration options for the game engine.
+ */
 export type EngineConfig = {
+  /** Custom UUID generation method. Defaults to crypto.randomUUID() */
   uuidMethod?: UuidMethod;
+  /** Custom shuffle method. Defaults to Fisher-Yates algorithm */
   shuffleMethod?: ShuffleMethod;
+  /** Enable console logging. Defaults to false */
   logging?: boolean;
+  /** Custom logger instance. When provided, takes precedence over 'logging' option */
+  logger?: Logger;
 };
 
 export const configureEngine = (config: Partial<EngineConfig>) => {
@@ -41,7 +56,13 @@ export const configureEngine = (config: Partial<EngineConfig>) => {
   const ruleRepository = jsonRules();
   const uuid = config.uuidMethod || uuidMethod;
   const shuffle = config.shuffleMethod || shuffleMethod;
-  const logger = config.logging ? winstonLogger(true) : winstonLogger(false);
+
+  // Logger priority: custom logger > logging flag > silent
+  const logger = config.logger
+    ? config.logger
+    : config.logging
+      ? consoleLogger(true)
+      : silentLogger;
 
   return {
     createGameHandler: createGameHandler(
@@ -84,5 +105,9 @@ export const configureEngine = (config: Partial<EngineConfig>) => {
       calculateScoreUseCase,
     }),
     calculateScoreHandler: calculateScoreHandler(logger, calculateScoreUseCase),
+    getValidPlacementsHandler: getValidPlacementsHandler(logger),
+    canPlaceDominoHandler: canPlaceDominoHandler(logger),
+    serializeGameHandler: serializeGameHandler(logger),
+    deserializeGameHandler: deserializeGameHandler(logger),
   };
 };

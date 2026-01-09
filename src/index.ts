@@ -1,11 +1,58 @@
 import type { GameEngine } from "@core/portUserside/engine";
 import { configureEngine, type EngineConfig } from "./config.js";
 
+// Configuration
+export type { EngineConfig };
+
+// Commands
 export * from "@application/commands/index.js";
+
+// Domain types
 export * from "@core/domain/types/index.js";
+
+// Domain errors
+export * from "@core/domain/errors/domainErrors.js";
+
+// Ports
 export * from "@core/portServerside/index.js";
 export * from "@core/portUserside/engine.js";
 
+// Events
+export * from "@core/events/gameEvents.js";
+
+// i18n
+export * from "@core/i18n/translations.js";
+
+// Use cases (for advanced usage)
+export { type ValidPlacement } from "@core/useCases/getValidPlacements.js";
+export {
+  serializeGame,
+  deserializeGame,
+  createSavePoint,
+  restoreFromSavePoint,
+  type GameSavePoint,
+} from "@core/useCases/serialization.js";
+
+/**
+ * Creates a new Kingdomino game engine instance.
+ *
+ * @param config - Configuration options for the engine
+ * @returns A fully configured GameEngine instance
+ *
+ * @example
+ * ```typescript
+ * // Basic usage
+ * const engine = createGameEngine({});
+ *
+ * // With logging
+ * const engine = createGameEngine({ logging: true });
+ *
+ * // With custom shuffle for testing
+ * const engine = createGameEngine({
+ *   shuffleMethod: (array) => array, // No shuffle
+ * });
+ * ```
+ */
 export const createGameEngine = (config: Partial<EngineConfig>): GameEngine => {
   const {
     createGameHandler,
@@ -19,6 +66,10 @@ export const createGameEngine = (config: Partial<EngineConfig>): GameEngine => {
     discardDominoHandler,
     getResultHandler,
     calculateScoreHandler,
+    getValidPlacementsHandler,
+    canPlaceDominoHandler,
+    serializeGameHandler,
+    deserializeGameHandler,
   } = configureEngine(config);
 
   return {
@@ -33,5 +84,9 @@ export const createGameEngine = (config: Partial<EngineConfig>): GameEngine => {
     discardDomino: (command) => discardDominoHandler(command),
     getResults: (command) => getResultHandler(command),
     calculateScore: (command) => calculateScoreHandler(command),
+    getValidPlacements: (command) => getValidPlacementsHandler(command),
+    canPlaceDomino: (command) => canPlaceDominoHandler(command),
+    serialize: (command) => serializeGameHandler(command),
+    deserialize: (command) => deserializeGameHandler(command),
   };
 };

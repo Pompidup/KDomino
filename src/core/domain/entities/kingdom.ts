@@ -267,44 +267,48 @@ const hasValidAdjacent = (
 };
 
 export const checkCastleIsInMiddle = (kingdom: Kingdom): boolean => {
-  // Find index of castle
-  const castlePosition = kingdom
-    .map((row) => row.findIndex((tile) => tile.type === "castle"))
-    .find((index) => index !== -1);
+  // Find castle coordinates (x, y)
+  let castleX: number | undefined;
+  let castleY: number | undefined;
 
-  // Count how many tiles not empty are on the left of the castle
-  const leftTiles =
-    castlePosition !== undefined
-      ? kingdom[castlePosition]!.slice(0, castlePosition)
-      : [];
-  const leftTilesCount = leftTiles.filter(
-    (tile) => tile.type !== "empty"
-  ).length;
+  for (let y = 0; y < kingdom.length; y++) {
+    const x = kingdom[y]!.findIndex((tile) => tile.type === "castle");
+    if (x !== -1) {
+      castleX = x;
+      castleY = y;
+      break;
+    }
+  }
 
-  // Count how many tiles not empty are on the right of the castle
-  const rightTiles =
-    castlePosition !== undefined
-      ? kingdom[castlePosition]!.slice(castlePosition + 1)
-      : [];
-  const rightTilesCount = rightTiles.filter(
-    (tile) => tile.type !== "empty"
-  ).length;
+  if (castleX === undefined || castleY === undefined) {
+    return false;
+  }
 
-  // Count how many tiles not empty are on the top of the castle
-  const topTiles =
-    castlePosition !== undefined
-      ? kingdom[castlePosition]!.slice(0, castlePosition)
-      : [];
-  const topTilesCount = topTiles.filter((tile) => tile.type !== "empty").length;
+  // Count tiles on the left of the castle (same row, x < castleX)
+  const leftTilesCount = kingdom[castleY]!
+    .slice(0, castleX)
+    .filter((tile) => tile.type !== "empty").length;
 
-  // Count how many tiles not empty are on the bottom of the castle
-  const bottomTiles =
-    castlePosition != undefined
-      ? kingdom[castlePosition]!.slice(castlePosition + 1)
-      : [];
-  const bottomTilesCount = bottomTiles.filter(
-    (tile) => tile.type !== "empty"
-  ).length;
+  // Count tiles on the right of the castle (same row, x > castleX)
+  const rightTilesCount = kingdom[castleY]!
+    .slice(castleX + 1)
+    .filter((tile) => tile.type !== "empty").length;
+
+  // Count tiles above the castle (same column, y < castleY)
+  let topTilesCount = 0;
+  for (let y = 0; y < castleY; y++) {
+    if (kingdom[y]![castleX]!.type !== "empty") {
+      topTilesCount++;
+    }
+  }
+
+  // Count tiles below the castle (same column, y > castleY)
+  let bottomTilesCount = 0;
+  for (let y = castleY + 1; y < kingdom.length; y++) {
+    if (kingdom[y]![castleX]!.type !== "empty") {
+      bottomTilesCount++;
+    }
+  }
 
   return (
     leftTilesCount === rightTilesCount &&

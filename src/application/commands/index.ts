@@ -9,3 +9,6 @@ export * from "./getModesCommand.js";
 export * from "./getResultCommand.js";
 export * from "./placeDominoCommand.js";
 export * from "./startGameCommand.js";
+export * from "./getValidPlacementsCommand.js";
+export * from "./canPlaceDominoCommand.js";
+export * from "./serializeGameCommand.js";

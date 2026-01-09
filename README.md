@@ -115,7 +115,7 @@ const engine = createGameEngine({});
 Add players to the game by passing an array of player names:
 
 ```typescript
-gameState = engine.addPlayers({gameState, ["Player 1", "Player 2", "Player 3"]});
+gameState = engine.addPlayers({ game: gameState, players: ["Player 1", "Player 2", "Player 3"] });
 ```
 
 ### Getting Available Game Modes
