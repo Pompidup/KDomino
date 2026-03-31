@@ -35,6 +35,9 @@
     "url": "https://github.com/Pompidup/KDomino/issues"
   },
   "homepage": "https://github.com/Pompidup/KDomino#readme",
+  "engines": {
+    "node": ">=18"
+  },
   "devDependencies": {
     "@biomejs/biome": "^2.4.10",
     "@types/node": "^25.5.0",
