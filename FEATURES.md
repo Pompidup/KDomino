@@ -14,7 +14,7 @@
 ## Règles et gameplay
 
 5. ~~**Undo/Redo**~~ - ✅ Implémenté. `GameHistory` avec `createGameHistory`, `pushState`, `undo`, `redo`, `canUndo`, `canRedo`, `clearHistory`, `getHistorySize`. Snapshot-based, standalone utility.
-6. **Historique des coups** - Enregistrer chaque action dans un log immuable pour pouvoir rejouer une partie ou l'analyser.
+6. ~~**Historique des coups**~~ - ✅ Implémenté. Log immuable via `wrapWithActionLog(engine)` qui enregistre chaque action. Queries : `getActions`, `getActionsByType`, `getActionsByTurn`. Replay complet via `replayActions(engine, log)`. Standalone utility, types exportés (`GameActionLog`, `ActionEntry`, `ActionType`).
 7. **Mode spectateur** - API pour obtenir un état de jeu "censuré" (sans révéler les infos cachées aux autres joueurs).
 8. **Timer/Horloge** - Support optionnel d'un timer par tour pour les parties compétitives.
 9. ~~**Seed de partie**~~ - ✅ Implémenté. Seed optionnel dans `createGame({ seed })`, auto-généré si absent, déterminisme garanti sur dominos et lords.
@@ -58,3 +58,4 @@ Les plus impactantes à court terme :
 - ~~**Undo/Redo** (5)~~ - ✅ Done
 - ~~**Bot / IA joueur** (19)~~ - ✅ Done
 - ~~**Système d'événements v2** (13)~~ - ✅ Done
+- ~~**Historique des coups** (6)~~ - ✅ Done

@@ -1,67 +1,74 @@
 import type { GameEngine } from "@core/portUserside/engine";
-import { configureEngine, type EngineConfig } from "./config.js";
 import { wrapWithEvents } from "@core/useCases/gameEvents.js";
-
-// Configuration
-export type { EngineConfig };
+import { configureEngine, type EngineConfig } from "./config.js";
 
 // Commands
 export * from "@application/commands/index.js";
+// Domain errors
+export * from "@core/domain/errors/domainErrors.js";
 
 // Domain types
 export * from "@core/domain/types/index.js";
-
-// Domain errors
-export * from "@core/domain/errors/domainErrors.js";
+// i18n
+export * from "@core/i18n/translations.js";
 
 // Ports
 export * from "@core/portServerside/index.js";
 export * from "@core/portUserside/engine.js";
-
-// i18n
-export * from "@core/i18n/translations.js";
-
-// Use cases (for advanced usage)
-export { type ValidPlacement } from "@core/useCases/getValidPlacements.js";
-export { type DynastyResult } from "@core/useCases/getDynastyResult.js";
-export {
-  serializeGame,
-  deserializeGame,
-  createSavePoint,
-  restoreFromSavePoint,
-  type GameSavePoint,
-} from "@core/useCases/serialization.js";
-
-// History (undo/redo)
-export {
-  type GameHistory,
-  createGameHistory,
-  pushState,
-  undo,
-  redo,
-  canUndo,
-  canRedo,
-  clearHistory,
-  getHistorySize,
-} from "@core/useCases/gameHistory.js";
-
 // Bot / AI player
 export {
+  advancedStrategy,
   type BotStrategy,
+  expertStrategy,
+  greedyStrategy,
   type PickContext,
   type PlaceContext,
-  randomStrategy,
-  greedyStrategy,
-  advancedStrategy,
-  expertStrategy,
   playBotTurn,
+  randomStrategy,
 } from "@core/useCases/bot.js";
-
+// Action log (game history / replay)
+export {
+  type ActionEntry,
+  type ActionPayloadMap,
+  type ActionType,
+  appendAction,
+  createActionLog,
+  type GameActionLog,
+  getActions,
+  getActionsByTurn,
+  getActionsByType,
+  replayActions,
+  wrapWithActionLog,
+} from "@core/useCases/gameActionLog.js";
 // Game events
 export {
   type GameEventCallbacks,
   wrapWithEvents,
 } from "@core/useCases/gameEvents.js";
+// History (undo/redo)
+export {
+  canRedo,
+  canUndo,
+  clearHistory,
+  createGameHistory,
+  type GameHistory,
+  getHistorySize,
+  pushState,
+  redo,
+  undo,
+} from "@core/useCases/gameHistory.js";
+export type { DynastyResult } from "@core/useCases/getDynastyResult.js";
+// Use cases (for advanced usage)
+export type { ValidPlacement } from "@core/useCases/getValidPlacements.js";
+export {
+  createSavePoint,
+  deserializeGame,
+  type GameSavePoint,
+  restoreFromSavePoint,
+  serializeGame,
+} from "@core/useCases/serialization.js";
+// Configuration
+export type { EngineConfig };
 
 /**
  * Creates a new Kingdomino game engine instance.
