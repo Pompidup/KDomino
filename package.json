@@ -13,7 +13,8 @@
     "url": "git+https://github.com/Pompidup/KDomino.git"
   },
   "scripts": {
-    "lint": "tsc",
+    "typecheck": "tsc",
+    "lint": "biome check src/",
     "test": "vitest",
     "coverage": "vitest --coverage --config ./vitest.config.ts",
     "build": "tsup",
@@ -35,6 +36,7 @@
   },
   "homepage": "https://github.com/Pompidup/KDomino#readme",
   "devDependencies": {
+    "@biomejs/biome": "^2.4.10",
     "@types/node": "^25.5.0",
     "@vitest/coverage-v8": "^4.1.2",
     "tsup": "^8.2.4",
