@@ -32,3 +32,8 @@ export type Kingdom = (Tile | EmptyTile)[][];
  * This allows for a 5x5 kingdom with the castle placed anywhere.
  */
 export const GRIDSIZE = 9;
+
+/**
+ * Maximum kingdom size (5x5 in standard rules, 7x7 for Mighty Duel).
+ */
+export const MAX_KINGDOM_SIZE = 5;

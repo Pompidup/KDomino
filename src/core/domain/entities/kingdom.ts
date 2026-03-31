@@ -2,6 +2,7 @@ import {
   type Domino,
   type EmptyTile,
   GRIDSIZE,
+  MAX_KINGDOM_SIZE,
   type Kingdom,
   type Position,
   type Rotation,
@@ -150,6 +151,10 @@ export const placeDomino = (
     return isFreePlaceResult;
   }
 
+  if (exceedsMaxSize(kingdom, firstTile.position, secondTile.position)) {
+    return err("Invalid placement (exceeds kingdom size)");
+  }
+
   const adjacentTiles = isAdjacent(
     kingdom,
     firstTile.position,
@@ -251,7 +256,7 @@ const hasValidAdjacent = (
 };
 
 export const checkCastleIsInMiddle = (kingdom: Kingdom): boolean => {
-  // Find castle coordinates (x, y)
+  // Find castle coordinates
   let castleX: number | undefined;
   let castleY: number | undefined;
 
@@ -268,37 +273,60 @@ export const checkCastleIsInMiddle = (kingdom: Kingdom): boolean => {
     return false;
   }
 
-  // Count tiles on the left of the castle (same row, x < castleX)
-  const leftTilesCount = kingdom[castleY]!
-    .slice(0, castleX)
-    .filter((tile) => tile.type !== "empty").length;
+  const bbox = getBoundingBox(kingdom);
+  if (!bbox) return false;
 
-  // Count tiles on the right of the castle (same row, x > castleX)
-  const rightTilesCount = kingdom[castleY]!
-    .slice(castleX + 1)
-    .filter((tile) => tile.type !== "empty").length;
+  // Castle must be at the exact center of the bounding box
+  const centerX = (bbox.minX + bbox.maxX) / 2;
+  const centerY = (bbox.minY + bbox.maxY) / 2;
 
-  // Count tiles above the castle (same column, y < castleY)
-  let topTilesCount = 0;
-  for (let y = 0; y < castleY; y++) {
-    if (kingdom[y]![castleX]!.type !== "empty") {
-      topTilesCount++;
+  return castleX === centerX && castleY === centerY;
+};
+
+export const getBoundingBox = (
+  kingdom: Kingdom
+): { minX: number; maxX: number; minY: number; maxY: number } | null => {
+  let minX = Infinity;
+  let maxX = -Infinity;
+  let minY = Infinity;
+  let maxY = -Infinity;
+
+  for (let y = 0; y < kingdom.length; y++) {
+    for (let x = 0; x < kingdom[y]!.length; x++) {
+      if (kingdom[y]![x]!.type !== "empty") {
+        if (x < minX) minX = x;
+        if (x > maxX) maxX = x;
+        if (y < minY) minY = y;
+        if (y > maxY) maxY = y;
+      }
     }
   }
 
-  // Count tiles below the castle (same column, y > castleY)
-  let bottomTilesCount = 0;
-  for (let y = castleY + 1; y < kingdom.length; y++) {
-    if (kingdom[y]![castleX]!.type !== "empty") {
-      bottomTilesCount++;
-    }
+  if (minX === Infinity) return null;
+  return { minX, maxX, minY, maxY };
+};
+
+const exceedsMaxSize = (
+  kingdom: Kingdom,
+  firstPosition: Position,
+  secondPosition: Position,
+  maxSize: number = MAX_KINGDOM_SIZE
+): boolean => {
+  const bbox = getBoundingBox(kingdom);
+
+  let minX = bbox?.minX ?? Infinity;
+  let maxX = bbox?.maxX ?? -Infinity;
+  let minY = bbox?.minY ?? Infinity;
+  let maxY = bbox?.maxY ?? -Infinity;
+
+  for (const pos of [firstPosition, secondPosition]) {
+    if (pos.x < minX) minX = pos.x;
+    if (pos.x > maxX) maxX = pos.x;
+    if (pos.y < minY) minY = pos.y;
+    if (pos.y > maxY) maxY = pos.y;
   }
 
-  return (
-    leftTilesCount === rightTilesCount &&
-    topTilesCount === bottomTilesCount &&
-    leftTilesCount === topTilesCount
-  );
+  return (maxX - minX + 1) > maxSize || (maxY - minY + 1) > maxSize;
 };
 
 export const countDominoes = (kingdom: Kingdom): number => {
