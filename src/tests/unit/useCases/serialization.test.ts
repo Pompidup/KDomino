@@ -105,6 +105,20 @@ describe("Serialization", () => {
         expect(result.error).toBe("Invalid game state structure");
       }
     });
+
+    test("should preserve seed through serialization round-trip", () => {
+      const game = createGameBuilder()
+        .withAllDefaults()
+        .withNextAction(stepStart)
+        .withSeed("my-replay-seed")
+        .build();
+      const json = serializeGame(game);
+      const result = deserializeGame(json);
+
+      expect(isOk(result)).toBe(true);
+      const restored = unwrap(result);
+      expect(restored.seed).toBe("my-replay-seed");
+    });
   });
 
   describe("createSavePoint", () => {

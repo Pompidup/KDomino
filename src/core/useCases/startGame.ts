@@ -9,6 +9,7 @@ import { playerActions } from "@core/domain/types/player.js";
 import type { ShuffleMethod } from "@core/portServerside/shuffleMethod.js";
 import type { UuidMethod } from "@core/portServerside/uuidMethod.js";
 import { ok, type Result } from "@utils/result.js";
+import { createSeededShuffle } from "@utils/seededShuffle.js";
 
 export type StartGameUseCase = (
   game: GameWithNextStep
@@ -40,7 +41,10 @@ export const startGameUseCase =
       }
     }
 
-    const shuffledLords = shuffleMethod(newLords);
+    const shuffle = game.seed
+      ? createSeededShuffle(game.seed, "lords")
+      : shuffleMethod;
+    const shuffledLords = shuffle(newLords);
     const dominoesCopy = [...dominoes];
     const dominoesDrawn = dominoesCopy.splice(0, dominoesPerTurn);
     dominoesDrawn.sort((a, b) => a.number - b.number);

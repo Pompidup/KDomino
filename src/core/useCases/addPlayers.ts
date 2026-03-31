@@ -12,6 +12,7 @@ import type { RuleRepository } from "@core/portServerside/ruleRepository.js";
 import type { ShuffleMethod } from "@core/portServerside/shuffleMethod.js";
 import type { UuidMethod } from "@core/portServerside/uuidMethod.js";
 import { err, isErr, ok, type Result } from "@utils/result.js";
+import { createSeededShuffle } from "@utils/seededShuffle.js";
 
 export type AddPlayersUseCase = (
   game: GameWithNextStep,
@@ -57,7 +58,10 @@ export const addPlayersUseCase =
     // updateDominoes
     const dominoes = game.dominoes;
     const { maxDominoes } = basicRules;
-    const shuffledDominoes = shuffleMethod(dominoes);
+    const shuffle = game.seed
+      ? createSeededShuffle(game.seed, "dominoes")
+      : shuffleMethod;
+    const shuffledDominoes = shuffle(dominoes);
     const splicedDominoes = shuffledDominoes.slice(0, maxDominoes);
     const next: NextStep = {
       type: "step",

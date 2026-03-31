@@ -66,6 +66,41 @@ describe("Create game", () => {
     });
   });
 
+  test("should store the provided seed", () => {
+    // Arrange
+    const fakeUuid = () => "uuid-test";
+
+    const deps = {
+      modeRepository: jsonModes(),
+      dominoesRepository: jsonDominoes(),
+      uuidMethod: fakeUuid,
+    };
+
+    // Act
+    const result = createGameUseCase(deps)("Classic", "my-custom-seed");
+
+    // Assert
+    expect(unwrap(result).seed).toBe("my-custom-seed");
+  });
+
+  test("should auto-generate a seed when none is provided", () => {
+    // Arrange
+    const fakeUuid = () => "uuid-test";
+
+    const deps = {
+      modeRepository: jsonModes(),
+      dominoesRepository: jsonDominoes(),
+      uuidMethod: fakeUuid,
+    };
+
+    // Act
+    const result = createGameUseCase(deps)("Classic");
+
+    // Assert
+    expect(unwrap(result).seed).toBeDefined();
+    expect(unwrap(result).seed).toBe("uuid-test");
+  });
+
   test("should return next step add players", () => {
     // Arrange
     const fakeUuid = () => "uuid-test";

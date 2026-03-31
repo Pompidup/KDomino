@@ -384,4 +384,80 @@ describe("Engine", () => {
     const hasX7Mighty = placementsMighty.some((p: any) => p.position.x === 7);
     expect(hasX7Mighty).toBe(true);
   });
+
+  test("should produce identical games with the same seed", () => {
+    const seed = "replay-test-seed";
+
+    // Run game setup twice with the same seed
+    const game1 = engine.createGame({ mode: "Classic", seed });
+    const withPlayers1 = engine.addPlayers({
+      game: game1,
+      players: ["Alice", "Bob"],
+    });
+    const started1 = engine.startGame({ game: withPlayers1 });
+
+    const game2 = engine.createGame({ mode: "Classic", seed });
+    const withPlayers2 = engine.addPlayers({
+      game: game2,
+      players: ["Alice", "Bob"],
+    });
+    const started2 = engine.startGame({ game: withPlayers2 });
+
+    // Domino order should be identical
+    expect(started1.dominoes.map((d) => d.number)).toEqual(
+      started2.dominoes.map((d) => d.number)
+    );
+    expect(started1.currentDominoes.map((d) => d.domino.number)).toEqual(
+      started2.currentDominoes.map((d) => d.domino.number)
+    );
+
+    // Lord order should be identical (same player index pattern)
+    // Map playerIds to indices (0 or 1) to compare structural order
+    const toPattern = (started: typeof started1) => {
+      const playerIds = started.players.map((p) => p.id);
+      return started.lords.map((l) => playerIds.indexOf(l.playerId));
+    };
+    expect(toPattern(started1)).toEqual(toPattern(started2));
+  });
+
+  test("should produce different games with different seeds", () => {
+    const runSetup = (seed: string) => {
+      const game = engine.createGame({ mode: "Classic", seed });
+      const withPlayers = engine.addPlayers({
+        game,
+        players: ["Alice", "Bob"],
+      });
+      return engine.startGame({ game: withPlayers });
+    };
+
+    const started1 = runSetup("seed-AAA");
+    const started2 = runSetup("seed-BBB");
+
+    // At least one of domino order or lord order should differ
+    const dominosSame =
+      JSON.stringify(started1.dominoes.map((d) => d.number)) ===
+      JSON.stringify(started2.dominoes.map((d) => d.number));
+
+    expect(dominosSame).toBe(false);
+  });
+
+  test("should store and preserve the seed in game state", () => {
+    const game = engine.createGame({ mode: "Classic", seed: "my-seed" });
+    expect(game.seed).toBe("my-seed");
+
+    const withPlayers = engine.addPlayers({
+      game,
+      players: ["Alice", "Bob"],
+    });
+    expect(withPlayers.seed).toBe("my-seed");
+
+    const started = engine.startGame({ game: withPlayers });
+    expect(started.seed).toBe("my-seed");
+  });
+
+  test("should auto-generate a seed when none is provided", () => {
+    const game = engine.createGame({ mode: "Classic" });
+    expect(game.seed).toBeDefined();
+    expect(typeof game.seed).toBe("string");
+  });
 });

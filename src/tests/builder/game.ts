@@ -101,6 +101,7 @@ export const createGameBuilder = <
     createGameBuilder<U>({ ...game, nextAction } as GameBuilderNextAction<U>),
   withRules: (rules: Game["rules"]) => createGameBuilder<T>({ ...game, rules }),
   withMode: (mode: Game["mode"]) => createGameBuilder<T>({ ...game, mode }),
+  withSeed: (seed: string) => createGameBuilder<T>({ ...game, seed }),
   withDefaultDominoes: () =>
     createGameBuilder<T>({
       ...game,

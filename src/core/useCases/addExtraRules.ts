@@ -9,6 +9,7 @@ import type { RuleRepository } from "@core/portServerside/ruleRepository.js";
 import type { DominoesRepository } from "@core/portServerside/dominoesRepository.js";
 import type { ShuffleMethod } from "@core/portServerside/shuffleMethod.js";
 import { toExtraRule } from "@core/domain/entities/rule.js";
+import { createSeededShuffle } from "@utils/seededShuffle.js";
 
 export type AddExtraRulesUseCase = (
   game: GameWithNextStep,
@@ -51,7 +52,10 @@ export const addExtraRulesUseCase =
       // Reload and shuffle all 48 dominoes
       const allDominoes = dominoesRepository.getForMode(game.mode);
       if (allDominoes) {
-        updatedDominoes = shuffleMethod(allDominoes);
+        const shuffle = game.seed
+          ? createSeededShuffle(game.seed, "mighty-duel")
+          : shuffleMethod;
+        updatedDominoes = shuffle(allDominoes);
       }
     }
 

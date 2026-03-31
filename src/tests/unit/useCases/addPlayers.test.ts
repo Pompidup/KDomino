@@ -154,6 +154,43 @@ describe("Add players", () => {
     expect(result).toEqual(err("Invalid number of players"));
   });
 
+  test("should use seeded shuffle when game has a seed", () => {
+    // Arrange
+    const initialGame = createGameBuilder<NextStep>()
+      .withId("uuid-test")
+      .withMode({ name: "Classic", description: "Classic mode" })
+      .withDominoes(
+        Array.from({ length: 10 }, (_, i) => ({
+          number: i + 1,
+          left: { type: "wheat" as const, crowns: 0 },
+          right: { type: "forest" as const, crowns: 0 },
+        }))
+      )
+      .withSeed("test-seed")
+      .build();
+
+    const dependencies = {
+      uuidMethod: () => "uuid-test",
+      shuffleMethod: (dominoes: any[]) => dominoes,
+      ruleRepository: inMemoryRepo,
+    };
+
+    // Act
+    const result1 = addPlayersUseCase(dependencies)(initialGame, [
+      "Player 1",
+      "Player 2",
+    ]);
+    const result2 = addPlayersUseCase(dependencies)(initialGame, [
+      "Player 1",
+      "Player 2",
+    ]);
+
+    // Assert - same seed produces same domino order
+    const dominoes1 = unwrap(result1).dominoes;
+    const dominoes2 = unwrap(result2).dominoes;
+    expect(dominoes1).toEqual(dominoes2);
+  });
+
   test("should return an error if player name is invalid", () => {
     // Arrange
     const initialGame = createGameBuilder<NextStep>()

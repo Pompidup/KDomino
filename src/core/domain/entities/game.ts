@@ -9,8 +9,9 @@ export const create = (payload: {
   id: string;
   mode: GameMode;
   dominoes: Domino[];
+  seed?: string;
 }): GameWithNextStep => {
-  const { id, mode, dominoes } = payload;
+  const { id, mode, dominoes, seed } = payload;
   return {
     id,
     dominoes,
@@ -33,5 +34,6 @@ export const create = (payload: {
       extra: [],
     },
     mode,
+    ...(seed !== undefined && { seed }),
   };
 };

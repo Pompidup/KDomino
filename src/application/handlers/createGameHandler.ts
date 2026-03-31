@@ -11,7 +11,7 @@ export const createGameHandler =
   (logger: Logger, useCase: CreateGameUseCase): CreateGameHandler =>
   (command: CreateGameCommand) => {
     logger.info(`Creating game with mode: ${command.mode}`);
-    const result = useCase(command.mode);
+    const result = useCase(command.mode, command.seed);
 
     if (isErr(result)) {
       logger.error(`Error creating game: ${result.error}`);

@@ -137,6 +137,60 @@ describe("Add extra rules", () => {
     ]);
   });
 
+  test("should use seeded shuffle for Mighty Duel when game has a seed", () => {
+    // Arrange
+    const mightyDuelDominoes: Domino[] = Array.from({ length: 48 }, (_, i) => ({
+      left: { type: "forest" as const, crowns: 0 },
+      right: { type: "wheat" as const, crowns: i % 3 },
+      number: i + 1,
+    }));
+
+    const extraRules = [
+      {
+        name: "The Mighty Duel",
+        description: "Use all 48 dominoes and build a 7x7 kingdom.",
+        mode: [{ name: "Classic", description: "Classic mode" }],
+        playersLimit: 2,
+      },
+    ];
+
+    const ruleRepository: RuleRepository = {
+      getAll: () => ({ basic: basicRules, extraRules }),
+      getAllExtra: () => extraRules,
+    };
+
+    const dominoesRepository: DominoesRepository = {
+      getForMode: () => mightyDuelDominoes,
+    };
+
+    const shuffleMethod = <T>(array: T[]) => array;
+
+    const initialGame = createGameBuilder<NextStep>()
+      .withId("uuid-test")
+      .withMode(mode)
+      .withDominoes(dominoes)
+      .withSeed("mighty-seed")
+      .build();
+
+    // Act
+    const result1 = addExtraRulesUseCase({
+      ruleRepository,
+      dominoesRepository,
+      shuffleMethod,
+    })(initialGame, ["The Mighty Duel"]);
+    const result2 = addExtraRulesUseCase({
+      ruleRepository,
+      dominoesRepository,
+      shuffleMethod,
+    })(initialGame, ["The Mighty Duel"]);
+
+    // Assert - same seed produces same domino order
+    const dominoes1 = unwrap(result1).dominoes;
+    const dominoes2 = unwrap(result2).dominoes;
+    expect(dominoes1).toEqual(dominoes2);
+    expect(dominoes1.length).toBe(48);
+  });
+
   test("should return error if extra rules not available", () => {
     // Arrange
     const initialGame = createGameBuilder<NextStep>()

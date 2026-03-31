@@ -6,7 +6,10 @@ import type { ModeRepository } from "@core/portServerside/modeRepository.js";
 import type { UuidMethod } from "@core/portServerside/uuidMethod.js";
 import { err, isErr, ok, type Result } from "@utils/result.js";
 
-export type CreateGameUseCase = (mode: string) => Result<GameWithNextStep>;
+export type CreateGameUseCase = (
+  mode: string,
+  seed?: string
+) => Result<GameWithNextStep>;
 
 export const createGameUseCase =
   (deps: {
@@ -14,9 +17,10 @@ export const createGameUseCase =
     dominoesRepository: DominoesRepository;
     uuidMethod: UuidMethod;
   }): CreateGameUseCase =>
-  (mode) => {
+  (mode, seed) => {
     const { modeRepository, dominoesRepository, uuidMethod } = deps;
     const id = uuidMethod();
+    const gameSeed = seed ?? uuidMethod();
     const availableMode = modeRepository.getAvailables();
     const newMode = createMode(mode, availableMode);
 
@@ -34,6 +38,7 @@ export const createGameUseCase =
       id,
       mode: newMode.value,
       dominoes,
+      seed: gameSeed,
     };
 
     const newGame = create(payload);

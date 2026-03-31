@@ -29,6 +29,8 @@ export type Game = {
   rules: SelectedRules;
   /** Game mode being played */
   mode: GameMode;
+  /** Optional seed for deterministic shuffle (replays, sharing) */
+  seed?: string;
 };
 
 /**
