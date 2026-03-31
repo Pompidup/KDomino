@@ -10,8 +10,8 @@
     {
       "playersLimit": 3,
       "lordsPerPlayer": 1,
-      "maxDominoes": 36,
-      "dominoesPerTurn": 3,
+      "maxDominoes": 48,
+      "dominoesPerTurn": 4,
       "maxTurns": 12
     },
     {

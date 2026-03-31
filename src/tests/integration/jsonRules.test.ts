@@ -13,7 +13,7 @@ describe("jsonRules", () => {
     expect(result).toHaveProperty("basic");
     expect(result.basic).toEqual({
       "2": { lords: 2, maxDominoes: 24, dominoesPerTurn: 4, maxTurns: 6 },
-      "3": { lords: 1, maxDominoes: 36, dominoesPerTurn: 3, maxTurns: 12 },
+      "3": { lords: 1, maxDominoes: 48, dominoesPerTurn: 4, maxTurns: 12 },
       "4": { lords: 1, maxDominoes: 48, dominoesPerTurn: 4, maxTurns: 12 },
     });
     expect(result).toHaveProperty("extraRules");
