@@ -1,5 +1,6 @@
 import type { GameEngine } from "@core/portUserside/engine";
 import { configureEngine, type EngineConfig } from "./config.js";
+import { wrapWithEvents } from "@core/useCases/gameEvents.js";
 
 // Configuration
 export type { EngineConfig };
@@ -56,6 +57,12 @@ export {
   playBotTurn,
 } from "@core/useCases/bot.js";
 
+// Game events
+export {
+  type GameEventCallbacks,
+  wrapWithEvents,
+} from "@core/useCases/gameEvents.js";
+
 /**
  * Creates a new Kingdomino game engine instance.
  *
@@ -70,9 +77,12 @@ export {
  * // With logging
  * const engine = createGameEngine({ logging: true });
  *
- * // With custom shuffle for testing
+ * // With event callbacks
  * const engine = createGameEngine({
- *   shuffleMethod: (array) => array, // No shuffle
+ *   events: {
+ *     onDominoPlaced: ({ lordId }) => console.log(`${lordId} placed`),
+ *     onGameEnd: () => console.log('Game over!'),
+ *   },
  * });
  * ```
  */
@@ -96,7 +106,7 @@ export const createGameEngine = (config: Partial<EngineConfig>): GameEngine => {
     getDynastyResultHandler,
   } = configureEngine(config);
 
-  return {
+  let engine: GameEngine = {
     getModes: (command) => getModesHandler(command),
     getExtraRules: (command) => getExtraRulesHandler(command),
     createGame: (command) => createGameHandler(command),
@@ -114,4 +124,10 @@ export const createGameEngine = (config: Partial<EngineConfig>): GameEngine => {
     deserialize: (command) => deserializeGameHandler(command),
     getDynastyResults: (command) => getDynastyResultHandler(command),
   };
+
+  if (config.events) {
+    engine = wrapWithEvents(engine, config.events);
+  }
+
+  return engine;
 };

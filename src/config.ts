@@ -41,6 +41,7 @@ import {
   getValidPlacementsUseCase,
   canPlaceDominoUseCase,
 } from "@core/useCases/getValidPlacements.js";
+import type { GameEventCallbacks } from "@core/useCases/gameEvents.js";
 
 /**
  * Configuration options for the game engine.
@@ -54,6 +55,8 @@ export type EngineConfig = {
   logging?: boolean;
   /** Custom logger instance. When provided, takes precedence over 'logging' option */
   logger?: Logger;
+  /** Optional event callbacks for UI/animation integration */
+  events?: GameEventCallbacks;
 };
 
 export const configureEngine = (config: Partial<EngineConfig>) => {

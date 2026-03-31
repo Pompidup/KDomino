@@ -24,7 +24,7 @@
 10. **Validation de state complète** - Une fonction `validateGameState(game)` qui vérifie l'intégrité de l'état (pas de dominos dupliqués, kingdoms valides, etc.). Utile quand le consommateur persiste et restaure l'état.
 11. **Meilleurs messages d'erreur** - Internationalisation des erreurs (le système i18n existe déjà mais semble minimal). Codes d'erreur structurés avec contexte.
 12. **Mode debug** - Logger plus détaillé avec dump de l'état à chaque étape, utile pour les consommateurs qui développent leur UI.
-13. **Système d'événements (v2)** - Réintroduire les events sous forme de callbacks optionnels (`onDominoPlaced`, `onTurnEnd`, `onGameEnd`) pour faciliter l'intégration UI/animation.
+13. ~~**Système d'événements (v2)**~~ - ✅ Implémenté. Callbacks optionnels via `EngineConfig.events` : `onGameCreated`, `onPlayersAdded`, `onGameStarted`, `onDominoPicked`, `onDominoPlaced`, `onDominoDiscarded`, `onTurnStart`, `onTurnEnd`, `onGameEnd`. Aussi disponible standalone via `wrapWithEvents(engine, callbacks)`.
 
 ## Nouveaux modes de jeu
 
@@ -57,4 +57,4 @@ Les plus impactantes à court terme :
 - ~~**Seed de partie** (9)~~ - ✅ Done
 - ~~**Undo/Redo** (5)~~ - ✅ Done
 - ~~**Bot / IA joueur** (19)~~ - ✅ Done
-- **Système d'événements v2** (13) - Intégration UI/animations
+- ~~**Système d'événements v2** (13)~~ - ✅ Done
