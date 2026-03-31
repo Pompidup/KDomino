@@ -49,23 +49,18 @@ export const chooseDominoUseCase: ChooseDominoUseCase = (
   }
 
   // update currentDominoes
-  const updatedCurrentDominoes = game.currentDominoes.map((domino) => {
-    if (domino.domino.number === dominoPick) {
-      domino.picked = true;
-      domino.lordId = currentLord.id;
-    }
-    return domino;
-  });
+  const updatedCurrentDominoes = game.currentDominoes.map((domino) =>
+    domino.domino.number === dominoPick
+      ? { ...domino, picked: true, lordId: currentLord.id }
+      : domino
+  );
 
   // update lords
-  const updatedLords = game.lords.map((lord) => {
-    if (lord.id === currentLord.id) {
-      lord.hasPick = true;
-      lord.turnEnded = true;
-      lord.dominoPicked = selectedDomino.domino;
-    }
-    return lord;
-  });
+  const updatedLords = game.lords.map((lord) =>
+    lord.id === currentLord.id
+      ? { ...lord, hasPick: true, turnEnded: true, dominoPicked: selectedDomino.domino }
+      : lord
+  );
 
   const turnEnded = allLordsHavePlayed(updatedLords);
 
