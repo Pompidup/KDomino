@@ -13,7 +13,7 @@
 
 ## Règles et gameplay
 
-5. **Undo/Redo** - Permettre de revenir en arrière sur une action (utile pour les UI). Le système de sérialisation existant le facilite.
+5. ~~**Undo/Redo**~~ - ✅ Implémenté. `GameHistory` avec `createGameHistory`, `pushState`, `undo`, `redo`, `canUndo`, `canRedo`, `clearHistory`, `getHistorySize`. Snapshot-based, standalone utility.
 6. **Historique des coups** - Enregistrer chaque action dans un log immuable pour pouvoir rejouer une partie ou l'analyser.
 7. **Mode spectateur** - API pour obtenir un état de jeu "censuré" (sans révéler les infos cachées aux autres joueurs).
 8. **Timer/Horloge** - Support optionnel d'un timer par tour pour les parties compétitives.
@@ -55,6 +55,6 @@
 
 Les plus impactantes à court terme :
 - ~~**Seed de partie** (9)~~ - ✅ Done
-- **Undo/Redo** (5) - Indispensable pour toute UI
+- ~~**Undo/Redo** (5)~~ - ✅ Done
 - **Bot / IA joueur** (19) - Mode solo et tests automatisés
 - **Système d'événements v2** (13) - Intégration UI/animations

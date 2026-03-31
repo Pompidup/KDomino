@@ -31,6 +31,19 @@ export {
   type GameSavePoint,
 } from "@core/useCases/serialization.js";
 
+// History (undo/redo)
+export {
+  type GameHistory,
+  createGameHistory,
+  pushState,
+  undo,
+  redo,
+  canUndo,
+  canRedo,
+  clearHistory,
+  getHistorySize,
+} from "@core/useCases/gameHistory.js";
+
 /**
  * Creates a new Kingdomino game engine instance.
  *

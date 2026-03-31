@@ -29,6 +29,10 @@ export const ErrorCode = {
   CANNOT_PICK: "CANNOT_PICK",
   CANNOT_PLACE: "CANNOT_PLACE",
   DOMINO_ALREADY_PICKED: "DOMINO_ALREADY_PICKED",
+
+  // History errors
+  UNDO_UNAVAILABLE: "UNDO_UNAVAILABLE",
+  REDO_UNAVAILABLE: "REDO_UNAVAILABLE",
 } as const;
 
 export type ErrorCodeType = (typeof ErrorCode)[keyof typeof ErrorCode];
@@ -152,5 +156,33 @@ export class ValidationError extends DomainException {
       context,
     });
     this.name = "ValidationError";
+  }
+}
+
+/**
+ * Error thrown when undo is requested but no previous state exists.
+ */
+export class UndoError extends DomainException {
+  constructor(message = "No state to undo", context?: Record<string, unknown>) {
+    super({
+      code: ErrorCode.UNDO_UNAVAILABLE,
+      message,
+      context,
+    });
+    this.name = "UndoError";
+  }
+}
+
+/**
+ * Error thrown when redo is requested but no future state exists.
+ */
+export class RedoError extends DomainException {
+  constructor(message = "No state to redo", context?: Record<string, unknown>) {
+    super({
+      code: ErrorCode.REDO_UNAVAILABLE,
+      message,
+      context,
+    });
+    this.name = "RedoError";
   }
 }
