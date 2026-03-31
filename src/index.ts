@@ -22,6 +22,7 @@ export * from "@core/i18n/translations.js";
 
 // Use cases (for advanced usage)
 export { type ValidPlacement } from "@core/useCases/getValidPlacements.js";
+export { type DynastyResult } from "@core/useCases/getDynastyResult.js";
 export {
   serializeGame,
   deserializeGame,
@@ -67,6 +68,7 @@ export const createGameEngine = (config: Partial<EngineConfig>): GameEngine => {
     canPlaceDominoHandler,
     serializeGameHandler,
     deserializeGameHandler,
+    getDynastyResultHandler,
   } = configureEngine(config);
 
   return {
@@ -85,5 +87,6 @@ export const createGameEngine = (config: Partial<EngineConfig>): GameEngine => {
     canPlaceDomino: (command) => canPlaceDominoHandler(command),
     serialize: (command) => serializeGameHandler(command),
     deserialize: (command) => deserializeGameHandler(command),
+    getDynastyResults: (command) => getDynastyResultHandler(command),
   };
 };

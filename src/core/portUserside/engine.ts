@@ -24,7 +24,9 @@ import type {
   SerializeGameCommand,
   DeserializeGameCommand,
 } from "@application/commands/serializeGameCommand.js";
+import type { GetDynastyResultCommand } from "@application/commands/getDynastyResultCommand.js";
 import type { ValidPlacement } from "@core/useCases/getValidPlacements.js";
+import type { DynastyResult } from "@core/useCases/getDynastyResult.js";
 
 /**
  * The main interface for interacting with the Kingdomino game engine.
@@ -166,4 +168,12 @@ export type GameEngine = {
    * @throws Error if the JSON is invalid or incompatible
    */
   deserialize: (command: DeserializeGameCommand) => GameState;
+
+  /**
+   * Calculates dynasty results from multiple completed games.
+   * Sum total points across games, highest total wins.
+   * @param command - Contains array of completed games with results
+   * @returns Ranked dynasty results per player
+   */
+  getDynastyResults: (command: GetDynastyResultCommand) => DynastyResult[];
 };

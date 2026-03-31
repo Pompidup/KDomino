@@ -12,3 +12,4 @@ export * from "./startGameCommand.js";
 export * from "./getValidPlacementsCommand.js";
 export * from "./canPlaceDominoCommand.js";
 export * from "./serializeGameCommand.js";
+export * from "./getDynastyResultCommand.js";

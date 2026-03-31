@@ -5,21 +5,24 @@
       "lordsPerPlayer": 2,
       "maxDominoes": 24,
       "dominoesPerTurn": 4,
-      "maxTurns": 6
+      "maxTurns": 6,
+      "maxKingdomSize": 5
     },
     {
       "playersLimit": 3,
       "lordsPerPlayer": 1,
       "maxDominoes": 48,
       "dominoesPerTurn": 4,
-      "maxTurns": 12
+      "maxTurns": 12,
+      "maxKingdomSize": 5
     },
     {
       "playersLimit": 4,
       "lordsPerPlayer": 1,
       "maxDominoes": 48,
       "dominoesPerTurn": 4,
-      "maxTurns": 12
+      "maxTurns": 12,
+      "maxKingdomSize": 5
     }
   ],
   "extra": [
@@ -31,6 +34,17 @@
     {
       "name": "Harmony",
       "description": "Gain 5 additional points if your kingdom is complete (no discarded dominoes).",
+      "mode": [{ "name": "Classic", "description": "King Domino classic mode" }]
+    },
+    {
+      "name": "The Mighty Duel",
+      "description": "Use all 48 dominoes and build a 7x7 kingdom. For 2 players only.",
+      "mode": [{ "name": "Classic", "description": "King Domino classic mode" }],
+      "playersLimit": 2
+    },
+    {
+      "name": "Dynasty",
+      "description": "Play 3 games in a row. The player with the highest total points wins.",
       "mode": [{ "name": "Classic", "description": "King Domino classic mode" }]
     }
   ]
