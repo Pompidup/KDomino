@@ -113,13 +113,12 @@ describe("Get result of a game", () => {
     });
   });
 
-  test("should return player ranking with tie, decide on totalCrowns", async () => {
+  test("should return shared victory when points and maxPropertiesSize are equal", async () => {
     // Arrange
-
     const players = [
       { id: "player1-id", name: "player1" },
       { id: "player2-id", name: "player2" },
-    ].map((player, index) =>
+    ].map((player) =>
       createPlayerBuilder().withId(player.id).withName(player.name).build()
     );
 
@@ -145,7 +144,7 @@ describe("Get result of a game", () => {
     // Act
     const result = getResultUseCase(initialGame, scoreResult);
 
-    // Assert
+    // Assert — per official rules, tied players share the victory
     const unwrapResult = unwrap(result);
     expect(unwrapResult).toEqual({
       ...initialGame,
@@ -160,7 +159,7 @@ describe("Get result of a game", () => {
           playerId: "player1-id",
           playerName: "player1",
           details: { points: 4, maxPropertiesSize: 2, totalCrowns: 2 },
-          position: 2,
+          position: 1,
         },
       ],
     });

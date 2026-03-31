@@ -59,15 +59,12 @@ export const getResultUseCase: GetResultUseCase = (game, scoreResult) => {
     };
   });
 
-  // 1 order players by score, then by maxPropertiesSize, then by totalCrowns all descending
+  // Order players by score, then by maxPropertiesSize (per official rules, no further tiebreaker)
   finalScoreResult.sort((a, b) => {
     if (a.details.points !== b.details.points) {
       return b.details.points - a.details.points;
     }
-    if (a.details.maxPropertiesSize !== b.details.maxPropertiesSize) {
-      return b.details.maxPropertiesSize - a.details.maxPropertiesSize;
-    }
-    return b.details.totalCrowns - a.details.totalCrowns;
+    return b.details.maxPropertiesSize - a.details.maxPropertiesSize;
   });
 
   const result: FinalResult[] = [];
@@ -88,8 +85,7 @@ export const getResultUseCase: GetResultUseCase = (game, scoreResult) => {
       currentScore &&
       currentScore.details.points === previousScore.details.points &&
       currentScore.details.maxPropertiesSize ===
-        previousScore.details.maxPropertiesSize &&
-      currentScore.details.totalCrowns === previousScore.details.totalCrowns
+        previousScore.details.maxPropertiesSize
     ) {
       isTie = true;
     }
