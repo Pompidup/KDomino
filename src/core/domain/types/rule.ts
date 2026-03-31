@@ -12,6 +12,8 @@ export type BasicRules = {
   dominoesPerTurn: number;
   /** Maximum number of turns in the game */
   maxTurns: number;
+  /** Maximum kingdom grid size (5 for standard, 7 for Mighty Duel) */
+  maxKingdomSize: number;
 };
 
 /**

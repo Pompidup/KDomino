@@ -8,4 +8,6 @@ export type GetValidPlacementsCommand = {
   kingdom: Kingdom;
   /** The domino to find placements for */
   domino: Domino;
+  /** Maximum kingdom size (default: 5, use 7 for Mighty Duel) */
+  maxKingdomSize?: number;
 };

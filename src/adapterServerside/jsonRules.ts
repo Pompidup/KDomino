@@ -17,6 +17,7 @@ const jsonRules = (): RuleRepository => {
       maxDominoes: rule.maxDominoes,
       dominoesPerTurn: rule.dominoesPerTurn,
       maxTurns: rule.maxTurns,
+      maxKingdomSize: rule.maxKingdomSize,
     };
   });
 
@@ -25,6 +26,7 @@ const jsonRules = (): RuleRepository => {
       name: rule.name,
       description: rule.description,
       mode: rule.mode,
+      ...("playersLimit" in rule && { playersLimit: rule.playersLimit }),
     });
   });
 

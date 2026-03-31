@@ -28,6 +28,7 @@ export const create = (payload: {
         maxDominoes: 0,
         dominoesPerTurn: 0,
         maxTurns: 0,
+        maxKingdomSize: 5,
       },
       extra: [],
     },

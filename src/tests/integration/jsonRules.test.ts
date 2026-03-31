@@ -12,9 +12,9 @@ describe("jsonRules", () => {
     // Assert
     expect(result).toHaveProperty("basic");
     expect(result.basic).toEqual({
-      "2": { lords: 2, maxDominoes: 24, dominoesPerTurn: 4, maxTurns: 6 },
-      "3": { lords: 1, maxDominoes: 48, dominoesPerTurn: 4, maxTurns: 12 },
-      "4": { lords: 1, maxDominoes: 48, dominoesPerTurn: 4, maxTurns: 12 },
+      "2": { lords: 2, maxDominoes: 24, dominoesPerTurn: 4, maxTurns: 6, maxKingdomSize: 5 },
+      "3": { lords: 1, maxDominoes: 48, dominoesPerTurn: 4, maxTurns: 12, maxKingdomSize: 5 },
+      "4": { lords: 1, maxDominoes: 48, dominoesPerTurn: 4, maxTurns: 12, maxKingdomSize: 5 },
     });
     expect(result).toHaveProperty("extraRules");
     expect(result.extraRules).toEqual([
@@ -30,6 +30,19 @@ describe("jsonRules", () => {
           "Gain 5 additional points if your kingdom is complete (no discarded dominoes).",
         mode: [{ name: "Classic", description: "King Domino classic mode" }],
       },
+      {
+        name: "The Mighty Duel",
+        description:
+          "Use all 48 dominoes and build a 7x7 kingdom. For 2 players only.",
+        mode: [{ name: "Classic", description: "King Domino classic mode" }],
+        playersLimit: 2,
+      },
+      {
+        name: "Dynasty",
+        description:
+          "Play 3 games in a row. The player with the highest total points wins.",
+        mode: [{ name: "Classic", description: "King Domino classic mode" }],
+      },
     ]);
   });
 
@@ -41,6 +54,6 @@ describe("jsonRules", () => {
     const result = repository.getAllExtra();
 
     // Assert
-    expect(result.length).toBe(2);
+    expect(result.length).toBe(4);
   });
 });

@@ -69,6 +69,7 @@ const defaultGame: Game = {
       maxDominoes: 24,
       dominoesPerTurn: 4,
       maxTurns: 6,
+      maxKingdomSize: 5,
     },
     extra: [],
   },

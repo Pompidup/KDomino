@@ -21,6 +21,8 @@ import {
   serializeGameHandler,
   deserializeGameHandler,
 } from "@application/handlers/serializeGameHandler.js";
+import { getDynastyResultHandler } from "@application/handlers/getDynastyResultHandler.js";
+import { getDynastyResultUseCase } from "@core/useCases/getDynastyResult.js";
 import type { ShuffleMethod } from "@core/portServerside/shuffleMethod.js";
 import type { UuidMethod } from "@core/portServerside/uuidMethod.js";
 import type { Logger } from "@core/portServerside/logger.js";
@@ -95,7 +97,7 @@ export const configureEngine = (config: Partial<EngineConfig>) => {
     ),
     addExtraRulesHandler: addExtraRulesHandler(
       logger,
-      addExtraRulesUseCase({ ruleRepository })
+      addExtraRulesUseCase({ ruleRepository, dominoesRepository, shuffleMethod: shuffle })
     ),
     startGameHandler: startGameHandler(
       logger,
@@ -119,5 +121,6 @@ export const configureEngine = (config: Partial<EngineConfig>) => {
     ),
     serializeGameHandler: serializeGameHandler(logger),
     deserializeGameHandler: deserializeGameHandler(logger),
+    getDynastyResultHandler: getDynastyResultHandler(logger, getDynastyResultUseCase),
   };
 };

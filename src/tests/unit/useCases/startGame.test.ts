@@ -15,6 +15,7 @@ describe("Start game", () => {
           maxDominoes: 10,
           dominoesPerTurn: 4,
           maxTurns: 5,
+          maxKingdomSize: 5,
         },
         extra: [],
       })
@@ -49,6 +50,7 @@ describe("Start game", () => {
           maxDominoes: 10,
           dominoesPerTurn: 2,
           maxTurns: 5,
+          maxKingdomSize: 5,
         },
         extra: [],
       })
@@ -93,6 +95,7 @@ describe("Start game", () => {
           maxDominoes: 10,
           dominoesPerTurn: 2,
           maxTurns: 5,
+          maxKingdomSize: 5,
         },
         extra: [],
       })

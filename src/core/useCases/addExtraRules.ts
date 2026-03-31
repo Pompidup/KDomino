@@ -6,6 +6,8 @@ import {
 } from "@core/domain/types/index.js";
 import { isErr, ok, type Result } from "@utils/result.js";
 import type { RuleRepository } from "@core/portServerside/ruleRepository.js";
+import type { DominoesRepository } from "@core/portServerside/dominoesRepository.js";
+import type { ShuffleMethod } from "@core/portServerside/shuffleMethod.js";
 import { toExtraRule } from "@core/domain/entities/rule.js";
 
 export type AddExtraRulesUseCase = (
@@ -14,9 +16,13 @@ export type AddExtraRulesUseCase = (
 ) => Result<GameWithNextStep>;
 
 export const addExtraRulesUseCase =
-  (deps: { ruleRepository: RuleRepository }): AddExtraRulesUseCase =>
+  (deps: {
+    ruleRepository: RuleRepository;
+    dominoesRepository: DominoesRepository;
+    shuffleMethod: ShuffleMethod;
+  }): AddExtraRulesUseCase =>
   (game, rules) => {
-    const { ruleRepository } = deps;
+    const { ruleRepository, dominoesRepository, shuffleMethod } = deps;
     const availableExtraRules = ruleRepository.getAllExtra();
 
     const newExtraRules: ExtraRule[] = [];
@@ -31,8 +37,26 @@ export const addExtraRulesUseCase =
       newExtraRules.push(result.value);
     }
 
+    // The Mighty Duel overrides basic rules for 2-player games
+    let updatedBasic = game.rules.basic;
+    let updatedDominoes = game.dominoes;
+    const hasMightyDuel = newExtraRules.some((r) => r.name === "The Mighty Duel");
+    if (hasMightyDuel) {
+      updatedBasic = {
+        ...updatedBasic,
+        maxDominoes: 48,
+        maxTurns: 12,
+        maxKingdomSize: 7,
+      };
+      // Reload and shuffle all 48 dominoes
+      const allDominoes = dominoesRepository.getForMode(game.mode);
+      if (allDominoes) {
+        updatedDominoes = shuffleMethod(allDominoes);
+      }
+    }
+
     const updatedRules = {
-      basic: game.rules.basic,
+      basic: updatedBasic,
       extra: newExtraRules,
     };
 
@@ -43,6 +67,7 @@ export const addExtraRulesUseCase =
 
     const updatedGame: GameWithNextStep = {
       ...game,
+      dominoes: updatedDominoes,
       rules: updatedRules,
       nextAction: next,
     };

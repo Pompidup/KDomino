@@ -6,6 +6,7 @@ import type { Domino } from "@core/domain/types/domino.js";
 import { createGameBuilder } from "../../builder/game.js";
 import { err } from "@utils/result.js";
 import type { RuleRepository } from "@core/portServerside/ruleRepository.js";
+import type { DominoesRepository } from "@core/portServerside/dominoesRepository.js";
 import type { NextStep } from "@core/domain/types/game.js";
 
 describe("Add extra rules", () => {
@@ -45,18 +46,21 @@ describe("Add extra rules", () => {
       maxDominoes: 10,
       dominoesPerTurn: 2,
       maxTurns: 5,
+      maxKingdomSize: 5,
     },
     3: {
       lords: 3,
       maxDominoes: 15,
       dominoesPerTurn: 3,
       maxTurns: 7,
+      maxKingdomSize: 5,
     },
     4: {
       lords: 4,
       maxDominoes: 20,
       dominoesPerTurn: 4,
       maxTurns: 9,
+      maxKingdomSize: 5,
     },
   };
 
@@ -95,6 +99,12 @@ describe("Add extra rules", () => {
       getAllExtra: () => extraRules,
     };
 
+    const dominoesRepository: DominoesRepository = {
+      getForMode: () => dominoes,
+    };
+
+    const shuffleMethod = <T>(array: T[]) => array;
+
     const payload = {
       game: initialGame,
       rules: ["Extra Rule 1", "Extra Rule 2"],
@@ -102,7 +112,7 @@ describe("Add extra rules", () => {
     };
 
     // Act
-    const result = addExtraRulesUseCase({ ruleRepository })(
+    const result = addExtraRulesUseCase({ ruleRepository, dominoesRepository, shuffleMethod })(
       payload.game,
       payload.rules
     );
@@ -162,6 +172,12 @@ describe("Add extra rules", () => {
       getAllExtra: () => extraRules,
     };
 
+    const dominoesRepository: DominoesRepository = {
+      getForMode: () => dominoes,
+    };
+
+    const shuffleMethod = <T>(array: T[]) => array;
+
     const payload = {
       game: initialGame,
       rules: ["Extra Rule 1", "Extra Rule 2", "Extra Rule 4"],
@@ -169,7 +185,7 @@ describe("Add extra rules", () => {
     };
 
     // Act
-    const result = addExtraRulesUseCase({ ruleRepository })(
+    const result = addExtraRulesUseCase({ ruleRepository, dominoesRepository, shuffleMethod })(
       payload.game,
       payload.rules
     );

@@ -1,5 +1,5 @@
 import type { Kingdom, Position, Rotation, Domino } from "@core/domain/types/index.js";
-import { GRIDSIZE } from "@core/domain/types/kingdom.js";
+import { GRIDSIZE, MAX_KINGDOM_SIZE } from "@core/domain/types/kingdom.js";
 import { placeDomino } from "@core/domain/entities/kingdom.js";
 import { isOk } from "@utils/result.js";
 
@@ -13,7 +13,8 @@ export type ValidPlacement = {
 
 export type GetValidPlacementsUseCase = (
   kingdom: Kingdom,
-  domino: Domino
+  domino: Domino,
+  maxKingdomSize?: number
 ) => ValidPlacement[];
 
 /**
@@ -22,11 +23,13 @@ export type GetValidPlacementsUseCase = (
  *
  * @param kingdom - The current state of the kingdom grid
  * @param domino - The domino to place
+ * @param maxKingdomSize - Maximum kingdom size (default: 5)
  * @returns Array of valid placements (position + rotation combinations)
  */
 export const getValidPlacementsUseCase: GetValidPlacementsUseCase = (
   kingdom,
-  domino
+  domino,
+  maxKingdomSize = MAX_KINGDOM_SIZE
 ) => {
   const validPlacements: ValidPlacement[] = [];
   const rotations: Rotation[] = [0, 90, 180, 270];
@@ -38,7 +41,7 @@ export const getValidPlacementsUseCase: GetValidPlacementsUseCase = (
 
       // Try each rotation
       for (const rotation of rotations) {
-        const result = placeDomino(kingdom, position, rotation, domino);
+        const result = placeDomino(kingdom, position, rotation, domino, maxKingdomSize);
         if (isOk(result)) {
           validPlacements.push({ position, rotation });
         }
@@ -54,11 +57,13 @@ export const getValidPlacementsUseCase: GetValidPlacementsUseCase = (
  *
  * @param kingdom - The current state of the kingdom grid
  * @param domino - The domino to check
+ * @param maxKingdomSize - Maximum kingdom size (default: 5)
  * @returns True if at least one valid placement exists
  */
 export const canPlaceDominoUseCase = (
   kingdom: Kingdom,
-  domino: Domino
+  domino: Domino,
+  maxKingdomSize: number = MAX_KINGDOM_SIZE
 ): boolean => {
   const rotations: Rotation[] = [0, 90, 180, 270];
 
@@ -69,7 +74,7 @@ export const canPlaceDominoUseCase = (
 
       // Check each rotation - return early if any placement is valid
       for (const rotation of rotations) {
-        const result = placeDomino(kingdom, position, rotation, domino);
+        const result = placeDomino(kingdom, position, rotation, domino, maxKingdomSize);
         if (isOk(result)) {
           return true;
         }

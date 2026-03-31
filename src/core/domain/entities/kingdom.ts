@@ -134,7 +134,8 @@ export const placeDomino = (
   kingdom: Kingdom,
   position: Position,
   rotation: Rotation,
-  domino: Domino
+  domino: Domino,
+  maxKingdomSize: number = MAX_KINGDOM_SIZE
 ): Result<Kingdom> => {
   const [firstTile, secondTile] = calculateDominoPosition(
     position,
@@ -151,7 +152,7 @@ export const placeDomino = (
     return isFreePlaceResult;
   }
 
-  if (exceedsMaxSize(kingdom, firstTile.position, secondTile.position)) {
+  if (exceedsMaxSize(kingdom, firstTile.position, secondTile.position, maxKingdomSize)) {
     return err("Invalid placement (exceeds kingdom size)");
   }
 

@@ -63,7 +63,8 @@ export const placeDominoUseCase: PlaceDominoUseCase = (
     currentPlayer.kingdom,
     position,
     rotation,
-    domino
+    domino,
+    game.rules.basic.maxKingdomSize
   );
 
   if (isErr(updatedKingdom)) {

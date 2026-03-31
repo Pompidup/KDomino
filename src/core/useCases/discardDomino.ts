@@ -43,7 +43,7 @@ export const discardDominoUseCase: DiscardDominoUseCase = (game, lordId) => {
       (player) => player.id === currentLord.playerId
     );
 
-    if (currentPlayer && canPlaceDominoUseCase(currentPlayer.kingdom, currentLord.dominoPicked)) {
+    if (currentPlayer && canPlaceDominoUseCase(currentPlayer.kingdom, currentLord.dominoPicked, game.rules.basic.maxKingdomSize)) {
       return err("Cannot discard: valid placement exists");
     }
   }

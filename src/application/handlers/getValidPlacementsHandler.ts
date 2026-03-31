@@ -5,7 +5,8 @@ import type { Kingdom, Domino } from "@core/domain/types/index.js";
 
 type GetValidPlacementsUseCase = (
   kingdom: Kingdom,
-  domino: Domino
+  domino: Domino,
+  maxKingdomSize?: number
 ) => ValidPlacement[];
 
 type GetValidPlacementsHandler = (
@@ -21,7 +22,7 @@ export const getValidPlacementsHandler = (
 ): GetValidPlacementsHandler => {
   return (command) => {
     logger.info(`Getting valid placements for domino: ${command.domino.number}`);
-    const placements = useCase(command.kingdom, command.domino);
+    const placements = useCase(command.kingdom, command.domino, command.maxKingdomSize);
     logger.info(`Found ${placements.length} valid placements`);
     return placements;
   };

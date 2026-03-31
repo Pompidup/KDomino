@@ -50,6 +50,7 @@ describe("Engine", () => {
         maxDominoes: 24,
         dominoesPerTurn: 4,
         maxTurns: 6,
+        maxKingdomSize: 5,
       },
       extra: [],
     });
@@ -81,6 +82,19 @@ describe("Engine", () => {
           "Gain 5 additional points if your kingdom is complete (no discarded dominoes).",
         mode: [{ name: "Classic", description: "King Domino classic mode" }],
       },
+      {
+        name: "The Mighty Duel",
+        description:
+          "Use all 48 dominoes and build a 7x7 kingdom. For 2 players only.",
+        mode: [{ name: "Classic", description: "King Domino classic mode" }],
+        playersLimit: 2,
+      },
+      {
+        name: "Dynasty",
+        description:
+          "Play 3 games in a row. The player with the highest total points wins.",
+        mode: [{ name: "Classic", description: "King Domino classic mode" }],
+      },
     ]);
   });
 
@@ -105,6 +119,7 @@ describe("Engine", () => {
         maxDominoes: 24,
         dominoesPerTurn: 4,
         maxTurns: 6,
+        maxKingdomSize: 5,
       },
       extra: [
         {
@@ -322,5 +337,51 @@ describe("Engine", () => {
       maxPropertiesSize: 0,
       totalCrowns: 0,
     });
+  });
+
+  test("should support The Mighty Duel variant", () => {
+    // Arrange
+    const newGame = engine.createGame({ mode: "Classic" });
+    const gameWithPlayers = engine.addPlayers({
+      game: newGame,
+      players: ["player1", "player2"],
+    });
+
+    // Act — add Mighty Duel
+    const gameWithExtraRules = engine.addExtraRules({
+      game: gameWithPlayers,
+      extraRules: ["The Mighty Duel"],
+    });
+
+    // Assert — basic rules overridden
+    expect(gameWithExtraRules.rules.basic.maxDominoes).toBe(48);
+    expect(gameWithExtraRules.rules.basic.maxTurns).toBe(12);
+    expect(gameWithExtraRules.rules.basic.maxKingdomSize).toBe(7);
+    expect(gameWithExtraRules.dominoes).toHaveLength(48);
+  });
+
+  test("should allow placements beyond 5x5 with Mighty Duel", async () => {
+    // Build a kingdom where positions would exceed 5x5 but fit in 7x7
+    // Castle at (4,4). Place wheat tiles spanning x: 1..5 (5 wide)
+    const { createEmptyKingdom, placeCastle, placeTile } = await import("@core/domain/entities/kingdom.js");
+    let kingdom = placeCastle(createEmptyKingdom());
+    kingdom = placeTile(kingdom, { x: 3, y: 4 }, { type: "wheat", crowns: 0 });
+    kingdom = placeTile(kingdom, { x: 2, y: 4 }, { type: "wheat", crowns: 0 });
+    kingdom = placeTile(kingdom, { x: 1, y: 4 }, { type: "wheat", crowns: 0 });
+    kingdom = placeTile(kingdom, { x: 5, y: 4 }, { type: "wheat", crowns: 0 });
+    kingdom = placeTile(kingdom, { x: 6, y: 4 }, { type: "wheat", crowns: 0 });
+    // bbox x: 1..6 = 6 wide — exceeds 5x5 but fits in 7x7
+
+    const domino = { left: { type: "wheat" as const, crowns: 0 }, right: { type: "wheat" as const, crowns: 0 }, number: 99 };
+
+    // With maxKingdomSize=5, placement at (7,4) should fail
+    const placementsStandard = engine.getValidPlacements({ kingdom, domino, maxKingdomSize: 5 });
+    const hasX7Standard = placementsStandard.some((p: any) => p.position.x === 7);
+    expect(hasX7Standard).toBe(false);
+
+    // With maxKingdomSize=7, placement at (7,4) should succeed
+    const placementsMighty = engine.getValidPlacements({ kingdom, domino, maxKingdomSize: 7 });
+    const hasX7Mighty = placementsMighty.some((p: any) => p.position.x === 7);
+    expect(hasX7Mighty).toBe(true);
   });
 });
