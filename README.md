@@ -17,7 +17,7 @@ A simple, lightweight TypeScript engine for the Kingdomino board game.
 - [Installation](#installation)
 - [Usage](#usage)
   - [Basic Setup](#basic-setup)
-  - [Options for GameEngine](#options-for-gameengine)
+  - [Engine Options](#engine-options)
   - [Adding Players](#adding-players)
   - [Getting Available Game Modes](#getting-available-game-modes)
   - [Getting Available Extra Rules](#getting-available-extra-rules)
@@ -26,6 +26,8 @@ A simple, lightweight TypeScript engine for the Kingdomino board game.
   - [Player Actions](#player-actions)
   - [Game Flow](#game-flow)
   - [Scoring](#scoring)
+  - [Valid Placements](#valid-placements)
+  - [Serialization](#serialization)
 - [Complete Game Example](#complete-game-example)
 - [Extra Rules](#extra-rules)
 - [API Documentation](#api-documentation)
@@ -34,6 +36,7 @@ A simple, lightweight TypeScript engine for the Kingdomino board game.
 - [Development](#development)
   - [Setup](#setup)
   - [Testing](#testing)
+  - [Linting and Type Checking](#linting-and-type-checking)
   - [Building](#building)
 - [Contributing](#contributing)
 
@@ -43,9 +46,11 @@ This is a simple and lightweight TypeScript engine designed to facilitate the ga
 
 Kingdomino is a tile-placement game where players build kingdoms by connecting domino-like tiles with different terrains. This engine handles all the game logic, allowing you to focus on building the user interface and experience.
 
+The engine is **stateless**: each method takes the current game state as input and returns a new game state. It is your responsibility to persist the state between calls.
+
 ## Requirements
 
-- Node v20.6.0 or higher
+- Node.js >= 18
 
 ## Features
 
@@ -55,7 +60,10 @@ Kingdomino is a tile-placement game where players build kingdoms by connecting d
 - **Extra Rules Support**: Implement and manage additional game rules for enhanced gameplay.
 - **Multiple Game Modes**: Support for different game modes, including Classic and potentially others.
 - **Scoring System**: Automatic calculation of scores based on kingdom layouts and rule sets.
-- **Typescript Support**: Full TypeScript support with comprehensive type definitions.
+- **Valid Placement Detection**: Find all valid positions for a domino or check if any placement exists.
+- **Serialization**: Save and restore game state to/from JSON for persistence.
+- **TypeScript Support**: Full TypeScript support with comprehensive type definitions.
+- **Dependency Injection**: Custom shuffle, UUID, and logger implementations can be injected.
 
 ## Installation
 
@@ -80,42 +88,52 @@ Each method returns an updated game state object, which contains the current sta
 To start using the Kingdomino Engine, import it and initialize a new game instance:
 
 ```typescript
-import createGameEngine from "@pompidup/kingdomino-engine";
+import { createGameEngine } from "@pompidup/kingdomino-engine";
 
 const engine = createGameEngine({});
 let gameState = engine.createGame({ mode: "Classic" });
 ```
 
-### Options for GameEngine
+### Engine Options
 
-You can pass options to the `createGameEngine` function to customize the engine's behavior. The available options are:
+You can pass options to the `createGameEngine` function to customize the engine's behavior:
 
-- `logging`: Enable or disable logging for debugging purposes. Default is `false`.
-- `shuffleMethod`: Specify the method used to shuffle dominoes. If not specified, a default shuffle method will be used.
-- `uuidMethod`: Specify the method used to generate UUIDs. If not specified, a default UUID method will be used.
-
-Here's an example of how to pass options to the engine:
+| Option | Type | Default | Description |
+|--------|------|---------|-------------|
+| `logging` | `boolean` | `false` | Enable console logging for debugging |
+| `logger` | `Logger` | — | Custom logger instance (takes precedence over `logging`) |
+| `shuffleMethod` | `ShuffleMethod` | Fisher-Yates | Custom shuffle function for dominoes and lords |
+| `uuidMethod` | `UuidMethod` | `crypto.randomUUID()` | Custom UUID generator |
 
 ```typescript
-// Full custom options
-const options: EngineConfig = {
-  logging: true,
-  shuffleMethod: myCustomShuffleMethod,
-  uuidMethod: myCustomUuidMethod,
-};
+import { createGameEngine, type EngineConfig } from "@pompidup/kingdomino-engine";
 
-const engine = createGameEngine(options);
+// With logging enabled
+const engine = createGameEngine({ logging: true });
 
-// If you want default options
-const engine = createGameEngine({});
+// With custom logger
+const engine = createGameEngine({
+  logger: {
+    info: (msg) => console.log(msg),
+    error: (msg) => console.error(msg),
+  },
+});
+
+// With deterministic shuffle (useful for testing)
+const engine = createGameEngine({
+  shuffleMethod: (array) => array, // No shuffle
+});
 ```
 
 ### Adding Players
 
-Add players to the game by passing an array of player names:
+Add players to the game by passing an array of player names (2-4 players, minimum 3 characters per name):
 
 ```typescript
-gameState = engine.addPlayers({ game: gameState, players: ["Player 1", "Player 2", "Player 3"] });
+gameState = engine.addPlayers({
+  game: gameState,
+  players: ["Alice", "Bob", "Carol"],
+});
 ```
 
 ### Getting Available Game Modes
@@ -137,7 +155,7 @@ const extraRules = engine.getExtraRules({ mode: "Classic", players: 2 });
 
 ### Setting Up Extra Rules
 
-You can add extra rules to the game to modify gameplay. For example, you can add the "The Middle Kingdom" rule:
+You can add extra rules to the game to modify gameplay:
 
 ```typescript
 gameState = engine.addExtraRules({
@@ -148,7 +166,7 @@ gameState = engine.addExtraRules({
 
 ### Starting the Game
 
-After setting up players and rules, start the game, the engine will automatically set up the initial game state and determine the first player (lord) to play in nextAction.
+After setting up players and rules, start the game. The engine will automatically set up the initial game state and determine the first player (lord) to play in `nextAction`.
 
 ```typescript
 gameState = engine.startGame({ game: gameState });
@@ -158,28 +176,28 @@ gameState = engine.startGame({ game: gameState });
 
 Players can perform actions like picking a domino, placing a domino, and discarding a domino.
 
-- Pick Domino:
+**Pick a domino** from the currently revealed set:
 
 ```typescript
 gameState = engine.chooseDomino({
   game: gameState,
   lordId: "lordId",
-  dominoPick: 12,
+  dominoPick: 12, // domino number
 });
 ```
 
-- Place Domino:
+**Place a domino** on the kingdom grid:
 
 ```typescript
 gameState = engine.placeDomino({
   game: gameState,
   lordId: "lordId",
-  position: { x: 0, y: 0 },
-  rotation: 0,
+  position: { x: 5, y: 4 },
+  rotation: 0, // 0, 90, 180, or 270
 });
 ```
 
-- Discard Domino:
+**Discard a domino** when no valid placement exists:
 
 ```typescript
 gameState = engine.discardDomino({
@@ -190,33 +208,94 @@ gameState = engine.discardDomino({
 
 ### Game Flow
 
-The game progresses through various steps and actions. The `nextAction` property in the game state indicates what action should be taken next. This could be a step (like "addPlayers", "options", "start", or "result") or an action (like "pickDomino" or "placeDomino").
-Once the game is started you will receive the nextAction and nextLord, when you receive a nextStep the game isOver.
-You can use utility functions to check the game state and determine the next action to take.
+The game progresses through steps and actions. The `nextAction` property in the game state indicates what should happen next.
+
+**Steps** (setup and completion phases): `addPlayers` → `options` → `start` → `result`
+
+**Actions** (during gameplay): `pickDomino`, `placeDomino`, `pass`
+
+Use the provided type guards to determine the current state:
 
 ```typescript
+import { isGameWithNextAction, isGameWithNextStep } from "@pompidup/kingdomino-engine";
+
 while (isGameWithNextAction(gameState)) {
-  // Manage player actions
+  const { nextLord, nextAction } = gameState.nextAction;
+  // Handle pickDomino, placeDomino, or pass
 }
 
 if (isGameWithNextStep(gameState)) {
-  // Manage game steps, like adding players or showing results
+  // Game has ended, get results
 }
 ```
 
 ### Scoring
 
-When the last turn is played, the game will automatically calculate the final score for each player and their position.
-You can get the results by calling the `getResults` method:
+When the last turn is played, the game transitions to the `result` step. Get final results with rankings:
 
 ```typescript
-gameState = engine.getResults({ game: gameState });
+const gameWithResults = engine.getResults({ game: gameState });
+console.log(gameWithResults.result);
+// [{ playerId, playerName, details: { points, maxPropertiesSize, totalCrowns }, position }]
 ```
 
-You have the possibility to get the results at any time of a kingdom, you can use `calculateScore` method:
+You can also calculate the score of any kingdom at any time:
 
 ```typescript
 const score = engine.calculateScore({ kingdom: gameState.players[0].kingdom });
+// { points: 42, maxPropertiesSize: 5, totalCrowns: 8 }
+```
+
+### Valid Placements
+
+The engine provides helpers to determine where a domino can be placed:
+
+```typescript
+// Get all valid positions and rotations for a domino
+const placements = engine.getValidPlacements({
+  kingdom: player.kingdom,
+  domino: myDomino,
+});
+// [{ position: { x: 3, y: 4 }, rotation: 0 }, ...]
+
+// Quick check: can this domino be placed at all?
+const canPlace = engine.canPlaceDomino({
+  kingdom: player.kingdom,
+  domino: myDomino,
+});
+// true or false
+```
+
+### Serialization
+
+Save and restore game state for persistence:
+
+```typescript
+import {
+  serializeGame,
+  deserializeGame,
+  createSavePoint,
+  restoreFromSavePoint,
+} from "@pompidup/kingdomino-engine";
+
+// Serialize to JSON string
+const json = serializeGame(gameState);
+
+// Deserialize back (returns a Result type)
+const result = deserializeGame(json);
+
+// Or use save points with metadata
+const savePoint = createSavePoint(gameState);
+// { serialized, createdAt, gameId, turn }
+
+const restored = restoreFromSavePoint(savePoint);
+```
+
+The engine also provides `serialize` and `deserialize` methods on the engine instance:
+
+```typescript
+const json = engine.serialize({ game: gameState });
+const restored = engine.deserialize({ json });
 ```
 
 ## Complete Game Example
@@ -227,52 +306,64 @@ Here's a complete example of how to simulate a game from start to finish:
 import { createGameEngine, isGameWithNextAction } from "@pompidup/kingdomino-engine";
 
 // Create the game engine
-const engine = createGameEngine({
-  logging: true,
-  // Optional: provide custom shuffle method
-  shuffleMethod: (array) => array,
-});
+const engine = createGameEngine({});
 
 // Create a new game with Classic mode
 let game = engine.createGame({ mode: "Classic" });
 
 // Add players
-const players = ["Alice", "Bob"];
-game = engine.addPlayers({ game, players });
+game = engine.addPlayers({ game, players: ["Alice", "Bob"] });
+
+// Optionally add extra rules
+game = engine.addExtraRules({ game, extraRules: ["The middle Kingdom", "Harmony"] });
 
 // Start the game
 game = engine.startGame({ game });
 
-// Game loop - continue until there are no more actions
+// Game loop
 while (isGameWithNextAction(game)) {
   const currentLordId = game.nextAction.nextLord;
   const nextAction = game.nextAction.nextAction;
 
-  // Handle different actions
   if (nextAction === "pickDomino") {
-    // Choose a domino from the available ones
-    const dominoToChoose = game.currentDominoes[0].domino.number;
-    game = engine.chooseDomino({
-      game,
-      lordId: currentLordId,
-      dominoPick: dominoToChoose,
-    });
-  } else if (nextAction === "placeDomino") {
-    // Try to place the domino
-    try {
-      game = engine.placeDomino({
+    // Pick the first available domino
+    const availableDomino = game.currentDominoes.find((d) => !d.picked);
+    if (availableDomino) {
+      game = engine.chooseDomino({
         game,
         lordId: currentLordId,
-        position: { x: 0, y: 0 }, // Position to place the domino
-        rotation: 0, // Rotation of the domino (0, 90, 180, 270)
-      });
-    } catch (error) {
-      // If placement fails, discard the domino
-      game = engine.discardDomino({
-        game,
-        lordId: currentLordId,
+        dominoPick: availableDomino.domino.number,
       });
     }
+  } else if (nextAction === "placeDomino") {
+    // Check if placement is possible
+    const lord = game.lords.find((l) => l.id === currentLordId);
+    const player = game.players.find((p) => p.id === lord?.playerId);
+
+    if (lord?.dominoPicked && player) {
+      const canPlace = engine.canPlaceDomino({
+        kingdom: player.kingdom,
+        domino: lord.dominoPicked,
+      });
+
+      if (canPlace) {
+        const placements = engine.getValidPlacements({
+          kingdom: player.kingdom,
+          domino: lord.dominoPicked,
+        });
+        game = engine.placeDomino({
+          game,
+          lordId: currentLordId,
+          position: placements[0].position,
+          rotation: placements[0].rotation,
+        });
+      } else {
+        game = engine.discardDomino({ game, lordId: currentLordId });
+      }
+    }
+  } else {
+    // pass action
+    game = engine.discardDomino({ game, lordId: currentLordId });
   }
 }
 
@@ -283,7 +374,7 @@ console.log("Game results:", gameResult.result);
 
 ## Extra Rules
 
-The engine supports extra rules that can modify gameplay. Some examples include:
+The engine supports extra rules that can modify gameplay:
 
 - **The Middle Kingdom**: Gain 10 additional points if your castle is in the middle of the kingdom.
 - **Harmony**: Gain 5 additional points if your kingdom is complete (no discarded dominoes).
@@ -292,7 +383,6 @@ You can get all available extra rules for a specific game mode and number of pla
 
 ```typescript
 const extraRules = engine.getExtraRules({ mode: "Classic", players: 2 });
-console.log("Available extra rules:", extraRules);
 ```
 
 ## API Documentation
@@ -316,6 +406,10 @@ type GameEngine = {
   discardDomino: (command: DiscardDominoCommand) => GameState;
   getResults: (command: GetResultCommand) => GameWithResults;
   calculateScore: (command: CalculateScoreCommand) => Score;
+  getValidPlacements: (command: GetValidPlacementsCommand) => ValidPlacement[];
+  canPlaceDomino: (command: CanPlaceDominoCommand) => boolean;
+  serialize: (command: SerializeGameCommand) => string;
+  deserialize: (command: DeserializeGameCommand) => GameState;
 };
 ```
 
@@ -327,7 +421,7 @@ Represents the current state of a Kingdomino game.
 type Game = {
   id: string;
   dominoes: Domino[];
-  currentDominoes: RevealedDomino[];
+  currentDominoes: RevealsDomino[];
   players: Player[];
   lords: Lord[];
   turn: number;
@@ -354,6 +448,18 @@ type NextAction = {
 };
 ```
 
+#### Score
+
+Represents the score calculation for a kingdom.
+
+```typescript
+type Score = {
+  points: number;
+  maxPropertiesSize: number;
+  totalCrowns: number;
+};
+```
+
 #### ExtraRule
 
 Represents an additional rule that can be applied to the game.
@@ -367,43 +473,54 @@ type ExtraRule = {
 };
 ```
 
+#### ValidPlacement
+
+Represents a valid position and rotation for placing a domino.
+
+```typescript
+type ValidPlacement = {
+  position: Position;
+  rotation: Rotation; // 0 | 90 | 180 | 270
+};
+```
+
+#### Domain Errors
+
+The engine throws typed `DomainException` errors with error codes for programmatic handling:
+
+```typescript
+import { DomainException, ErrorCode } from "@pompidup/kingdomino-engine";
+
+try {
+  game = engine.placeDomino({ game, lordId, position, rotation });
+} catch (error) {
+  if (error instanceof DomainException) {
+    console.log(error.code);    // e.g. "INVALID_PLACEMENT"
+    console.log(error.message);  // Human-readable message
+    console.log(error.context);  // Optional debug context
+  }
+}
+```
+
 ### Methods
 
-#### createGame(command: CreateGameCommand): GameWithNextStep
-
-Creates a new game with the specified game mode.
-
-#### addPlayers(command: AddPlayersCommand): GameWithNextStep
-
-Adds players to the game.
-
-#### addExtraRules(command: AddExtraRulesCommand): GameWithNextStep
-
-Adds extra rules to the game.
-
-#### startGame(command: StartGameCommand): GameWithNextAction
-
-Starts the game, setting up the initial game state.
-
-#### chooseDomino(command: ChooseDominoCommand): GameWithNextAction
-
-Allows a player to choose a domino.
-
-#### placeDomino(command: PlaceDominoCommand): GameState
-
-Allows a player to place a domino on their kingdom.
-
-#### discardDomino(command: DiscardDominoCommand): GameState
-
-Allows a player to discard a domino if they cannot place it.
-
-#### getResults(command: GetResultCommand): GameWithResults
-
-Calculates and returns the final game results.
-
-#### calculateScore(command: CalculateScoreCommand): Score
-
-Calculates and returns the score of a kingdom.
+| Method | Input | Output | Description |
+|--------|-------|--------|-------------|
+| `getModes` | `{}` | `GameMode[]` | Get available game modes |
+| `getExtraRules` | `{ mode, players }` | `ExtraRule[]` | Get extra rules for a mode/player count |
+| `createGame` | `{ mode }` | `GameWithNextStep` | Create a new game |
+| `addPlayers` | `{ game, players }` | `GameWithNextStep` | Add 2-4 players |
+| `addExtraRules` | `{ game, extraRules }` | `GameWithNextStep` | Add optional extra rules |
+| `startGame` | `{ game }` | `GameWithNextAction` | Start the game |
+| `chooseDomino` | `{ game, lordId, dominoPick }` | `GameWithNextAction` | Pick a domino |
+| `placeDomino` | `{ game, lordId, position, rotation }` | `GameState` | Place a domino on kingdom |
+| `discardDomino` | `{ game, lordId }` | `GameState` | Discard when no placement exists |
+| `getResults` | `{ game }` | `GameWithResults` | Get final rankings and scores |
+| `calculateScore` | `{ kingdom }` | `Score` | Calculate score for a kingdom |
+| `getValidPlacements` | `{ kingdom, domino }` | `ValidPlacement[]` | Find all valid placements |
+| `canPlaceDomino` | `{ kingdom, domino }` | `boolean` | Check if any placement exists |
+| `serialize` | `{ game }` | `string` | Serialize game state to JSON |
+| `deserialize` | `{ json }` | `GameState` | Restore game state from JSON |
 
 ## Development
 
@@ -424,19 +541,35 @@ To set up the project for development:
 
 ### Testing
 
-The project uses Vitest for testing. To run the tests:
+The project uses Vitest for testing:
 
 ```bash
-# Run all tests
+# Run tests in watch mode
 pnpm test
+
+# Run tests once
+pnpm test -- --run
 
 # Run tests with coverage
 pnpm coverage
+
+# Run a specific test file
+pnpm test -- src/tests/unit/useCases/calculateScore.test.ts --run
+```
+
+### Linting and Type Checking
+
+```bash
+# Lint with Biome
+pnpm lint
+
+# Type check with TypeScript
+pnpm typecheck
 ```
 
 ### Building
 
-To build the project:
+To build the project (ESM output to `dist/`):
 
 ```bash
 pnpm build
@@ -449,13 +582,10 @@ Contributions are welcome! Here's how you can contribute:
 1. Fork the repository
 2. Create a new branch (`git checkout -b feature/your-feature-name`)
 3. Make your changes
-4. Run tests to ensure everything works (`pnpm test`)
-5. Commit your changes (`git commit -m 'Add some feature'`)
-6. Push to the branch (`git push origin feature/your-feature-name`)
-7. Open a Pull Request
+4. Run tests to ensure everything works (`pnpm test -- --run`)
+5. Run type checking (`pnpm typecheck`)
+6. Commit your changes (`git commit -m 'Add some feature'`)
+7. Push to the branch (`git push origin feature/your-feature-name`)
+8. Open a Pull Request
 
 Please make sure your code follows the existing style and includes appropriate tests.
-
-## Advanced Usage
-
-For more advanced usage and detailed API documentation, please refer to the source code and inline comments.
