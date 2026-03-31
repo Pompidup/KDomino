@@ -35,6 +35,10 @@ import { getResultUseCase } from "@core/useCases/getResult.js";
 import { placeDominoUseCase } from "@core/useCases/placeDomino.js";
 import { startGameUseCase } from "@core/useCases/startGame.js";
 import { calculateScoreUseCase } from "@core/useCases/calculateScore.js";
+import {
+  getValidPlacementsUseCase,
+  canPlaceDominoUseCase,
+} from "@core/useCases/getValidPlacements.js";
 
 /**
  * Configuration options for the game engine.
@@ -105,8 +109,14 @@ export const configureEngine = (config: Partial<EngineConfig>) => {
       calculateScoreUseCase,
     }),
     calculateScoreHandler: calculateScoreHandler(logger, calculateScoreUseCase),
-    getValidPlacementsHandler: getValidPlacementsHandler(logger),
-    canPlaceDominoHandler: canPlaceDominoHandler(logger),
+    getValidPlacementsHandler: getValidPlacementsHandler(
+      logger,
+      getValidPlacementsUseCase
+    ),
+    canPlaceDominoHandler: canPlaceDominoHandler(
+      logger,
+      canPlaceDominoUseCase
+    ),
     serializeGameHandler: serializeGameHandler(logger),
     deserializeGameHandler: deserializeGameHandler(logger),
   };

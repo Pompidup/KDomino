@@ -1,6 +1,8 @@
 import type { Logger } from "@core/portServerside/logger.js";
 import type { CanPlaceDominoCommand } from "@application/commands/canPlaceDominoCommand.js";
-import { canPlaceDominoUseCase } from "@core/useCases/getValidPlacements.js";
+import type { Kingdom, Domino } from "@core/domain/types/index.js";
+
+type CanPlaceDominoUseCase = (kingdom: Kingdom, domino: Domino) => boolean;
 
 type CanPlaceDominoHandler = (command: CanPlaceDominoCommand) => boolean;
 
@@ -8,11 +10,12 @@ type CanPlaceDominoHandler = (command: CanPlaceDominoCommand) => boolean;
  * Creates a handler for checking if a domino can be placed.
  */
 export const canPlaceDominoHandler = (
-  logger: Logger
+  logger: Logger,
+  useCase: CanPlaceDominoUseCase
 ): CanPlaceDominoHandler => {
   return (command) => {
     logger.info(`Checking if domino ${command.domino.number} can be placed`);
-    const canPlace = canPlaceDominoUseCase(command.kingdom, command.domino);
+    const canPlace = useCase(command.kingdom, command.domino);
     logger.info(`Can place domino: ${canPlace}`);
     return canPlace;
   };
