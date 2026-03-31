@@ -41,15 +41,13 @@ export const updateLordOrder = (lords: Lord[]): Lord[] => {
   });
 };
 
-export const resetLordsActions = (lord: Lord[]): Lord[] => {
-  const lordsCopy = [...lord];
-  for (const lord of lordsCopy) {
-    lord.turnEnded = false;
-    lord.hasPick = false;
-    lord.hasPlace = false;
-  }
-
-  return lordsCopy;
+export const resetLordsActions = (lords: Lord[]): Lord[] => {
+  return lords.map((lord) => ({
+    ...lord,
+    turnEnded: false,
+    hasPick: false,
+    hasPlace: false,
+  }));
 };
 
 export const nextLordWithAction = (lords: Lord[]): NextAction => {
