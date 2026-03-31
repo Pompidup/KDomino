@@ -17,9 +17,6 @@ export * from "@core/domain/errors/domainErrors.js";
 export * from "@core/portServerside/index.js";
 export * from "@core/portUserside/engine.js";
 
-// Events
-export * from "@core/events/gameEvents.js";
-
 // i18n
 export * from "@core/i18n/translations.js";
 
