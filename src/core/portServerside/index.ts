@@ -1,2 +1,6 @@
+export * from "./dominoesRepository.js";
+export * from "./logger.js";
+export * from "./modeRepository.js";
+export * from "./ruleRepository.js";
 export * from "./shuffleMethod.js";
 export * from "./uuidMethod.js";
