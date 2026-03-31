@@ -36,8 +36,8 @@ export const canPlaceAndDominoPickedIsDefined = (
 };
 
 export const updateLordOrder = (lords: Lord[]): Lord[] => {
-  return lords.sort((a, b) => {
-    return a.dominoPicked!.number - b.dominoPicked!.number;
+  return [...lords].sort((a, b) => {
+    return (a.dominoPicked?.number ?? 0) - (b.dominoPicked?.number ?? 0);
   });
 };
 
