@@ -8,7 +8,7 @@ import type {
   GameWithResults,
   ScoreResult,
 } from "@core/domain/types/index.js";
-import { ok, type Result } from "@utils/result.js";
+import { err, ok, type Result } from "@utils/result.js";
 
 export type GetResultUseCase = (
   game: GameWithNextStep,
@@ -22,11 +22,12 @@ export const getResultUseCase: GetResultUseCase = (game, scoreResult) => {
   const finalScoreResult = scoreResult.map((score): ScoreResult => {
     let finalScore = score.details.points;
 
-    const kingdom = game.players.find((player) => {
-      if (player.id === score.playerId) {
-        return player;
-      }
-    })?.kingdom!;
+    const player = game.players.find((p) => p.id === score.playerId);
+    if (!player) {
+      return score;
+    }
+
+    const { kingdom } = player;
 
     if (extra.length > 0) {
       extra.forEach((extraRule) => {
