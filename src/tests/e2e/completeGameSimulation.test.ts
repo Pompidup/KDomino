@@ -40,16 +40,22 @@ describe("Full Game Simulation", () => {
         let nextAction = game.nextAction.nextAction;
 
         if (nextAction == "placeDomino") {
-          if (game.turn === 1) {
-            if (allLordIds.includes(currentLordId)) {
-              game = engine.placeDomino({
-                game,
-                lordId: currentLordId,
-                position: positions[i]!,
-                rotation: 0,
-              });
-              allLordIds.splice(allLordIds.indexOf(currentLordId), 1);
-            }
+          const currentLord = game.lords.find((l) => l.id === currentLordId)!;
+          const currentPlayer = game.players.find((p) => p.id === currentLord.playerId)!;
+          const domino = currentLord.dominoPicked!;
+          const validPlacements = engine.getValidPlacements({
+            kingdom: currentPlayer.kingdom,
+            domino,
+          });
+
+          if (validPlacements.length > 0) {
+            const placement = validPlacements[0]!;
+            game = engine.placeDomino({
+              game,
+              lordId: currentLordId,
+              position: placement.position,
+              rotation: placement.rotation,
+            });
           } else {
             game = engine.discardDomino({
               game,

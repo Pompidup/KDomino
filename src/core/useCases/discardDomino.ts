@@ -11,6 +11,7 @@ import {
   type NextAction,
   type NextStep,
 } from "@core/domain/types/game.js";
+import { canPlaceDominoUseCase } from "./getValidPlacements.js";
 import { err, ok } from "@utils/result.js";
 
 export type DiscardDominoUseCase = (
@@ -35,6 +36,16 @@ export const discardDominoUseCase: DiscardDominoUseCase = (game, lordId) => {
 
   if (!canPass(currentLord)) {
     return err("Lord can't pass");
+  }
+
+  if (currentLord.dominoPicked) {
+    const currentPlayer = game.players.find(
+      (player) => player.id === currentLord.playerId
+    );
+
+    if (currentPlayer && canPlaceDominoUseCase(currentPlayer.kingdom, currentLord.dominoPicked)) {
+      return err("Cannot discard: valid placement exists");
+    }
   }
 
   const maxTurns = game.rules.basic.maxTurns;

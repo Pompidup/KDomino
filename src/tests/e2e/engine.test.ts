@@ -180,7 +180,7 @@ describe("Engine", () => {
     });
   });
 
-  test("should be able to discard a domino", () => {
+  test("should be able to discard a domino when no valid placement exists", () => {
     // Arrange
     const newGame = engine.createGame({ mode: "Classic" });
     const gameWithPlayers = engine.addPlayers({
@@ -198,6 +198,21 @@ describe("Engine", () => {
       });
     }
 
+    // Fill the current player's kingdom 5×5 so no placement is possible
+    const currentLord = gameWithChosenDomino.lords.find(
+      (l) => l.id === gameWithChosenDomino.nextAction.nextLord
+    )!;
+    const currentPlayer = gameWithChosenDomino.players.find(
+      (p) => p.id === currentLord.playerId
+    )!;
+    // Fill all cells in the 5×5 area (2,2)-(6,6) with wheat, except castle at (4,4)
+    for (let y = 2; y <= 6; y++) {
+      for (let x = 2; x <= 6; x++) {
+        if (x === 4 && y === 4) continue; // keep castle
+        currentPlayer.kingdom[y]![x] = { type: "wheat", crowns: 0 };
+      }
+    }
+
     // Act
     const gameWithDiscardedDomino = engine.discardDomino({
       game: gameWithChosenDomino,
@@ -210,6 +225,33 @@ describe("Engine", () => {
       nextLord: gameWithChosenDomino.lords[0]!.id,
       nextAction: "pickDomino",
     });
+  });
+
+  test("should not be able to discard a domino when valid placement exists", () => {
+    // Arrange
+    const newGame = engine.createGame({ mode: "Classic" });
+    const gameWithPlayers = engine.addPlayers({
+      game: newGame,
+      players: ["player1", "player2"],
+    });
+    let gameWithChosenDomino = engine.startGame({game: gameWithPlayers});
+    for (let i = 0; i < 4; i++) {
+      const lordId = gameWithChosenDomino.nextAction.nextLord;
+      const domino = gameWithChosenDomino.currentDominoes[i]!.domino;
+      gameWithChosenDomino = engine.chooseDomino({
+        game: gameWithChosenDomino,
+        lordId: lordId,
+        dominoPick: domino.number,
+      });
+    }
+
+    // Act & Assert — kingdom is nearly empty so placement exists
+    expect(() =>
+      engine.discardDomino({
+        game: gameWithChosenDomino,
+        lordId: gameWithChosenDomino.nextAction.nextLord,
+      })
+    ).toThrowError("Cannot discard: valid placement exists");
   });
 
   test("should be able to place a domino", () => {
