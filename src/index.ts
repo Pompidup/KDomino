@@ -44,6 +44,18 @@ export {
   getHistorySize,
 } from "@core/useCases/gameHistory.js";
 
+// Bot / AI player
+export {
+  type BotStrategy,
+  type PickContext,
+  type PlaceContext,
+  randomStrategy,
+  greedyStrategy,
+  advancedStrategy,
+  expertStrategy,
+  playBotTurn,
+} from "@core/useCases/bot.js";
+
 /**
  * Creates a new Kingdomino game engine instance.
  *

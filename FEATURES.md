@@ -36,7 +36,7 @@
 ## API & DX (Developer Experience)
 
 18. **Suggestions IA** - Fonction `getBestPlacement(game)` qui retourne le placement optimal (scoring maximum). Utile pour un mode "hint" dans les UI ou un bot.
-19. **Bot / IA joueur** - Différents niveaux de difficulté (random, greedy, minimax) comme adaptateurs injectables.
+19. ~~**Bot / IA joueur**~~ - ✅ Implémenté. 4 stratégies : `randomStrategy`, `greedyStrategy`, `advancedStrategy` (lookahead 1 tour), `expertStrategy` (beam-search multi-tours). Helper `playBotTurn(engine, game, strategy)`.
 20. **Statistiques de partie** - Points par tour, courbe de progression, dominos défaussés, propriétés formées, etc.
 21. **Export de partie** - Format standardisé (PGN-like) pour partager/importer des parties.
 22. **WebSocket adapter** - Adaptateur réseau prêt à l'emploi pour le multijoueur en ligne.
@@ -56,5 +56,5 @@
 Les plus impactantes à court terme :
 - ~~**Seed de partie** (9)~~ - ✅ Done
 - ~~**Undo/Redo** (5)~~ - ✅ Done
-- **Bot / IA joueur** (19) - Mode solo et tests automatisés
+- ~~**Bot / IA joueur** (19)~~ - ✅ Done
 - **Système d'événements v2** (13) - Intégration UI/animations
