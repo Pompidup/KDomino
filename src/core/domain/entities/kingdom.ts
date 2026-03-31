@@ -211,46 +211,30 @@ const isAdjacent = (
   firstPosition: Position,
   secondPosition: Position
 ): Tile[] => {
-  const xFirstPosition = firstPosition.x;
-  const yFirstPosition = firstPosition.y;
-  const xSecondPosition = secondPosition.x;
-  const ySecondPosition = secondPosition.y;
-
-  const adjacentTiles: Tile[] = [];
-  const adjacentTilesKeys = [
-    { x: xFirstPosition - 1, y: yFirstPosition },
-    { x: xFirstPosition, y: yFirstPosition - 1 },
-    { x: xFirstPosition + 1, y: yFirstPosition },
-    { x: xFirstPosition, y: yFirstPosition + 1 },
-    { x: xSecondPosition - 1, y: ySecondPosition },
-    { x: xSecondPosition, y: ySecondPosition - 1 },
-    { x: xSecondPosition + 1, y: ySecondPosition },
-    { x: xSecondPosition, y: ySecondPosition + 1 },
+  const offsets = [
+    { x: -1, y: 0 },
+    { x: 1, y: 0 },
+    { x: 0, y: -1 },
+    { x: 0, y: 1 },
   ];
 
-  // Remove firstPosition and secondPosition from adjacentTilesKeys
-  adjacentTilesKeys.splice(
-    adjacentTilesKeys.findIndex((pos) => {
-      return pos.x === xFirstPosition && pos.y === yFirstPosition;
-    }),
-    1
-  );
+  const isOwnPosition = (x: number, y: number) =>
+    (x === firstPosition.x && y === firstPosition.y) ||
+    (x === secondPosition.x && y === secondPosition.y);
 
-  adjacentTilesKeys.splice(
-    adjacentTilesKeys.findIndex((pos) => {
-      return pos.x === xSecondPosition && pos.y === ySecondPosition;
-    }),
-    1
-  );
+  const adjacentTiles: Tile[] = [];
 
-  adjacentTilesKeys.forEach((key) => {
-    const tile = getTile(kingdom, key);
-    if (isOk(tile)) {
-      if (tile.value.type !== "empty") {
+  for (const pos of [firstPosition, secondPosition]) {
+    for (const offset of offsets) {
+      const nx = pos.x + offset.x;
+      const ny = pos.y + offset.y;
+      if (isOwnPosition(nx, ny)) continue;
+      const tile = getTile(kingdom, { x: nx, y: ny });
+      if (isOk(tile) && tile.value.type !== "empty") {
         adjacentTiles.push(tile.value);
       }
     }
-  });
+  }
 
   return adjacentTiles;
 };
