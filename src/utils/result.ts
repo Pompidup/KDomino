@@ -20,7 +20,7 @@ export const isErr = <T>(result: Result<T>): result is Err =>
 
 export const unwrap = <T>(result: Ok<T> | Err): T => {
   if (result.tag === "Err") {
-    throw result.error;
+    throw new Error(result.error);
   }
   return result.value;
 };
