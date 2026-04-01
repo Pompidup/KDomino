@@ -47,7 +47,7 @@
 
 24. ~~**Strict mode TypeScript**~~ - ✅ Implémenté. `strict: true` (inclut `strictNullChecks`) et `noUncheckedIndexedAccess: true` activés dans `tsconfig.json`. Toutes les erreurs de compilation corrigées.
 25. **Benchmarks** - Suite de perf pour le scoring et le pathfinding (BFS), surtout pour les grilles 7×7/9×9.
-26. **WASM build** - Compiler le moteur en WASM pour l'utiliser hors écosystème Node (Unity, C#, etc.).
+26. ~~**WASM build**~~ - ✅ Implémenté. Build javy produisant `kingdomino-engine.wasm` depuis le bundle TypeScript. Protocole JSON RPC (stdin/stdout) pour appeler toutes les méthodes du moteur. Compatible wasmtime, wasmer, wazero. Exemples Python et shell. Bundle universel platform-neutral inclus (`dist/index.universal.js`).
 27. **Schéma JSON** - Publier un JSON Schema de l'état de jeu pour la validation côté consommateur.
 
 ---
@@ -98,4 +98,4 @@ Les plus impactantes à court terme :
 17. **WebSocket adapter (22)** — Dépend du mode spectateur (7). Réseau = complexité d'intégration élevée.
 18. **Schéma JSON (27)** — Utile mais dérivable des types TypeScript existants.
 19. **Benchmarks (25)** — Important pour l'optimisation mais pas bloquant fonctionnellement.
-20. **WASM build (26)** — Niche, pour usage hors Node. Dernière priorité.
+20. ~~**WASM build (26)**~~ — ✅ Done

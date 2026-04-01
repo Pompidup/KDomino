@@ -18,6 +18,7 @@
     "test": "vitest",
     "coverage": "vitest --coverage --config ./vitest.config.ts",
     "build": "tsup",
+    "build:wasm": "pnpm build && javy build dist/wasm-bridge.js -o dist/kingdomino-engine.wasm",
     "bump:major": "npm version major",
     "bump:minor": "npm version minor",
     "bump:patch": "npm version patch",
@@ -36,7 +37,7 @@
   },
   "homepage": "https://github.com/Pompidup/KDomino#readme",
   "engines": {
-    "node": ">=18"
+    "node": ">=20"
   },
   "peerDependencies": {
     "winston": "^3.0.0"
