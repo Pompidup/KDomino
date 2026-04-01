@@ -23,6 +23,7 @@ import {
 } from "@application/handlers/serializeGameHandler.js";
 import { startGameHandler } from "@application/handlers/startGameHandler.js";
 import type { Translator } from "@core/i18n/translations.js";
+import type { GameEngine } from "@core/portUserside/engine.js";
 import { defaultTranslator } from "@core/i18n/translations.js";
 import type { Logger } from "@core/portServerside/logger.js";
 import type { ShuffleMethod } from "@core/portServerside/shuffleMethod.js";
@@ -66,7 +67,26 @@ export type EngineConfig = {
   debug?: boolean | DebugOptions;
 };
 
-export const configureEngine = (config: Partial<EngineConfig>) => {
+export type ConfiguredHandlers = {
+  createGameHandler: GameEngine["createGame"];
+  getModesHandler: GameEngine["getModes"];
+  getExtraRulesHandler: GameEngine["getExtraRules"];
+  addPlayersHandler: GameEngine["addPlayers"];
+  addExtraRulesHandler: GameEngine["addExtraRules"];
+  startGameHandler: GameEngine["startGame"];
+  chooseDominoHandler: GameEngine["chooseDomino"];
+  placeDominoHandler: GameEngine["placeDomino"];
+  discardDominoHandler: GameEngine["discardDomino"];
+  getResultHandler: GameEngine["getResults"];
+  calculateScoreHandler: GameEngine["calculateScore"];
+  getValidPlacementsHandler: GameEngine["getValidPlacements"];
+  canPlaceDominoHandler: GameEngine["canPlaceDomino"];
+  serializeGameHandler: GameEngine["serialize"];
+  deserializeGameHandler: GameEngine["deserialize"];
+  getDynastyResultHandler: GameEngine["getDynastyResults"];
+};
+
+export const configureEngine = (config: Partial<EngineConfig>): ConfiguredHandlers => {
   const modeRepository = jsonModes();
   const dominoesRepository = jsonDominoes();
   const ruleRepository = jsonRules();

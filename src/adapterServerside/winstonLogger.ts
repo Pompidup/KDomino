@@ -26,7 +26,7 @@ import winston from "winston";
  */
 export const winstonLogger = (isLoggingEnabled: boolean): Logger => {
   const myFormat = winston.format.printf(
-    (info: { level: string; message: string; label?: string; timestamp?: string }) => {
+    (info) => {
       return `${info.timestamp} [${info.label}] ${info.level}: ${info.message}`;
     }
   );

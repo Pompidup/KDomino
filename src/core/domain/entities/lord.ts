@@ -70,6 +70,6 @@ const findNextLord = (lords: Lord[]): Lord => {
   return lord;
 };
 
-export const allLordsHavePlayed = (lords: Lord[]) => {
+export const allLordsHavePlayed = (lords: Lord[]): boolean => {
   return lords.every((lord) => lord.turnEnded);
 };

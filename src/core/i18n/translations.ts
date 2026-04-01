@@ -222,4 +222,4 @@ export const createTranslator = (
 /**
  * Default translator using English translations.
  */
-export const defaultTranslator = createTranslator();
+export const defaultTranslator: Translator = createTranslator();

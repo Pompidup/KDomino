@@ -1,6 +1,6 @@
 import type { GameMode } from "@core/domain/types/mode.js";
 import type { ModeRepository } from "@core/portServerside/modeRepository.js";
-import modesJson from "../datasources/modes.json" assert { type: "json" };
+import modesJson from "../datasources/modes.json" with { type: "json" };
 
 const jsonModes = (): ModeRepository => {
   const modes: GameMode[] = [];
