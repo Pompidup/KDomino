@@ -14,6 +14,7 @@ import {
   nextLordWithAction,
 } from "@core/domain/entities/lord.js";
 import { placeDomino } from "@core/domain/entities/kingdom.js";
+import { playerActions } from "@core/domain/types/player.js";
 import type {
   Position,
   Rotation,
@@ -107,11 +108,38 @@ export const placeDominoUseCase: PlaceDominoUseCase = (
     step: gameSteps.result,
   };
 
+  const isQueenDomino = game.mode.name === "QueenDomino";
+
   if (isLastTurn && allLordsHavePlayed(updatedLords)) {
     updatedGame = {
       ...game,
       lords: updatedLords,
       nextAction: resultStep,
+      players: updatedPlayers,
+    };
+  } else if (isQueenDomino && !isLastTurn) {
+    // In QueenDomino, after placing a domino, the same lord gets optional actions
+    updatedGame = {
+      ...game,
+      lords: updatedLords,
+      nextAction: {
+        type: "action",
+        nextLord: currentLord.id,
+        nextAction: playerActions.placeKnight,
+      },
+      players: updatedPlayers,
+    };
+  } else if (isQueenDomino && isLastTurn) {
+    // Last turn in QueenDomino: optional actions before checking if all lords done
+    const queenDominoAction: NextAction = {
+      type: "action",
+      nextLord: currentLord.id,
+      nextAction: playerActions.placeKnight,
+    };
+    updatedGame = {
+      ...game,
+      lords: updatedLords,
+      nextAction: queenDominoAction,
       players: updatedPlayers,
     };
   } else {

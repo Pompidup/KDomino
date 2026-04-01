@@ -1,6 +1,6 @@
 import type { NextAction } from "@core/domain/types/game.js";
 import type { Lord } from "@core/domain/types/lord.js";
-import { playerActions } from "@core/domain/types/player.js";
+import { type PlayerActions, playerActions } from "@core/domain/types/player.js";
 
 export const createLord = (id: string, playerId: string): Lord => {
   return {
@@ -72,4 +72,27 @@ const findNextLord = (lords: Lord[]): Lord => {
 
 export const allLordsHavePlayed = (lords: Lord[]): boolean => {
   return lords.every((lord) => lord.turnEnded);
+};
+
+/**
+ * Queendomino optional action sequence after placeDomino:
+ * placeKnight → constructBuilding → useDragon → pickDomino
+ *
+ * Given the current optional action, returns the next one in the sequence.
+ */
+const QUEENDOMINO_ACTION_SEQUENCE: PlayerActions[] = [
+  playerActions.placeKnight,
+  playerActions.constructBuilding,
+  playerActions.useDragon,
+  playerActions.pickDomino,
+];
+
+export const nextQueenDominoAction = (
+  currentAction: PlayerActions,
+): PlayerActions => {
+  const index = QUEENDOMINO_ACTION_SEQUENCE.indexOf(currentAction);
+  if (index === -1 || index >= QUEENDOMINO_ACTION_SEQUENCE.length - 1) {
+    return playerActions.pickDomino;
+  }
+  return QUEENDOMINO_ACTION_SEQUENCE[index + 1]!;
 };

@@ -57,6 +57,17 @@ export const TranslationKey = {
   ACTION_PICK_DOMINO: "action.pickDomino",
   ACTION_PLACE_DOMINO: "action.placeDomino",
   ACTION_PASS: "action.pass",
+
+  // Queendomino errors
+  ERROR_CANNOT_PLACE_KNIGHT: "error.cannotPlaceKnight",
+  ERROR_MAX_KNIGHTS_REACHED: "error.maxKnightsReached",
+  ERROR_KNIGHT_TERRITORY_OCCUPIED: "error.knightTerritoryOccupied",
+  ERROR_CANNOT_AFFORD_BUILDING: "error.cannotAffordBuilding",
+  ERROR_NO_CONSTRUCTION_SQUARE: "error.noConstructionSquare",
+  ERROR_DRAGON_UNAVAILABLE: "error.dragonUnavailable",
+  ERROR_QUEEN_HOLDER_CANNOT_USE_DRAGON: "error.queenHolderCannotUseDragon",
+  ERROR_BUILDING_NOT_FOUND: "error.buildingNotFound",
+  ERROR_INVALID_OPTIONAL_ACTION: "error.invalidOptionalAction",
 } as const;
 
 export type TranslationKeyType =
@@ -121,6 +132,17 @@ export const defaultTranslations: Record<TranslationKeyType, string> = {
   [TranslationKey.ACTION_PICK_DOMINO]: "Pick Domino",
   [TranslationKey.ACTION_PLACE_DOMINO]: "Place Domino",
   [TranslationKey.ACTION_PASS]: "Pass",
+
+  // Queendomino errors
+  [TranslationKey.ERROR_CANNOT_PLACE_KNIGHT]: "Cannot place knight here",
+  [TranslationKey.ERROR_MAX_KNIGHTS_REACHED]: "Maximum number of knights reached (3)",
+  [TranslationKey.ERROR_KNIGHT_TERRITORY_OCCUPIED]: "This territory already has a knight",
+  [TranslationKey.ERROR_CANNOT_AFFORD_BUILDING]: "Not enough coins to purchase this building",
+  [TranslationKey.ERROR_NO_CONSTRUCTION_SQUARE]: "No open construction square available",
+  [TranslationKey.ERROR_DRAGON_UNAVAILABLE]: "The Dragon is not available this round",
+  [TranslationKey.ERROR_QUEEN_HOLDER_CANNOT_USE_DRAGON]: "The Queen holder cannot use the Dragon",
+  [TranslationKey.ERROR_BUILDING_NOT_FOUND]: "Building not found on the Builders Board",
+  [TranslationKey.ERROR_INVALID_OPTIONAL_ACTION]: "Invalid optional action for this game state",
 };
 
 /**
@@ -157,6 +179,15 @@ export const errorCodeToTranslationKey: Record<
   [ErrorCode.DOMINO_ALREADY_PICKED]: TranslationKey.ERROR_DOMINO_ALREADY_PICKED,
   [ErrorCode.UNDO_UNAVAILABLE]: TranslationKey.ERROR_UNDO_UNAVAILABLE,
   [ErrorCode.REDO_UNAVAILABLE]: TranslationKey.ERROR_REDO_UNAVAILABLE,
+  [ErrorCode.CANNOT_PLACE_KNIGHT]: TranslationKey.ERROR_CANNOT_PLACE_KNIGHT,
+  [ErrorCode.MAX_KNIGHTS_REACHED]: TranslationKey.ERROR_MAX_KNIGHTS_REACHED,
+  [ErrorCode.KNIGHT_TERRITORY_OCCUPIED]: TranslationKey.ERROR_KNIGHT_TERRITORY_OCCUPIED,
+  [ErrorCode.CANNOT_AFFORD_BUILDING]: TranslationKey.ERROR_CANNOT_AFFORD_BUILDING,
+  [ErrorCode.NO_CONSTRUCTION_SQUARE]: TranslationKey.ERROR_NO_CONSTRUCTION_SQUARE,
+  [ErrorCode.DRAGON_UNAVAILABLE]: TranslationKey.ERROR_DRAGON_UNAVAILABLE,
+  [ErrorCode.QUEEN_HOLDER_CANNOT_USE_DRAGON]: TranslationKey.ERROR_QUEEN_HOLDER_CANNOT_USE_DRAGON,
+  [ErrorCode.BUILDING_NOT_FOUND]: TranslationKey.ERROR_BUILDING_NOT_FOUND,
+  [ErrorCode.INVALID_OPTIONAL_ACTION]: TranslationKey.ERROR_INVALID_OPTIONAL_ACTION,
 };
 
 /**
