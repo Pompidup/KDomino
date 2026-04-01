@@ -1,3 +1,4 @@
+import { createBuildersBoard } from "@core/domain/entities/building.js";
 import { createLord } from "@core/domain/entities/lord";
 import type {
   GameWithNextAction,
@@ -54,6 +55,19 @@ export const startGameUseCase =
       nextAction: playerActions.pickDomino,
     };
 
+    // Setup Builders Board for QueenDomino mode
+    let queendomino = game.queendomino;
+    if (queendomino && game.mode.name === "QueenDomino") {
+      const buildingShuffle = game.seed
+        ? createSeededShuffle(game.seed, "buildings")
+        : shuffleMethod;
+      const board = createBuildersBoard(
+        queendomino.buildersBoard.drawPile,
+        buildingShuffle,
+      );
+      queendomino = { ...queendomino, buildersBoard: board };
+    }
+
     const newState: GameWithNextAction = {
       ...game,
       lords: shuffledLords,
@@ -67,6 +81,7 @@ export const startGameUseCase =
           position: index + 1,
         };
       }),
+      ...(queendomino !== undefined && { queendomino }),
     };
 
     return ok(newState);

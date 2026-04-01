@@ -1,3 +1,4 @@
+import { STARTING_COINS } from "@core/domain/entities/economy.js";
 import {
   createEmptyKingdom,
   placeCastle,
@@ -54,6 +55,14 @@ export const addPlayersUseCase =
 
       if (isErr(newPlayer)) {
         return newPlayer;
+      }
+
+      // Initialize Queendomino-specific player state
+      if (game.mode.name === "QueenDomino") {
+        newPlayer.value.coins = STARTING_COINS;
+        newPlayer.value.towers = 0;
+        newPlayer.value.knights = [];
+        newPlayer.value.buildings = [];
       }
 
       newPlayers.push(newPlayer.value);

@@ -1,4 +1,5 @@
 import { consoleLogger, silentLogger } from "@adapter/consoleLogger.js";
+import jsonBuildings from "@adapter/jsonBuildings.js";
 import jsonDominoes from "@adapter/jsonDominoes.js";
 import jsonModes from "@adapter/jsonModes.js";
 import jsonRules from "@adapter/jsonRules.js";
@@ -101,6 +102,7 @@ export type ConfiguredHandlers = {
 export const configureEngine = (config: Partial<EngineConfig>): ConfiguredHandlers => {
   const modeRepository = jsonModes();
   const dominoesRepository = jsonDominoes();
+  const buildingsRepository = jsonBuildings();
   const ruleRepository = jsonRules();
   const uuid = config.uuidMethod || uuidMethod;
   const shuffle = config.shuffleMethod || shuffleMethod;
@@ -121,6 +123,7 @@ export const configureEngine = (config: Partial<EngineConfig>): ConfiguredHandle
         modeRepository,
         dominoesRepository,
         uuidMethod: uuid,
+        buildingsRepository,
       }),
     ),
     getModesHandler: getModesHandler(

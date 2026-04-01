@@ -1,15 +1,17 @@
 import { create } from "@core/domain/entities/game.js";
 import { createMode } from "@core/domain/entities/mode.js";
+import { ErrorCode } from "@core/domain/errors/domainErrors.js";
+import type { BuildingTile } from "@core/domain/types/building.js";
 import type { GameWithNextStep } from "@core/domain/types/game.js";
+import type { BuildingsRepository } from "@core/portServerside/buildingsRepository.js";
 import type { DominoesRepository } from "@core/portServerside/dominoesRepository.js";
 import type { ModeRepository } from "@core/portServerside/modeRepository.js";
 import type { UuidMethod } from "@core/portServerside/uuidMethod.js";
-import { ErrorCode } from "@core/domain/errors/domainErrors.js";
 import { err, isErr, ok, type Result } from "@utils/result.js";
 
 export type CreateGameUseCase = (
   mode: string,
-  seed?: string
+  seed?: string,
 ) => Result<GameWithNextStep>;
 
 export const createGameUseCase =
@@ -17,9 +19,10 @@ export const createGameUseCase =
     modeRepository: ModeRepository;
     dominoesRepository: DominoesRepository;
     uuidMethod: UuidMethod;
+    buildingsRepository?: BuildingsRepository;
   }): CreateGameUseCase =>
   (mode, seed) => {
-    const { modeRepository, dominoesRepository, uuidMethod } = deps;
+    const { modeRepository, dominoesRepository, uuidMethod, buildingsRepository } = deps;
     const id = uuidMethod();
     const gameSeed = seed ?? uuidMethod();
     const availableMode = modeRepository.getAvailables();
@@ -35,11 +38,19 @@ export const createGameUseCase =
       return err(ErrorCode.DOMINO_NOT_FOUND);
     }
 
+    const isQueenDomino = newMode.value.name === "QueenDomino";
+    let buildings: BuildingTile[] | undefined;
+
+    if (isQueenDomino && buildingsRepository) {
+      buildings = buildingsRepository.getAll();
+    }
+
     const payload = {
       id,
       mode: newMode.value,
       dominoes,
       seed: gameSeed,
+      buildings,
     };
 
     const newGame = create(payload);
