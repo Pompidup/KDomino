@@ -14,11 +14,21 @@ import type { UuidMethod } from "@core/portServerside/uuidMethod.js";
 import { ErrorCode } from "@core/domain/errors/domainErrors.js";
 import { err, isErr, ok, type Result } from "@utils/result.js";
 import { createSeededShuffle } from "@utils/seededShuffle.js";
+import type { PlayerInput } from "@application/commands/addPlayersCommand.js";
 
 export type AddPlayersUseCase = (
   game: GameWithNextStep,
-  players: string[]
+  players: PlayerInput[]
 ) => Result<GameWithNextStep>;
+
+const normalizePlayerInput = (
+  input: PlayerInput
+): { name: string; bot?: { strategyName: string } } => {
+  if (typeof input === "string") {
+    return { name: input };
+  }
+  return { name: input.name, bot: input.bot };
+};
 
 export const addPlayersUseCase =
   (deps: {
@@ -36,10 +46,11 @@ export const addPlayersUseCase =
     const newPlayers: Players = [];
 
     for (const player of players) {
+      const { name, bot } = normalizePlayerInput(player);
       let kingdom = createEmptyKingdom();
       kingdom = placeCastle(kingdom);
       let id = uuidMethod();
-      const newPlayer = createPlayer(player, id, kingdom);
+      const newPlayer = createPlayer(name, id, kingdom, bot);
 
       if (isErr(newPlayer)) {
         return newPlayer;

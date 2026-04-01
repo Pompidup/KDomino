@@ -85,9 +85,9 @@ describe("AddPlayersHandler", () => {
       return ok({
         ...game,
         players: [
-          ...players.map((name) => ({
+          ...players.map((input) => ({
             id: "playerId",
-            name,
+            name: typeof input === "string" ? input : input.name,
             kingdom: [] as Kingdom,
           })),
         ],

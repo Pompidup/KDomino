@@ -16,7 +16,8 @@ export const validatePlayer = (name: string): Result<string> => {
 export const createPlayer = (
   playerName: string,
   id: string,
-  kingdom: Kingdom
+  kingdom: Kingdom,
+  bot?: { strategyName: string }
 ): Result<Player> => {
   const name = validatePlayer(playerName);
 
@@ -28,5 +29,6 @@ export const createPlayer = (
     name: name.value,
     id,
     kingdom,
+    ...(bot && { bot }),
   });
 };

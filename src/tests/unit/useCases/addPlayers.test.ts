@@ -258,4 +258,62 @@ describe("Add players", () => {
     // Assert
     expect(result).toEqual(err(ErrorCode.INVALID_PLAYER_NAME));
   });
+
+  test("should add players with bot config using PlayerInput objects", () => {
+    // Arrange
+    const initialGame = createGameBuilder<NextStep>()
+      .withId("uuid-test")
+      .withMode({ name: "Classic", description: "Classic mode" })
+      .build();
+
+    const payload = [
+      "Human Player",
+      { name: "Bot Player", bot: { strategyName: "greedy" } },
+    ];
+    const dependencies = {
+      uuidMethod: () => "uuid-test",
+      shuffleMethod: (dominoes: any[]) => dominoes,
+      ruleRepository: inMemoryRepo,
+    };
+
+    // Act
+    const result = addPlayersUseCase(dependencies)(initialGame, payload);
+
+    // Assert
+    const unwrapResult = unwrap(result);
+    expect(unwrapResult.players).toHaveLength(2);
+    expect(unwrapResult.players[0]!.name).toBe("Human Player");
+    expect(unwrapResult.players[0]!.bot).toBeUndefined();
+    expect(unwrapResult.players[1]!.name).toBe("Bot Player");
+    expect(unwrapResult.players[1]!.bot).toEqual({ strategyName: "greedy" });
+  });
+
+  test("should add player with PlayerInput object without bot (human)", () => {
+    // Arrange
+    const initialGame = createGameBuilder<NextStep>()
+      .withId("uuid-test")
+      .withMode({ name: "Classic", description: "Classic mode" })
+      .build();
+
+    const payload = [
+      { name: "Player 1" },
+      { name: "Player 2" },
+    ];
+    const dependencies = {
+      uuidMethod: () => "uuid-test",
+      shuffleMethod: (dominoes: any[]) => dominoes,
+      ruleRepository: inMemoryRepo,
+    };
+
+    // Act
+    const result = addPlayersUseCase(dependencies)(initialGame, payload);
+
+    // Assert
+    const unwrapResult = unwrap(result);
+    expect(unwrapResult.players).toHaveLength(2);
+    expect(unwrapResult.players[0]!.name).toBe("Player 1");
+    expect(unwrapResult.players[0]!.bot).toBeUndefined();
+    expect(unwrapResult.players[1]!.name).toBe("Player 2");
+    expect(unwrapResult.players[1]!.bot).toBeUndefined();
+  });
 });

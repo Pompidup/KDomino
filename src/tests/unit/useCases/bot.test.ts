@@ -5,6 +5,8 @@ import {
   advancedStrategy,
   expertStrategy,
   playBotTurn,
+  isBotTurn,
+  playBotTurns,
   type PickContext,
   type PlaceContext,
 } from "@core/useCases/bot.js";
@@ -402,5 +404,61 @@ describe("playBotTurn", () => {
 
     expect(engine.discardDomino).toHaveBeenCalledOnce();
     expect(result).toBe(expectedState);
+  });
+});
+
+// ─── isBotTurn / playBotTurns tests ──────────────────────────────────
+
+describe("isBotTurn", () => {
+  test("should return true when current lord belongs to a bot player", () => {
+    const botPlayer = createPlayerBuilder()
+      .withId("bot-player-id")
+      .withName("Bot")
+      .build();
+    // Manually set bot field
+    (botPlayer as any).bot = { strategyName: "greedy" };
+
+    const lord = createLordBuilder()
+      .withId("lord-1")
+      .withPlayerId("bot-player-id")
+      .withHasPlace(true)
+      .build();
+
+    const game = createGameBuilder<NextAction>()
+      .withPlayers([botPlayer])
+      .withLords([lord])
+      .withNextAction({
+        type: "action",
+        nextLord: "lord-1",
+        nextAction: "pickDomino",
+      })
+      .build() as GameWithNextAction;
+
+    expect(isBotTurn(game)).toBe(true);
+  });
+
+  test("should return false when current lord belongs to a human player", () => {
+    const humanPlayer = createPlayerBuilder()
+      .withId("human-player-id")
+      .withName("Human")
+      .build();
+
+    const lord = createLordBuilder()
+      .withId("lord-1")
+      .withPlayerId("human-player-id")
+      .withHasPlace(true)
+      .build();
+
+    const game = createGameBuilder<NextAction>()
+      .withPlayers([humanPlayer])
+      .withLords([lord])
+      .withNextAction({
+        type: "action",
+        nextLord: "lord-1",
+        nextAction: "pickDomino",
+      })
+      .build() as GameWithNextAction;
+
+    expect(isBotTurn(game)).toBe(false);
   });
 });

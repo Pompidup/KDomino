@@ -21,11 +21,19 @@ export {
   type BotStrategy,
   expertStrategy,
   greedyStrategy,
+  isBotTurn,
   type PickContext,
   type PlaceContext,
   playBotTurn,
+  playBotTurns,
   randomStrategy,
 } from "@core/useCases/bot.js";
+// Bot strategy registry
+export {
+  getStrategy,
+  getStrategyNames,
+  type StrategyName,
+} from "@core/useCases/botRegistry.js";
 // Action log (game history / replay)
 export {
   type ActionEntry,

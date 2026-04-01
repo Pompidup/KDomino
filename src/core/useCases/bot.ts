@@ -6,12 +6,14 @@ import type {
   GameState,
   Score,
 } from "@core/domain/types/index.js";
+import { isGameWithNextAction } from "@core/domain/types/game.js";
 import type { ValidPlacement } from "./getValidPlacements.js";
 import type { GameEngine } from "@core/portUserside/engine.js";
 import { placeDomino } from "@core/domain/entities/kingdom.js";
 import { calculateScoreUseCase } from "./calculateScore.js";
 import { getValidPlacementsUseCase } from "./getValidPlacements.js";
 import { isOk } from "@utils/result.js";
+import { getStrategy } from "./botRegistry.js";
 
 // ─── Types ───────────────────────────────────────────────────────────
 
@@ -537,4 +539,50 @@ export const playBotTurn = (
 
   // action === "pass"
   return engine.discardDomino({ game, lordId });
+};
+
+// ─── Mixed human/bot helpers ────────────────────────────────────────
+
+/**
+ * Checks if the current turn belongs to a bot player.
+ */
+export const isBotTurn = (game: GameWithNextAction): boolean => {
+  const lordId = game.nextAction.nextLord;
+  const lord = game.lords.find((l) => l.id === lordId);
+  const player = lord
+    ? game.players.find((p) => p.id === lord.playerId)
+    : undefined;
+  return !!player?.bot;
+};
+
+/**
+ * Plays all consecutive bot turns until a human turn or game end is reached.
+ * Resolves each bot's strategy by name from the registry (or custom map).
+ * Falls back to randomStrategy if the strategy name is not found.
+ *
+ * @param engine - The game engine instance
+ * @param game - Current game state
+ * @param customStrategies - Optional custom strategy map (name → BotStrategy)
+ * @returns Updated game state paused at the next human turn or game end
+ */
+export const playBotTurns = (
+  engine: GameEngine,
+  game: GameState,
+  customStrategies?: Record<string, BotStrategy>
+): GameState => {
+  let current = game;
+
+  while (isGameWithNextAction(current) && isBotTurn(current)) {
+    const lordId = current.nextAction.nextLord;
+    const lord = current.lords.find((l) => l.id === lordId);
+    const player = lord
+      ? current.players.find((p) => p.id === lord.playerId)
+      : undefined;
+    const strategyName = player?.bot?.strategyName ?? "random";
+    const strategy =
+      getStrategy(strategyName, customStrategies) ?? randomStrategy;
+    current = playBotTurn(engine, current, strategy);
+  }
+
+  return current;
 };

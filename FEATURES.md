@@ -37,6 +37,7 @@
 
 18. **Suggestions IA** - Fonction `getBestPlacement(game)` qui retourne le placement optimal (scoring maximum). Utile pour un mode "hint" dans les UI ou un bot.
 19. ~~**Bot / IA joueur**~~ - ✅ Implémenté. 4 stratégies : `randomStrategy`, `greedyStrategy`, `advancedStrategy` (lookahead 1 tour), `expertStrategy` (beam-search multi-tours). Helper `playBotTurn(engine, game, strategy)`.
+28. ~~**Parties mixtes humains/bots**~~ - ✅ Implémenté. Champ optionnel `bot?: { strategyName: string }` sur `Player`. `PlayerInput = string | { name: string, bot? }` dans `addPlayers`. Registre de stratégies (`getStrategy`, `getStrategyNames`). Helpers `isBotTurn(game)` et `playBotTurns(engine, game, customStrategies?)` qui jouent tous les tours bot consécutifs. Supporte stratégies custom et sérialisation.
 20. **Statistiques de partie** - Points par tour, courbe de progression, dominos défaussés, propriétés formées, etc.
 21. **Export de partie** - Format standardisé (PGN-like) pour partager/importer des parties.
 22. **WebSocket adapter** - Adaptateur réseau prêt à l'emploi pour le multijoueur en ligne.
@@ -75,7 +76,8 @@ Les plus impactantes à court terme :
 ### Priorité moyenne — Gameplay & variantes
 
 4. ~~**Mode solo (3)**~~ — ✅ Done
-5. **Mode rapide (16)** — Moins de dominos/tours. Trivial à implémenter (paramétrage du nombre de dominos), valeur immédiate pour les UI.
+5. ~~**Parties mixtes humains/bots (28)**~~ — ✅ Done
+6. **Mode rapide (16)** — Moins de dominos/tours. Trivial à implémenter (paramétrage du nombre de dominos), valeur immédiate pour les UI.
 6. **Timer/Horloge (8)** — Utile pour le compétitif. Standalone utility, pas de modification du moteur core.
 7. **Mode draft (17)** — Variante intéressante mais modifie le flow de jeu. Plus complexe que les modes ci-dessus.
 

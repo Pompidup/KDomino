@@ -11,6 +11,8 @@ export type Player = {
   name: string;
   /** The player's kingdom grid where dominoes are placed */
   kingdom: Kingdom;
+  /** If set, this player is controlled by a bot with the named strategy */
+  bot?: { strategyName: string };
 };
 
 /**

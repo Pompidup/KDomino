@@ -4,6 +4,7 @@ import type {
   Rotation,
 } from "@core/domain/types/index.js";
 import type { GameEngine } from "@core/portUserside/engine.js";
+import type { PlayerInput } from "@application/commands/addPlayersCommand.js";
 
 // ─── Types ──────────────────────────────────────────────────────────
 
@@ -25,7 +26,7 @@ export type ActionType =
  */
 export type ActionPayloadMap = {
   createGame: { mode: string; seed?: string };
-  addPlayers: { players: string[] };
+  addPlayers: { players: PlayerInput[] };
   addExtraRules: { extraRules: string[] };
   startGame: Record<string, never>;
   chooseDomino: { lordId: string; dominoPick: number };
