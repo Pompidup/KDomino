@@ -21,7 +21,7 @@
 
 ## Qualité du moteur
 
-10. **Validation de state complète** - Une fonction `validateGameState(game)` qui vérifie l'intégrité de l'état (pas de dominos dupliqués, kingdoms valides, etc.). Utile quand le consommateur persiste et restaure l'état.
+10. ~~**Validation de state complète**~~ - ✅ Implémenté. Fonction `validateGameState(game)` qui vérifie l'intégrité complète de l'état : structure du Game, players (IDs uniques, noms, kingdoms 9×9, castle, terrains), dominos (numéros uniques, tiles valides, cohérence picked/lordId), lords (IDs uniques, playerId existant, flags cohérents), flow de jeu (nextAction/nextStep valides, lord existant), et rules (valeurs positives, extra rules valides). Retourne un `ValidationIssue[]` avec `path`, `code`, `message`, `severity`. Types exportés : `ValidationIssue`, `ValidationSeverity`.
 11. ~~**Meilleurs messages d'erreur**~~ - ✅ Implémenté. Toutes les erreurs utilisent des `ErrorCode` structurés avec `context` (lordId, gameId, etc.). Messages traduits via `Translator` injectable dans `EngineConfig.translator`. Mapping `errorCodeToTranslationKey` + helper `translateErrorCode`. Support i18n complet avec `createTranslator({ customTranslations })`.
 12. **Mode debug** - Logger plus détaillé avec dump de l'état à chaque étape, utile pour les consommateurs qui développent leur UI.
 13. ~~**Système d'événements (v2)**~~ - ✅ Implémenté. Callbacks optionnels via `EngineConfig.events` : `onGameCreated`, `onPlayersAdded`, `onGameStarted`, `onDominoPicked`, `onDominoPlaced`, `onDominoDiscarded`, `onTurnStart`, `onTurnEnd`, `onGameEnd`. Aussi disponible standalone via `wrapWithEvents(engine, callbacks)`.
@@ -60,3 +60,40 @@ Les plus impactantes à court terme :
 - ~~**Système d'événements v2** (13)~~ - ✅ Done
 - ~~**Historique des coups** (6)~~ - ✅ Done
 - ~~**Meilleurs messages d'erreur** (11)~~ - ✅ Done
+- ~~**Strict mode TypeScript** (24)~~ - ✅ Done
+
+---
+
+## Roadmap ordonnée des features restantes
+
+### Priorité haute — Fondations du moteur
+
+1. ~~**Validation de state complète (10)**~~ — ✅ Done
+2. **Mode spectateur (7)** — API censurée pour le multijoueur. Pré-requis avant tout adapter réseau (22). Complexité modérée.
+3. **Mode debug (12)** — Logger détaillé pour les développeurs d'UI. Accélère l'adoption par les consommateurs, très peu de code.
+
+### Priorité moyenne — Gameplay & variantes
+
+4. **Mode solo (3)** — Variante officielle simple (1 joueur, scoring cible). Réutilise 90% du moteur existant, élargit les cas d'usage.
+5. **Mode rapide (16)** — Moins de dominos/tours. Trivial à implémenter (paramétrage du nombre de dominos), valeur immédiate pour les UI.
+6. **Timer/Horloge (8)** — Utile pour le compétitif. Standalone utility, pas de modification du moteur core.
+7. **Mode draft (17)** — Variante intéressante mais modifie le flow de jeu. Plus complexe que les modes ci-dessus.
+
+### Priorité basse — Extensions majeures
+
+8. **Age of Giants (2)** — Extension officielle, nécessite de nouveaux dominos et mécaniques de géants. Effort significatif.
+9. **Mode "The Court" (4)** — Variante 2 joueurs avec royaume fantôme. Mécanique nouvelle, public restreint.
+10. **Queendomino (1)** — La plus grosse extension (bâtiments, pièces, dragon, reine). Énorme scope, quasi un second moteur.
+11. **Kingdomino Origins (15)** — Extension avec feu/volcans. Complexité similaire à Queendomino.
+12. **Kingdomino Duel (14)** — Version dés, papier-crayon. Gameplay totalement différent, partage peu de code.
+
+### Priorité basse — API & Infra
+
+13. **Statistiques de partie (20)** — Nice-to-have, exploitable via l'action log déjà implémenté.
+14. **Export de partie (21)** — Format PGN-like, utile mais pas bloquant. L'action log couvre déjà le replay.
+15. **Suggestions IA (18)** — `getBestPlacement()` — le bot `expertStrategy` fait déjà le gros du travail, c'est un wrapper.
+16. **Plugin system (23)** — Architecture lourde, peu de demande tant que le moteur n'a pas plus d'adopteurs.
+17. **WebSocket adapter (22)** — Dépend du mode spectateur (7). Réseau = complexité d'intégration élevée.
+18. **Schéma JSON (27)** — Utile mais dérivable des types TypeScript existants.
+19. **Benchmarks (25)** — Important pour l'optimisation mais pas bloquant fonctionnellement.
+20. **WASM build (26)** — Niche, pour usage hors Node. Dernière priorité.

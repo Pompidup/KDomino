@@ -57,6 +57,7 @@ export {
   redo,
   undo,
 } from "@core/useCases/gameHistory.js";
+export { validateGameState } from "@core/domain/entities/validateGameState.js";
 export type { DynastyResult } from "@core/useCases/getDynastyResult.js";
 // Use cases (for advanced usage)
 export type { ValidPlacement } from "@core/useCases/getValidPlacements.js";

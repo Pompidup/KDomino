@@ -6,3 +6,4 @@ export * from "./player.js";
 export * from "./rule.js";
 export * from "./game.js";
 export * from "./utils.js";
+export * from "./validation.js";
