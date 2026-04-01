@@ -6,7 +6,7 @@
 
 ## Nouvelles variantes de jeu
 
-1. **Queendomino** - Extension officielle avec bâtiments, ressources (pièces), dragon, et la Reine qui donne des bonus. C'est la plus grosse extension possible.
+1. ~~**Queendomino**~~ - ✅ Implémenté. Mode `QueenDomino` complet avec 48 dominos dédiés (cases construction), 18 tuiles bâtiment, Builders Board, économie (pièces), chevaliers (taxe BFS), tours, la Reine (+1 couronne au meilleur territoire), le Dragon (destruction de bâtiments). Flow de tour étendu : placeDomino → placeKnight → constructBuilding → useDragon → pickDomino (actions optionnelles skippables). Scoring étendu : bonus bâtiments fin de partie (flat, perBuilding, perTower, perCrown, perTerrain), bonus Reine. Compatible extra rules (Middle Kingdom, Harmony, Mighty Duel, Dynasty). 4 nouvelles méthodes engine : `placeKnight`, `constructBuilding`, `useDragon`, `skipOptionalAction`.
 2. **Age of Giants** - Extension avec tuiles géantes qui volent des couronnes et ajoutent des tuiles de 12 nouveaux dominos (numéros 49-60).
 3. ~~**Mode solo**~~ - ✅ Implémenté. Support 1 joueur avec règles solo (48 dominos, 4 révélés par tour, 12 tours, grille 5×5). Le joueur choisit 1 domino sur 4 chaque tour. Compatible avec les extra rules (The middle Kingdom, Harmony, Dynasty) et toutes les stratégies bot.
 4. **Mode "The Court"** - Variante officielle pour 2 joueurs avec un 3e royaume "fantôme".
@@ -85,7 +85,7 @@ Les plus impactantes à court terme :
 
 8. **Age of Giants (2)** — Extension officielle, nécessite de nouveaux dominos et mécaniques de géants. Effort significatif.
 9. **Mode "The Court" (4)** — Variante 2 joueurs avec royaume fantôme. Mécanique nouvelle, public restreint.
-10. **Queendomino (1)** — La plus grosse extension (bâtiments, pièces, dragon, reine). Énorme scope, quasi un second moteur.
+10. ~~**Queendomino (1)**~~ — ✅ Done
 11. **Kingdomino Origins (15)** — Extension avec feu/volcans. Complexité similaire à Queendomino.
 12. **Kingdomino Duel (14)** — Version dés, papier-crayon. Gameplay totalement différent, partage peu de code.
 
