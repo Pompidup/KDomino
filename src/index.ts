@@ -78,6 +78,10 @@ export {
 export type { DynastyResult } from "@core/useCases/getDynastyResult.js";
 // Use cases (for advanced usage)
 export type { ValidPlacement } from "@core/useCases/getValidPlacements.js";
+export type { PlaceKnightUseCase } from "@core/useCases/placeKnight.js";
+export type { ConstructBuildingUseCase } from "@core/useCases/constructBuilding.js";
+export type { UseDragonUseCase } from "@core/useCases/useDragon.js";
+export type { SkipOptionalActionUseCase } from "@core/useCases/skipOptionalAction.js";
 export {
   createSavePoint,
   deserializeGame,
@@ -129,6 +133,10 @@ export const createGameEngine = (config: Partial<EngineConfig>): GameEngine => {
     serializeGameHandler,
     deserializeGameHandler,
     getDynastyResultHandler,
+    placeKnightHandler,
+    constructBuildingHandler,
+    useDragonHandler,
+    skipOptionalActionHandler,
   } = configureEngine(config);
 
   let engine: GameEngine = {
@@ -148,6 +156,10 @@ export const createGameEngine = (config: Partial<EngineConfig>): GameEngine => {
     serialize: (command) => serializeGameHandler(command),
     deserialize: (command) => deserializeGameHandler(command),
     getDynastyResults: (command) => getDynastyResultHandler(command),
+    placeKnight: (command) => placeKnightHandler(command),
+    constructBuilding: (command) => constructBuildingHandler(command),
+    useDragon: (command) => useDragonHandler(command),
+    skipOptionalAction: (command) => skipOptionalActionHandler(command),
   };
 
   if (config.events) {

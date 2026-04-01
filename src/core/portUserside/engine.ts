@@ -25,6 +25,10 @@ import type {
   DeserializeGameCommand,
 } from "@application/commands/serializeGameCommand.js";
 import type { GetDynastyResultCommand } from "@application/commands/getDynastyResultCommand.js";
+import type { PlaceKnightCommand } from "@application/commands/placeKnightCommand.js";
+import type { ConstructBuildingCommand } from "@application/commands/constructBuildingCommand.js";
+import type { UseDragonCommand } from "@application/commands/useDragonCommand.js";
+import type { SkipOptionalActionCommand } from "@application/commands/skipOptionalActionCommand.js";
 import type { ValidPlacement } from "@core/useCases/getValidPlacements.js";
 import type { DynastyResult } from "@core/useCases/getDynastyResult.js";
 
@@ -176,4 +180,32 @@ export type GameEngine = {
    * @returns Ranked dynasty results per player
    */
   getDynastyResults: (command: GetDynastyResultCommand) => DynastyResult[];
+
+  /**
+   * Places a knight on the lord's kingdom at the specified position (Queendomino).
+   * @param command - Contains game state, lord ID, and position
+   * @returns Updated game state with next action
+   */
+  placeKnight: (command: PlaceKnightCommand) => GameState;
+
+  /**
+   * Constructs a building on the lord's kingdom (Queendomino).
+   * @param command - Contains game state, lord ID, building ID, and position
+   * @returns Updated game state with next action
+   */
+  constructBuilding: (command: ConstructBuildingCommand) => GameState;
+
+  /**
+   * Uses the dragon to destroy a building on the builders board (Queendomino).
+   * @param command - Contains game state, lord ID, and building ID
+   * @returns Updated game state with next action
+   */
+  useDragon: (command: UseDragonCommand) => GameState;
+
+  /**
+   * Skips the current optional action (Queendomino).
+   * @param command - Contains game state and lord ID
+   * @returns Updated game state with next action
+   */
+  skipOptionalAction: (command: SkipOptionalActionCommand) => GameState;
 };

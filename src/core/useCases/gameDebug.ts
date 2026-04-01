@@ -290,5 +290,24 @@ export const wrapWithDebug = (
       logger,
       level,
     ),
+    placeKnight: wrapMethod(
+      "placeKnight",
+      engine.placeKnight,
+      logger,
+      level,
+    ),
+    constructBuilding: wrapMethod(
+      "constructBuilding",
+      engine.constructBuilding,
+      logger,
+      level,
+    ),
+    useDragon: wrapMethod("useDragon", engine.useDragon, logger, level),
+    skipOptionalAction: wrapMethod(
+      "skipOptionalAction",
+      engine.skipOptionalAction,
+      logger,
+      level,
+    ),
   };
 };

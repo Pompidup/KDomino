@@ -13,3 +13,7 @@ export * from "./getValidPlacementsCommand.js";
 export * from "./canPlaceDominoCommand.js";
 export * from "./serializeGameCommand.js";
 export * from "./getDynastyResultCommand.js";
+export * from "./placeKnightCommand.js";
+export * from "./constructBuildingCommand.js";
+export * from "./useDragonCommand.js";
+export * from "./skipOptionalActionCommand.js";

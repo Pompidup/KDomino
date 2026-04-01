@@ -220,6 +220,12 @@ export const wrapWithActionLog = (
       record("discardDomino", { lordId: cmd.lordId }, game.turn);
       return game;
     },
+
+    // Queendomino methods — pass through (no action log recording yet)
+    placeKnight: (cmd) => engine.placeKnight(cmd),
+    constructBuilding: (cmd) => engine.constructBuilding(cmd),
+    useDragon: (cmd) => engine.useDragon(cmd),
+    skipOptionalAction: (cmd) => engine.skipOptionalAction(cmd),
   };
 
   return {

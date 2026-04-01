@@ -22,6 +22,10 @@ import {
   serializeGameHandler,
 } from "@application/handlers/serializeGameHandler.js";
 import { startGameHandler } from "@application/handlers/startGameHandler.js";
+import { placeKnightHandler } from "@application/handlers/placeKnightHandler.js";
+import { constructBuildingHandler } from "@application/handlers/constructBuildingHandler.js";
+import { useDragonHandler } from "@application/handlers/useDragonHandler.js";
+import { skipOptionalActionHandler } from "@application/handlers/skipOptionalActionHandler.js";
 import type { Translator } from "@core/i18n/translations.js";
 import type { GameEngine } from "@core/portUserside/engine.js";
 import { defaultTranslator } from "@core/i18n/translations.js";
@@ -45,6 +49,10 @@ import {
   getValidPlacementsUseCase,
 } from "@core/useCases/getValidPlacements.js";
 import { placeDominoUseCase } from "@core/useCases/placeDomino.js";
+import { placeKnightUseCase } from "@core/useCases/placeKnight.js";
+import { constructBuildingUseCase } from "@core/useCases/constructBuilding.js";
+import { useDragonUseCase } from "@core/useCases/useDragon.js";
+import { skipOptionalActionUseCase } from "@core/useCases/skipOptionalAction.js";
 import { startGameUseCase } from "@core/useCases/startGame.js";
 
 /**
@@ -84,6 +92,10 @@ export type ConfiguredHandlers = {
   serializeGameHandler: GameEngine["serialize"];
   deserializeGameHandler: GameEngine["deserialize"];
   getDynastyResultHandler: GameEngine["getDynastyResults"];
+  placeKnightHandler: GameEngine["placeKnight"];
+  constructBuildingHandler: GameEngine["constructBuilding"];
+  useDragonHandler: GameEngine["useDragon"];
+  skipOptionalActionHandler: GameEngine["skipOptionalAction"];
 };
 
 export const configureEngine = (config: Partial<EngineConfig>): ConfiguredHandlers => {
@@ -184,6 +196,26 @@ export const configureEngine = (config: Partial<EngineConfig>): ConfiguredHandle
       logger,
       translator,
       getDynastyResultUseCase,
+    ),
+    placeKnightHandler: placeKnightHandler(
+      logger,
+      translator,
+      placeKnightUseCase,
+    ),
+    constructBuildingHandler: constructBuildingHandler(
+      logger,
+      translator,
+      constructBuildingUseCase,
+    ),
+    useDragonHandler: useDragonHandler(
+      logger,
+      translator,
+      useDragonUseCase,
+    ),
+    skipOptionalActionHandler: skipOptionalActionHandler(
+      logger,
+      translator,
+      skipOptionalActionUseCase,
     ),
   };
 };

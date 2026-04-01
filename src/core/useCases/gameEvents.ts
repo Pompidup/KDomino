@@ -145,4 +145,10 @@ export const wrapWithEvents = (
 
     return game;
   },
+
+  // Queendomino methods — pass through (no specific events yet)
+  placeKnight: (cmd) => engine.placeKnight(cmd),
+  constructBuilding: (cmd) => engine.constructBuilding(cmd),
+  useDragon: (cmd) => engine.useDragon(cmd),
+  skipOptionalAction: (cmd) => engine.skipOptionalAction(cmd),
 });
