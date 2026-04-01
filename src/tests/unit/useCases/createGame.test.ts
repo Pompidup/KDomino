@@ -1,10 +1,11 @@
-import { describe, test, expect } from "vitest";
 import jsonDominoes from "@adapter/jsonDominoes.js";
 import jsonModes from "@adapter/jsonModes.js";
-import { createGameUseCase } from "@core/useCases/createGame.js";
-import type { GameMode } from "@core/domain/types/mode.js";
-import { unwrap } from "@utils/result.js";
+import { ErrorCode } from "@core/domain/errors/domainErrors.js";
 import type { NextStep } from "@core/domain/types/game.js";
+import type { GameMode } from "@core/domain/types/mode.js";
+import { createGameUseCase } from "@core/useCases/createGame.js";
+import { unwrap } from "@utils/result.js";
+import { describe, expect, test } from "vitest";
 
 describe("Create game", () => {
   test("should create a new game", () => {
@@ -40,7 +41,7 @@ describe("Create game", () => {
     // Assert
     expect(result).toEqual({
       tag: "Err",
-      error: "Invalid mode: Invalid",
+      error: ErrorCode.MODE_NOT_FOUND,
     });
   });
 
@@ -62,7 +63,7 @@ describe("Create game", () => {
     // Assert
     expect(result).toEqual({
       tag: "Err",
-      error: "No dominoes found for mode Classic",
+      error: ErrorCode.DOMINO_NOT_FOUND,
     });
   });
 

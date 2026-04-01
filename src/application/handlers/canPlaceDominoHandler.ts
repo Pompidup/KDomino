@@ -1,8 +1,13 @@
-import type { Logger } from "@core/portServerside/logger.js";
 import type { CanPlaceDominoCommand } from "@application/commands/canPlaceDominoCommand.js";
-import type { Kingdom, Domino } from "@core/domain/types/index.js";
+import type { Domino, Kingdom } from "@core/domain/types/index.js";
+import type { Translator } from "@core/i18n/translations.js";
+import type { Logger } from "@core/portServerside/logger.js";
 
-type CanPlaceDominoUseCase = (kingdom: Kingdom, domino: Domino, maxKingdomSize?: number) => boolean;
+type CanPlaceDominoUseCase = (
+  kingdom: Kingdom,
+  domino: Domino,
+  maxKingdomSize?: number,
+) => boolean;
 
 type CanPlaceDominoHandler = (command: CanPlaceDominoCommand) => boolean;
 
@@ -11,11 +16,16 @@ type CanPlaceDominoHandler = (command: CanPlaceDominoCommand) => boolean;
  */
 export const canPlaceDominoHandler = (
   logger: Logger,
-  useCase: CanPlaceDominoUseCase
+  translator: Translator,
+  useCase: CanPlaceDominoUseCase,
 ): CanPlaceDominoHandler => {
   return (command) => {
     logger.info(`Checking if domino ${command.domino.number} can be placed`);
-    const canPlace = useCase(command.kingdom, command.domino, command.maxKingdomSize);
+    const canPlace = useCase(
+      command.kingdom,
+      command.domino,
+      command.maxKingdomSize,
+    );
     logger.info(`Can place domino: ${canPlace}`);
     return canPlace;
   };

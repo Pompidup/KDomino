@@ -1,13 +1,13 @@
-import { unwrap } from "@utils/result.js";
-import { describe, test, expect } from "vitest";
-import { addExtraRulesUseCase } from "@core/useCases/addExtraRules.js";
-import type { GameMode } from "@core/domain/types/mode.js";
+import { ErrorCode } from "@core/domain/errors/domainErrors.js";
 import type { Domino } from "@core/domain/types/domino.js";
-import { createGameBuilder } from "../../builder/game.js";
-import { err } from "@utils/result.js";
-import type { RuleRepository } from "@core/portServerside/ruleRepository.js";
-import type { DominoesRepository } from "@core/portServerside/dominoesRepository.js";
 import type { NextStep } from "@core/domain/types/game.js";
+import type { GameMode } from "@core/domain/types/mode.js";
+import type { DominoesRepository } from "@core/portServerside/dominoesRepository.js";
+import type { RuleRepository } from "@core/portServerside/ruleRepository.js";
+import { addExtraRulesUseCase } from "@core/useCases/addExtraRules.js";
+import { err, unwrap } from "@utils/result.js";
+import { describe, expect, test } from "vitest";
+import { createGameBuilder } from "../../builder/game.js";
 
 describe("Add extra rules", () => {
   const mode: GameMode = {
@@ -112,10 +112,11 @@ describe("Add extra rules", () => {
     };
 
     // Act
-    const result = addExtraRulesUseCase({ ruleRepository, dominoesRepository, shuffleMethod })(
-      payload.game,
-      payload.rules
-    );
+    const result = addExtraRulesUseCase({
+      ruleRepository,
+      dominoesRepository,
+      shuffleMethod,
+    })(payload.game, payload.rules);
 
     // Assert
     const unwrapResult = unwrap(result);
@@ -239,12 +240,13 @@ describe("Add extra rules", () => {
     };
 
     // Act
-    const result = addExtraRulesUseCase({ ruleRepository, dominoesRepository, shuffleMethod })(
-      payload.game,
-      payload.rules
-    );
+    const result = addExtraRulesUseCase({
+      ruleRepository,
+      dominoesRepository,
+      shuffleMethod,
+    })(payload.game, payload.rules);
 
     // Assert
-    expect(result).toEqual(err("Rule not found: Extra Rule 4"));
+    expect(result).toEqual(err(ErrorCode.STEP_EXECUTION_FAILED));
   });
 });

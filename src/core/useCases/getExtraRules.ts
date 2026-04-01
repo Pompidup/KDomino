@@ -2,6 +2,7 @@ import { getAvailablesExtraRules } from "@core/domain/entities/rule.js";
 import type { GameMode } from "@core/domain/types/mode.js";
 import type { ExtraRule } from "@core/domain/types/rule.js";
 import type { RuleRepository } from "@core/portServerside/ruleRepository.js";
+import { ErrorCode } from "@core/domain/errors/domainErrors.js";
 import { err, type Result } from "@utils/result.js";
 
 export type GetExtraRulesUseCase = (
@@ -17,7 +18,7 @@ export const getExtraRulesUseCase =
     const allExtraRules = ruleRepository.getAllExtra();
 
     if (!allExtraRules) {
-      return err("No rules found");
+      return err(ErrorCode.STEP_EXECUTION_FAILED);
     }
 
     return getAvailablesExtraRules(allExtraRules, mode, players);

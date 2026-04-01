@@ -1,6 +1,6 @@
-import {createGameEngine} from "../../index";
-import type {GameEngine} from "@core/portUserside/engine.js";
-import {beforeAll, describe, expect, test} from "vitest";
+import type { GameEngine } from "@core/portUserside/engine.js";
+import { beforeAll, describe, expect, test } from "vitest";
+import { createGameEngine } from "../../index";
 
 describe("Engine", () => {
   let engine: GameEngine;
@@ -65,7 +65,7 @@ describe("Engine", () => {
   test("should be able to get extra rules", () => {
     // Arrange
     engine.createGame({ mode: "Classic" });
-// Act
+    // Act
     const extraRules = engine.getExtraRules({ mode: "Classic", players: 2 });
 
     // Assert
@@ -186,7 +186,7 @@ describe("Engine", () => {
     // Assert
     expect(gameWithChosenDomino.currentDominoes[0]!.picked).toBeTruthy();
     expect(gameWithChosenDomino.currentDominoes[0]!.lordId).toEqual(
-      firstLordId
+      firstLordId,
     );
     expect(gameWithChosenDomino.nextAction).toEqual({
       type: "action",
@@ -202,7 +202,7 @@ describe("Engine", () => {
       game: newGame,
       players: ["player1", "player2"],
     });
-    let gameWithChosenDomino = engine.startGame({game: gameWithPlayers});
+    let gameWithChosenDomino = engine.startGame({ game: gameWithPlayers });
     for (let i = 0; i < 4; i++) {
       const lordId = gameWithChosenDomino.nextAction.nextLord;
       const domino = gameWithChosenDomino.currentDominoes[i]!.domino;
@@ -215,10 +215,10 @@ describe("Engine", () => {
 
     // Fill the current player's kingdom 5×5 so no placement is possible
     const currentLord = gameWithChosenDomino.lords.find(
-      (l) => l.id === gameWithChosenDomino.nextAction.nextLord
+      (l) => l.id === gameWithChosenDomino.nextAction.nextLord,
     )!;
     const currentPlayer = gameWithChosenDomino.players.find(
-      (p) => p.id === currentLord.playerId
+      (p) => p.id === currentLord.playerId,
     )!;
     // Fill all cells in the 5×5 area (2,2)-(6,6) with wheat, except castle at (4,4)
     for (let y = 2; y <= 6; y++) {
@@ -249,7 +249,7 @@ describe("Engine", () => {
       game: newGame,
       players: ["player1", "player2"],
     });
-    let gameWithChosenDomino = engine.startGame({game: gameWithPlayers});
+    let gameWithChosenDomino = engine.startGame({ game: gameWithPlayers });
     for (let i = 0; i < 4; i++) {
       const lordId = gameWithChosenDomino.nextAction.nextLord;
       const domino = gameWithChosenDomino.currentDominoes[i]!.domino;
@@ -265,8 +265,8 @@ describe("Engine", () => {
       engine.discardDomino({
         game: gameWithChosenDomino,
         lordId: gameWithChosenDomino.nextAction.nextLord,
-      })
-    ).toThrowError("Cannot discard: valid placement exists");
+      }),
+    ).toThrowError("Cannot place a domino now");
   });
 
   test("should be able to place a domino", () => {
@@ -276,7 +276,7 @@ describe("Engine", () => {
       game: newGame,
       players: ["player1", "player2"],
     });
-    let gameWithChosenDomino = engine.startGame({game: gameWithPlayers});
+    let gameWithChosenDomino = engine.startGame({ game: gameWithPlayers });
     for (let i = 0; i < 4; i++) {
       const lordId = gameWithChosenDomino.nextAction.nextLord;
       const domino = gameWithChosenDomino.currentDominoes[i]!.domino;
@@ -298,10 +298,10 @@ describe("Engine", () => {
     });
 
     const lordIndex = gameWithPlacedDomino.lords.findIndex(
-      (lord) => lord.id === lordId
+      (lord) => lord.id === lordId,
     );
     const playerIndex = gameWithPlacedDomino.players.findIndex(
-      (player) => player.id === gameWithPlacedDomino.lords[lordIndex]!.playerId
+      (player) => player.id === gameWithPlacedDomino.lords[lordIndex]!.playerId,
     );
     const player = gameWithPlacedDomino.players[playerIndex];
     const domino = gameWithPlacedDomino.lords[lordIndex]!.dominoPicked;
@@ -363,7 +363,9 @@ describe("Engine", () => {
   test("should allow placements beyond 5x5 with Mighty Duel", async () => {
     // Build a kingdom where positions would exceed 5x5 but fit in 7x7
     // Castle at (4,4). Place wheat tiles spanning x: 1..5 (5 wide)
-    const { createEmptyKingdom, placeCastle, placeTile } = await import("@core/domain/entities/kingdom.js");
+    const { createEmptyKingdom, placeCastle, placeTile } = await import(
+      "@core/domain/entities/kingdom.js"
+    );
     let kingdom = placeCastle(createEmptyKingdom());
     kingdom = placeTile(kingdom, { x: 3, y: 4 }, { type: "wheat", crowns: 0 });
     kingdom = placeTile(kingdom, { x: 2, y: 4 }, { type: "wheat", crowns: 0 });
@@ -372,15 +374,29 @@ describe("Engine", () => {
     kingdom = placeTile(kingdom, { x: 6, y: 4 }, { type: "wheat", crowns: 0 });
     // bbox x: 1..6 = 6 wide — exceeds 5x5 but fits in 7x7
 
-    const domino = { left: { type: "wheat" as const, crowns: 0 }, right: { type: "wheat" as const, crowns: 0 }, number: 99 };
+    const domino = {
+      left: { type: "wheat" as const, crowns: 0 },
+      right: { type: "wheat" as const, crowns: 0 },
+      number: 99,
+    };
 
     // With maxKingdomSize=5, placement at (7,4) should fail
-    const placementsStandard = engine.getValidPlacements({ kingdom, domino, maxKingdomSize: 5 });
-    const hasX7Standard = placementsStandard.some((p: any) => p.position.x === 7);
+    const placementsStandard = engine.getValidPlacements({
+      kingdom,
+      domino,
+      maxKingdomSize: 5,
+    });
+    const hasX7Standard = placementsStandard.some(
+      (p: any) => p.position.x === 7,
+    );
     expect(hasX7Standard).toBe(false);
 
     // With maxKingdomSize=7, placement at (7,4) should succeed
-    const placementsMighty = engine.getValidPlacements({ kingdom, domino, maxKingdomSize: 7 });
+    const placementsMighty = engine.getValidPlacements({
+      kingdom,
+      domino,
+      maxKingdomSize: 7,
+    });
     const hasX7Mighty = placementsMighty.some((p: any) => p.position.x === 7);
     expect(hasX7Mighty).toBe(true);
   });
@@ -405,10 +421,10 @@ describe("Engine", () => {
 
     // Domino order should be identical
     expect(started1.dominoes.map((d) => d.number)).toEqual(
-      started2.dominoes.map((d) => d.number)
+      started2.dominoes.map((d) => d.number),
     );
     expect(started1.currentDominoes.map((d) => d.domino.number)).toEqual(
-      started2.currentDominoes.map((d) => d.domino.number)
+      started2.currentDominoes.map((d) => d.domino.number),
     );
 
     // Lord order should be identical (same player index pattern)

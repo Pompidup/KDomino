@@ -1,6 +1,7 @@
 import { winstonLogger } from "@adapter/winstonLogger.js";
 import { calculateScoreHandler } from "@application/handlers/calculateScoreHandler.js";
 import type { Kingdom } from "@core/domain/types";
+import { defaultTranslator } from "@core/i18n/translations.js";
 import { err, ok } from "@utils/result.js";
 import { describe, expect, test } from "vitest";
 
@@ -13,7 +14,11 @@ describe("calculateScoreHandler", () => {
 
     const mockUseCase = () => err("use case failed");
 
-    const handler = calculateScoreHandler(logger, mockUseCase);
+    const handler = calculateScoreHandler(
+      logger,
+      defaultTranslator,
+      mockUseCase,
+    );
 
     const command = {
       kingdom,
@@ -138,7 +143,11 @@ describe("calculateScoreHandler", () => {
 
     const mockUseCase = () => ok(expectedResult);
 
-    const handler = calculateScoreHandler(logger, mockUseCase);
+    const handler = calculateScoreHandler(
+      logger,
+      defaultTranslator,
+      mockUseCase,
+    );
 
     const command = {
       kingdom,

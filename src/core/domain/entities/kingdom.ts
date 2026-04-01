@@ -8,6 +8,7 @@ import {
   type Rotation,
   type Tile,
 } from "@core/domain/types/index.js";
+import { ErrorCode } from "@core/domain/errors/domainErrors.js";
 import {err, isErr, isOk, ok, type Result} from "@utils/result.js";
 import {createTile} from "./domino.js";
 
@@ -41,7 +42,7 @@ export const getTile = (
 ): Result<Tile | EmptyTile> => {
   const tile = kingdom[position.y]?.[position.x];
   if (!tile) {
-    return err("Invalid placement (not fit into the grid)");
+    return err(ErrorCode.PLACEMENT_OUT_OF_BOUNDS);
   }
   return ok(tile);
 };
@@ -153,7 +154,7 @@ export const placeDomino = (
   }
 
   if (exceedsMaxSize(kingdom, firstTile.position, secondTile.position, maxKingdomSize)) {
-    return err("Invalid placement (exceeds kingdom size)");
+    return err(ErrorCode.PLACEMENT_EXCEEDS_KINGDOM_SIZE);
   }
 
   const adjacentTiles = isAdjacent(
@@ -163,7 +164,7 @@ export const placeDomino = (
   );
 
   if (adjacentTiles.length === 0) {
-    return err("Invalid placement (not adjacent)");
+    return err(ErrorCode.PLACEMENT_NOT_ADJACENT);
   }
 
   const hasValidAdjacentTiles = hasValidAdjacent(adjacentTiles, [
@@ -172,7 +173,7 @@ export const placeDomino = (
   ]);
 
   if (!hasValidAdjacentTiles) {
-    return err("Invalid placement (not valid adjacent)");
+    return err(ErrorCode.PLACEMENT_INVALID_TERRAIN);
   }
 
   return ok(placeTiles(kingdom, [firstTile, secondTile]));
@@ -206,7 +207,7 @@ const isFreePlace = (
   }
 
   if (firstTile.value.type !== "empty" || secondTile.value.type !== "empty") {
-    return err("Invalid placement (not empty)");
+    return err(ErrorCode.PLACEMENT_NOT_EMPTY);
   }
 
   return ok(true);

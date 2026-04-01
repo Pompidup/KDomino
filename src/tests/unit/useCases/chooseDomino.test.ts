@@ -1,9 +1,9 @@
-import { chooseDominoUseCase } from "@core/useCases/chooseDomino";
-import { unwrap } from "@utils/result.js";
-import { describe, test, expect } from "vitest";
+import { ErrorCode } from "@core/domain/errors/domainErrors.js";
 import type { Domino } from "@core/domain/types/domino.js";
+import { chooseDominoUseCase } from "@core/useCases/chooseDomino";
+import { err, unwrap } from "@utils/result.js";
+import { describe, expect, test } from "vitest";
 import { createGameBuilder } from "../../builder/game.js";
-import { err } from "@utils/result.js";
 
 describe("Choose Domino", () => {
   test("should save player choice", async () => {
@@ -60,7 +60,7 @@ describe("Choose Domino", () => {
     const result = chooseDominoUseCase(
       initialGame,
       initialGame.lords[0]!.id,
-      revealsDomino[0]!.domino.number
+      revealsDomino[0]!.domino.number,
     );
 
     // Assert
@@ -89,11 +89,11 @@ describe("Choose Domino", () => {
     const result = chooseDominoUseCase(
       initialGame,
       initialGame.lords[0]!.id,
-      1
+      1,
     );
 
     // Assert
-    expect(result).toEqual(err("Lord can't pick"));
+    expect(result).toEqual(err(ErrorCode.CANNOT_PICK));
   });
 
   test("should return error if domino not found", async () => {
@@ -112,11 +112,11 @@ describe("Choose Domino", () => {
     const result = chooseDominoUseCase(
       initialGame,
       initialGame.lords[0]!.id,
-      3
+      3,
     );
 
     // Assert
-    expect(result).toEqual(err("Domino not found"));
+    expect(result).toEqual(err(ErrorCode.DOMINO_NOT_FOUND));
   });
 
   test("should return error if domino already picked", async () => {
@@ -173,11 +173,11 @@ describe("Choose Domino", () => {
     const result = chooseDominoUseCase(
       initialGame,
       initialGame.lords[0]!.id,
-      revealsDomino[0]!.domino.number
+      revealsDomino[0]!.domino.number,
     );
 
     // Assert
-    expect(result).toEqual(err("Domino already picked"));
+    expect(result).toEqual(err(ErrorCode.DOMINO_ALREADY_PICKED));
   });
 
   test("should end turn if all lords have played", async () => {
@@ -229,7 +229,7 @@ describe("Choose Domino", () => {
     const result = chooseDominoUseCase(
       initialGame,
       initialGame.lords[3]!.id,
-      revealsDomino[3]!.domino.number
+      revealsDomino[3]!.domino.number,
     );
 
     // Assert

@@ -1,9 +1,9 @@
-import { describe, expect, test } from "vitest";
-import { discardDominoUseCase } from "@core/useCases/discardDomino.js";
-import { createGameBuilder } from "../../builder/game.js";
-import { unwrap } from "@utils/result.js";
-import { err } from "@utils/result.js";
+import { ErrorCode } from "@core/domain/errors/domainErrors.js";
 import type { NextAction } from "@core/domain/types/game.js";
+import { discardDominoUseCase } from "@core/useCases/discardDomino.js";
+import { err, unwrap } from "@utils/result.js";
+import { describe, expect, test } from "vitest";
+import { createGameBuilder } from "../../builder/game.js";
 
 describe("Game Pass", () => {
   test("should pass turn and next action will be pickDomino", () => {
@@ -107,7 +107,7 @@ describe("Game Pass", () => {
     const result = discardDominoUseCase(initialGame, "not-found");
 
     // Assert
-    expect(result).toEqual(err("Lord not found"));
+    expect(result).toEqual(err(ErrorCode.LORD_NOT_FOUND));
   });
 
   test("should return error if not lord turn", () => {
@@ -125,7 +125,7 @@ describe("Game Pass", () => {
     const result = discardDominoUseCase(initialGame, "lord1-id");
 
     // Assert
-    expect(result).toEqual(err("Not your turn"));
+    expect(result).toEqual(err(ErrorCode.NOT_YOUR_TURN));
   });
 
   test("should return error if lord can't pass", () => {
@@ -145,6 +145,6 @@ describe("Game Pass", () => {
     const result = discardDominoUseCase(initialGame, "lord1-id");
 
     // Assert
-    expect(result).toEqual(err("Lord can't pass"));
+    expect(result).toEqual(err(ErrorCode.CANNOT_PLACE));
   });
 });

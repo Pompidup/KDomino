@@ -1,9 +1,9 @@
-import { placeDominoUseCase } from "@core/useCases/placeDomino.js";
-import { describe, test, expect } from "vitest";
-import { unwrap } from "@utils/result.js";
-import { createGameBuilder } from "../../builder/game.js";
-import { err } from "@utils/result.js";
+import { ErrorCode } from "@core/domain/errors/domainErrors.js";
 import type { NextAction } from "@core/domain/types/game.js";
+import { placeDominoUseCase } from "@core/useCases/placeDomino.js";
+import { err, unwrap } from "@utils/result.js";
+import { describe, expect, test } from "vitest";
+import { createGameBuilder } from "../../builder/game.js";
 
 describe("Game Place", () => {
   test("should place a domino", () => {
@@ -18,34 +18,24 @@ describe("Game Place", () => {
 
     game.lords[0]!.dominoPicked = game.dominoes[0];
 
-    const result = placeDominoUseCase(
-      game,
-      "lord1-id",
-      { x: 5, y: 4 },
-      0
-    );
+    const result = placeDominoUseCase(game, "lord1-id", { x: 5, y: 4 }, 0);
 
     const updatedGame = unwrap(result);
 
     expect(updatedGame.players[0]!.kingdom[4]![5]).toEqual(
-      game.dominoes[0]!.left
+      game.dominoes[0]!.left,
     );
     expect(updatedGame.players[0]!.kingdom[4]![6]).toEqual(
-      game.dominoes[0]!.right
+      game.dominoes[0]!.right,
     );
   });
 
   test("should return error if lord is not found", () => {
     const game = createGameBuilder<NextAction>().withAllDefaults().build();
 
-    const result = placeDominoUseCase(
-      game,
-      "lord1-id",
-      { x: 5, y: 4 },
-      0
-    );
+    const result = placeDominoUseCase(game, "lord1-id", { x: 5, y: 4 }, 0);
 
-    expect(result).toEqual(err("Lord not found"));
+    expect(result).toEqual(err(ErrorCode.LORD_NOT_FOUND));
   });
 
   test("should return error if it's not lord turn", () => {
@@ -58,14 +48,9 @@ describe("Game Place", () => {
       })
       .build();
 
-    const result = placeDominoUseCase(
-      game,
-      "lord1-id",
-      { x: 5, y: 4 },
-      0
-    );
+    const result = placeDominoUseCase(game, "lord1-id", { x: 5, y: 4 }, 0);
 
-    expect(result).toEqual(err("Not your turn"));
+    expect(result).toEqual(err(ErrorCode.NOT_YOUR_TURN));
   });
 
   test("should return error if lord can't place", () => {
@@ -80,14 +65,9 @@ describe("Game Place", () => {
 
     game.lords[0]!.hasPick = true;
 
-    const result = placeDominoUseCase(
-      game,
-      "lord1-id",
-      { x: 5, y: 4 },
-      0
-    );
+    const result = placeDominoUseCase(game, "lord1-id", { x: 5, y: 4 }, 0);
 
-    expect(result).toEqual(err("Lord can't place"));
+    expect(result).toEqual(err(ErrorCode.CANNOT_PLACE));
   });
 
   test("should return error if not fit into the grid", () => {
@@ -102,14 +82,9 @@ describe("Game Place", () => {
 
     game.lords[0]!.dominoPicked = game.dominoes[0];
 
-    const result = placeDominoUseCase(
-      game,
-      "lord1-id",
-      { x: 10, y: 4 },
-      0
-    );
+    const result = placeDominoUseCase(game, "lord1-id", { x: 10, y: 4 }, 0);
 
-    expect(result).toEqual(err("Invalid placement (not fit into the grid)"));
+    expect(result).toEqual(err(ErrorCode.PLACEMENT_OUT_OF_BOUNDS));
   });
 
   test("should return error if position is already occupied", () => {
@@ -126,14 +101,9 @@ describe("Game Place", () => {
 
     game.lords[0]!.dominoPicked = game.dominoes[0];
 
-    const result = placeDominoUseCase(
-      game,
-      "lord1-id",
-      { x: 4, y: 4 },
-      0
-    );
+    const result = placeDominoUseCase(game, "lord1-id", { x: 4, y: 4 }, 0);
 
-    expect(result).toEqual(err("Invalid placement (not empty)"));
+    expect(result).toEqual(err(ErrorCode.PLACEMENT_NOT_EMPTY));
   });
 
   test("should return error if position is not adjacent to another tile", () => {
@@ -148,14 +118,9 @@ describe("Game Place", () => {
 
     game.lords[0]!.dominoPicked = game.dominoes[0];
 
-    const result = placeDominoUseCase(
-      game,
-      "lord1-id",
-      { x: 5, y: 5 },
-      0
-    );
+    const result = placeDominoUseCase(game, "lord1-id", { x: 5, y: 5 }, 0);
 
-    expect(result).toEqual(err("Invalid placement (not adjacent)"));
+    expect(result).toEqual(err(ErrorCode.PLACEMENT_NOT_ADJACENT));
   });
 
   test("should return error if position is not adjacent to valid tile", () => {
@@ -172,14 +137,9 @@ describe("Game Place", () => {
 
     game.lords[0]!.dominoPicked = game.dominoes[0];
 
-    const result = placeDominoUseCase(
-      game,
-      "lord1-id",
-      { x: 5, y: 4 },
-      0
-    );
+    const result = placeDominoUseCase(game, "lord1-id", { x: 5, y: 4 }, 0);
 
-    expect(result).toEqual(err("Invalid placement (not valid adjacent)"));
+    expect(result).toEqual(err(ErrorCode.PLACEMENT_INVALID_TERRAIN));
   });
 
   test('should update lord "hasPlace" to true', () => {
@@ -195,7 +155,7 @@ describe("Game Place", () => {
     game.lords[0]!.dominoPicked = game.dominoes[0];
 
     const updatedGame = unwrap(
-      placeDominoUseCase(game, "lord1-id", { x: 5, y: 4 }, 0)
+      placeDominoUseCase(game, "lord1-id", { x: 5, y: 4 }, 0),
     );
 
     expect(updatedGame.lords[0]!.hasPlace).toBe(true);
@@ -214,12 +174,12 @@ describe("Game Place", () => {
     game.lords[0]!.dominoPicked = game.dominoes[0];
 
     const updatedGame = unwrap(
-      placeDominoUseCase(game, "lord1-id", { x: 5, y: 4 }, 0)
+      placeDominoUseCase(game, "lord1-id", { x: 5, y: 4 }, 0),
     );
 
     expect(updatedGame.nextAction.type).toBe("action");
     expect((updatedGame.nextAction as NextAction).nextAction).toBe(
-      "pickDomino"
+      "pickDomino",
     );
   });
 
@@ -240,7 +200,7 @@ describe("Game Place", () => {
 
     // Act
     const updatedGame = unwrap(
-      placeDominoUseCase(game, "lord1-id", { x: 5, y: 4 }, 0)
+      placeDominoUseCase(game, "lord1-id", { x: 5, y: 4 }, 0),
     );
 
     // Assert
@@ -292,8 +252,8 @@ describe("Game Place", () => {
         initialGame,
         initialGame.lords[3]!.id,
         { x: 5, y: 4 },
-        0
-      )
+        0,
+      ),
     );
 
     // Assert

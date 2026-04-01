@@ -1,12 +1,14 @@
-import { addPlayersHandler } from "@application/handlers/addPlayersHandler.js";
-import type { AddPlayersCommand } from "@application/commands/addPlayersCommand.js";
-import type { NextAction, NextStep } from "@core/domain/types/game.js";
-import { createGameBuilder } from "../../builder/game.js";
-import type { AddPlayersUseCase } from "@core/useCases/addPlayers.js";
-import { describe, expect, test } from "vitest";
-import { err, ok } from "@utils/result.js";
-import type { Kingdom } from "@core/domain/types/kingdom.js";
 import { winstonLogger } from "@adapter/winstonLogger.js";
+import type { AddPlayersCommand } from "@application/commands/addPlayersCommand.js";
+import { addPlayersHandler } from "@application/handlers/addPlayersHandler.js";
+import { ErrorCode } from "@core/domain/errors/domainErrors.js";
+import type { NextAction, NextStep } from "@core/domain/types/game.js";
+import type { Kingdom } from "@core/domain/types/kingdom.js";
+import { defaultTranslator } from "@core/i18n/translations.js";
+import type { AddPlayersUseCase } from "@core/useCases/addPlayers.js";
+import { err, ok } from "@utils/result.js";
+import { describe, expect, test } from "vitest";
+import { createGameBuilder } from "../../builder/game.js";
 
 describe("AddPlayersHandler", () => {
   const logger = winstonLogger(false);
@@ -25,10 +27,11 @@ describe("AddPlayersHandler", () => {
     };
 
     // Act
-    const act = () => addPlayersHandler(logger, useCase)(command);
+    const act = () =>
+      addPlayersHandler(logger, defaultTranslator, useCase)(command);
 
     // Assert
-    expect(act).toThrowError("Required game with nextAction type: 'step'");
+    expect(act).toThrowError("Invalid game step");
   });
 
   test("should throw error if next action is not addPlayers", () => {
@@ -47,15 +50,17 @@ describe("AddPlayersHandler", () => {
     };
 
     // Act
-    const act = () => addPlayersHandler(logger, useCase)(command);
+    const act = () =>
+      addPlayersHandler(logger, defaultTranslator, useCase)(command);
 
     // Assert
-    expect(act).toThrowError("Required game with addPlayers step");
+    expect(act).toThrowError("Invalid game step");
   });
 
   test("should return useCase error", () => {
     // Arrange
-    const useCase: AddPlayersUseCase = () => err("useCase error");
+    const useCase: AddPlayersUseCase = () =>
+      err(ErrorCode.INVALID_PLAYER_COUNT);
 
     const game = createGameBuilder<NextStep>()
       .withNextAction({ type: "step", step: "addPlayers" })
@@ -67,10 +72,11 @@ describe("AddPlayersHandler", () => {
     };
 
     // Act
-    const act = () => addPlayersHandler(logger, useCase)(command);
+    const act = () =>
+      addPlayersHandler(logger, defaultTranslator, useCase)(command);
 
     // Assert
-    expect(act).toThrowError("useCase error");
+    expect(act).toThrowError("Invalid number of players (2-4 required)");
   });
 
   test("should return game with players", () => {
@@ -99,7 +105,11 @@ describe("AddPlayersHandler", () => {
     };
 
     // Act
-    const result = addPlayersHandler(logger, useCase)(command);
+    const result = addPlayersHandler(
+      logger,
+      defaultTranslator,
+      useCase,
+    )(command);
 
     // Assert
     expect(result.players).toEqual([

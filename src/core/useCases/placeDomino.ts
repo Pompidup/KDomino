@@ -1,3 +1,4 @@
+import { ErrorCode } from "@core/domain/errors/domainErrors.js";
 import { err, isErr, ok } from "@utils/result.js";
 import {
   gameSteps,
@@ -38,15 +39,15 @@ export const placeDominoUseCase: PlaceDominoUseCase = (
   );
 
   if (!currentLord) {
-    return err("Lord not found");
+    return err(ErrorCode.LORD_NOT_FOUND);
   }
 
   if (currentLord.id !== lordId) {
-    return err("Not your turn");
+    return err(ErrorCode.NOT_YOUR_TURN);
   }
 
   if (!canPlaceAndDominoPickedIsDefined(currentLord)) {
-    return err("Lord can't place");
+    return err(ErrorCode.CANNOT_PLACE);
   }
 
   const domino = currentLord.dominoPicked;
@@ -56,7 +57,7 @@ export const placeDominoUseCase: PlaceDominoUseCase = (
   );
 
   if (!currentPlayer) {
-    return err("Player not found");
+    return err(ErrorCode.PLAYER_NOT_FOUND);
   }
 
   const updatedKingdom = placeDomino(

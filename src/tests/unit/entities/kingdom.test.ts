@@ -1,14 +1,15 @@
 import {
+  checkCastleIsInMiddle,
   createEmptyKingdom,
+  getBoundingBox,
   placeCastle,
   placeDomino,
   placeTile,
-  getBoundingBox,
-  checkCastleIsInMiddle,
 } from "@core/domain/entities/kingdom.js";
-import { describe, test, expect } from "vitest";
-import { isErr, isOk } from "@utils/result.js";
+import { ErrorCode } from "@core/domain/errors/domainErrors.js";
 import type { Domino, Tile } from "@core/domain/types/index.js";
+import { isErr, isOk } from "@utils/result.js";
+import { describe, expect, test } from "vitest";
 
 const wheat: Tile = { type: "wheat", crowns: 0 };
 const forest: Tile = { type: "forest", crowns: 0 };
@@ -52,7 +53,7 @@ describe("Kingdom - 5x5 constraint", () => {
     const result = placeDomino(kingdom, { x: 7, y: 4 }, 0, wheatDomino);
     expect(isErr(result)).toBe(true);
     if (isErr(result)) {
-      expect(result.error).toBe("Invalid placement (exceeds kingdom size)");
+      expect(result.error).toBe(ErrorCode.PLACEMENT_EXCEEDS_KINGDOM_SIZE);
     }
   });
 
@@ -70,7 +71,7 @@ describe("Kingdom - 5x5 constraint", () => {
     const result = placeDomino(kingdom, { x: 3, y: 7 }, 0, wheatDomino);
     expect(isErr(result)).toBe(true);
     if (isErr(result)) {
-      expect(result.error).toBe("Invalid placement (exceeds kingdom size)");
+      expect(result.error).toBe(ErrorCode.PLACEMENT_EXCEEDS_KINGDOM_SIZE);
     }
   });
 
@@ -98,7 +99,10 @@ describe("Kingdom - getBoundingBox", () => {
   test("should return castle position for kingdom with only castle", () => {
     const kingdom = buildKingdomWithCastle();
     expect(getBoundingBox(kingdom)).toEqual({
-      minX: 4, maxX: 4, minY: 4, maxY: 4,
+      minX: 4,
+      maxX: 4,
+      minY: 4,
+      maxY: 4,
     });
   });
 
@@ -108,7 +112,10 @@ describe("Kingdom - getBoundingBox", () => {
     kingdom = placeTile(kingdom, { x: 6, y: 5 }, wheat);
 
     expect(getBoundingBox(kingdom)).toEqual({
-      minX: 2, maxX: 6, minY: 3, maxY: 5,
+      minX: 2,
+      maxX: 6,
+      minY: 3,
+      maxY: 5,
     });
   });
 });

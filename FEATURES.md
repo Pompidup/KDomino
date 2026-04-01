@@ -22,7 +22,7 @@
 ## Qualité du moteur
 
 10. **Validation de state complète** - Une fonction `validateGameState(game)` qui vérifie l'intégrité de l'état (pas de dominos dupliqués, kingdoms valides, etc.). Utile quand le consommateur persiste et restaure l'état.
-11. **Meilleurs messages d'erreur** - Internationalisation des erreurs (le système i18n existe déjà mais semble minimal). Codes d'erreur structurés avec contexte.
+11. ~~**Meilleurs messages d'erreur**~~ - ✅ Implémenté. Toutes les erreurs utilisent des `ErrorCode` structurés avec `context` (lordId, gameId, etc.). Messages traduits via `Translator` injectable dans `EngineConfig.translator`. Mapping `errorCodeToTranslationKey` + helper `translateErrorCode`. Support i18n complet avec `createTranslator({ customTranslations })`.
 12. **Mode debug** - Logger plus détaillé avec dump de l'état à chaque étape, utile pour les consommateurs qui développent leur UI.
 13. ~~**Système d'événements (v2)**~~ - ✅ Implémenté. Callbacks optionnels via `EngineConfig.events` : `onGameCreated`, `onPlayersAdded`, `onGameStarted`, `onDominoPicked`, `onDominoPlaced`, `onDominoDiscarded`, `onTurnStart`, `onTurnEnd`, `onGameEnd`. Aussi disponible standalone via `wrapWithEvents(engine, callbacks)`.
 
@@ -59,3 +59,4 @@ Les plus impactantes à court terme :
 - ~~**Bot / IA joueur** (19)~~ - ✅ Done
 - ~~**Système d'événements v2** (13)~~ - ✅ Done
 - ~~**Historique des coups** (6)~~ - ✅ Done
+- ~~**Meilleurs messages d'erreur** (11)~~ - ✅ Done

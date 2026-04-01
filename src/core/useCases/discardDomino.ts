@@ -11,6 +11,7 @@ import {
   type NextAction,
   type NextStep,
 } from "@core/domain/types/game.js";
+import { ErrorCode } from "@core/domain/errors/domainErrors.js";
 import { canPlaceDominoUseCase } from "./getValidPlacements.js";
 import { err, ok } from "@utils/result.js";
 
@@ -27,15 +28,15 @@ export const discardDominoUseCase: DiscardDominoUseCase = (game, lordId) => {
   );
 
   if (!currentLord) {
-    return err("Lord not found");
+    return err(ErrorCode.LORD_NOT_FOUND);
   }
 
   if (currentLord.id !== lordId) {
-    return err("Not your turn");
+    return err(ErrorCode.NOT_YOUR_TURN);
   }
 
   if (!canPass(currentLord)) {
-    return err("Lord can't pass");
+    return err(ErrorCode.CANNOT_PLACE);
   }
 
   if (currentLord.dominoPicked) {
@@ -44,7 +45,7 @@ export const discardDominoUseCase: DiscardDominoUseCase = (game, lordId) => {
     );
 
     if (currentPlayer && canPlaceDominoUseCase(currentPlayer.kingdom, currentLord.dominoPicked, game.rules.basic.maxKingdomSize)) {
-      return err("Cannot discard: valid placement exists");
+      return err(ErrorCode.CANNOT_PLACE);
     }
   }
 

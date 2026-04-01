@@ -1,3 +1,4 @@
+import { ErrorCode } from "@core/domain/errors/domainErrors.js";
 import type { ExtraRule } from "@core/domain/types/rule.js";
 import { ok, err, type Result } from "@utils/result.js";
 
@@ -14,7 +15,7 @@ export const getAvailablesExtraRules = (
   });
 
   if (availableExtraRules.length === 0) {
-    return err("No extra rules found");
+    return err(ErrorCode.STEP_EXECUTION_FAILED);
   }
 
   return ok(availableExtraRules);
@@ -27,7 +28,7 @@ export const toExtraRule = (
   const foundRule = extraRules.find((r) => r.name === rule);
 
   if (!foundRule) {
-    return err(`Rule not found: ${rule}`);
+    return err(ErrorCode.STEP_EXECUTION_FAILED);
   }
 
   return ok(foundRule);

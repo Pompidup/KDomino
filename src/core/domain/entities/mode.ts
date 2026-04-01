@@ -1,3 +1,4 @@
+import { ErrorCode } from "@core/domain/errors/domainErrors.js";
 import { err, ok, type Result } from "@utils/result.js";
 import type { GameMode } from "@core/domain/types/mode.js";
 
@@ -17,5 +18,5 @@ export const createMode = (
     return ok(foundMode);
   }
 
-  return err(`Invalid mode: ${mode}`);
+  return err(ErrorCode.MODE_NOT_FOUND);
 };

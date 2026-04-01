@@ -1,15 +1,20 @@
-import type { Logger } from "@core/portServerside/logger.js";
-import type { GameState } from "@core/domain/types/index.js";
 import type {
-  SerializeGameCommand,
   DeserializeGameCommand,
+  SerializeGameCommand,
 } from "@application/commands/serializeGameCommand.js";
 import {
-  serializeGame,
+  type ErrorCodeType,
+  StepExecutionError,
+} from "@core/domain/errors/domainErrors.js";
+import type { GameState } from "@core/domain/types/index.js";
+import type { Translator } from "@core/i18n/translations.js";
+import { translateErrorCode } from "@core/i18n/translations.js";
+import type { Logger } from "@core/portServerside/logger.js";
+import {
   deserializeGame,
+  serializeGame,
 } from "@core/useCases/serialization.js";
 import { isErr, unwrap } from "@utils/result.js";
-import { StepExecutionError } from "@core/domain/errors/domainErrors.js";
 
 type SerializeGameHandler = (command: SerializeGameCommand) => string;
 type DeserializeGameHandler = (command: DeserializeGameCommand) => GameState;
@@ -18,7 +23,8 @@ type DeserializeGameHandler = (command: DeserializeGameCommand) => GameState;
  * Creates a handler for serializing game state.
  */
 export const serializeGameHandler = (
-  logger: Logger
+  logger: Logger,
+  _translator: Translator,
 ): SerializeGameHandler => {
   return (command) => {
     logger.info(`Serializing game: ${command.game.id}`);
@@ -32,7 +38,8 @@ export const serializeGameHandler = (
  * Creates a handler for deserializing game state.
  */
 export const deserializeGameHandler = (
-  logger: Logger
+  logger: Logger,
+  translator: Translator,
 ): DeserializeGameHandler => {
   return (command) => {
     logger.info(`Deserializing game from JSON`);
@@ -40,7 +47,8 @@ export const deserializeGameHandler = (
 
     if (isErr(result)) {
       logger.error(`Failed to deserialize game: ${result.error}`);
-      throw new StepExecutionError(result.error);
+      const code = result.error as ErrorCodeType;
+      throw new StepExecutionError(translateErrorCode(translator, code), code);
     }
 
     const game = unwrap(result);

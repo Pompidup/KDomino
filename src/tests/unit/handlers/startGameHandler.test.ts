@@ -1,15 +1,17 @@
-import { describe, expect, test } from "vitest";
+import { winstonLogger } from "@adapter/winstonLogger.js";
+import type { StartGameCommand } from "@application/commands/startGameCommand.js";
+import { startGameHandler } from "@application/handlers/startGameHandler.js";
+import { ErrorCode } from "@core/domain/errors/domainErrors.js";
 import type {
   GameWithNextAction,
   NextAction,
   NextStep,
 } from "@core/domain/types/game.js";
+import { defaultTranslator } from "@core/i18n/translations.js";
 import type { StartGameUseCase } from "@core/useCases/startGame.js";
-import { createGameBuilder } from "../../builder/game.js";
 import { err, ok } from "@utils/result.js";
-import type { StartGameCommand } from "@application/commands/startGameCommand.js";
-import { startGameHandler } from "@application/handlers/startGameHandler.js";
-import { winstonLogger } from "@adapter/winstonLogger.js";
+import { describe, expect, test } from "vitest";
+import { createGameBuilder } from "../../builder/game.js";
 
 describe("startGameHandler", () => {
   const logger = winstonLogger(false);
@@ -19,7 +21,7 @@ describe("startGameHandler", () => {
     const mockUseCase: StartGameUseCase = () => {
       throw new Error("This should not be called");
     };
-    const handler = startGameHandler(logger, mockUseCase);
+    const handler = startGameHandler(logger, defaultTranslator, mockUseCase);
 
     const game = createGameBuilder<NextAction>().build();
 
@@ -29,7 +31,7 @@ describe("startGameHandler", () => {
     const act = () => handler(command);
 
     // Assert
-    expect(act).toThrowError("Required game with nextAction type: 'step'");
+    expect(act).toThrowError("Invalid game step");
   });
 
   test("should throw an error if the next action step is not 'start' or 'options'", () => {
@@ -37,7 +39,7 @@ describe("startGameHandler", () => {
     const mockUseCase: StartGameUseCase = () => {
       throw new Error("This should not be called");
     };
-    const handler = startGameHandler(logger, mockUseCase);
+    const handler = startGameHandler(logger, defaultTranslator, mockUseCase);
 
     const game = createGameBuilder<NextStep>()
       .withNextAction({ type: "step", step: "addPlayers" })
@@ -49,7 +51,7 @@ describe("startGameHandler", () => {
     const act = () => handler(command);
 
     // Assert
-    expect(act).toThrowError("Required game with start step or options step");
+    expect(act).toThrowError("Invalid game step");
   });
 
   test("should call the use case and return the result if the next action step is 'start'", () => {
@@ -69,7 +71,7 @@ describe("startGameHandler", () => {
     };
 
     const mockUseCase: StartGameUseCase = () => ok(expectedGame);
-    const handler = startGameHandler(logger, mockUseCase);
+    const handler = startGameHandler(logger, defaultTranslator, mockUseCase);
     const command: StartGameCommand = { game };
 
     // Act
@@ -96,7 +98,7 @@ describe("startGameHandler", () => {
     };
 
     const mockUseCase: StartGameUseCase = () => ok(expectedGame);
-    const handler = startGameHandler(logger, mockUseCase);
+    const handler = startGameHandler(logger, defaultTranslator, mockUseCase);
     const command: StartGameCommand = { game };
 
     // Act
@@ -108,8 +110,9 @@ describe("startGameHandler", () => {
 
   test("should throw an error if the use case returns an error", () => {
     // Arrange
-    const mockUseCase: StartGameUseCase = () => err("Use case failed");
-    const handler = startGameHandler(logger, mockUseCase);
+    const mockUseCase: StartGameUseCase = () =>
+      err(ErrorCode.STEP_EXECUTION_FAILED);
+    const handler = startGameHandler(logger, defaultTranslator, mockUseCase);
 
     const game = createGameBuilder<NextStep>()
       .withNextAction({ type: "step", step: "start" })
@@ -121,6 +124,6 @@ describe("startGameHandler", () => {
     const act = () => handler(command);
 
     // Assert
-    expect(act).toThrowError("Use case failed");
+    expect(act).toThrowError("Step execution failed");
   });
 });

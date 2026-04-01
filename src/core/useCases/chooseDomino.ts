@@ -6,6 +6,7 @@ import {
   updateLordOrder,
 } from "@core/domain/entities/lord.js";
 import type { GameWithNextAction } from "@core/domain/types/game.js";
+import { ErrorCode } from "@core/domain/errors/domainErrors.js";
 import { err, ok, type Result } from "@utils/result.js";
 
 export type ChooseDominoUseCase = (
@@ -24,15 +25,15 @@ export const chooseDominoUseCase: ChooseDominoUseCase = (
   );
 
   if (!currentLord) {
-    return err("Lord not found");
+    return err(ErrorCode.LORD_NOT_FOUND);
   }
 
   if (currentLord.id !== lordId) {
-    return err("Not your turn");
+    return err(ErrorCode.NOT_YOUR_TURN);
   }
 
   if (!canPick(currentLord)) {
-    return err("Lord can't pick");
+    return err(ErrorCode.CANNOT_PICK);
   }
 
   // Check if dominoPick is valid choice
@@ -41,11 +42,11 @@ export const chooseDominoUseCase: ChooseDominoUseCase = (
   );
 
   if (!selectedDomino) {
-    return err("Domino not found");
+    return err(ErrorCode.DOMINO_NOT_FOUND);
   }
 
   if (selectedDomino.picked) {
-    return err("Domino already picked");
+    return err(ErrorCode.DOMINO_ALREADY_PICKED);
   }
 
   // update currentDominoes

@@ -55,7 +55,7 @@ export interface DomainError {
 export const createDomainError = (
   code: ErrorCodeType,
   message: string,
-  context?: Record<string, unknown>
+  context?: Record<string, unknown>,
 ): DomainError => ({
   code,
   message,
@@ -95,9 +95,13 @@ export class InvalidStepError extends DomainException {
  * Error thrown when a step execution fails.
  */
 export class StepExecutionError extends DomainException {
-  constructor(message: string, context?: Record<string, unknown>) {
+  constructor(
+    message: string,
+    code: ErrorCodeType = ErrorCode.STEP_EXECUTION_FAILED,
+    context?: Record<string, unknown>,
+  ) {
     super({
-      code: ErrorCode.STEP_EXECUTION_FAILED,
+      code,
       message,
       context,
     });
@@ -112,7 +116,7 @@ export class ActionExecutionError extends DomainException {
   constructor(
     message: string,
     code: ErrorCodeType = ErrorCode.ACTION_EXECUTION_FAILED,
-    context?: Record<string, unknown>
+    context?: Record<string, unknown>,
   ) {
     super({
       code,
@@ -130,7 +134,7 @@ export class NotFoundError extends DomainException {
   constructor(
     message: string,
     code: ErrorCodeType = ErrorCode.LORD_NOT_FOUND,
-    context?: Record<string, unknown>
+    context?: Record<string, unknown>,
   ) {
     super({
       code,
@@ -148,7 +152,7 @@ export class ValidationError extends DomainException {
   constructor(
     message: string,
     code: ErrorCodeType,
-    context?: Record<string, unknown>
+    context?: Record<string, unknown>,
   ) {
     super({
       code,

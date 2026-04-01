@@ -1,5 +1,6 @@
 import type { CalculateScoreCommand } from "@application/commands/calculateScoreCommand.js";
 import type { Score } from "@core/domain/types/game.js";
+import type { Translator } from "@core/i18n/translations.js";
 import type { Logger } from "@core/portServerside/logger.js";
 import type { CalculateScoreUseCase } from "@core/useCases/calculateScore.js";
 import { isErr } from "@utils/result.js";
@@ -7,7 +8,11 @@ import { isErr } from "@utils/result.js";
 type CalculateScoreHandler = (command: CalculateScoreCommand) => Score;
 
 export const calculateScoreHandler =
-  (logger: Logger, useCase: CalculateScoreUseCase): CalculateScoreHandler =>
+  (
+    logger: Logger,
+    translator: Translator,
+    useCase: CalculateScoreUseCase,
+  ): CalculateScoreHandler =>
   (command) => {
     const { kingdom } = command;
     logger.info(`Calculating score for kingdom`);

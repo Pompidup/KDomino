@@ -11,6 +11,7 @@ import type {
 import type { RuleRepository } from "@core/portServerside/ruleRepository.js";
 import type { ShuffleMethod } from "@core/portServerside/shuffleMethod.js";
 import type { UuidMethod } from "@core/portServerside/uuidMethod.js";
+import { ErrorCode } from "@core/domain/errors/domainErrors.js";
 import { err, isErr, ok, type Result } from "@utils/result.js";
 import { createSeededShuffle } from "@utils/seededShuffle.js";
 
@@ -29,7 +30,7 @@ export const addPlayersUseCase =
     const { uuidMethod, shuffleMethod, ruleRepository } = deps;
 
     if (!players || players.length < 2 || players.length > 4) {
-      return err("Invalid number of players");
+      return err(ErrorCode.INVALID_PLAYER_COUNT);
     }
 
     const newPlayers: Players = [];
@@ -52,7 +53,7 @@ export const addPlayersUseCase =
     const basicRules = rules.basic[newPlayers.length];
 
     if (!basicRules) {
-      return err("No base rules found");
+      return err(ErrorCode.STEP_EXECUTION_FAILED);
     }
 
     // updateDominoes

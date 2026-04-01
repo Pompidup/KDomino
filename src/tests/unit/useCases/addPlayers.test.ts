@@ -1,13 +1,13 @@
-import { addPlayersUseCase } from "@core/useCases/addPlayers.js";
-import { createGameBuilder } from "../../builder/game.js";
-import { describe, test, expect } from "vitest";
-import type { NextStep, Players, Rules } from "@core/domain/types/index.js";
 import {
   createEmptyKingdom,
   placeCastle,
 } from "@core/domain/entities/kingdom.js";
-import { unwrap } from "@utils/result.js";
-import { err } from "@utils/result.js";
+import { ErrorCode } from "@core/domain/errors/domainErrors.js";
+import type { NextStep, Players, Rules } from "@core/domain/types/index.js";
+import { addPlayersUseCase } from "@core/useCases/addPlayers.js";
+import { err, unwrap } from "@utils/result.js";
+import { describe, expect, test } from "vitest";
+import { createGameBuilder } from "../../builder/game.js";
 
 describe("Add players", () => {
   const extraRules = [
@@ -124,7 +124,7 @@ describe("Add players", () => {
     const result = addPlayersUseCase(dependencies)(initialGame, payload);
 
     // Assert
-    expect(result).toEqual(err("Invalid number of players"));
+    expect(result).toEqual(err(ErrorCode.INVALID_PLAYER_COUNT));
   });
 
   test("should return an error for 5 players", () => {
@@ -151,7 +151,7 @@ describe("Add players", () => {
     const result = addPlayersUseCase(dependencies)(initialGame, payload);
 
     // Assert
-    expect(result).toEqual(err("Invalid number of players"));
+    expect(result).toEqual(err(ErrorCode.INVALID_PLAYER_COUNT));
   });
 
   test("should use seeded shuffle when game has a seed", () => {
@@ -164,7 +164,7 @@ describe("Add players", () => {
           number: i + 1,
           left: { type: "wheat" as const, crowns: 0 },
           right: { type: "forest" as const, crowns: 0 },
-        }))
+        })),
       )
       .withSeed("test-seed")
       .build();
@@ -209,6 +209,6 @@ describe("Add players", () => {
     const result = addPlayersUseCase(dependencies)(initialGame, payload);
 
     // Assert
-    expect(result).toEqual(err("Invalid player name: Pl"));
+    expect(result).toEqual(err(ErrorCode.INVALID_PLAYER_NAME));
   });
 });
