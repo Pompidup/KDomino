@@ -1,16 +1,14 @@
-import { createGameEngine } from "../../index.js";
 import {
-  isGameWithNextAction,
   type GameState,
+  isGameWithNextAction,
 } from "@core/domain/types/game.js";
 import type { GameEventCallbacks } from "@core/useCases/gameEvents.js";
 import { describe, expect, test, vi } from "vitest";
+import { createGameEngine } from "../../index.js";
 
 describe("GameEvents e2e", () => {
   test("should emit all events during a complete 2-player game", () => {
-    const callbacks: Required<{
-      [K in keyof GameEventCallbacks]: ReturnType<typeof vi.fn>;
-    }> = {
+    const callbacks = {
       onGameCreated: vi.fn(),
       onPlayersAdded: vi.fn(),
       onGameStarted: vi.fn(),
@@ -24,7 +22,7 @@ describe("GameEvents e2e", () => {
 
     const engine = createGameEngine({
       shuffleMethod: (array) => array,
-      events: callbacks,
+      events: callbacks as GameEventCallbacks,
     });
 
     let game: GameState = engine.createGame({ mode: "Classic" });

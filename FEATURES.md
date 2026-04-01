@@ -44,7 +44,7 @@
 
 ## Technique / Infra
 
-24. **Strict mode TypeScript** - Activer `strictNullChecks` et `noUncheckedIndexedAccess` si pas déjà fait.
+24. ~~**Strict mode TypeScript**~~ - ✅ Implémenté. `strict: true` (inclut `strictNullChecks`) et `noUncheckedIndexedAccess: true` activés dans `tsconfig.json`. Toutes les erreurs de compilation corrigées.
 25. **Benchmarks** - Suite de perf pour le scoring et le pathfinding (BFS), surtout pour les grilles 7×7/9×9.
 26. **WASM build** - Compiler le moteur en WASM pour l'utiliser hors écosystème Node (Unity, C#, etc.).
 27. **Schéma JSON** - Publier un JSON Schema de l'état de jeu pour la validation côté consommateur.

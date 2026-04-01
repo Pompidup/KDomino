@@ -5,6 +5,7 @@ import {
   InvalidStepError,
   StepExecutionError,
 } from "@core/domain/errors/domainErrors.js";
+import type { GameState } from "@core/domain/types/game.js";
 import {
   createTranslator,
   errorCodeToTranslationKey,
@@ -17,7 +18,7 @@ describe("Error messages e2e", () => {
   test("errors should have code, message, and context", () => {
     const engine = createGameEngine({});
 
-    let game = engine.createGame({ mode: "Classic" });
+    let game: GameState = engine.createGame({ mode: "Classic" });
     game = engine.addPlayers({ game, players: ["Alice", "Bob"] });
     game = engine.startGame({ game });
 
@@ -104,7 +105,7 @@ describe("Error messages e2e", () => {
       translator: frenchTranslator,
     });
 
-    let game = engine.createGame({ mode: "Classic" });
+    let game: GameState = engine.createGame({ mode: "Classic" });
     game = engine.addPlayers({ game, players: ["Alice", "Bob"] });
     game = engine.startGame({ game });
 
