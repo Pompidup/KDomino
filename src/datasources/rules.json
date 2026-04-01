@@ -37,23 +37,35 @@
     {
       "name": "The middle Kingdom",
       "description": "Gain 10 additional points if your castle is in the middle of the kingdom.",
-      "mode": [{ "name": "Classic", "description": "King Domino classic mode" }]
+      "mode": [
+        { "name": "Classic", "description": "King Domino classic mode" },
+        { "name": "QueenDomino", "description": "Queendomino expansion with buildings, knights, coins, the Queen and the Dragon" }
+      ]
     },
     {
       "name": "Harmony",
       "description": "Gain 5 additional points if your kingdom is complete (no discarded dominoes).",
-      "mode": [{ "name": "Classic", "description": "King Domino classic mode" }]
+      "mode": [
+        { "name": "Classic", "description": "King Domino classic mode" },
+        { "name": "QueenDomino", "description": "Queendomino expansion with buildings, knights, coins, the Queen and the Dragon" }
+      ]
     },
     {
       "name": "The Mighty Duel",
       "description": "Use all 48 dominoes and build a 7x7 kingdom. For 2 players only.",
-      "mode": [{ "name": "Classic", "description": "King Domino classic mode" }],
+      "mode": [
+        { "name": "Classic", "description": "King Domino classic mode" },
+        { "name": "QueenDomino", "description": "Queendomino expansion with buildings, knights, coins, the Queen and the Dragon" }
+      ],
       "playersLimit": 2
     },
     {
       "name": "Dynasty",
       "description": "Play 3 games in a row. The player with the highest total points wins.",
-      "mode": [{ "name": "Classic", "description": "King Domino classic mode" }]
+      "mode": [
+        { "name": "Classic", "description": "King Domino classic mode" },
+        { "name": "QueenDomino", "description": "Queendomino expansion with buildings, knights, coins, the Queen and the Dragon" }
+      ]
     }
   ]
 }

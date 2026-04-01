@@ -1,4 +1,4 @@
-import { describe, test, expect } from "vitest";
+import { describe, expect, test } from "vitest";
 import jsonModes from "../../adapterServerside/jsonModes";
 
 describe("jsonModes", () => {
@@ -10,6 +10,8 @@ describe("jsonModes", () => {
     const result = repository.getAvailables();
 
     // Assert
-    expect(result.length).toBe(1);
+    expect(result.length).toBe(2);
+    expect(result.map((m) => m.name)).toContain("Classic");
+    expect(result.map((m) => m.name)).toContain("QueenDomino");
   });
 });

@@ -30,6 +30,8 @@ export type Tile = {
   type: Ground;
   /** Number of crowns (0-3), multiplier for scoring */
   crowns: Crown;
+  /** Whether this tile has a construction square for buildings (Queendomino) */
+  hasConstructionSquare?: boolean;
 };
 
 /**

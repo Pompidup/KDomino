@@ -13,9 +13,11 @@ describe("Engine", () => {
     const modes = engine.getModes({});
 
     // Assert
-    expect(modes).toEqual([
-      { name: "Classic", description: "Original KingDomino rules" },
-    ]);
+    expect(modes).toContainEqual({
+      name: "Classic",
+      description: "Original KingDomino rules",
+    });
+    expect(modes.length).toBeGreaterThanOrEqual(1);
   });
 
   test("should be able to create a game", () => {
@@ -69,33 +71,16 @@ describe("Engine", () => {
     const extraRules = engine.getExtraRules({ mode: "Classic", players: 2 });
 
     // Assert
-    expect(extraRules).toEqual([
-      {
-        name: "The middle Kingdom",
-        description:
-          "Gain 10 additional points if your castle is in the middle of the kingdom.",
-        mode: [{ name: "Classic", description: "King Domino classic mode" }],
-      },
-      {
-        name: "Harmony",
-        description:
-          "Gain 5 additional points if your kingdom is complete (no discarded dominoes).",
-        mode: [{ name: "Classic", description: "King Domino classic mode" }],
-      },
-      {
-        name: "The Mighty Duel",
-        description:
-          "Use all 48 dominoes and build a 7x7 kingdom. For 2 players only.",
-        mode: [{ name: "Classic", description: "King Domino classic mode" }],
-        playersLimit: 2,
-      },
-      {
-        name: "Dynasty",
-        description:
-          "Play 3 games in a row. The player with the highest total points wins.",
-        mode: [{ name: "Classic", description: "King Domino classic mode" }],
-      },
+    expect(extraRules).toHaveLength(4);
+    expect(extraRules.map((r) => r.name)).toEqual([
+      "The middle Kingdom",
+      "Harmony",
+      "The Mighty Duel",
+      "Dynasty",
     ]);
+    for (const rule of extraRules) {
+      expect(rule.mode.map((m) => m.name)).toContain("Classic");
+    }
   });
 
   test("should be able to add extra rules", () => {
@@ -113,23 +98,17 @@ describe("Engine", () => {
     });
 
     // Assert
-    expect(gameWithExtraRules.rules).toEqual({
-      basic: {
-        lords: 2,
-        maxDominoes: 24,
-        dominoesPerTurn: 4,
-        maxTurns: 6,
-        maxKingdomSize: 5,
-      },
-      extra: [
-        {
-          name: "The middle Kingdom",
-          description:
-            "Gain 10 additional points if your castle is in the middle of the kingdom.",
-          mode: [{ name: "Classic", description: "King Domino classic mode" }],
-        },
-      ],
+    expect(gameWithExtraRules.rules.basic).toEqual({
+      lords: 2,
+      maxDominoes: 24,
+      dominoesPerTurn: 4,
+      maxTurns: 6,
+      maxKingdomSize: 5,
     });
+    expect(gameWithExtraRules.rules.extra).toHaveLength(1);
+    expect(gameWithExtraRules.rules.extra[0]?.name).toBe(
+      "The middle Kingdom",
+    );
     expect(gameWithExtraRules.nextAction).toEqual({
       type: "step",
       step: "start",

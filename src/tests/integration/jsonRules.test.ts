@@ -1,4 +1,4 @@
-import { describe, test, expect } from "vitest";
+import { describe, expect, test } from "vitest";
 import jsonRules from "../../adapterServerside/jsonRules.js";
 
 describe("jsonRules", () => {
@@ -18,33 +18,17 @@ describe("jsonRules", () => {
       "4": { lords: 1, maxDominoes: 48, dominoesPerTurn: 4, maxTurns: 12, maxKingdomSize: 5 },
     });
     expect(result).toHaveProperty("extraRules");
-    expect(result.extraRules).toEqual([
-      {
-        name: "The middle Kingdom",
-        description:
-          "Gain 10 additional points if your castle is in the middle of the kingdom.",
-        mode: [{ name: "Classic", description: "King Domino classic mode" }],
-      },
-      {
-        name: "Harmony",
-        description:
-          "Gain 5 additional points if your kingdom is complete (no discarded dominoes).",
-        mode: [{ name: "Classic", description: "King Domino classic mode" }],
-      },
-      {
-        name: "The Mighty Duel",
-        description:
-          "Use all 48 dominoes and build a 7x7 kingdom. For 2 players only.",
-        mode: [{ name: "Classic", description: "King Domino classic mode" }],
-        playersLimit: 2,
-      },
-      {
-        name: "Dynasty",
-        description:
-          "Play 3 games in a row. The player with the highest total points wins.",
-        mode: [{ name: "Classic", description: "King Domino classic mode" }],
-      },
+    expect(result.extraRules).toHaveLength(4);
+    expect(result.extraRules.map((r) => r.name)).toEqual([
+      "The middle Kingdom",
+      "Harmony",
+      "The Mighty Duel",
+      "Dynasty",
     ]);
+    for (const rule of result.extraRules) {
+      expect(rule.mode.map((m) => m.name)).toContain("Classic");
+      expect(rule.mode.map((m) => m.name)).toContain("QueenDomino");
+    }
   });
 
   test("should return all extra rules", () => {

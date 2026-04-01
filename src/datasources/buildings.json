@@ -1,0 +1,20 @@
+[
+  { "id": 1, "name": "The Bakery", "cost": 1, "immediateBonus": { "type": "coins", "amount": 2 }, "crowns": 0, "towers": 0 },
+  { "id": 2, "name": "The Bakery", "cost": 1, "immediateBonus": { "type": "coins", "amount": 2 }, "crowns": 0, "towers": 0 },
+  { "id": 3, "name": "The Sawmill", "cost": 2, "crowns": 0, "towers": 0, "endGameScoring": { "type": "perTerrain", "terrain": "forest", "points": 1 } },
+  { "id": 4, "name": "The Fishmonger's", "cost": 2, "immediateBonus": { "type": "coins", "amount": 1 }, "crowns": 0, "towers": 0, "endGameScoring": { "type": "perTerrain", "terrain": "sea", "points": 1 } },
+  { "id": 5, "name": "The Fishmonger's", "cost": 2, "immediateBonus": { "type": "coins", "amount": 1 }, "crowns": 0, "towers": 0, "endGameScoring": { "type": "perTerrain", "terrain": "sea", "points": 1 } },
+  { "id": 6, "name": "The Weaving Shop", "cost": 3, "crowns": 1, "towers": 0, "endGameScoring": { "type": "perTerrain", "terrain": "wheat", "points": 1 } },
+  { "id": 7, "name": "The Magic School", "cost": 4, "crowns": 1, "towers": 0, "endGameScoring": { "type": "perCrown", "points": 1 } },
+  { "id": 8, "name": "The Fountain", "cost": 3, "crowns": 0, "towers": 1, "endGameScoring": { "type": "perTower", "points": 2 } },
+  { "id": 9, "name": "The Church", "cost": 4, "crowns": 1, "towers": 0, "endGameScoring": { "type": "perBuilding", "points": 2 } },
+  { "id": 10, "name": "The Bath", "cost": 2, "immediateBonus": { "type": "coins", "amount": 1 }, "crowns": 0, "towers": 0, "endGameScoring": { "type": "flat", "points": 4 } },
+  { "id": 11, "name": "The Guard Tower", "cost": 1, "crowns": 0, "towers": 1, "endGameScoring": { "type": "flat", "points": 2 } },
+  { "id": 12, "name": "The Guard Tower", "cost": 1, "crowns": 0, "towers": 1, "endGameScoring": { "type": "flat", "points": 2 } },
+  { "id": 13, "name": "The Big Tower", "cost": 3, "crowns": 0, "towers": 2, "endGameScoring": { "type": "flat", "points": 4 } },
+  { "id": 14, "name": "The Guardhouse", "cost": 2, "crowns": 0, "towers": 1, "endGameScoring": { "type": "perBuilding", "points": 1 } },
+  { "id": 15, "name": "The Fortified Castle", "cost": 5, "crowns": 2, "towers": 1, "endGameScoring": { "type": "flat", "points": 6 } },
+  { "id": 16, "name": "The Travelling Castle", "cost": 3, "crowns": 1, "towers": 1, "endGameScoring": { "type": "perTower", "points": 1 } },
+  { "id": 17, "name": "The Travelling Group", "cost": 2, "immediateBonus": { "type": "coins", "amount": 1 }, "crowns": 0, "towers": 0, "endGameScoring": { "type": "perBuilding", "points": 1 } },
+  { "id": 18, "name": "The Harbour", "cost": 3, "crowns": 0, "towers": 0, "endGameScoring": { "type": "perTerrain", "terrain": "sea", "points": 2 } }
+]

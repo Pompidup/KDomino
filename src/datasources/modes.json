@@ -2,5 +2,9 @@
     {
         "name": "Classic",
         "description": "Original KingDomino rules"
+    },
+    {
+        "name": "QueenDomino",
+        "description": "Queendomino expansion with buildings, knights, coins, the Queen and the Dragon"
     }
 ]

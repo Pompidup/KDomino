@@ -1,7 +1,22 @@
-import type { Domino, Ground } from "@core/domain/types/domino.js";
+import type { Domino, Ground, Tile } from "@core/domain/types/domino.js";
 import type { GameMode } from "@core/domain/types/mode.js";
 import type { DominoesRepository } from "@core/portServerside/dominoesRepository.js";
 import dominoesJson from "../datasources/dominoes.json" with { type: "json" };
+
+const mapTile = (raw: {
+  type: string;
+  crowns: number;
+  hasConstructionSquare?: boolean;
+}): Tile => {
+  const tile: Tile = {
+    type: raw.type as Ground,
+    crowns: raw.crowns,
+  };
+  if (raw.hasConstructionSquare) {
+    tile.hasConstructionSquare = true;
+  }
+  return tile;
+};
 
 const jsonDominoes = (): DominoesRepository => {
   const dominoes: Record<string, Domino[]> = {};
@@ -10,14 +25,8 @@ const jsonDominoes = (): DominoesRepository => {
     const currentDominoes: Domino[] = [];
     value.forEach((domino) => {
       currentDominoes.push({
-        left: {
-          type: <Ground>domino.left.type,
-          crowns: domino.left.crowns,
-        },
-        right: {
-          type: <Ground>domino.right.type,
-          crowns: domino.right.crowns,
-        },
+        left: mapTile(domino.left),
+        right: mapTile(domino.right),
         number: domino.number,
       });
     });
