@@ -33,6 +33,7 @@ import { calculateScoreUseCase } from "@core/useCases/calculateScore.js";
 import { chooseDominoUseCase } from "@core/useCases/chooseDomino.js";
 import { createGameUseCase } from "@core/useCases/createGame.js";
 import { discardDominoUseCase } from "@core/useCases/discardDomino.js";
+import type { DebugOptions } from "@core/useCases/gameDebug.js";
 import type { GameEventCallbacks } from "@core/useCases/gameEvents.js";
 import { getDynastyResultUseCase } from "@core/useCases/getDynastyResult.js";
 import { getExtraRulesUseCase } from "@core/useCases/getExtraRules.js";
@@ -61,6 +62,8 @@ export type EngineConfig = {
   events?: GameEventCallbacks;
   /** Custom translator for i18n error messages. Defaults to English */
   translator?: Translator;
+  /** Enable debug mode with detailed logging. Pass `true` for defaults or a `DebugOptions` object. */
+  debug?: boolean | DebugOptions;
 };
 
 export const configureEngine = (config: Partial<EngineConfig>) => {

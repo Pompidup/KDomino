@@ -23,7 +23,7 @@
 
 10. ~~**Validation de state complète**~~ - ✅ Implémenté. Fonction `validateGameState(game)` qui vérifie l'intégrité complète de l'état : structure du Game, players (IDs uniques, noms, kingdoms 9×9, castle, terrains), dominos (numéros uniques, tiles valides, cohérence picked/lordId), lords (IDs uniques, playerId existant, flags cohérents), flow de jeu (nextAction/nextStep valides, lord existant), et rules (valeurs positives, extra rules valides). Retourne un `ValidationIssue[]` avec `path`, `code`, `message`, `severity`. Types exportés : `ValidationIssue`, `ValidationSeverity`.
 11. ~~**Meilleurs messages d'erreur**~~ - ✅ Implémenté. Toutes les erreurs utilisent des `ErrorCode` structurés avec `context` (lordId, gameId, etc.). Messages traduits via `Translator` injectable dans `EngineConfig.translator`. Mapping `errorCodeToTranslationKey` + helper `translateErrorCode`. Support i18n complet avec `createTranslator({ customTranslations })`.
-12. **Mode debug** - Logger plus détaillé avec dump de l'état à chaque étape, utile pour les consommateurs qui développent leur UI.
+12. ~~**Mode debug**~~ - ✅ Implémenté. Wrapper standalone `wrapWithDebug(engine, options?)` qui intercepte chaque méthode du moteur et log des informations détaillées. 3 niveaux de verbosité : `minimal` (method + phase), `standard` (+ `GameStateSummary` + params clés), `verbose` (+ dump complet du state). Mesure la durée d'exécution. Logger custom injectable via `DebugLogger`. Intégré dans `EngineConfig.debug` (boolean ou `DebugOptions`). Types exportés : `DebugOptions`, `DebugLogger`, `DebugLogEntry`, `GameStateSummary`, `DebugLogLevel`.
 13. ~~**Système d'événements (v2)**~~ - ✅ Implémenté. Callbacks optionnels via `EngineConfig.events` : `onGameCreated`, `onPlayersAdded`, `onGameStarted`, `onDominoPicked`, `onDominoPlaced`, `onDominoDiscarded`, `onTurnStart`, `onTurnEnd`, `onGameEnd`. Aussi disponible standalone via `wrapWithEvents(engine, callbacks)`.
 
 ## Nouveaux modes de jeu
@@ -70,7 +70,7 @@ Les plus impactantes à court terme :
 
 1. ~~**Validation de state complète (10)**~~ — ✅ Done
 2. **Mode spectateur (7)** — API censurée pour le multijoueur. Pré-requis avant tout adapter réseau (22). Complexité modérée.
-3. **Mode debug (12)** — Logger détaillé pour les développeurs d'UI. Accélère l'adoption par les consommateurs, très peu de code.
+3. ~~**Mode debug (12)**~~ — ✅ Done
 
 ### Priorité moyenne — Gameplay & variantes
 

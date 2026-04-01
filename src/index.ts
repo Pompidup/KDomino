@@ -1,17 +1,17 @@
 import type { GameEngine } from "@core/portUserside/engine";
+import { type DebugOptions, wrapWithDebug } from "@core/useCases/gameDebug.js";
 import { wrapWithEvents } from "@core/useCases/gameEvents.js";
 import { configureEngine, type EngineConfig } from "./config.js";
 
 // Commands
 export * from "@application/commands/index.js";
+export { validateGameState } from "@core/domain/entities/validateGameState.js";
 // Domain errors
 export * from "@core/domain/errors/domainErrors.js";
-
 // Domain types
 export * from "@core/domain/types/index.js";
 // i18n
 export * from "@core/i18n/translations.js";
-
 // Ports
 export * from "@core/portServerside/index.js";
 export * from "@core/portUserside/engine.js";
@@ -40,6 +40,16 @@ export {
   replayActions,
   wrapWithActionLog,
 } from "@core/useCases/gameActionLog.js";
+// Debug mode
+export {
+  type DebugLogEntry,
+  type DebugLogger,
+  type DebugLogLevel,
+  type DebugOptions,
+  type GameStateSummary,
+  summarizeGameState,
+  wrapWithDebug,
+} from "@core/useCases/gameDebug.js";
 // Game events
 export {
   type GameEventCallbacks,
@@ -57,7 +67,6 @@ export {
   redo,
   undo,
 } from "@core/useCases/gameHistory.js";
-export { validateGameState } from "@core/domain/entities/validateGameState.js";
 export type { DynastyResult } from "@core/useCases/getDynastyResult.js";
 // Use cases (for advanced usage)
 export type { ValidPlacement } from "@core/useCases/getValidPlacements.js";
@@ -135,6 +144,12 @@ export const createGameEngine = (config: Partial<EngineConfig>): GameEngine => {
 
   if (config.events) {
     engine = wrapWithEvents(engine, config.events);
+  }
+
+  if (config.debug) {
+    const debugOptions: DebugOptions | undefined =
+      typeof config.debug === "object" ? config.debug : undefined;
+    engine = wrapWithDebug(engine, debugOptions);
   }
 
   return engine;
