@@ -1,5 +1,5 @@
 import { ErrorCode } from "@core/domain/errors/domainErrors.js";
-import { err, isErr, ok } from "@utils/result.js";
+import { err, isErr, isOk, ok } from "@utils/result.js";
 import {
   gameSteps,
   type GameState,
@@ -13,30 +13,70 @@ import {
   canPlaceAndDominoPickedIsDefined,
   nextLordWithAction,
 } from "@core/domain/entities/lord.js";
-import { placeDomino } from "@core/domain/entities/kingdom.js";
+import {
+  calculateDominoPosition,
+  placeDomino,
+} from "@core/domain/entities/kingdom.js";
 import { playerActions } from "@core/domain/types/player.js";
-import type {
-  Position,
-  Rotation,
-} from "@core/domain/types/kingdom.js";
+import type { Position, Rotation } from "@core/domain/types/kingdom.js";
+import {
+  isOriginsMode,
+  isResourceMode,
+} from "@core/domain/entities/originsHelpers.js";
+import { createResourceForTile } from "@core/domain/entities/resource.js";
+import { takeFireToken } from "@core/domain/entities/fireToken.js";
+import type { PendingFireToken, Resource } from "@core/domain/types/origins.js";
 
 export type PlaceDominoUseCase = (
   game: GameWithNextAction,
   lordId: string,
   position: Position,
-  rotation: Rotation
+  rotation: Rotation,
 ) => GameStateResult;
+
+/**
+ * Finds the volcano tile position(s) in a just-placed domino.
+ * Returns the first volcano tile with craters, or undefined.
+ */
+const findVolcanoInDomino = (
+  game: GameWithNextAction,
+  position: Position,
+  rotation: Rotation,
+): { craters: number; volcanoPosition: Position } | undefined => {
+  const lord = game.lords.find((l) => l.id === game.nextAction.nextLord);
+  if (!lord?.dominoPicked) return undefined;
+
+  const [first, second] = calculateDominoPosition(
+    position,
+    rotation,
+    lord.dominoPicked,
+  );
+
+  for (const placed of [first, second]) {
+    if (
+      placed.tile.type === "volcano" &&
+      placed.tile.volcanoCraters &&
+      placed.tile.volcanoCraters > 0
+    ) {
+      return {
+        craters: placed.tile.volcanoCraters,
+        volcanoPosition: placed.position,
+      };
+    }
+  }
+  return undefined;
+};
 
 export const placeDominoUseCase: PlaceDominoUseCase = (
   game,
   lordId,
   position,
-  rotation
+  rotation,
 ) => {
   const nextAction = game.nextAction;
 
   const currentLord = game.lords.find(
-    (lord) => lord.id === nextAction.nextLord
+    (lord) => lord.id === nextAction.nextLord,
   );
 
   if (!currentLord) {
@@ -54,7 +94,7 @@ export const placeDominoUseCase: PlaceDominoUseCase = (
   const domino = currentLord.dominoPicked;
 
   const currentPlayer = game.players.find(
-    (player) => player.id === currentLord.playerId
+    (player) => player.id === currentLord.playerId,
   );
 
   if (!currentPlayer) {
@@ -66,16 +106,32 @@ export const placeDominoUseCase: PlaceDominoUseCase = (
     position,
     rotation,
     domino,
-    game.rules.basic.maxKingdomSize
+    game.rules.basic.maxKingdomSize,
   );
 
   if (isErr(updatedKingdom)) {
     return updatedKingdom;
   }
 
+  // Collect resources from placed tiles (Totem/Tribe modes)
+  let newResources: Resource[] = [];
+  if (isResourceMode(game.mode.name)) {
+    const [first, second] = calculateDominoPosition(position, rotation, domino);
+    for (const placed of [first, second]) {
+      const resource = createResourceForTile(placed.tile, placed.position);
+      if (resource) {
+        newResources.push(resource);
+      }
+    }
+  }
+
   const updatedPlayers = game.players.map((player) => {
     if (player.id === currentPlayer.id) {
-      player.kingdom = updatedKingdom.value;
+      const updated = { ...player, kingdom: updatedKingdom.value };
+      if (newResources.length > 0 && updated.resources) {
+        updated.resources = [...updated.resources, ...newResources];
+      }
+      return updated;
     }
     return player;
   });
@@ -109,8 +165,9 @@ export const placeDominoUseCase: PlaceDominoUseCase = (
   };
 
   const isQueenDomino = game.mode.name === "QueenDomino";
+  const isOrigins = isOriginsMode(game.mode.name);
 
-  if (isLastTurn && allLordsHavePlayed(updatedLords)) {
+  if (isLastTurn && allLordsHavePlayed(updatedLords) && !isQueenDomino && !isOrigins) {
     updatedGame = {
       ...game,
       lords: updatedLords,
@@ -142,11 +199,98 @@ export const placeDominoUseCase: PlaceDominoUseCase = (
       nextAction: queenDominoAction,
       players: updatedPlayers,
     };
+  } else if (isOrigins) {
+    // Origins: check for volcano to grant fire token
+    const volcano = findVolcanoInDomino(game, position, rotation);
+    let updatedOrigins = game.origins;
+
+    if (volcano && updatedOrigins) {
+      const tokenResult = takeFireToken(
+        updatedOrigins.fireTokenPool,
+        volcano.craters,
+      );
+      if (isOk(tokenResult)) {
+        // Grant fire token and set pending for placement
+        const pendingFireToken: PendingFireToken = {
+          fires: tokenResult.value.fires,
+          volcanoPosition: volcano.volcanoPosition,
+        };
+        updatedOrigins = {
+          ...updatedOrigins,
+          fireTokenPool: tokenResult.value.updatedPool,
+          pendingFireToken,
+        };
+
+        // Route to placeFireToken action
+        updatedGame = {
+          ...game,
+          lords: updatedLords,
+          players: updatedPlayers,
+          origins: updatedOrigins,
+          nextAction: {
+            type: "action",
+            nextLord: currentLord.id,
+            nextAction: playerActions.placeFireToken,
+          },
+        };
+      } else {
+        // Pool empty for this crater type - skip fire token, go to pickDomino
+        if (isLastTurn && allLordsHavePlayed(updatedLords)) {
+          updatedGame = {
+            ...game,
+            lords: updatedLords,
+            nextAction: resultStep,
+            players: updatedPlayers,
+            origins: updatedOrigins,
+          };
+        } else if (isLastTurn) {
+          updatedGame = {
+            ...game,
+            lords: updatedLords,
+            nextAction: resultStep,
+            players: updatedPlayers,
+            origins: updatedOrigins,
+          };
+        } else {
+          updatedGame = {
+            ...game,
+            lords: updatedLords,
+            nextAction: nextLordWithAction(updatedLords) as NextAction,
+            players: updatedPlayers,
+            origins: updatedOrigins,
+          };
+        }
+      }
+    } else {
+      // No volcano placed - skip straight to next action
+      if (isLastTurn && allLordsHavePlayed(updatedLords)) {
+        updatedGame = {
+          ...game,
+          lords: updatedLords,
+          nextAction: resultStep,
+          players: updatedPlayers,
+        };
+      } else if (isLastTurn) {
+        updatedGame = {
+          ...game,
+          lords: updatedLords,
+          nextAction: resultStep,
+          players: updatedPlayers,
+        };
+      } else {
+        updatedGame = {
+          ...game,
+          lords: updatedLords,
+          nextAction: nextLordWithAction(updatedLords) as NextAction,
+          players: updatedPlayers,
+        };
+      }
+    }
   } else {
     updatedGame = {
       ...game,
       lords: updatedLords,
-      nextAction: <NextAction>nextLordWithAction(updatedLords),
+      nextAction: nextLordWithAction(updatedLords) as NextAction,
       players: updatedPlayers,
     };
   }

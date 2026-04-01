@@ -81,6 +81,8 @@ export type { ValidPlacement } from "@core/useCases/getValidPlacements.js";
 export type { PlaceKnightUseCase } from "@core/useCases/placeKnight.js";
 export type { ConstructBuildingUseCase } from "@core/useCases/constructBuilding.js";
 export type { UseDragonUseCase } from "@core/useCases/useDragon.js";
+export type { PlaceFireTokenUseCase } from "@core/useCases/placeFireToken.js";
+export type { RecruitCavemanUseCase } from "@core/useCases/recruitCaveman.js";
 export type { SkipOptionalActionUseCase } from "@core/useCases/skipOptionalAction.js";
 export {
   createSavePoint,
@@ -136,6 +138,8 @@ export const createGameEngine = (config: Partial<EngineConfig>): GameEngine => {
     placeKnightHandler,
     constructBuildingHandler,
     useDragonHandler,
+    placeFireTokenHandler,
+    recruitCavemanHandler,
     skipOptionalActionHandler,
   } = configureEngine(config);
 
@@ -159,6 +163,8 @@ export const createGameEngine = (config: Partial<EngineConfig>): GameEngine => {
     placeKnight: (command) => placeKnightHandler(command),
     constructBuilding: (command) => constructBuildingHandler(command),
     useDragon: (command) => useDragonHandler(command),
+    placeFireToken: (command) => placeFireTokenHandler(command),
+    recruitCaveman: (command) => recruitCavemanHandler(command),
     skipOptionalAction: (command) => skipOptionalActionHandler(command),
   };
 

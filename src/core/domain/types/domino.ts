@@ -10,6 +10,12 @@ export const GROUND = [
   "plain",
   "swamp",
   "mine",
+  "grassland",
+  "lake",
+  "jungle",
+  "quarry",
+  "desert",
+  "volcano",
 ] as const;
 
 /** Union type of all terrain types */
@@ -28,10 +34,12 @@ export type Crown = number;
 export type Tile = {
   /** The terrain type of this tile */
   type: Ground;
-  /** Number of crowns (0-3), multiplier for scoring */
+  /** Number of crowns (0-3), multiplier for scoring. In Origins, represents fire symbols. */
   crowns: Crown;
   /** Whether this tile has a construction square for buildings (Queendomino) */
   hasConstructionSquare?: boolean;
+  /** Number of volcanic craters on this tile (Origins, 1-3). Determines fire token type. */
+  volcanoCraters?: number;
 };
 
 /**

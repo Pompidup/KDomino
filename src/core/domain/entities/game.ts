@@ -5,7 +5,16 @@ import {
   type GameMode,
   type GameWithNextStep,
 } from "@core/domain/types/index.js";
+import type { OriginsState } from "@core/domain/types/origins.js";
 import type { QueenDominoState } from "@core/domain/types/queendomino.js";
+import { createFireTokenPool } from "./fireToken.js";
+import type { CavemanTile } from "@core/domain/types/origins.js";
+import {
+  getOriginsSubMode,
+  isOriginsMode,
+  isTotemMode,
+  isTribeMode,
+} from "./originsHelpers.js";
 
 export const create = (payload: {
   id: string;
@@ -13,8 +22,9 @@ export const create = (payload: {
   dominoes: Domino[];
   seed?: string;
   buildings?: BuildingTile[];
+  cavemen?: CavemanTile[];
 }): GameWithNextStep => {
-  const { id, mode, dominoes, seed, buildings } = payload;
+  const { id, mode, dominoes, seed, buildings, cavemen } = payload;
 
   let queendomino: QueenDominoState | undefined;
   if (mode.name === "QueenDomino" && buildings) {
@@ -26,6 +36,30 @@ export const create = (payload: {
       queenHolderId: null,
       dragonAvailable: true,
       dragonUsedThisRound: false,
+    };
+  }
+
+  let origins: OriginsState | undefined;
+  if (isOriginsMode(mode.name)) {
+    const subMode = getOriginsSubMode(mode.name)!;
+    origins = {
+      subMode,
+      fireTokenPool: createFireTokenPool(),
+      ...(isTotemMode(mode.name) && {
+        totems: {
+          mammoth: null,
+          fish: null,
+          mushroom: null,
+          flint: null,
+        },
+      }),
+      ...(isTribeMode(mode.name) &&
+        cavemen && {
+          caveBoard: {
+            visible: [],
+            drawPile: cavemen,
+          },
+        }),
     };
   }
 
@@ -53,5 +87,6 @@ export const create = (payload: {
     mode,
     ...(seed !== undefined && { seed }),
     ...(queendomino !== undefined && { queendomino }),
+    ...(origins !== undefined && { origins }),
   };
 };

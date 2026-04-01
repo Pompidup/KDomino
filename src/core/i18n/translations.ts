@@ -68,6 +68,16 @@ export const TranslationKey = {
   ERROR_QUEEN_HOLDER_CANNOT_USE_DRAGON: "error.queenHolderCannotUseDragon",
   ERROR_BUILDING_NOT_FOUND: "error.buildingNotFound",
   ERROR_INVALID_OPTIONAL_ACTION: "error.invalidOptionalAction",
+
+  // Origins errors
+  ERROR_FIRE_TOKEN_POOL_EMPTY: "error.fireTokenPoolEmpty",
+  ERROR_FIRE_TOKEN_INVALID_POSITION: "error.fireTokenInvalidPosition",
+  ERROR_NO_PENDING_FIRE_TOKEN: "error.noPendingFireToken",
+  ERROR_CANNOT_RECRUIT_CAVEMAN: "error.cannotRecruitCaveman",
+  ERROR_INSUFFICIENT_RESOURCES: "error.insufficientResources",
+  ERROR_INVALID_CAVEMAN_PLACEMENT: "error.invalidCavemanPlacement",
+  ERROR_CAVEMAN_NOT_FOUND: "error.cavemanNotFound",
+  ERROR_NOT_TRIBE_MODE: "error.notTribeMode",
 } as const;
 
 export type TranslationKeyType =
@@ -143,6 +153,16 @@ export const defaultTranslations: Record<TranslationKeyType, string> = {
   [TranslationKey.ERROR_QUEEN_HOLDER_CANNOT_USE_DRAGON]: "The Queen holder cannot use the Dragon",
   [TranslationKey.ERROR_BUILDING_NOT_FOUND]: "Building not found on the Builders Board",
   [TranslationKey.ERROR_INVALID_OPTIONAL_ACTION]: "Invalid optional action for this game state",
+
+  // Origins errors
+  [TranslationKey.ERROR_FIRE_TOKEN_POOL_EMPTY]: "No fire tokens remaining in the pool",
+  [TranslationKey.ERROR_FIRE_TOKEN_INVALID_POSITION]: "Invalid position for fire token placement",
+  [TranslationKey.ERROR_NO_PENDING_FIRE_TOKEN]: "No pending fire token to place",
+  [TranslationKey.ERROR_CANNOT_RECRUIT_CAVEMAN]: "Cannot recruit a caveman",
+  [TranslationKey.ERROR_INSUFFICIENT_RESOURCES]: "Insufficient resources for this action",
+  [TranslationKey.ERROR_INVALID_CAVEMAN_PLACEMENT]: "Invalid position for caveman placement",
+  [TranslationKey.ERROR_CAVEMAN_NOT_FOUND]: "Caveman not found",
+  [TranslationKey.ERROR_NOT_TRIBE_MODE]: "Tribe mode is not enabled",
 };
 
 /**
@@ -188,6 +208,14 @@ export const errorCodeToTranslationKey: Record<
   [ErrorCode.QUEEN_HOLDER_CANNOT_USE_DRAGON]: TranslationKey.ERROR_QUEEN_HOLDER_CANNOT_USE_DRAGON,
   [ErrorCode.BUILDING_NOT_FOUND]: TranslationKey.ERROR_BUILDING_NOT_FOUND,
   [ErrorCode.INVALID_OPTIONAL_ACTION]: TranslationKey.ERROR_INVALID_OPTIONAL_ACTION,
+  [ErrorCode.FIRE_TOKEN_POOL_EMPTY]: TranslationKey.ERROR_FIRE_TOKEN_POOL_EMPTY,
+  [ErrorCode.FIRE_TOKEN_INVALID_POSITION]: TranslationKey.ERROR_FIRE_TOKEN_INVALID_POSITION,
+  [ErrorCode.NO_PENDING_FIRE_TOKEN]: TranslationKey.ERROR_NO_PENDING_FIRE_TOKEN,
+  [ErrorCode.CANNOT_RECRUIT_CAVEMAN]: TranslationKey.ERROR_CANNOT_RECRUIT_CAVEMAN,
+  [ErrorCode.INSUFFICIENT_RESOURCES]: TranslationKey.ERROR_INSUFFICIENT_RESOURCES,
+  [ErrorCode.INVALID_CAVEMAN_PLACEMENT]: TranslationKey.ERROR_INVALID_CAVEMAN_PLACEMENT,
+  [ErrorCode.CAVEMAN_NOT_FOUND]: TranslationKey.ERROR_CAVEMAN_NOT_FOUND,
+  [ErrorCode.NOT_TRIBE_MODE]: TranslationKey.ERROR_NOT_TRIBE_MODE,
 };
 
 /**

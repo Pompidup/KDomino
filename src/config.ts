@@ -1,5 +1,6 @@
 import { consoleLogger, silentLogger } from "@adapter/consoleLogger.js";
 import jsonBuildings from "@adapter/jsonBuildings.js";
+import jsonCavemen from "@adapter/jsonCavemen.js";
 import jsonDominoes from "@adapter/jsonDominoes.js";
 import jsonModes from "@adapter/jsonModes.js";
 import jsonRules from "@adapter/jsonRules.js";
@@ -26,6 +27,8 @@ import { startGameHandler } from "@application/handlers/startGameHandler.js";
 import { placeKnightHandler } from "@application/handlers/placeKnightHandler.js";
 import { constructBuildingHandler } from "@application/handlers/constructBuildingHandler.js";
 import { useDragonHandler } from "@application/handlers/useDragonHandler.js";
+import { placeFireTokenHandler } from "@application/handlers/placeFireTokenHandler.js";
+import { recruitCavemanHandler } from "@application/handlers/recruitCavemanHandler.js";
 import { skipOptionalActionHandler } from "@application/handlers/skipOptionalActionHandler.js";
 import type { Translator } from "@core/i18n/translations.js";
 import type { GameEngine } from "@core/portUserside/engine.js";
@@ -53,6 +56,8 @@ import { placeDominoUseCase } from "@core/useCases/placeDomino.js";
 import { placeKnightUseCase } from "@core/useCases/placeKnight.js";
 import { constructBuildingUseCase } from "@core/useCases/constructBuilding.js";
 import { useDragonUseCase } from "@core/useCases/useDragon.js";
+import { placeFireTokenUseCase } from "@core/useCases/placeFireToken.js";
+import { recruitCavemanUseCase } from "@core/useCases/recruitCaveman.js";
 import { skipOptionalActionUseCase } from "@core/useCases/skipOptionalAction.js";
 import { startGameUseCase } from "@core/useCases/startGame.js";
 
@@ -96,6 +101,8 @@ export type ConfiguredHandlers = {
   placeKnightHandler: GameEngine["placeKnight"];
   constructBuildingHandler: GameEngine["constructBuilding"];
   useDragonHandler: GameEngine["useDragon"];
+  placeFireTokenHandler: GameEngine["placeFireToken"];
+  recruitCavemanHandler: GameEngine["recruitCaveman"];
   skipOptionalActionHandler: GameEngine["skipOptionalAction"];
 };
 
@@ -103,6 +110,7 @@ export const configureEngine = (config: Partial<EngineConfig>): ConfiguredHandle
   const modeRepository = jsonModes();
   const dominoesRepository = jsonDominoes();
   const buildingsRepository = jsonBuildings();
+  const cavemenRepository = jsonCavemen();
   const ruleRepository = jsonRules();
   const uuid = config.uuidMethod || uuidMethod;
   const shuffle = config.shuffleMethod || shuffleMethod;
@@ -124,6 +132,7 @@ export const configureEngine = (config: Partial<EngineConfig>): ConfiguredHandle
         dominoesRepository,
         uuidMethod: uuid,
         buildingsRepository,
+        cavemenRepository,
       }),
     ),
     getModesHandler: getModesHandler(
@@ -214,6 +223,16 @@ export const configureEngine = (config: Partial<EngineConfig>): ConfiguredHandle
       logger,
       translator,
       useDragonUseCase,
+    ),
+    placeFireTokenHandler: placeFireTokenHandler(
+      logger,
+      translator,
+      placeFireTokenUseCase,
+    ),
+    recruitCavemanHandler: recruitCavemanHandler(
+      logger,
+      translator,
+      recruitCavemanUseCase,
     ),
     skipOptionalActionHandler: skipOptionalActionHandler(
       logger,

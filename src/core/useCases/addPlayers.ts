@@ -3,6 +3,11 @@ import {
   createEmptyKingdom,
   placeCastle,
 } from "@core/domain/entities/kingdom.js";
+import {
+  isOriginsMode,
+  isResourceMode,
+  isTribeMode,
+} from "@core/domain/entities/originsHelpers.js";
 import { createPlayer } from "@core/domain/entities/player.js";
 import type {
   GameWithNextStep,
@@ -63,6 +68,17 @@ export const addPlayersUseCase =
         newPlayer.value.towers = 0;
         newPlayer.value.knights = [];
         newPlayer.value.buildings = [];
+      }
+
+      // Initialize Origins-specific player state
+      if (isOriginsMode(game.mode.name)) {
+        newPlayer.value.fireTokens = [];
+        if (isResourceMode(game.mode.name)) {
+          newPlayer.value.resources = [];
+        }
+        if (isTribeMode(game.mode.name)) {
+          newPlayer.value.cavemen = [];
+        }
       }
 
       newPlayers.push(newPlayer.value);

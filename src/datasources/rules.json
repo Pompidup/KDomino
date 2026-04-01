@@ -66,6 +66,43 @@
         { "name": "Classic", "description": "King Domino classic mode" },
         { "name": "QueenDomino", "description": "Queendomino expansion with buildings, knights, coins, the Queen and the Dragon" }
       ]
+    },
+    {
+      "name": "Empire of Fire",
+      "description": "Gain 10 additional points if your hut is in the center of your territory.",
+      "mode": [
+        { "name": "KingdominoOrigins-Discovery", "description": "Kingdomino Origins - Discovery mode" },
+        { "name": "KingdominoOrigins-Totem", "description": "Kingdomino Origins - Totem mode" },
+        { "name": "KingdominoOrigins-Tribe", "description": "Kingdomino Origins - Tribe mode" }
+      ]
+    },
+    {
+      "name": "Homo Habilis",
+      "description": "Gain 5 additional points if your 5x5 territory is complete (no discarded dominoes).",
+      "mode": [
+        { "name": "KingdominoOrigins-Discovery", "description": "Kingdomino Origins - Discovery mode" },
+        { "name": "KingdominoOrigins-Totem", "description": "Kingdomino Origins - Totem mode" },
+        { "name": "KingdominoOrigins-Tribe", "description": "Kingdomino Origins - Tribe mode" }
+      ]
+    },
+    {
+      "name": "Neolithic",
+      "description": "Use all 48 dominoes and build a 7x7 territory. For 2 players only.",
+      "mode": [
+        { "name": "KingdominoOrigins-Discovery", "description": "Kingdomino Origins - Discovery mode" },
+        { "name": "KingdominoOrigins-Totem", "description": "Kingdomino Origins - Totem mode" },
+        { "name": "KingdominoOrigins-Tribe", "description": "Kingdomino Origins - Tribe mode" }
+      ],
+      "playersLimit": 2
+    },
+    {
+      "name": "Dynasty",
+      "description": "Play 3 games in a row. The player with the highest total points wins.",
+      "mode": [
+        { "name": "KingdominoOrigins-Discovery", "description": "Kingdomino Origins - Discovery mode" },
+        { "name": "KingdominoOrigins-Totem", "description": "Kingdomino Origins - Totem mode" },
+        { "name": "KingdominoOrigins-Tribe", "description": "Kingdomino Origins - Tribe mode" }
+      ]
     }
   ]
 }

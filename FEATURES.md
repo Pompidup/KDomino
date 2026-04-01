@@ -29,7 +29,7 @@
 ## Nouveaux modes de jeu
 
 14. **Kingdomino Duel** - Version dés du jeu (variante papier-crayon officielle).
-15. **Kingdomino Origins** - Extension officielle avec feu, volcans et hommes des cavernes.
+15. ~~**Kingdomino Origins**~~ - ✅ Implémenté. 3 modes de jeu : Discovery (volcans, jetons feu, scoring par symboles feu), Totem (ressources en bois, majorité totems), Tribe (plateau caverne, 22 hommes des cavernes recrutables, scoring chasseurs-cueilleurs et guerriers). 48 dominos Origins avec 6 terrains (grassland, lake, jungle, quarry, desert, volcano). Pool de 10 jetons feu (5×1, 4×2, 1×3). Actions optionnelles : `placeFireToken`, `recruitCaveman`. Règles extra Origins : Empire of Fire, Homo Habilis, Neolithic, Dynasty. Compatible bot strategies.
 16. **Mode rapide** - Moins de tours, moins de dominos, pour des parties express.
 17. **Mode draft** - Les joueurs voient tous les dominos du tour et draftent à tour de rôle (au lieu de la pioche standard).
 
@@ -86,7 +86,7 @@ Les plus impactantes à court terme :
 8. **Age of Giants (2)** — Extension officielle, nécessite de nouveaux dominos et mécaniques de géants. Effort significatif.
 9. **Mode "The Court" (4)** — Variante 2 joueurs avec royaume fantôme. Mécanique nouvelle, public restreint.
 10. ~~**Queendomino (1)**~~ — ✅ Done
-11. **Kingdomino Origins (15)** — Extension avec feu/volcans. Complexité similaire à Queendomino.
+11. ~~**Kingdomino Origins (15)**~~ — ✅ Done
 12. **Kingdomino Duel (14)** — Version dés, papier-crayon. Gameplay totalement différent, partage peu de code.
 
 ### Priorité basse — API & Infra

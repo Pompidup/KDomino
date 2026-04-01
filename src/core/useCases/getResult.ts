@@ -2,6 +2,14 @@ import {
   checkCastleIsInMiddle,
   countDominoes,
 } from "@core/domain/entities/kingdom.js";
+import { calculateTribeCavemanScore } from "@core/domain/entities/caveman.js";
+import {
+  isOriginsMode,
+  isTotemMode,
+  isTribeMode,
+} from "@core/domain/entities/originsHelpers.js";
+import { calculateOriginsFireBonus } from "@core/domain/entities/originsScore.js";
+import { calculateTotemScore } from "@core/domain/entities/totem.js";
 import type {
   FinalResult,
   GameWithNextStep,
@@ -29,16 +37,41 @@ export const getResultUseCase: GetResultUseCase = (game, scoreResult) => {
 
     const { kingdom } = player;
 
+    // Origins fire token scoring bonus
+    if (isOriginsMode(game.mode.name) && player.fireTokens && player.fireTokens.length > 0) {
+      finalScore += calculateOriginsFireBonus(kingdom, player.fireTokens);
+    }
+
+    // Totem mode: resource points + totem bonuses
+    if (isTotemMode(game.mode.name) && game.origins?.totems) {
+      finalScore += calculateTotemScore(player, game.origins.totems);
+    }
+
+    // Tribe mode: caveman bonuses (no resource points, no totems)
+    if (isTribeMode(game.mode.name) && player.cavemen && player.cavemen.length > 0) {
+      finalScore += calculateTribeCavemanScore(
+        player.cavemen,
+        kingdom,
+        player.resources ?? [],
+        player.fireTokens ?? [],
+      );
+    }
+
     if (extra.length > 0) {
       extra.forEach((extraRule) => {
-        if (extraRule.name === "The middle Kingdom") {
+        // Castle in middle: "The middle Kingdom" (Classic/QD) or "Empire of Fire" (Origins)
+        if (
+          extraRule.name === "The middle Kingdom" ||
+          extraRule.name === "Empire of Fire"
+        ) {
           const castleIsInMiddle = checkCastleIsInMiddle(kingdom);
           if (castleIsInMiddle) {
             finalScore += 10;
           }
         }
 
-        if (extraRule.name === "Harmony") {
+        // Complete kingdom: "Harmony" (Classic/QD) or "Homo Habilis" (Origins)
+        if (extraRule.name === "Harmony" || extraRule.name === "Homo Habilis") {
           const totalDominoes = countDominoes(kingdom);
           const dominoLimit = basic.maxDominoes;
           const totalPlayers = game.players.length;

@@ -226,6 +226,10 @@ export const wrapWithActionLog = (
     constructBuilding: (cmd) => engine.constructBuilding(cmd),
     useDragon: (cmd) => engine.useDragon(cmd),
     skipOptionalAction: (cmd) => engine.skipOptionalAction(cmd),
+
+    // Origins methods — pass through (no action log recording yet)
+    placeFireToken: (cmd) => engine.placeFireToken(cmd),
+    recruitCaveman: (cmd) => engine.recruitCaveman(cmd),
   };
 
   return {

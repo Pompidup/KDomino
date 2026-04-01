@@ -151,4 +151,8 @@ export const wrapWithEvents = (
   constructBuilding: (cmd) => engine.constructBuilding(cmd),
   useDragon: (cmd) => engine.useDragon(cmd),
   skipOptionalAction: (cmd) => engine.skipOptionalAction(cmd),
+
+  // Origins methods — pass through (no specific events yet)
+  placeFireToken: (cmd) => engine.placeFireToken(cmd),
+  recruitCaveman: (cmd) => engine.recruitCaveman(cmd),
 });

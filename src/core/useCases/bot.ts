@@ -537,6 +537,17 @@ export const playBotTurn = (
     });
   }
 
+  // Optional actions (Queendomino and Origins) - skip them
+  if (
+    action === "placeKnight" ||
+    action === "constructBuilding" ||
+    action === "useDragon" ||
+    action === "placeFireToken" ||
+    action === "recruitCaveman"
+  ) {
+    return engine.skipOptionalAction({ game, lordId });
+  }
+
   // action === "pass"
   return engine.discardDomino({ game, lordId });
 };

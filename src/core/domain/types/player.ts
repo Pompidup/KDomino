@@ -1,5 +1,6 @@
 import type { PlacedBuilding } from "./building.js";
 import type { Kingdom, Position } from "./kingdom.js";
+import type { PlacedCaveman, PlacedFireToken, Resource } from "./origins.js";
 import type { ObjectValues } from "./utils.js";
 
 /**
@@ -32,6 +33,12 @@ export type Player = {
   knights?: Knight[];
   /** Buildings placed on the kingdom (Queendomino) */
   buildings?: PlacedBuilding[];
+  /** Fire tokens placed on the kingdom (Origins) */
+  fireTokens?: PlacedFireToken[];
+  /** Wooden resources on the kingdom (Origins Totem/Tribe) */
+  resources?: Resource[];
+  /** Cavemen placed on the kingdom (Origins Tribe) */
+  cavemen?: PlacedCaveman[];
 };
 
 /**
@@ -64,8 +71,12 @@ export const playerActions = {
   constructBuilding: "constructBuilding",
   /** Use the Dragon to burn a building tile (Queendomino, optional) */
   useDragon: "useDragon",
-  /** Skip the current optional action (Queendomino) */
+  /** Skip the current optional action (Queendomino/Origins) */
   skipOptionalAction: "skipOptionalAction",
+  /** Place a fire token after placing a volcano domino (Origins, optional) */
+  placeFireToken: "placeFireToken",
+  /** Recruit a caveman from the cave board (Origins Tribe, optional) */
+  recruitCaveman: "recruitCaveman",
 } as const;
 
 /** Union type of all player actions */

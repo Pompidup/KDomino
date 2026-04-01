@@ -1,6 +1,6 @@
 # Game Modes
 
-KDomino supports two game modes with configurable extra rules, for 1 to 4 players.
+KDomino supports multiple game modes with configurable extra rules, for 1 to 4 players.
 
 ---
 
@@ -10,8 +10,11 @@ KDomino supports two game modes with configurable extra rules, for 1 to 4 player
 |--------------|--------------------------------------------------------------------------|
 | Classic      | Original Kingdomino rules                                                |
 | QueenDomino  | Expansion with buildings, knights, coins, the Queen, and the Dragon      |
+| KingdominoOrigins-Discovery | Origins expansion - volcanoes, fire tokens, fire-based scoring |
+| KingdominoOrigins-Totem     | Origins - Discovery + resources + totem majority              |
+| KingdominoOrigins-Tribe     | Origins - Discovery + resources + cave board + cavemen        |
 
-Both modes share the same base rules (player counts, turn structure, kingdom grid) and the same set of extra rules.
+All modes share the same base rules (player counts, turn structure, kingdom grid). Each mode has its own set of compatible extra rules.
 
 ---
 
@@ -65,6 +68,23 @@ For full details, see [queendomino.md](./queendomino.md).
 
 ---
 
+## Kingdomino Origins Modes
+
+Origins introduces prehistoric terrains (grassland, lake, jungle, quarry, desert, volcano) and fire-based scoring. Three sub-modes build on each other:
+
+- **Discovery**: Volcanoes provide fire tokens placed on the kingdom. Scoring = region size × fire symbols.
+- **Totem**: Discovery + wooden resources + totem majority tiles for bonus points.
+- **Tribe**: Discovery + resources + cave board with 22 cavemen to recruit.
+
+Additional actions:
+- **placeFireToken** -- Place a fire token after placing a volcano domino.
+- **recruitCaveman** -- Recruit a caveman from the cave board (Tribe mode, after picking).
+- **skipOptionalAction** -- Skip any of the above optional actions.
+
+For full details, see [origins.md](./origins.md).
+
+---
+
 ## Game Rules by Player Count
 
 | Players | Lords/Player | Max Dominoes | Dominoes/Turn | Max Turns | Max Kingdom Size |
@@ -92,7 +112,7 @@ type BasicRules = {
 
 ## Extra Rules
 
-Extra rules are optional modifiers selected after adding players (during the `options` step). All extra rules are compatible with both Classic and QueenDomino modes.
+Extra rules are optional modifiers selected after adding players (during the `options` step). Each rule specifies which modes it's compatible with.
 
 ### The Middle Kingdom
 

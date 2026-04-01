@@ -1,5 +1,7 @@
 import { createBuildersBoard } from "@core/domain/entities/building.js";
+import { createCaveBoard } from "@core/domain/entities/caveman.js";
 import { createLord } from "@core/domain/entities/lord";
+import { isTribeMode } from "@core/domain/entities/originsHelpers.js";
 import type {
   GameWithNextAction,
   GameWithNextStep,
@@ -68,6 +70,16 @@ export const startGameUseCase =
       queendomino = { ...queendomino, buildersBoard: board };
     }
 
+    // Setup Cave Board for Tribe mode
+    let origins = game.origins;
+    if (origins?.caveBoard && isTribeMode(game.mode.name)) {
+      const caveShuffle = game.seed
+        ? createSeededShuffle(game.seed, "cavemen")
+        : shuffleMethod;
+      const board = createCaveBoard(origins.caveBoard.drawPile, caveShuffle);
+      origins = { ...origins, caveBoard: board };
+    }
+
     const newState: GameWithNextAction = {
       ...game,
       lords: shuffledLords,
@@ -82,6 +94,7 @@ export const startGameUseCase =
         };
       }),
       ...(queendomino !== undefined && { queendomino }),
+      ...(origins !== undefined && { origins }),
     };
 
     return ok(newState);

@@ -16,4 +16,6 @@ export * from "./getDynastyResultCommand.js";
 export * from "./placeKnightCommand.js";
 export * from "./constructBuildingCommand.js";
 export * from "./useDragonCommand.js";
+export * from "./placeFireTokenCommand.js";
+export * from "./recruitCavemanCommand.js";
 export * from "./skipOptionalActionCommand.js";

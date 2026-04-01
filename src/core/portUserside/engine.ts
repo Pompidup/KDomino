@@ -28,6 +28,8 @@ import type { GetDynastyResultCommand } from "@application/commands/getDynastyRe
 import type { PlaceKnightCommand } from "@application/commands/placeKnightCommand.js";
 import type { ConstructBuildingCommand } from "@application/commands/constructBuildingCommand.js";
 import type { UseDragonCommand } from "@application/commands/useDragonCommand.js";
+import type { PlaceFireTokenCommand } from "@application/commands/placeFireTokenCommand.js";
+import type { RecruitCavemanCommand } from "@application/commands/recruitCavemanCommand.js";
 import type { SkipOptionalActionCommand } from "@application/commands/skipOptionalActionCommand.js";
 import type { ValidPlacement } from "@core/useCases/getValidPlacements.js";
 import type { DynastyResult } from "@core/useCases/getDynastyResult.js";
@@ -203,7 +205,21 @@ export type GameEngine = {
   useDragon: (command: UseDragonCommand) => GameState;
 
   /**
-   * Skips the current optional action (Queendomino).
+   * Places a fire token on the lord's kingdom after placing a volcano domino (Origins).
+   * @param command - Contains game state, lord ID, and target position
+   * @returns Updated game state with next action
+   */
+  placeFireToken: (command: PlaceFireTokenCommand) => GameState;
+
+  /**
+   * Recruits a caveman from the cave board and places it on the lord's kingdom (Origins).
+   * @param command - Contains game state, lord ID, caveman ID, position, and resource positions to spend
+   * @returns Updated game state with next action
+   */
+  recruitCaveman: (command: RecruitCavemanCommand) => GameState;
+
+  /**
+   * Skips the current optional action (Queendomino/Origins).
    * @param command - Contains game state and lord ID
    * @returns Updated game state with next action
    */

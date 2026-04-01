@@ -5,6 +5,7 @@ export * from "./kingdom.js";
 export * from "./lord.js";
 export * from "./mode.js";
 export * from "./player.js";
+export * from "./origins.js";
 export * from "./queendomino.js";
 export * from "./rule.js";
 export * from "./utils.js";

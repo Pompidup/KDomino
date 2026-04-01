@@ -18,17 +18,17 @@ describe("jsonRules", () => {
       "4": { lords: 1, maxDominoes: 48, dominoesPerTurn: 4, maxTurns: 12, maxKingdomSize: 5 },
     });
     expect(result).toHaveProperty("extraRules");
-    expect(result.extraRules).toHaveLength(4);
+    expect(result.extraRules).toHaveLength(8);
     expect(result.extraRules.map((r) => r.name)).toEqual([
       "The middle Kingdom",
       "Harmony",
       "The Mighty Duel",
       "Dynasty",
+      "Empire of Fire",
+      "Homo Habilis",
+      "Neolithic",
+      "Dynasty",
     ]);
-    for (const rule of result.extraRules) {
-      expect(rule.mode.map((m) => m.name)).toContain("Classic");
-      expect(rule.mode.map((m) => m.name)).toContain("QueenDomino");
-    }
   });
 
   test("should return all extra rules", () => {
@@ -39,6 +39,6 @@ describe("jsonRules", () => {
     const result = repository.getAllExtra();
 
     // Assert
-    expect(result.length).toBe(4);
+    expect(result.length).toBe(8);
   });
 });

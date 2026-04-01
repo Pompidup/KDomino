@@ -7,6 +7,7 @@ const mapTile = (raw: {
   type: string;
   crowns: number;
   hasConstructionSquare?: boolean;
+  volcanoCraters?: number;
 }): Tile => {
   const tile: Tile = {
     type: raw.type as Ground,
@@ -15,7 +16,19 @@ const mapTile = (raw: {
   if (raw.hasConstructionSquare) {
     tile.hasConstructionSquare = true;
   }
+  if (raw.volcanoCraters) {
+    tile.volcanoCraters = raw.volcanoCraters;
+  }
   return tile;
+};
+
+/** Maps Origins sub-mode names to the shared domino data key */
+const ORIGINS_MODE_PREFIX = "KingdominoOrigins";
+const resolveDataKey = (modeName: string): string => {
+  if (modeName.startsWith(ORIGINS_MODE_PREFIX)) {
+    return ORIGINS_MODE_PREFIX;
+  }
+  return modeName;
 };
 
 const jsonDominoes = (): DominoesRepository => {
@@ -36,7 +49,8 @@ const jsonDominoes = (): DominoesRepository => {
 
   return {
     getForMode: (mode: GameMode) => {
-      return dominoes[mode.name] || [];
+      const key = resolveDataKey(mode.name);
+      return dominoes[key] || [];
     },
   };
 };

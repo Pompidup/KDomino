@@ -3,6 +3,7 @@ import type { Domino, RevealsDomino } from "./domino.js";
 import type { Lord } from "./lord.js";
 import type { GameMode } from "./mode.js";
 import type { Player, PlayerActions } from "./player.js";
+import type { OriginsState } from "./origins.js";
 import type { QueenDominoState } from "./queendomino.js";
 import type { SelectedRules } from "./rule.js";
 import type { ObjectValues } from "./utils.js";
@@ -34,6 +35,8 @@ export type Game = {
   seed?: string;
   /** Queendomino-specific state (only present in QueenDomino mode) */
   queendomino?: QueenDominoState;
+  /** Origins-specific state (only present in KingdominoOrigins modes) */
+  origins?: OriginsState;
 };
 
 /**

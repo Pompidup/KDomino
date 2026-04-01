@@ -309,5 +309,17 @@ export const wrapWithDebug = (
       logger,
       level,
     ),
+    placeFireToken: wrapMethod(
+      "placeFireToken",
+      engine.placeFireToken,
+      logger,
+      level,
+    ),
+    recruitCaveman: wrapMethod(
+      "recruitCaveman",
+      engine.recruitCaveman,
+      logger,
+      level,
+    ),
   };
 };

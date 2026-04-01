@@ -96,3 +96,46 @@ export const nextQueenDominoAction = (
   }
   return QUEENDOMINO_ACTION_SEQUENCE[index + 1]!;
 };
+
+/**
+ * Origins Discovery/Totem action sequence after placeDomino:
+ * placeFireToken → pickDomino
+ *
+ * In Origins, placing a fire token is optional (only after placing a volcano domino).
+ */
+const ORIGINS_DISCOVERY_SEQUENCE: PlayerActions[] = [
+  playerActions.placeFireToken,
+  playerActions.pickDomino,
+];
+
+/**
+ * Origins Tribe action sequence after placeDomino:
+ * placeFireToken → pickDomino → recruitCaveman
+ *
+ * recruitCaveman happens after picking a new domino (unique to Tribe mode).
+ */
+const ORIGINS_TRIBE_SEQUENCE: PlayerActions[] = [
+  playerActions.placeFireToken,
+  playerActions.pickDomino,
+  playerActions.recruitCaveman,
+];
+
+/**
+ * Returns the next Origins action in the sequence.
+ * @param currentAction - The current action being completed or skipped
+ * @param isTribe - Whether the game is in Tribe mode
+ */
+export const nextOriginsAction = (
+  currentAction: PlayerActions,
+  isTribe: boolean,
+): PlayerActions => {
+  const sequence = isTribe
+    ? ORIGINS_TRIBE_SEQUENCE
+    : ORIGINS_DISCOVERY_SEQUENCE;
+  const index = sequence.indexOf(currentAction);
+  if (index === -1 || index >= sequence.length - 1) {
+    // Fallback: if we're past the end, signal turn done
+    return playerActions.pickDomino;
+  }
+  return sequence[index + 1]!;
+};
