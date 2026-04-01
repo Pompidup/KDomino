@@ -34,7 +34,7 @@ export type ExtraRule = {
  * Complete rules configuration loaded from data source.
  */
 export type Rules = {
-  /** Basic rules indexed by player count (2-4) */
+  /** Basic rules indexed by player count (1-4) */
   basic: Record<number, BasicRules>;
   /** Available extra rules */
   extraRules: ExtraRule[];

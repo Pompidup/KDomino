@@ -140,7 +140,7 @@ describe("Error messages e2e", () => {
     const game = engine.createGame({ mode: "Classic" });
 
     try {
-      engine.addPlayers({ game, players: ["Alice"] });
+      engine.addPlayers({ game, players: [] });
       expect.unreachable("Should have thrown");
     } catch (error) {
       expect(error).toBeInstanceOf(StepExecutionError);
@@ -149,9 +149,9 @@ describe("Error messages e2e", () => {
       // Should preserve the specific INVALID_PLAYER_COUNT code
       expect(domainError.code).toBe(ErrorCode.INVALID_PLAYER_COUNT);
       expect(domainError.message).toBe(
-        "Invalid number of players (2-4 required)",
+        "Invalid number of players (1-4 required)",
       );
-      expect(domainError.context?.players).toEqual(["Alice"]);
+      expect(domainError.context?.players).toEqual([]);
     }
   });
 });

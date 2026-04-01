@@ -29,7 +29,7 @@ export const addPlayersUseCase =
   (game, players) => {
     const { uuidMethod, shuffleMethod, ruleRepository } = deps;
 
-    if (!players || players.length < 2 || players.length > 4) {
+    if (!players || players.length < 1 || players.length > 4) {
       return err(ErrorCode.INVALID_PLAYER_COUNT);
     }
 

@@ -77,7 +77,7 @@ export type GameEngine = {
   /**
    * Adds players to the game and initializes their kingdoms.
    * Each player receives an empty kingdom with a castle at the center.
-   * @param command - Contains game state and array of player names (2-4 players)
+   * @param command - Contains game state and array of player names (1-4 players)
    * @returns Game state with next step 'options' or 'start'
    * @throws Error if player count is invalid or names are too short
    */

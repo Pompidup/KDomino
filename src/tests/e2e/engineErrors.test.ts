@@ -29,7 +29,7 @@ describe("Engine - Error paths", () => {
     const game = engine.createGame({ mode: "Classic" });
 
     expect(() =>
-      engine.addPlayers({ game, players: ["Alice"] })
+      engine.addPlayers({ game, players: [] })
     ).toThrow();
   });
 

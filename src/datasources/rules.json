@@ -1,6 +1,14 @@
 {
   "commun": [
     {
+      "playersLimit": 1,
+      "lordsPerPlayer": 1,
+      "maxDominoes": 48,
+      "dominoesPerTurn": 4,
+      "maxTurns": 12,
+      "maxKingdomSize": 5
+    },
+    {
       "playersLimit": 2,
       "lordsPerPlayer": 2,
       "maxDominoes": 24,

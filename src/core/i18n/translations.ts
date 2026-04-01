@@ -89,7 +89,7 @@ export const defaultTranslations: Record<TranslationKeyType, string> = {
   [TranslationKey.ERROR_DOMINO_ALREADY_PICKED]:
     "Domino has already been picked",
   [TranslationKey.ERROR_INVALID_PLAYER_COUNT]:
-    "Invalid number of players (2-4 required)",
+    "Invalid number of players (1-4 required)",
   [TranslationKey.ERROR_INVALID_PLAYER_NAME]:
     "Player name must be at least 3 characters",
   [TranslationKey.ERROR_UNDO_UNAVAILABLE]: "No state to undo",

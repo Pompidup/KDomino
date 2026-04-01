@@ -8,7 +8,7 @@
 
 1. **Queendomino** - Extension officielle avec bâtiments, ressources (pièces), dragon, et la Reine qui donne des bonus. C'est la plus grosse extension possible.
 2. **Age of Giants** - Extension avec tuiles géantes qui volent des couronnes et ajoutent des tuiles de 12 nouveaux dominos (numéros 49-60).
-3. **Mode solo** - Un mode 1 joueur avec scoring cible (règles officielles : remplir le 5×5 avec le meilleur score possible).
+3. ~~**Mode solo**~~ - ✅ Implémenté. Support 1 joueur avec règles solo (48 dominos, 4 révélés par tour, 12 tours, grille 5×5). Le joueur choisit 1 domino sur 4 chaque tour. Compatible avec les extra rules (The middle Kingdom, Harmony, Dynasty) et toutes les stratégies bot.
 4. **Mode "The Court"** - Variante officielle pour 2 joueurs avec un 3e royaume "fantôme".
 
 ## Règles et gameplay
@@ -74,7 +74,7 @@ Les plus impactantes à court terme :
 
 ### Priorité moyenne — Gameplay & variantes
 
-4. **Mode solo (3)** — Variante officielle simple (1 joueur, scoring cible). Réutilise 90% du moteur existant, élargit les cas d'usage.
+4. ~~**Mode solo (3)**~~ — ✅ Done
 5. **Mode rapide (16)** — Moins de dominos/tours. Trivial à implémenter (paramétrage du nombre de dominos), valeur immédiate pour les UI.
 6. **Timer/Horloge (8)** — Utile pour le compétitif. Standalone utility, pas de modification du moteur core.
 7. **Mode draft (17)** — Variante intéressante mais modifie le flow de jeu. Plus complexe que les modes ci-dessus.

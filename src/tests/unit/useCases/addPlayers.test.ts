@@ -36,6 +36,13 @@ describe("Add players", () => {
     getAll: () => {
       const rules: Rules = {
         basic: {
+          1: {
+            lords: 1,
+            maxDominoes: 48,
+            dominoesPerTurn: 4,
+            maxTurns: 12,
+            maxKingdomSize: 5,
+          },
           2: {
             lords: 2,
             maxDominoes: 10,
@@ -106,14 +113,54 @@ describe("Add players", () => {
     expect((unwrapResult.nextAction as NextStep).step).toEqual("options");
   });
 
-  test("should return an error for only 1 player", () => {
+  test("should add a single player for solo mode", () => {
     // Arrange
     const initialGame = createGameBuilder<NextStep>()
       .withId("uuid-test")
       .withMode({ name: "Classic", description: "Classic mode" })
       .build();
 
-    const payload = ["Player 1"];
+    const payload = ["Solo Player"];
+    const newKingdom = createEmptyKingdom();
+
+    const expectedPlayers: Players = [
+      {
+        id: "uuid-test",
+        name: "Solo Player",
+        kingdom: placeCastle(newKingdom),
+      },
+    ];
+    const dependencies = {
+      uuidMethod: () => "uuid-test",
+      shuffleMethod: (dominoes: any[]) => dominoes,
+      ruleRepository: inMemoryRepo,
+    };
+
+    // Act
+    const result = addPlayersUseCase(dependencies)(initialGame, payload);
+
+    // Assert
+    const unwrapResult = unwrap(result);
+    expect(unwrapResult.players).toEqual(expectedPlayers);
+    expect(unwrapResult.rules.basic).toEqual({
+      lords: 1,
+      maxDominoes: 48,
+      dominoesPerTurn: 4,
+      maxTurns: 12,
+      maxKingdomSize: 5,
+    });
+    expect(unwrapResult.nextAction.type).toEqual("step");
+    expect((unwrapResult.nextAction as NextStep).step).toEqual("options");
+  });
+
+  test("should return an error for 0 players", () => {
+    // Arrange
+    const initialGame = createGameBuilder<NextStep>()
+      .withId("uuid-test")
+      .withMode({ name: "Classic", description: "Classic mode" })
+      .build();
+
+    const payload: string[] = [];
     const dependencies = {
       uuidMethod: () => "uuid-test",
       shuffleMethod: (dominoes: any[]) => dominoes,

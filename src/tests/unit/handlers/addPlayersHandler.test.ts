@@ -76,7 +76,7 @@ describe("AddPlayersHandler", () => {
       addPlayersHandler(logger, defaultTranslator, useCase)(command);
 
     // Assert
-    expect(act).toThrowError("Invalid number of players (2-4 required)");
+    expect(act).toThrowError("Invalid number of players (1-4 required)");
   });
 
   test("should return game with players", () => {

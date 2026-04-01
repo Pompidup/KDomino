@@ -12,6 +12,7 @@ describe("jsonRules", () => {
     // Assert
     expect(result).toHaveProperty("basic");
     expect(result.basic).toEqual({
+      "1": { lords: 1, maxDominoes: 48, dominoesPerTurn: 4, maxTurns: 12, maxKingdomSize: 5 },
       "2": { lords: 2, maxDominoes: 24, dominoesPerTurn: 4, maxTurns: 6, maxKingdomSize: 5 },
       "3": { lords: 1, maxDominoes: 48, dominoesPerTurn: 4, maxTurns: 12, maxKingdomSize: 5 },
       "4": { lords: 1, maxDominoes: 48, dominoesPerTurn: 4, maxTurns: 12, maxKingdomSize: 5 },
