@@ -1,9 +1,9 @@
 import {
-  calculateLocalTradeBonus,
+  calculateAustereKingBonus,
   calculateKingdomBordersBonus,
+  calculateLocalTradeBonus,
   calculateLostCornerBonus,
   calculateMegalomaniaBonus,
-  calculateAustereKingBonus,
   calculateQuestBonus,
 } from "@core/domain/entities/questScore.js";
 import type { QuestTile } from "@core/domain/types/ageOfGiants.js";

@@ -1,7 +1,7 @@
 import { ErrorCode } from "@core/domain/errors/domainErrors.js";
-import { type Result, err, ok, isErr } from "@utils/result.js";
-import type { Player } from "@core/domain/types/player.js";
 import type { Kingdom } from "@core/domain/types/kingdom.js";
+import type { Player } from "@core/domain/types/player.js";
+import { err, isErr, ok, type Result } from "@utils/result.js";
 
 const MINPLAYERSNAMELENGTH = 3;
 
@@ -17,7 +17,7 @@ export const createPlayer = (
   playerName: string,
   id: string,
   kingdom: Kingdom,
-  bot?: { strategyName: string }
+  bot?: { strategyName: string },
 ): Result<Player> => {
   const name = validatePlayer(playerName);
 

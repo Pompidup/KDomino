@@ -1,38 +1,44 @@
 import {
   isAgeOfGiantsMode,
   isAgeOfGiantsQueenDominoMode,
-  isGiantDomino,
   isFootprintDomino,
+  isGiantDomino,
 } from "@core/domain/entities/ageOfGiantsHelpers.js";
-import { findCrownsNotCoveredByGiants, playerHasGiant } from "@core/domain/entities/giant.js";
-import { ErrorCode } from "@core/domain/errors/domainErrors.js";
-import { err, isErr, isOk, ok } from "@utils/result.js";
+import { takeFireToken } from "@core/domain/entities/fireToken.js";
 import {
-  gameSteps,
-  type GameState,
-  type GameStateResult,
-  type GameWithNextAction,
-  type NextAction,
-  type NextStep,
-} from "@core/domain/types/game.js";
+  findCrownsNotCoveredByGiants,
+  playerHasGiant,
+} from "@core/domain/entities/giant.js";
+import {
+  calculateDominoPosition,
+  placeDomino,
+} from "@core/domain/entities/kingdom.js";
 import {
   allLordsHavePlayed,
   canPlaceAndDominoPickedIsDefined,
   nextLordWithAction,
 } from "@core/domain/entities/lord.js";
 import {
-  calculateDominoPosition,
-  placeDomino,
-} from "@core/domain/entities/kingdom.js";
-import { type PlayerActions, playerActions } from "@core/domain/types/player.js";
-import type { Position, Rotation } from "@core/domain/types/kingdom.js";
-import {
   isOriginsMode,
   isResourceMode,
 } from "@core/domain/entities/originsHelpers.js";
 import { createResourceForTile } from "@core/domain/entities/resource.js";
-import { takeFireToken } from "@core/domain/entities/fireToken.js";
+import { ErrorCode } from "@core/domain/errors/domainErrors.js";
+import {
+  type GameState,
+  type GameStateResult,
+  type GameWithNextAction,
+  gameSteps,
+  type NextAction,
+  type NextStep,
+} from "@core/domain/types/game.js";
+import type { Position, Rotation } from "@core/domain/types/kingdom.js";
 import type { PendingFireToken, Resource } from "@core/domain/types/origins.js";
+import {
+  type PlayerActions,
+  playerActions,
+} from "@core/domain/types/player.js";
+import { err, isErr, isOk, ok } from "@utils/result.js";
 
 export type PlaceDominoUseCase = (
   game: GameWithNextAction,
@@ -121,7 +127,7 @@ export const placeDominoUseCase: PlaceDominoUseCase = (
   }
 
   // Collect resources from placed tiles (Totem/Tribe modes)
-  let newResources: Resource[] = [];
+  const newResources: Resource[] = [];
   if (isResourceMode(game.mode.name)) {
     const [first, second] = calculateDominoPosition(position, rotation, domino);
     for (const placed of [first, second]) {
@@ -176,7 +182,13 @@ export const placeDominoUseCase: PlaceDominoUseCase = (
   const isAoG = isAgeOfGiantsMode(game.mode.name);
   const isAoGQD = isAgeOfGiantsQueenDominoMode(game.mode.name);
 
-  if (isLastTurn && allLordsHavePlayed(updatedLords) && !isQueenDomino && !isOrigins && !isAoG) {
+  if (
+    isLastTurn &&
+    allLordsHavePlayed(updatedLords) &&
+    !isQueenDomino &&
+    !isOrigins &&
+    !isAoG
+  ) {
     updatedGame = {
       ...game,
       lords: updatedLords,
@@ -297,7 +309,9 @@ export const placeDominoUseCase: PlaceDominoUseCase = (
     }
   } else if (isAoG) {
     // Age of Giants: check for giant/footprint domino effects
-    const currentPlayer = updatedPlayers.find((p) => p.id === currentLord.playerId);
+    const currentPlayer = updatedPlayers.find(
+      (p) => p.id === currentLord.playerId,
+    );
     const isGiant = isGiantDomino(domino);
     const isFootprint = isFootprintDomino(domino);
 
@@ -306,8 +320,12 @@ export const placeDominoUseCase: PlaceDominoUseCase = (
     if (isGiant) {
       // Giant domino: must place giant on a crown (mandatory)
       // But auto-skip if player has no uncovered crowns or pool is empty
-      const hasUncoveredCrowns = currentPlayer &&
-        findCrownsNotCoveredByGiants(currentPlayer.kingdom, currentPlayer.giants ?? []).length > 0;
+      const hasUncoveredCrowns =
+        currentPlayer &&
+        findCrownsNotCoveredByGiants(
+          currentPlayer.kingdom,
+          currentPlayer.giants ?? [],
+        ).length > 0;
       const poolAvailable = (game.ageOfGiants?.giantPool ?? 0) > 0;
 
       if (hasUncoveredCrowns && poolAvailable) {

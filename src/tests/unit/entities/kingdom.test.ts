@@ -15,7 +15,7 @@ const wheat: Tile = { type: "wheat", crowns: 0 };
 const forest: Tile = { type: "forest", crowns: 0 };
 
 const wheatDomino: Domino = { left: wheat, right: wheat, number: 1 };
-const forestDomino: Domino = { left: forest, right: forest, number: 2 };
+const _forestDomino: Domino = { left: forest, right: forest, number: 2 };
 
 const buildKingdomWithCastle = () => placeCastle(createEmptyKingdom());
 

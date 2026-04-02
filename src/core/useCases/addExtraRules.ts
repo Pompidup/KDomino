@@ -1,19 +1,19 @@
+import { toExtraRule } from "@core/domain/entities/rule.js";
 import {
-  gameSteps,
   type ExtraRule,
   type GameWithNextStep,
+  gameSteps,
   type NextStep,
 } from "@core/domain/types/index.js";
-import { isErr, ok, type Result } from "@utils/result.js";
-import type { RuleRepository } from "@core/portServerside/ruleRepository.js";
 import type { DominoesRepository } from "@core/portServerside/dominoesRepository.js";
+import type { RuleRepository } from "@core/portServerside/ruleRepository.js";
 import type { ShuffleMethod } from "@core/portServerside/shuffleMethod.js";
-import { toExtraRule } from "@core/domain/entities/rule.js";
+import { isErr, ok, type Result } from "@utils/result.js";
 import { createSeededShuffle } from "@utils/seededShuffle.js";
 
 export type AddExtraRulesUseCase = (
   game: GameWithNextStep,
-  rules: string[]
+  rules: string[],
 ) => Result<GameWithNextStep>;
 
 export const addExtraRulesUseCase =
@@ -41,7 +41,9 @@ export const addExtraRulesUseCase =
     // The Mighty Duel overrides basic rules for 2-player games
     let updatedBasic = game.rules.basic;
     let updatedDominoes = game.dominoes;
-    const hasMightyDuel = newExtraRules.some((r) => r.name === "The Mighty Duel");
+    const hasMightyDuel = newExtraRules.some(
+      (r) => r.name === "The Mighty Duel",
+    );
     if (hasMightyDuel) {
       updatedBasic = {
         ...updatedBasic,

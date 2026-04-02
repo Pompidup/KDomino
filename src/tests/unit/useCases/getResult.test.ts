@@ -1,11 +1,11 @@
-import { getResultUseCase } from "@core/useCases/getResult.js";
-import { describe, test, expect } from "vitest";
-import type { Kingdom } from "@core/domain/types/kingdom.js";
-import { createPlayerBuilder } from "../../builder/player.js";
-import { createGameBuilder } from "../../builder/game.js";
-import { unwrap } from "@utils/result.js";
 import type { NextStep } from "@core/domain/types/game.js";
+import type { Kingdom } from "@core/domain/types/kingdom.js";
 import type { ExtraRule } from "@core/domain/types/rule.js";
+import { getResultUseCase } from "@core/useCases/getResult.js";
+import { unwrap } from "@utils/result.js";
+import { describe, expect, test } from "vitest";
+import { createGameBuilder } from "../../builder/game.js";
+import { createPlayerBuilder } from "../../builder/player.js";
 
 describe("Get result of a game", () => {
   test("should return player ranking, decide on score (no tie)", async () => {
@@ -14,8 +14,8 @@ describe("Get result of a game", () => {
     const players = [
       { id: "player1-id", name: "player1" },
       { id: "player2-id", name: "player2" },
-    ].map((player, index) =>
-      createPlayerBuilder().withId(player.id).withName(player.name).build()
+    ].map((player, _index) =>
+      createPlayerBuilder().withId(player.id).withName(player.name).build(),
     );
 
     const initialGame = createGameBuilder<NextStep>()
@@ -67,7 +67,7 @@ describe("Get result of a game", () => {
       { id: "player1-id", name: "player1" },
       { id: "player2-id", name: "player2" },
     ].map((player) =>
-      createPlayerBuilder().withId(player.id).withName(player.name).build()
+      createPlayerBuilder().withId(player.id).withName(player.name).build(),
     );
 
     const initialGame = createGameBuilder<NextStep>()
@@ -119,7 +119,7 @@ describe("Get result of a game", () => {
       { id: "player1-id", name: "player1" },
       { id: "player2-id", name: "player2" },
     ].map((player) =>
-      createPlayerBuilder().withId(player.id).withName(player.name).build()
+      createPlayerBuilder().withId(player.id).withName(player.name).build(),
     );
 
     const initialGame = createGameBuilder<NextStep>()
@@ -277,7 +277,7 @@ describe("Get result of a game", () => {
         .withId(player.id)
         .withName(player.name)
         .withKingdom(initialGrid)
-        .build()
+        .build(),
     );
 
     const initialGame = createGameBuilder<NextStep>()
@@ -444,7 +444,7 @@ describe("Get result of a game", () => {
         .withId(player.id)
         .withName(player.name)
         .withKingdom(initialGrid)
-        .build()
+        .build(),
     );
 
     const initialGame = createGameBuilder<NextStep>()
@@ -611,7 +611,7 @@ describe("Get result of a game", () => {
         .withId(player.id)
         .withName(player.name)
         .withKingdom(initialGrid)
-        .build()
+        .build(),
     );
 
     const initialGame = createGameBuilder<NextStep>()

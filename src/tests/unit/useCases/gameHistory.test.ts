@@ -1,17 +1,17 @@
-import { describe, test, expect } from "vitest";
+import { RedoError, UndoError } from "@core/domain/errors/domainErrors.js";
+import type { NextAction, NextStep } from "@core/domain/types/game.js";
 import {
-  createGameHistory,
-  pushState,
-  undo,
-  redo,
-  canUndo,
   canRedo,
+  canUndo,
   clearHistory,
+  createGameHistory,
   getHistorySize,
+  pushState,
+  redo,
+  undo,
 } from "@core/useCases/gameHistory.js";
-import { UndoError, RedoError } from "@core/domain/errors/domainErrors.js";
+import { describe, expect, test } from "vitest";
 import { createGameBuilder } from "../../builder/game.js";
-import type { NextStep, NextAction } from "@core/domain/types/game.js";
 
 const stepStart: NextStep = { type: "step", step: "start" };
 const actionPick: NextAction = {

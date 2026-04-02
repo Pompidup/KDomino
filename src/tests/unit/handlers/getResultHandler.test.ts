@@ -125,6 +125,7 @@ describe("getResultHandler", () => {
   test("should return the result value if the use case succeeds", () => {
     // Arrange
     const game = createGameBuilder<NextStep>()
+      .withDefaultPlayers()
       .withNextAction({ type: "step", step: "result" })
       .build();
 
@@ -132,14 +133,14 @@ describe("getResultHandler", () => {
 
     const scoreResult = [
       {
-        playerId: game.players[0]?.id!,
-        playerName: game.players[0]?.name!,
+        playerId: game.players[0]!.id,
+        playerName: game.players[0]!.name,
         details: score,
         position: 1,
       },
       {
-        playerId: game.players[1]?.id!,
-        playerName: game.players[1]?.name!,
+        playerId: game.players[1]!.id,
+        playerName: game.players[1]!.name,
         details: score,
         position: 1,
       },

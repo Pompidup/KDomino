@@ -1,17 +1,17 @@
-import { createGameEngine } from "../../index.js";
 import {
+  type GameState,
+  isGameWithNextAction,
+} from "@core/domain/types/game.js";
+import {
+  canRedo,
+  canUndo,
   createGameHistory,
   pushState,
-  undo,
   redo,
-  canUndo,
-  canRedo,
+  undo,
 } from "@core/useCases/gameHistory.js";
-import {
-  isGameWithNextAction,
-  type GameState,
-} from "@core/domain/types/game.js";
 import { describe, expect, test } from "vitest";
+import { createGameEngine } from "../../index.js";
 
 describe("GameHistory e2e", () => {
   test("should track undo/redo through a real game flow", () => {
@@ -43,7 +43,7 @@ describe("GameHistory e2e", () => {
       if (nextAction === "placeDomino") {
         const currentLord = game.lords.find((l) => l.id === currentLordId)!;
         const currentPlayer = game.players.find(
-          (p) => p.id === currentLord.playerId
+          (p) => p.id === currentLord.playerId,
         )!;
         const domino = currentLord.dominoPicked!;
         const validPlacements = engine.getValidPlacements({

@@ -1,13 +1,13 @@
-import { describe, test, expect } from "vitest";
+import type { NextAction, NextStep } from "@core/domain/types/game.js";
 import {
-  serializeGame,
-  deserializeGame,
   createSavePoint,
+  deserializeGame,
   restoreFromSavePoint,
+  serializeGame,
 } from "@core/useCases/serialization.js";
+import { isErr, isOk, unwrap } from "@utils/result.js";
+import { describe, expect, test } from "vitest";
 import { createGameBuilder } from "../../builder/game.js";
-import { isOk, isErr, unwrap } from "@utils/result.js";
-import type { NextStep, NextAction } from "@core/domain/types/game.js";
 
 const stepStart: NextStep = { type: "step", step: "start" };
 const actionPick: NextAction = {
@@ -86,7 +86,7 @@ describe("Serialization", () => {
 
     test("should return error for unsupported version", () => {
       const result = deserializeGame(
-        JSON.stringify({ version: 999, data: {} })
+        JSON.stringify({ version: 999, data: {} }),
       );
 
       expect(isErr(result)).toBe(true);
@@ -97,7 +97,7 @@ describe("Serialization", () => {
 
     test("should return error for invalid game state structure", () => {
       const result = deserializeGame(
-        JSON.stringify({ version: 1, data: { id: "test" }, timestamp: "now" })
+        JSON.stringify({ version: 1, data: { id: "test" }, timestamp: "now" }),
       );
 
       expect(isErr(result)).toBe(true);

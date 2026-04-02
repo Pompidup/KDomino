@@ -11,7 +11,7 @@ const defaultPlayers: Game["players"] = [
   { id: "player1-id", name: "player1" },
   { id: "player2-id", name: "player2" },
 ].map((player) =>
-  createPlayerBuilder().withId(player.id).withName(player.name).build()
+  createPlayerBuilder().withId(player.id).withName(player.name).build(),
 );
 const defaultLords: Game["lords"] = [
   {
@@ -49,7 +49,7 @@ const defaultLords: Game["lords"] = [
     .withTurnEnded(lord.turnEnded)
     .withHasPick(lord.hasPick)
     .withHasPlace(lord.hasPlace)
-    .build()
+    .build(),
 );
 const defaultGame: Game = {
   id: "default-id",
@@ -80,13 +80,13 @@ const defaultGame: Game = {
 };
 
 type GameBuilderNextAction<
-  T extends NextAction | NextStep = NextAction | NextStep
+  T extends NextAction | NextStep = NextAction | NextStep,
 > = Omit<Game, "nextAction"> & { nextAction: T };
 
 export const createGameBuilder = <
-  T extends NextAction | NextStep = NextAction | NextStep
+  T extends NextAction | NextStep = NextAction | NextStep,
 >(
-  game: Partial<GameBuilderNextAction<T>> = {}
+  game: Partial<GameBuilderNextAction<T>> = {},
 ) => ({
   withId: (id: string) => createGameBuilder<T>({ ...game, id }),
   withDominoes: (dominoes: Game["dominoes"]) =>
@@ -122,5 +122,5 @@ export const createGameBuilder = <
     ({
       ...JSON.parse(JSON.stringify(defaultGame)),
       ...JSON.parse(JSON.stringify(game)),
-    } as GameBuilderNextAction<T>),
+    }) as GameBuilderNextAction<T>,
 });

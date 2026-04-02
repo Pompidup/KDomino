@@ -6,8 +6,8 @@ import {
   updateLordOrder,
 } from "@core/domain/entities/lord.js";
 import { isTribeMode } from "@core/domain/entities/originsHelpers.js";
-import type { GameWithNextAction } from "@core/domain/types/game.js";
 import { ErrorCode } from "@core/domain/errors/domainErrors.js";
+import type { GameWithNextAction } from "@core/domain/types/game.js";
 import { playerActions } from "@core/domain/types/player.js";
 import { err, ok, type Result } from "@utils/result.js";
 

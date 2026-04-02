@@ -16,7 +16,7 @@ type CanPlaceDominoHandler = (command: CanPlaceDominoCommand) => boolean;
  */
 export const canPlaceDominoHandler = (
   logger: Logger,
-  translator: Translator,
+  _translator: Translator,
   useCase: CanPlaceDominoUseCase,
 ): CanPlaceDominoHandler => {
   return (command) => {

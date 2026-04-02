@@ -1,14 +1,20 @@
 import type { Kingdom, Position, Score } from "@core/domain/types/index.js";
 import { ok, type Result } from "@utils/result.js";
 
-export type CalculateScoreUseCase = (kingdom: Kingdom, giantPositions?: Position[]) => Result<Score>;
+export type CalculateScoreUseCase = (
+  kingdom: Kingdom,
+  giantPositions?: Position[],
+) => Result<Score>;
 
 type Property = {
   size: number;
   crowns: number;
 };
 
-export const calculateScoreUseCase: CalculateScoreUseCase = (kingdom, giantPositions) => {
+export const calculateScoreUseCase: CalculateScoreUseCase = (
+  kingdom,
+  giantPositions,
+) => {
   const rows = kingdom.length;
   const cols = kingdom[0]!.length;
   const visited: boolean[][] = kingdom.map((row) => row.map(() => false));

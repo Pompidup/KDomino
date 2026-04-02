@@ -1,4 +1,7 @@
-import { isAgeOfGiantsMode, isAgeOfGiantsQueenDominoMode } from "@core/domain/entities/ageOfGiantsHelpers.js";
+import {
+  isAgeOfGiantsMode,
+  isAgeOfGiantsQueenDominoMode,
+} from "@core/domain/entities/ageOfGiantsHelpers.js";
 import { create } from "@core/domain/entities/game.js";
 import { createMode } from "@core/domain/entities/mode.js";
 import { isTribeMode } from "@core/domain/entities/originsHelpers.js";
@@ -33,7 +36,15 @@ export const createGameUseCase =
     questTilesRepository?: QuestTilesRepository;
   }): CreateGameUseCase =>
   (mode, seed) => {
-    const { modeRepository, dominoesRepository, uuidMethod, shuffleMethod, buildingsRepository, cavemenRepository, questTilesRepository } = deps;
+    const {
+      modeRepository,
+      dominoesRepository,
+      uuidMethod,
+      shuffleMethod,
+      buildingsRepository,
+      cavemenRepository,
+      questTilesRepository,
+    } = deps;
     const id = uuidMethod();
     const gameSeed = seed ?? uuidMethod();
     const availableMode = modeRepository.getAvailables();
@@ -49,7 +60,9 @@ export const createGameUseCase =
       return err(ErrorCode.DOMINO_NOT_FOUND);
     }
 
-    const isQueenDomino = newMode.value.name === "QueenDomino" || isAgeOfGiantsQueenDominoMode(newMode.value.name);
+    const isQueenDomino =
+      newMode.value.name === "QueenDomino" ||
+      isAgeOfGiantsQueenDominoMode(newMode.value.name);
     let buildings: BuildingTile[] | undefined;
 
     if (isQueenDomino && buildingsRepository) {

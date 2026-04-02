@@ -1,11 +1,11 @@
 import {
   createGiantPool,
-  takeFromGiantPool,
   findCrownsInKingdom,
   findCrownsNotCoveredByGiants,
-  playerHasGiant,
   placeGiantOnCrown,
+  playerHasGiant,
   sendGiantToOpponent,
+  takeFromGiantPool,
 } from "@core/domain/entities/giant.js";
 import { ErrorCode } from "@core/domain/errors/domainErrors.js";
 import { GRIDSIZE } from "@core/domain/types/kingdom.js";
@@ -138,7 +138,8 @@ describe("placeGiantOnCrown", () => {
     const player = makePlayer();
     const result = placeGiantOnCrown(player, { x: 0, y: 0 });
     expect(isErr(result)).toBe(true);
-    if (isErr(result)) expect(result.error).toBe(ErrorCode.INVALID_GIANT_PLACEMENT);
+    if (isErr(result))
+      expect(result.error).toBe(ErrorCode.INVALID_GIANT_PLACEMENT);
   });
 
   it("rejects placement on tile with 0 crowns", () => {
@@ -217,7 +218,8 @@ describe("sendGiantToOpponent", () => {
 
     const result = sendGiantToOpponent(source, target, 0, { x: 0, y: 0 });
     expect(isErr(result)).toBe(true);
-    if (isErr(result)) expect(result.error).toBe(ErrorCode.INVALID_GIANT_PLACEMENT);
+    if (isErr(result))
+      expect(result.error).toBe(ErrorCode.INVALID_GIANT_PLACEMENT);
   });
 
   it("returns error if target crown is already covered", () => {

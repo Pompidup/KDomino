@@ -3,28 +3,28 @@ import {
   canPass,
   nextLordWithAction,
 } from "@core/domain/entities/lord.js";
+import { ErrorCode } from "@core/domain/errors/domainErrors.js";
 import {
-  gameSteps,
   type GameState,
   type GameStateResult,
   type GameWithNextAction,
+  gameSteps,
   type NextAction,
   type NextStep,
 } from "@core/domain/types/game.js";
-import { ErrorCode } from "@core/domain/errors/domainErrors.js";
-import { canPlaceDominoUseCase } from "./getValidPlacements.js";
 import { err, ok } from "@utils/result.js";
+import { canPlaceDominoUseCase } from "./getValidPlacements.js";
 
 export type DiscardDominoUseCase = (
   game: GameWithNextAction,
-  lordId: string
+  lordId: string,
 ) => GameStateResult;
 
 export const discardDominoUseCase: DiscardDominoUseCase = (game, lordId) => {
   const nextAction = game.nextAction;
 
   const currentLord = game.lords.find(
-    (lord) => lord.id === nextAction.nextLord
+    (lord) => lord.id === nextAction.nextLord,
   );
 
   if (!currentLord) {
@@ -41,10 +41,17 @@ export const discardDominoUseCase: DiscardDominoUseCase = (game, lordId) => {
 
   if (currentLord.dominoPicked) {
     const currentPlayer = game.players.find(
-      (player) => player.id === currentLord.playerId
+      (player) => player.id === currentLord.playerId,
     );
 
-    if (currentPlayer && canPlaceDominoUseCase(currentPlayer.kingdom, currentLord.dominoPicked, game.rules.basic.maxKingdomSize)) {
+    if (
+      currentPlayer &&
+      canPlaceDominoUseCase(
+        currentPlayer.kingdom,
+        currentLord.dominoPicked,
+        game.rules.basic.maxKingdomSize,
+      )
+    ) {
       return err(ErrorCode.CANNOT_PLACE);
     }
   }

@@ -1,15 +1,12 @@
-import { describe, expect, test } from "vitest";
 import {
-  getStrategy,
-  getStrategyNames,
-} from "@core/useCases/botRegistry.js";
-import {
-  randomStrategy,
-  greedyStrategy,
   advancedStrategy,
-  expertStrategy,
   type BotStrategy,
+  expertStrategy,
+  greedyStrategy,
+  randomStrategy,
 } from "@core/useCases/bot.js";
+import { getStrategy, getStrategyNames } from "@core/useCases/botRegistry.js";
+import { describe, expect, test } from "vitest";
 
 describe("Bot Registry", () => {
   test("should return all built-in strategy names", () => {

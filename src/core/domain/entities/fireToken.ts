@@ -1,10 +1,10 @@
+import { ErrorCode } from "@core/domain/errors/domainErrors.js";
 import type { Kingdom, Position } from "@core/domain/types/index.js";
 import type {
   FireTokenPool,
   PlacedFireToken,
 } from "@core/domain/types/origins.js";
 import { err, ok, type Result } from "@utils/result.js";
-import { ErrorCode } from "@core/domain/errors/domainErrors.js";
 
 // ─── Fire Token Pool ─────────────────────────────────────────────────
 
@@ -141,7 +141,5 @@ export const isValidFireTokenPosition = (
     fires,
     existingFireTokens,
   );
-  return validPositions.some(
-    (p) => p.x === position.x && p.y === position.y,
-  );
+  return validPositions.some((p) => p.x === position.x && p.y === position.y);
 };

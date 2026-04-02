@@ -1,6 +1,6 @@
-import { createGameEngine } from "../../index";
 import type { GameEngine } from "@core/portUserside/engine.js";
 import { beforeAll, describe, expect, test } from "vitest";
+import { createGameEngine } from "../../index";
 
 describe("Engine - Error paths", () => {
   let engine: GameEngine;
@@ -21,16 +21,14 @@ describe("Engine - Error paths", () => {
     const started = engine.startGame({ game: withPlayers });
 
     expect(() =>
-      engine.addPlayers({ game: started, players: ["Eve", "Dan"] })
+      engine.addPlayers({ game: started, players: ["Eve", "Dan"] }),
     ).toThrow();
   });
 
   test("should throw when adding too few players", () => {
     const game = engine.createGame({ mode: "Classic" });
 
-    expect(() =>
-      engine.addPlayers({ game, players: [] })
-    ).toThrow();
+    expect(() => engine.addPlayers({ game, players: [] })).toThrow();
   });
 
   test("should throw when adding too many players", () => {
@@ -40,7 +38,7 @@ describe("Engine - Error paths", () => {
       engine.addPlayers({
         game,
         players: ["Alice", "Bobby", "Carol", "David", "Extra"],
-      })
+      }),
     ).toThrow();
   });
 
@@ -48,7 +46,7 @@ describe("Engine - Error paths", () => {
     const game = engine.createGame({ mode: "Classic" });
 
     expect(() =>
-      engine.addPlayers({ game, players: ["Al", "Bobby"] })
+      engine.addPlayers({ game, players: ["Al", "Bobby"] }),
     ).toThrow();
   });
 
@@ -76,7 +74,7 @@ describe("Engine - Error paths", () => {
         game: afterPick,
         lordId: secondLordId,
         dominoPick: dominoNumber,
-      })
+      }),
     ).toThrow();
   });
 
@@ -96,7 +94,7 @@ describe("Engine - Error paths", () => {
         game: started,
         lordId: wrongLordId,
         dominoPick: dominoNumber,
-      })
+      }),
     ).toThrow();
   });
 
@@ -127,7 +125,7 @@ describe("Engine - Error paths", () => {
         lordId,
         position: { x: 4, y: 4 },
         rotation: 0,
-      })
+      }),
     ).toThrow();
   });
 
@@ -156,7 +154,7 @@ describe("Engine - Error paths", () => {
         lordId,
         position: { x: 8, y: 4 },
         rotation: 0,
-      })
+      }),
     ).toThrow();
   });
 

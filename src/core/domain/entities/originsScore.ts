@@ -40,7 +40,12 @@ export const calculateOriginsFireBonus = (
   for (let y = 0; y < rows; y++) {
     for (let x = 0; x < cols; x++) {
       const tile = kingdom[y]![x]!;
-      if (visited[y]![x] || tile.type === "empty" || tile.type === "castle" || tile.type === "volcano") {
+      if (
+        visited[y]![x] ||
+        tile.type === "empty" ||
+        tile.type === "castle" ||
+        tile.type === "volcano"
+      ) {
         continue;
       }
 

@@ -21,5 +21,5 @@ export const createLordBuilder = (lord: Partial<Lord> = {}) => ({
     ({
       ...JSON.parse(JSON.stringify(defaultLord)),
       ...JSON.parse(JSON.stringify(lord)),
-    } as Lord),
+    }) as Lord,
 });

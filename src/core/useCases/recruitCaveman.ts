@@ -1,4 +1,3 @@
-import { ErrorCode } from "@core/domain/errors/domainErrors.js";
 import {
   isValidCavemanPosition,
   takeCavemanFromDrawPile,
@@ -9,14 +8,18 @@ import {
   nextLordWithAction,
 } from "@core/domain/entities/lord.js";
 import {
-  gameSteps,
+  canSpendResources,
+  spendResources,
+} from "@core/domain/entities/resource.js";
+import { ErrorCode } from "@core/domain/errors/domainErrors.js";
+import {
   type GameState,
   type GameStateResult,
   type GameWithNextAction,
+  gameSteps,
   type NextAction,
 } from "@core/domain/types/game.js";
 import type { Position } from "@core/domain/types/kingdom.js";
-import { canSpendResources, spendResources } from "@core/domain/entities/resource.js";
 import { err, ok } from "@utils/result.js";
 
 export type RecruitCavemanUseCase = (
@@ -50,9 +53,7 @@ export const recruitCavemanUseCase: RecruitCavemanUseCase = (
     return err(ErrorCode.NOT_TRIBE_MODE);
   }
 
-  const currentPlayer = game.players.find(
-    (p) => p.id === currentLord.playerId,
-  );
+  const currentPlayer = game.players.find((p) => p.id === currentLord.playerId);
 
   if (!currentPlayer) {
     return err(ErrorCode.PLAYER_NOT_FOUND);
@@ -81,7 +82,9 @@ export const recruitCavemanUseCase: RecruitCavemanUseCase = (
     return err(ErrorCode.INSUFFICIENT_RESOURCES);
   }
 
-  if (!canSpendResources(resources, resourcePositions, requiredDifferentTypes)) {
+  if (
+    !canSpendResources(resources, resourcePositions, requiredDifferentTypes)
+  ) {
     return err(ErrorCode.INSUFFICIENT_RESOURCES);
   }
 
@@ -99,7 +102,7 @@ export const recruitCavemanUseCase: RecruitCavemanUseCase = (
   }
 
   // Take caveman from board
-  let cavemanResult;
+  let cavemanResult: ReturnType<typeof takeCavemanFromVisible>;
   if (isFromVisible) {
     cavemanResult = takeCavemanFromVisible(game.origins.caveBoard, cavemanId);
   } else {

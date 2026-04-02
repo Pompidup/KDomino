@@ -1,7 +1,7 @@
+import { ErrorCode } from "@core/domain/errors/domainErrors.js";
 import type { PlacedGiant } from "@core/domain/types/ageOfGiants.js";
 import type { Kingdom, Position } from "@core/domain/types/kingdom.js";
 import type { Player } from "@core/domain/types/player.js";
-import { ErrorCode } from "@core/domain/errors/domainErrors.js";
 import { err, ok, type Result } from "@utils/result.js";
 
 const INITIAL_GIANT_POOL = 6;
@@ -48,7 +48,8 @@ export const findCrownsNotCoveredByGiants = (
 ): Position[] => {
   const allCrowns = findCrownsInKingdom(kingdom);
   return allCrowns.filter(
-    (crown) => !giants.some((g) => g.position.x === crown.x && g.position.y === crown.y),
+    (crown) =>
+      !giants.some((g) => g.position.x === crown.x && g.position.y === crown.y),
   );
 };
 
@@ -111,15 +112,23 @@ export const sendGiantToOpponent = (
   }
 
   // Validate target position has a crown
-  const targetTile = targetPlayer.kingdom[targetCrownPosition.y]?.[targetCrownPosition.x];
-  if (!targetTile || targetTile.type === "empty" || targetTile.type === "castle" || targetTile.crowns <= 0) {
+  const targetTile =
+    targetPlayer.kingdom[targetCrownPosition.y]?.[targetCrownPosition.x];
+  if (
+    !targetTile ||
+    targetTile.type === "empty" ||
+    targetTile.type === "castle" ||
+    targetTile.crowns <= 0
+  ) {
     return err(ErrorCode.INVALID_GIANT_PLACEMENT);
   }
 
   // Check target crown isn't already covered
   const targetGiants = targetPlayer.giants ?? [];
   const alreadyCovered = targetGiants.some(
-    (g) => g.position.x === targetCrownPosition.x && g.position.y === targetCrownPosition.y,
+    (g) =>
+      g.position.x === targetCrownPosition.x &&
+      g.position.y === targetCrownPosition.y,
   );
   if (alreadyCovered) {
     return err(ErrorCode.INVALID_GIANT_PLACEMENT);

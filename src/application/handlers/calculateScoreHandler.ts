@@ -10,7 +10,7 @@ type CalculateScoreHandler = (command: CalculateScoreCommand) => Score;
 export const calculateScoreHandler =
   (
     logger: Logger,
-    translator: Translator,
+    _translator: Translator,
     useCase: CalculateScoreUseCase,
   ): CalculateScoreHandler =>
   (command) => {

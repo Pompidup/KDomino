@@ -19,7 +19,7 @@ type GetValidPlacementsHandler = (
  */
 export const getValidPlacementsHandler = (
   logger: Logger,
-  translator: Translator,
+  _translator: Translator,
   useCase: GetValidPlacementsUseCase,
 ): GetValidPlacementsHandler => {
   return (command) => {

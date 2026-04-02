@@ -12,7 +12,7 @@ type GetDynastyResultHandler = (
 
 export const getDynastyResultHandler = (
   logger: Logger,
-  translator: Translator,
+  _translator: Translator,
   useCase: GetDynastyResultUseCase,
 ): GetDynastyResultHandler => {
   return (command) => {

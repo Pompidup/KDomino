@@ -215,9 +215,9 @@ describe("queen", () => {
         },
       ];
 
-      expect(calculateBuildingEndGameBonus(makePlayer("p1", 0, buildings))).toBe(
-        8,
-      );
+      expect(
+        calculateBuildingEndGameBonus(makePlayer("p1", 0, buildings)),
+      ).toBe(8);
     });
   });
 });

@@ -5,9 +5,9 @@ import {
 } from "@core/domain/entities/lord.js";
 import { ErrorCode } from "@core/domain/errors/domainErrors.js";
 import {
-  gameSteps,
   type GameStateResult,
   type GameWithNextAction,
+  gameSteps,
   type NextAction,
 } from "@core/domain/types/game.js";
 import { playerActions } from "@core/domain/types/player.js";
@@ -38,16 +38,17 @@ export const useDragonUseCase: UseDragonUseCase = (
     return err(ErrorCode.INVALID_OPTIONAL_ACTION);
   }
 
-  if (!game.queendomino.dragonAvailable || game.queendomino.dragonUsedThisRound) {
+  if (
+    !game.queendomino.dragonAvailable ||
+    game.queendomino.dragonUsedThisRound
+  ) {
     return err(ErrorCode.DRAGON_UNAVAILABLE);
   }
 
   const currentLord = game.lords.find((l) => l.id === lordId);
   if (!currentLord) return err(ErrorCode.LORD_NOT_FOUND);
 
-  const currentPlayer = game.players.find(
-    (p) => p.id === currentLord.playerId,
-  );
+  const currentPlayer = game.players.find((p) => p.id === currentLord.playerId);
   if (!currentPlayer) return err(ErrorCode.PLAYER_NOT_FOUND);
 
   // Queen holder cannot use dragon

@@ -62,7 +62,10 @@ describe("jsonDominoes", () => {
 
   test("should return 60 dominoes for AgeOfGiants mode", () => {
     const repository = jsonDominoes();
-    const mode: GameMode = { name: "AgeOfGiants", description: "Age of Giants" };
+    const mode: GameMode = {
+      name: "AgeOfGiants",
+      description: "Age of Giants",
+    };
 
     const result = repository.getForMode(mode);
     expect(result.length).toBe(60);
@@ -70,7 +73,10 @@ describe("jsonDominoes", () => {
 
   test("should return 60 dominoes for AgeOfGiants-QueenDomino mode", () => {
     const repository = jsonDominoes();
-    const mode: GameMode = { name: "AgeOfGiants-QueenDomino", description: "AoG + QD" };
+    const mode: GameMode = {
+      name: "AgeOfGiants-QueenDomino",
+      description: "AoG + QD",
+    };
 
     const result = repository.getForMode(mode);
     expect(result.length).toBe(60);
@@ -78,7 +84,10 @@ describe("jsonDominoes", () => {
 
   test("should have giant dominos with letter and hasGiant flag", () => {
     const repository = jsonDominoes();
-    const mode: GameMode = { name: "AgeOfGiants", description: "Age of Giants" };
+    const mode: GameMode = {
+      name: "AgeOfGiants",
+      description: "Age of Giants",
+    };
 
     const dominoes = repository.getForMode(mode);
     const giantDominos = dominoes.filter(
@@ -93,7 +102,10 @@ describe("jsonDominoes", () => {
 
   test("should have footprint dominos with hasFootprint flag", () => {
     const repository = jsonDominoes();
-    const mode: GameMode = { name: "AgeOfGiants", description: "Age of Giants" };
+    const mode: GameMode = {
+      name: "AgeOfGiants",
+      description: "Age of Giants",
+    };
 
     const dominoes = repository.getForMode(mode);
     const footprintDominos = dominoes.filter(
@@ -108,7 +120,10 @@ describe("jsonDominoes", () => {
 
   test("letter dominos sort before numbered dominos", () => {
     const repository = jsonDominoes();
-    const mode: GameMode = { name: "AgeOfGiants", description: "Age of Giants" };
+    const mode: GameMode = {
+      name: "AgeOfGiants",
+      description: "Age of Giants",
+    };
 
     const dominoes = repository.getForMode(mode);
     const sorted = [...dominoes].sort((a, b) => a.number - b.number);

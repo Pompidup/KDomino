@@ -7,10 +7,9 @@ import {
 } from "@core/domain/entities/lord.js";
 import { ErrorCode } from "@core/domain/errors/domainErrors.js";
 import {
-  gameSteps,
-  type GameState,
   type GameStateResult,
   type GameWithNextAction,
+  gameSteps,
   type NextAction,
 } from "@core/domain/types/game.js";
 import type { Position } from "@core/domain/types/kingdom.js";
@@ -65,7 +64,12 @@ export const sendGiantUseCase: SendGiantUseCase = (
     return err(ErrorCode.INVALID_GIANT_PLACEMENT);
   }
 
-  const result = sendGiantToOpponent(sourcePlayer, targetPlayer, giantIndex, targetCrownPosition);
+  const result = sendGiantToOpponent(
+    sourcePlayer,
+    targetPlayer,
+    giantIndex,
+    targetCrownPosition,
+  );
   if (isErr(result)) {
     return result;
   }

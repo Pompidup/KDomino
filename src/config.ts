@@ -12,6 +12,7 @@ import { addPlayersHandler } from "@application/handlers/addPlayersHandler.js";
 import { calculateScoreHandler } from "@application/handlers/calculateScoreHandler.js";
 import { canPlaceDominoHandler } from "@application/handlers/canPlaceDominoHandler.js";
 import { chooseDominoHandler } from "@application/handlers/chooseDominoHandler.js";
+import { constructBuildingHandler } from "@application/handlers/constructBuildingHandler.js";
 import { createGameHandler } from "@application/handlers/createGameHandler.js";
 import { discardDominoHandler } from "@application/handlers/discardDominoHandler.js";
 import { getDynastyResultHandler } from "@application/handlers/getDynastyResultHandler.js";
@@ -20,29 +21,29 @@ import { getModesHandler } from "@application/handlers/getModesHandler.js";
 import { getResultHandler } from "@application/handlers/getResultHandler.js";
 import { getValidPlacementsHandler } from "@application/handlers/getValidPlacementsHandler.js";
 import { placeDominoHandler } from "@application/handlers/placeDominoHandler.js";
+import { placeFireTokenHandler } from "@application/handlers/placeFireTokenHandler.js";
+import { placeGiantHandler } from "@application/handlers/placeGiantHandler.js";
+import { placeKnightHandler } from "@application/handlers/placeKnightHandler.js";
+import { recruitCavemanHandler } from "@application/handlers/recruitCavemanHandler.js";
+import { sendGiantHandler } from "@application/handlers/sendGiantHandler.js";
 import {
   deserializeGameHandler,
   serializeGameHandler,
 } from "@application/handlers/serializeGameHandler.js";
-import { startGameHandler } from "@application/handlers/startGameHandler.js";
-import { placeGiantHandler } from "@application/handlers/placeGiantHandler.js";
-import { placeKnightHandler } from "@application/handlers/placeKnightHandler.js";
-import { sendGiantHandler } from "@application/handlers/sendGiantHandler.js";
-import { constructBuildingHandler } from "@application/handlers/constructBuildingHandler.js";
-import { useDragonHandler } from "@application/handlers/useDragonHandler.js";
-import { placeFireTokenHandler } from "@application/handlers/placeFireTokenHandler.js";
-import { recruitCavemanHandler } from "@application/handlers/recruitCavemanHandler.js";
 import { skipOptionalActionHandler } from "@application/handlers/skipOptionalActionHandler.js";
+import { startGameHandler } from "@application/handlers/startGameHandler.js";
+import { useDragonHandler } from "@application/handlers/useDragonHandler.js";
 import type { Translator } from "@core/i18n/translations.js";
-import type { GameEngine } from "@core/portUserside/engine.js";
 import { defaultTranslator } from "@core/i18n/translations.js";
 import type { Logger } from "@core/portServerside/logger.js";
 import type { ShuffleMethod } from "@core/portServerside/shuffleMethod.js";
 import type { UuidMethod } from "@core/portServerside/uuidMethod.js";
+import type { GameEngine } from "@core/portUserside/engine.js";
 import { addExtraRulesUseCase } from "@core/useCases/addExtraRules.js";
 import { addPlayersUseCase } from "@core/useCases/addPlayers.js";
 import { calculateScoreUseCase } from "@core/useCases/calculateScore.js";
 import { chooseDominoUseCase } from "@core/useCases/chooseDomino.js";
+import { constructBuildingUseCase } from "@core/useCases/constructBuilding.js";
 import { createGameUseCase } from "@core/useCases/createGame.js";
 import { discardDominoUseCase } from "@core/useCases/discardDomino.js";
 import type { DebugOptions } from "@core/useCases/gameDebug.js";
@@ -56,15 +57,14 @@ import {
   getValidPlacementsUseCase,
 } from "@core/useCases/getValidPlacements.js";
 import { placeDominoUseCase } from "@core/useCases/placeDomino.js";
+import { placeFireTokenUseCase } from "@core/useCases/placeFireToken.js";
 import { placeGiantUseCase } from "@core/useCases/placeGiant.js";
 import { placeKnightUseCase } from "@core/useCases/placeKnight.js";
-import { sendGiantUseCase } from "@core/useCases/sendGiant.js";
-import { constructBuildingUseCase } from "@core/useCases/constructBuilding.js";
-import { useDragonUseCase } from "@core/useCases/useDragon.js";
-import { placeFireTokenUseCase } from "@core/useCases/placeFireToken.js";
 import { recruitCavemanUseCase } from "@core/useCases/recruitCaveman.js";
+import { sendGiantUseCase } from "@core/useCases/sendGiant.js";
 import { skipOptionalActionUseCase } from "@core/useCases/skipOptionalAction.js";
 import { startGameUseCase } from "@core/useCases/startGame.js";
+import { useDragonUseCase } from "@core/useCases/useDragon.js";
 
 /**
  * Configuration options for the game engine.
@@ -113,7 +113,9 @@ export type ConfiguredHandlers = {
   skipOptionalActionHandler: GameEngine["skipOptionalAction"];
 };
 
-export const configureEngine = (config: Partial<EngineConfig>): ConfiguredHandlers => {
+export const configureEngine = (
+  config: Partial<EngineConfig>,
+): ConfiguredHandlers => {
   const modeRepository = jsonModes();
   const dominoesRepository = jsonDominoes();
   const buildingsRepository = jsonBuildings();
@@ -219,16 +221,8 @@ export const configureEngine = (config: Partial<EngineConfig>): ConfiguredHandle
       translator,
       getDynastyResultUseCase,
     ),
-    placeGiantHandler: placeGiantHandler(
-      logger,
-      translator,
-      placeGiantUseCase,
-    ),
-    sendGiantHandler: sendGiantHandler(
-      logger,
-      translator,
-      sendGiantUseCase,
-    ),
+    placeGiantHandler: placeGiantHandler(logger, translator, placeGiantUseCase),
+    sendGiantHandler: sendGiantHandler(logger, translator, sendGiantUseCase),
     placeKnightHandler: placeKnightHandler(
       logger,
       translator,
@@ -239,11 +233,7 @@ export const configureEngine = (config: Partial<EngineConfig>): ConfiguredHandle
       translator,
       constructBuildingUseCase,
     ),
-    useDragonHandler: useDragonHandler(
-      logger,
-      translator,
-      useDragonUseCase,
-    ),
+    useDragonHandler: useDragonHandler(logger, translator, useDragonUseCase),
     placeFireTokenHandler: placeFireTokenHandler(
       logger,
       translator,

@@ -16,7 +16,7 @@ import { ok, type Result } from "@utils/result.js";
 import { createSeededShuffle } from "@utils/seededShuffle.js";
 
 export type StartGameUseCase = (
-  game: GameWithNextStep
+  game: GameWithNextStep,
 ) => Result<GameWithNextAction>;
 
 export const startGameUseCase =
@@ -67,7 +67,11 @@ export const startGameUseCase =
 
     // Setup Builders Board for QueenDomino mode (including AoG-QD)
     let queendomino = game.queendomino;
-    if (queendomino && (game.mode.name === "QueenDomino" || isAgeOfGiantsQueenDominoMode(game.mode.name))) {
+    if (
+      queendomino &&
+      (game.mode.name === "QueenDomino" ||
+        isAgeOfGiantsQueenDominoMode(game.mode.name))
+    ) {
       const buildingShuffle = game.seed
         ? createSeededShuffle(game.seed, "buildings")
         : shuffleMethod;

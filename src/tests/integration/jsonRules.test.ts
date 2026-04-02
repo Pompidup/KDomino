@@ -12,10 +12,34 @@ describe("jsonRules", () => {
     // Assert
     expect(result).toHaveProperty("basic");
     expect(result.basic).toEqual({
-      "1": { lords: 1, maxDominoes: 48, dominoesPerTurn: 4, maxTurns: 12, maxKingdomSize: 5 },
-      "2": { lords: 2, maxDominoes: 24, dominoesPerTurn: 4, maxTurns: 6, maxKingdomSize: 5 },
-      "3": { lords: 1, maxDominoes: 48, dominoesPerTurn: 4, maxTurns: 12, maxKingdomSize: 5 },
-      "4": { lords: 1, maxDominoes: 48, dominoesPerTurn: 4, maxTurns: 12, maxKingdomSize: 5 },
+      "1": {
+        lords: 1,
+        maxDominoes: 48,
+        dominoesPerTurn: 4,
+        maxTurns: 12,
+        maxKingdomSize: 5,
+      },
+      "2": {
+        lords: 2,
+        maxDominoes: 24,
+        dominoesPerTurn: 4,
+        maxTurns: 6,
+        maxKingdomSize: 5,
+      },
+      "3": {
+        lords: 1,
+        maxDominoes: 48,
+        dominoesPerTurn: 4,
+        maxTurns: 12,
+        maxKingdomSize: 5,
+      },
+      "4": {
+        lords: 1,
+        maxDominoes: 48,
+        dominoesPerTurn: 4,
+        maxTurns: 12,
+        maxKingdomSize: 5,
+      },
     });
     expect(result).toHaveProperty("extraRules");
     expect(result.extraRules).toHaveLength(9);
@@ -32,10 +56,38 @@ describe("jsonRules", () => {
     ]);
     expect(result).toHaveProperty("aogBasic");
     expect(result.aogBasic).toEqual({
-      "2": { lords: 2, maxDominoes: 30, dominoesPerTurn: 5, maxTurns: 6, maxKingdomSize: 5, dominoesDiscardedPerTurn: 1 },
-      "3": { lords: 1, maxDominoes: 60, dominoesPerTurn: 5, maxTurns: 12, maxKingdomSize: 5, dominoesDiscardedPerTurn: 2 },
-      "4": { lords: 1, maxDominoes: 60, dominoesPerTurn: 5, maxTurns: 12, maxKingdomSize: 5, dominoesDiscardedPerTurn: 1 },
-      "5": { lords: 1, maxDominoes: 60, dominoesPerTurn: 5, maxTurns: 12, maxKingdomSize: 5, dominoesDiscardedPerTurn: 0 },
+      "2": {
+        lords: 2,
+        maxDominoes: 30,
+        dominoesPerTurn: 5,
+        maxTurns: 6,
+        maxKingdomSize: 5,
+        dominoesDiscardedPerTurn: 1,
+      },
+      "3": {
+        lords: 1,
+        maxDominoes: 60,
+        dominoesPerTurn: 5,
+        maxTurns: 12,
+        maxKingdomSize: 5,
+        dominoesDiscardedPerTurn: 2,
+      },
+      "4": {
+        lords: 1,
+        maxDominoes: 60,
+        dominoesPerTurn: 5,
+        maxTurns: 12,
+        maxKingdomSize: 5,
+        dominoesDiscardedPerTurn: 1,
+      },
+      "5": {
+        lords: 1,
+        maxDominoes: 60,
+        dominoesPerTurn: 5,
+        maxTurns: 12,
+        maxKingdomSize: 5,
+        dominoesDiscardedPerTurn: 0,
+      },
     });
   });
 

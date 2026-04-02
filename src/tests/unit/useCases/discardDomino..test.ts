@@ -71,7 +71,7 @@ describe("Game Pass", () => {
       .withTurn(6)
       .build();
 
-    initialGame.lords.map((lord, index) => {
+    initialGame.lords.forEach((lord, index) => {
       if (index !== 3) {
         lord.hasPick = false;
         lord.hasPlace = true;

@@ -151,28 +151,42 @@ export const defaultTranslations: Record<TranslationKeyType, string> = {
 
   // Queendomino errors
   [TranslationKey.ERROR_CANNOT_PLACE_KNIGHT]: "Cannot place knight here",
-  [TranslationKey.ERROR_MAX_KNIGHTS_REACHED]: "Maximum number of knights reached (3)",
-  [TranslationKey.ERROR_KNIGHT_TERRITORY_OCCUPIED]: "This territory already has a knight",
-  [TranslationKey.ERROR_CANNOT_AFFORD_BUILDING]: "Not enough coins to purchase this building",
-  [TranslationKey.ERROR_NO_CONSTRUCTION_SQUARE]: "No open construction square available",
-  [TranslationKey.ERROR_DRAGON_UNAVAILABLE]: "The Dragon is not available this round",
-  [TranslationKey.ERROR_QUEEN_HOLDER_CANNOT_USE_DRAGON]: "The Queen holder cannot use the Dragon",
-  [TranslationKey.ERROR_BUILDING_NOT_FOUND]: "Building not found on the Builders Board",
-  [TranslationKey.ERROR_INVALID_OPTIONAL_ACTION]: "Invalid optional action for this game state",
+  [TranslationKey.ERROR_MAX_KNIGHTS_REACHED]:
+    "Maximum number of knights reached (3)",
+  [TranslationKey.ERROR_KNIGHT_TERRITORY_OCCUPIED]:
+    "This territory already has a knight",
+  [TranslationKey.ERROR_CANNOT_AFFORD_BUILDING]:
+    "Not enough coins to purchase this building",
+  [TranslationKey.ERROR_NO_CONSTRUCTION_SQUARE]:
+    "No open construction square available",
+  [TranslationKey.ERROR_DRAGON_UNAVAILABLE]:
+    "The Dragon is not available this round",
+  [TranslationKey.ERROR_QUEEN_HOLDER_CANNOT_USE_DRAGON]:
+    "The Queen holder cannot use the Dragon",
+  [TranslationKey.ERROR_BUILDING_NOT_FOUND]:
+    "Building not found on the Builders Board",
+  [TranslationKey.ERROR_INVALID_OPTIONAL_ACTION]:
+    "Invalid optional action for this game state",
 
   // Age of Giants errors
   [TranslationKey.ERROR_GIANT_POOL_EMPTY]: "No giants remaining in the pool",
   [TranslationKey.ERROR_GIANT_NOT_FOUND]: "Giant not found on the kingdom",
-  [TranslationKey.ERROR_INVALID_GIANT_PLACEMENT]: "Invalid position for giant placement — must be an uncovered crown",
+  [TranslationKey.ERROR_INVALID_GIANT_PLACEMENT]:
+    "Invalid position for giant placement — must be an uncovered crown",
   [TranslationKey.ERROR_NOT_AOG_MODE]: "Age of Giants mode is not enabled",
 
   // Origins errors
-  [TranslationKey.ERROR_FIRE_TOKEN_POOL_EMPTY]: "No fire tokens remaining in the pool",
-  [TranslationKey.ERROR_FIRE_TOKEN_INVALID_POSITION]: "Invalid position for fire token placement",
-  [TranslationKey.ERROR_NO_PENDING_FIRE_TOKEN]: "No pending fire token to place",
+  [TranslationKey.ERROR_FIRE_TOKEN_POOL_EMPTY]:
+    "No fire tokens remaining in the pool",
+  [TranslationKey.ERROR_FIRE_TOKEN_INVALID_POSITION]:
+    "Invalid position for fire token placement",
+  [TranslationKey.ERROR_NO_PENDING_FIRE_TOKEN]:
+    "No pending fire token to place",
   [TranslationKey.ERROR_CANNOT_RECRUIT_CAVEMAN]: "Cannot recruit a caveman",
-  [TranslationKey.ERROR_INSUFFICIENT_RESOURCES]: "Insufficient resources for this action",
-  [TranslationKey.ERROR_INVALID_CAVEMAN_PLACEMENT]: "Invalid position for caveman placement",
+  [TranslationKey.ERROR_INSUFFICIENT_RESOURCES]:
+    "Insufficient resources for this action",
+  [TranslationKey.ERROR_INVALID_CAVEMAN_PLACEMENT]:
+    "Invalid position for caveman placement",
   [TranslationKey.ERROR_CAVEMAN_NOT_FOUND]: "Caveman not found",
   [TranslationKey.ERROR_NOT_TRIBE_MODE]: "Tribe mode is not enabled",
 };
@@ -213,23 +227,33 @@ export const errorCodeToTranslationKey: Record<
   [ErrorCode.REDO_UNAVAILABLE]: TranslationKey.ERROR_REDO_UNAVAILABLE,
   [ErrorCode.CANNOT_PLACE_KNIGHT]: TranslationKey.ERROR_CANNOT_PLACE_KNIGHT,
   [ErrorCode.MAX_KNIGHTS_REACHED]: TranslationKey.ERROR_MAX_KNIGHTS_REACHED,
-  [ErrorCode.KNIGHT_TERRITORY_OCCUPIED]: TranslationKey.ERROR_KNIGHT_TERRITORY_OCCUPIED,
-  [ErrorCode.CANNOT_AFFORD_BUILDING]: TranslationKey.ERROR_CANNOT_AFFORD_BUILDING,
-  [ErrorCode.NO_CONSTRUCTION_SQUARE]: TranslationKey.ERROR_NO_CONSTRUCTION_SQUARE,
+  [ErrorCode.KNIGHT_TERRITORY_OCCUPIED]:
+    TranslationKey.ERROR_KNIGHT_TERRITORY_OCCUPIED,
+  [ErrorCode.CANNOT_AFFORD_BUILDING]:
+    TranslationKey.ERROR_CANNOT_AFFORD_BUILDING,
+  [ErrorCode.NO_CONSTRUCTION_SQUARE]:
+    TranslationKey.ERROR_NO_CONSTRUCTION_SQUARE,
   [ErrorCode.DRAGON_UNAVAILABLE]: TranslationKey.ERROR_DRAGON_UNAVAILABLE,
-  [ErrorCode.QUEEN_HOLDER_CANNOT_USE_DRAGON]: TranslationKey.ERROR_QUEEN_HOLDER_CANNOT_USE_DRAGON,
+  [ErrorCode.QUEEN_HOLDER_CANNOT_USE_DRAGON]:
+    TranslationKey.ERROR_QUEEN_HOLDER_CANNOT_USE_DRAGON,
   [ErrorCode.BUILDING_NOT_FOUND]: TranslationKey.ERROR_BUILDING_NOT_FOUND,
-  [ErrorCode.INVALID_OPTIONAL_ACTION]: TranslationKey.ERROR_INVALID_OPTIONAL_ACTION,
+  [ErrorCode.INVALID_OPTIONAL_ACTION]:
+    TranslationKey.ERROR_INVALID_OPTIONAL_ACTION,
   [ErrorCode.GIANT_POOL_EMPTY]: TranslationKey.ERROR_GIANT_POOL_EMPTY,
   [ErrorCode.GIANT_NOT_FOUND]: TranslationKey.ERROR_GIANT_NOT_FOUND,
-  [ErrorCode.INVALID_GIANT_PLACEMENT]: TranslationKey.ERROR_INVALID_GIANT_PLACEMENT,
+  [ErrorCode.INVALID_GIANT_PLACEMENT]:
+    TranslationKey.ERROR_INVALID_GIANT_PLACEMENT,
   [ErrorCode.NOT_AOG_MODE]: TranslationKey.ERROR_NOT_AOG_MODE,
   [ErrorCode.FIRE_TOKEN_POOL_EMPTY]: TranslationKey.ERROR_FIRE_TOKEN_POOL_EMPTY,
-  [ErrorCode.FIRE_TOKEN_INVALID_POSITION]: TranslationKey.ERROR_FIRE_TOKEN_INVALID_POSITION,
+  [ErrorCode.FIRE_TOKEN_INVALID_POSITION]:
+    TranslationKey.ERROR_FIRE_TOKEN_INVALID_POSITION,
   [ErrorCode.NO_PENDING_FIRE_TOKEN]: TranslationKey.ERROR_NO_PENDING_FIRE_TOKEN,
-  [ErrorCode.CANNOT_RECRUIT_CAVEMAN]: TranslationKey.ERROR_CANNOT_RECRUIT_CAVEMAN,
-  [ErrorCode.INSUFFICIENT_RESOURCES]: TranslationKey.ERROR_INSUFFICIENT_RESOURCES,
-  [ErrorCode.INVALID_CAVEMAN_PLACEMENT]: TranslationKey.ERROR_INVALID_CAVEMAN_PLACEMENT,
+  [ErrorCode.CANNOT_RECRUIT_CAVEMAN]:
+    TranslationKey.ERROR_CANNOT_RECRUIT_CAVEMAN,
+  [ErrorCode.INSUFFICIENT_RESOURCES]:
+    TranslationKey.ERROR_INSUFFICIENT_RESOURCES,
+  [ErrorCode.INVALID_CAVEMAN_PLACEMENT]:
+    TranslationKey.ERROR_INVALID_CAVEMAN_PLACEMENT,
   [ErrorCode.CAVEMAN_NOT_FOUND]: TranslationKey.ERROR_CAVEMAN_NOT_FOUND,
   [ErrorCode.NOT_TRIBE_MODE]: TranslationKey.ERROR_NOT_TRIBE_MODE,
 };

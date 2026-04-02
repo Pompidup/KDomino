@@ -1,6 +1,9 @@
 import type { NextAction } from "@core/domain/types/game.js";
 import type { Lord } from "@core/domain/types/lord.js";
-import { type PlayerActions, playerActions } from "@core/domain/types/player.js";
+import {
+  type PlayerActions,
+  playerActions,
+} from "@core/domain/types/player.js";
 
 export const createLord = (id: string, playerId: string): Lord => {
   return {
@@ -25,7 +28,7 @@ export const canPick = (lord: Lord): boolean => {
 };
 
 export const canPlaceAndDominoPickedIsDefined = (
-  lord: Lord
+  lord: Lord,
 ): lord is Required<Lord & Pick<Lord, "dominoPicked">> => {
   return (
     !hasPick(lord) &&

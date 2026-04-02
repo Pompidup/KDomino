@@ -1,22 +1,27 @@
-import { describe, test, expect, vi } from "vitest";
 import {
-  randomStrategy,
-  greedyStrategy,
+  createEmptyKingdom,
+  placeCastle,
+} from "@core/domain/entities/kingdom.js";
+import type { Domino, RevealsDomino } from "@core/domain/types/domino.js";
+import type {
+  GameWithNextAction,
+  NextAction,
+} from "@core/domain/types/game.js";
+import {
   advancedStrategy,
   expertStrategy,
-  playBotTurn,
+  greedyStrategy,
   isBotTurn,
-  playBotTurns,
   type PickContext,
   type PlaceContext,
+  playBotTurn,
+  randomStrategy,
 } from "@core/useCases/bot.js";
+import type { ValidPlacement } from "@core/useCases/getValidPlacements.js";
+import { describe, expect, test, vi } from "vitest";
 import { createGameBuilder } from "../../builder/game.js";
 import { createLordBuilder } from "../../builder/lord.js";
 import { createPlayerBuilder } from "../../builder/player.js";
-import { placeCastle, createEmptyKingdom } from "@core/domain/entities/kingdom.js";
-import type { Domino, RevealsDomino } from "@core/domain/types/domino.js";
-import type { NextAction, GameWithNextAction } from "@core/domain/types/game.js";
-import type { ValidPlacement } from "@core/useCases/getValidPlacements.js";
 
 // ─── Test Fixtures ───────────────────────────────────────────────────
 
@@ -38,7 +43,10 @@ const forestDomino: Domino = {
   number: 3,
 };
 
-const makeRevealsDomino = (domino: Domino, position: number): RevealsDomino => ({
+const makeRevealsDomino = (
+  domino: Domino,
+  position: number,
+): RevealsDomino => ({
   domino,
   picked: false,
   lordId: null,
@@ -55,7 +63,7 @@ const validPlacementsNearCastle: ValidPlacement[] = [
 
 const makePickContext = (
   availableDominoes: RevealsDomino[],
-  overrides?: Partial<PickContext>
+  overrides?: Partial<PickContext>,
 ): PickContext => {
   const kingdom = emptyKingdomWithCastle();
   const lord = createLordBuilder()
@@ -95,7 +103,7 @@ const makePickContext = (
 const makePlaceContext = (
   domino: Domino,
   placements: ValidPlacement[],
-  overrides?: Partial<PlaceContext>
+  overrides?: Partial<PlaceContext>,
 ): PlaceContext => {
   const kingdom = emptyKingdomWithCastle();
   const lord = createLordBuilder()
@@ -241,7 +249,9 @@ describe("advancedStrategy", () => {
 
 describe("expertStrategy", () => {
   // Use a near-end game state (turn 5 of 6, few dominoes left) to keep search fast
-  const makeExpertPickContext = (availableDominoes: RevealsDomino[]): PickContext => {
+  const makeExpertPickContext = (
+    availableDominoes: RevealsDomino[],
+  ): PickContext => {
     const kingdom = emptyKingdomWithCastle();
     const lord = createLordBuilder()
       .withId("lord1-id")
@@ -319,9 +329,11 @@ describe("expertStrategy", () => {
 
 describe("playBotTurn", () => {
   test("should call engine.chooseDomino for pickDomino action", () => {
+    // biome-ignore lint/suspicious/noExplicitAny: test mock
     const expectedState = { id: "new-state" } as any;
     const engine = {
       chooseDomino: vi.fn().mockReturnValue(expectedState),
+      // biome-ignore lint/suspicious/noExplicitAny: test mock
     } as any;
 
     const available = [makeRevealsDomino(wheatDomino, 1)];
@@ -344,6 +356,7 @@ describe("playBotTurn", () => {
   });
 
   test("should call engine.placeDomino for placeDomino action with valid placement", () => {
+    // biome-ignore lint/suspicious/noExplicitAny: test mock
     const expectedState = { id: "placed" } as any;
     const kingdom = emptyKingdomWithCastle();
 
@@ -361,6 +374,7 @@ describe("playBotTurn", () => {
     const engine = {
       placeDomino: vi.fn().mockReturnValue(expectedState),
       discardDomino: vi.fn(),
+      // biome-ignore lint/suspicious/noExplicitAny: test mock
     } as any;
 
     const actionPlace: NextAction = {
@@ -384,9 +398,11 @@ describe("playBotTurn", () => {
   });
 
   test("should call engine.discardDomino for pass action", () => {
+    // biome-ignore lint/suspicious/noExplicitAny: test mock
     const expectedState = { id: "discarded" } as any;
     const engine = {
       discardDomino: vi.fn().mockReturnValue(expectedState),
+      // biome-ignore lint/suspicious/noExplicitAny: test mock
     } as any;
 
     const actionPass: NextAction = {
@@ -416,6 +432,7 @@ describe("isBotTurn", () => {
       .withName("Bot")
       .build();
     // Manually set bot field
+    // biome-ignore lint/suspicious/noExplicitAny: test mock
     (botPlayer as any).bot = { strategyName: "greedy" };
 
     const lord = createLordBuilder()

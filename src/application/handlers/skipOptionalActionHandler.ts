@@ -1,7 +1,6 @@
 import type { SkipOptionalActionCommand } from "@application/commands/skipOptionalActionCommand.js";
 import {
   ActionExecutionError,
-  ErrorCode,
   type ErrorCodeType,
 } from "@core/domain/errors/domainErrors.js";
 import type { GameState } from "@core/domain/types/game.js";
@@ -11,7 +10,9 @@ import type { Logger } from "@core/portServerside/logger.js";
 import type { SkipOptionalActionUseCase } from "@core/useCases/skipOptionalAction.js";
 import { isErr } from "@utils/result.js";
 
-type SkipOptionalActionHandler = (command: SkipOptionalActionCommand) => GameState;
+type SkipOptionalActionHandler = (
+  command: SkipOptionalActionCommand,
+) => GameState;
 
 export const skipOptionalActionHandler =
   (

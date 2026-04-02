@@ -1,7 +1,9 @@
 import type { QuestTile, QuestType } from "@core/domain/types/ageOfGiants.js";
 import type { Ground } from "@core/domain/types/domino.js";
 import type { QuestTilesRepository } from "@core/portServerside/questTilesRepository.js";
-import questTilesJson from "../datasources/questTiles.json" with { type: "json" };
+import questTilesJson from "../datasources/questTiles.json" with {
+  type: "json",
+};
 
 const mapQuestTile = (raw: {
   id: number;

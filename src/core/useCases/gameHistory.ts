@@ -1,5 +1,5 @@
+import { RedoError, UndoError } from "@core/domain/errors/domainErrors.js";
 import type { GameState } from "@core/domain/types/index.js";
-import { UndoError, RedoError } from "@core/domain/errors/domainErrors.js";
 
 /**
  * Manages a history of game states for undo/redo support.
@@ -46,7 +46,7 @@ export const createGameHistory = (initialState: GameState): GameHistory => ({
  */
 export const pushState = (
   history: GameHistory,
-  newState: GameState
+  newState: GameState,
 ): GameHistory => ({
   current: newState,
   past: [...history.past, history.current],
@@ -123,7 +123,7 @@ export const clearHistory = (history: GameHistory): GameHistory => ({
  * Returns the number of states in the past and future stacks.
  */
 export const getHistorySize = (
-  history: GameHistory
+  history: GameHistory,
 ): { past: number; future: number } => ({
   past: history.past.length,
   future: history.future.length,

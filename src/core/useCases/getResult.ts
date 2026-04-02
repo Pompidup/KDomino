@@ -1,16 +1,16 @@
 import { isAgeOfGiantsMode } from "@core/domain/entities/ageOfGiantsHelpers.js";
+import { calculateTribeCavemanScore } from "@core/domain/entities/caveman.js";
 import {
   checkCastleIsInMiddle,
   countDominoes,
 } from "@core/domain/entities/kingdom.js";
-import { calculateQuestBonus } from "@core/domain/entities/questScore.js";
-import { calculateTribeCavemanScore } from "@core/domain/entities/caveman.js";
 import {
   isOriginsMode,
   isTotemMode,
   isTribeMode,
 } from "@core/domain/entities/originsHelpers.js";
 import { calculateOriginsFireBonus } from "@core/domain/entities/originsScore.js";
+import { calculateQuestBonus } from "@core/domain/entities/questScore.js";
 import { calculateTotemScore } from "@core/domain/entities/totem.js";
 import type {
   FinalResult,
@@ -18,11 +18,11 @@ import type {
   GameWithResults,
   ScoreResult,
 } from "@core/domain/types/index.js";
-import { err, ok, type Result } from "@utils/result.js";
+import { ok, type Result } from "@utils/result.js";
 
 export type GetResultUseCase = (
   game: GameWithNextStep,
-  scoreResult: ScoreResult[]
+  scoreResult: ScoreResult[],
 ) => Result<GameWithResults>;
 
 export const getResultUseCase: GetResultUseCase = (game, scoreResult) => {
@@ -40,7 +40,11 @@ export const getResultUseCase: GetResultUseCase = (game, scoreResult) => {
     const { kingdom } = player;
 
     // Origins fire token scoring bonus
-    if (isOriginsMode(game.mode.name) && player.fireTokens && player.fireTokens.length > 0) {
+    if (
+      isOriginsMode(game.mode.name) &&
+      player.fireTokens &&
+      player.fireTokens.length > 0
+    ) {
       finalScore += calculateOriginsFireBonus(kingdom, player.fireTokens);
     }
 
@@ -50,7 +54,11 @@ export const getResultUseCase: GetResultUseCase = (game, scoreResult) => {
     }
 
     // Tribe mode: caveman bonuses (no resource points, no totems)
-    if (isTribeMode(game.mode.name) && player.cavemen && player.cavemen.length > 0) {
+    if (
+      isTribeMode(game.mode.name) &&
+      player.cavemen &&
+      player.cavemen.length > 0
+    ) {
       finalScore += calculateTribeCavemanScore(
         player.cavemen,
         kingdom,

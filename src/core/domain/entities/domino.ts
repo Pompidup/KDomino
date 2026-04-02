@@ -1,19 +1,19 @@
 import {
-  GROUND,
   type Crown,
   type EmptyGround,
   type EmptyTile,
+  GROUND,
   type Ground,
   type Tile,
 } from "@core/domain/types/domino.js";
 
-const isGround = (ground: any): ground is Ground => {
-  return GROUND.includes(ground);
+const isGround = (ground: unknown): ground is Ground => {
+  return GROUND.includes(ground as Ground);
 };
 
 export const createTile = (
   ground: Ground | EmptyGround,
-  crowns: Crown = 0
+  crowns: Crown = 0,
 ): Tile | EmptyTile => {
   if (isGround(ground)) {
     return { type: ground, crowns } as Tile;

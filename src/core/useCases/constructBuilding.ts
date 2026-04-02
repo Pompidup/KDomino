@@ -45,9 +45,7 @@ export const constructBuildingUseCase: ConstructBuildingUseCase = (
   const currentLord = game.lords.find((l) => l.id === lordId);
   if (!currentLord) return err(ErrorCode.LORD_NOT_FOUND);
 
-  const currentPlayer = game.players.find(
-    (p) => p.id === currentLord.playerId,
-  );
+  const currentPlayer = game.players.find((p) => p.id === currentLord.playerId);
   if (!currentPlayer) return err(ErrorCode.PLAYER_NOT_FOUND);
 
   // Validate construction position

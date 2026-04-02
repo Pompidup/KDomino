@@ -1,6 +1,11 @@
-import type { Kingdom, Position, Rotation, Domino } from "@core/domain/types/index.js";
-import { GRIDSIZE, MAX_KINGDOM_SIZE } from "@core/domain/types/kingdom.js";
 import { placeDomino } from "@core/domain/entities/kingdom.js";
+import type {
+  Domino,
+  Kingdom,
+  Position,
+  Rotation,
+} from "@core/domain/types/index.js";
+import { GRIDSIZE, MAX_KINGDOM_SIZE } from "@core/domain/types/kingdom.js";
 import { isOk } from "@utils/result.js";
 
 /**
@@ -14,7 +19,7 @@ export type ValidPlacement = {
 export type GetValidPlacementsUseCase = (
   kingdom: Kingdom,
   domino: Domino,
-  maxKingdomSize?: number
+  maxKingdomSize?: number,
 ) => ValidPlacement[];
 
 /**
@@ -29,7 +34,7 @@ export type GetValidPlacementsUseCase = (
 export const getValidPlacementsUseCase: GetValidPlacementsUseCase = (
   kingdom,
   domino,
-  maxKingdomSize = MAX_KINGDOM_SIZE
+  maxKingdomSize = MAX_KINGDOM_SIZE,
 ) => {
   const validPlacements: ValidPlacement[] = [];
   const rotations: Rotation[] = [0, 90, 180, 270];
@@ -41,7 +46,13 @@ export const getValidPlacementsUseCase: GetValidPlacementsUseCase = (
 
       // Try each rotation
       for (const rotation of rotations) {
-        const result = placeDomino(kingdom, position, rotation, domino, maxKingdomSize);
+        const result = placeDomino(
+          kingdom,
+          position,
+          rotation,
+          domino,
+          maxKingdomSize,
+        );
         if (isOk(result)) {
           validPlacements.push({ position, rotation });
         }
@@ -63,7 +74,7 @@ export const getValidPlacementsUseCase: GetValidPlacementsUseCase = (
 export const canPlaceDominoUseCase = (
   kingdom: Kingdom,
   domino: Domino,
-  maxKingdomSize: number = MAX_KINGDOM_SIZE
+  maxKingdomSize: number = MAX_KINGDOM_SIZE,
 ): boolean => {
   const rotations: Rotation[] = [0, 90, 180, 270];
 
@@ -74,7 +85,13 @@ export const canPlaceDominoUseCase = (
 
       // Check each rotation - return early if any placement is valid
       for (const rotation of rotations) {
-        const result = placeDomino(kingdom, position, rotation, domino, maxKingdomSize);
+        const result = placeDomino(
+          kingdom,
+          position,
+          rotation,
+          domino,
+          maxKingdomSize,
+        );
         if (isOk(result)) {
           return true;
         }

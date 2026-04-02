@@ -1,9 +1,9 @@
-import { createGameEngine } from "../../index.js";
 import {
-  isGameWithNextAction,
   type GameState,
+  isGameWithNextAction,
 } from "@core/domain/types/game.js";
 import { describe, expect, test } from "vitest";
+import { createGameEngine } from "../../index.js";
 
 describe("Full Game Simulation", () => {
   test("should simulate a complete 2-player game", () => {
@@ -26,8 +26,8 @@ describe("Full Game Simulation", () => {
     // Simulate turns until the game is over
     while (isGameWithNextAction(game)) {
       for (let i = 0; i < 4; i++) {
-        const allLordIds = game.lords.map((lord) => lord.id);
-        const positions = [
+        const _allLordIds = game.lords.map((lord) => lord.id);
+        const _positions = [
           { x: 5, y: 4 },
           { x: 2, y: 4 },
           { x: 4, y: 3 },
@@ -39,9 +39,11 @@ describe("Full Game Simulation", () => {
         let currentLordId = game.nextAction.nextLord;
         let nextAction = game.nextAction.nextAction;
 
-        if (nextAction == "placeDomino") {
+        if (nextAction === "placeDomino") {
           const currentLord = game.lords.find((l) => l.id === currentLordId)!;
-          const currentPlayer = game.players.find((p) => p.id === currentLord.playerId)!;
+          const currentPlayer = game.players.find(
+            (p) => p.id === currentLord.playerId,
+          )!;
           const domino = currentLord.dominoPicked!;
           const validPlacements = engine.getValidPlacements({
             kingdom: currentPlayer.kingdom,
@@ -69,7 +71,7 @@ describe("Full Game Simulation", () => {
         currentLordId = game.nextAction.nextLord;
         nextAction = game.nextAction.nextAction;
 
-        if (nextAction == "pickDomino") {
+        if (nextAction === "pickDomino") {
           game = engine.chooseDomino({
             game,
             lordId: currentLordId,

@@ -1,4 +1,4 @@
-import { isAgeOfGiantsMode, isAgeOfGiantsQueenDominoMode } from "@core/domain/entities/ageOfGiantsHelpers.js";
+import { isAgeOfGiantsQueenDominoMode } from "@core/domain/entities/ageOfGiantsHelpers.js";
 import {
   allLordsHavePlayed,
   nextAgeOfGiantsAction,
@@ -6,12 +6,12 @@ import {
   nextOriginsAction,
   nextQueenDominoAction,
 } from "@core/domain/entities/lord.js";
-import { isOriginsMode, isTribeMode } from "@core/domain/entities/originsHelpers.js";
+import { isTribeMode } from "@core/domain/entities/originsHelpers.js";
 import { ErrorCode } from "@core/domain/errors/domainErrors.js";
 import {
-  gameSteps,
   type GameStateResult,
   type GameWithNextAction,
+  gameSteps,
   type NextAction,
 } from "@core/domain/types/game.js";
 import { playerActions } from "@core/domain/types/player.js";
@@ -47,8 +47,7 @@ export const skipOptionalActionUseCase: SkipOptionalActionUseCase = (
 
   // Age of Giants optional actions (sendGiant is optional; placeGiant is mandatory but auto-skipped when no crowns)
   const isAoGOptional =
-    action === playerActions.sendGiant ||
-    action === playerActions.placeGiant;
+    action === playerActions.sendGiant || action === playerActions.placeGiant;
 
   if (!isQueenDominoOptional && !isOriginsOptional && !isAoGOptional) {
     return err(ErrorCode.INVALID_OPTIONAL_ACTION);
@@ -86,7 +85,10 @@ const handleOriginsSkip = (
 ): GameStateResult => {
   // Clear pending fire token if skipping fire token placement
   let updatedOrigins = game.origins;
-  if (action === playerActions.placeFireToken && updatedOrigins?.pendingFireToken) {
+  if (
+    action === playerActions.placeFireToken &&
+    updatedOrigins?.pendingFireToken
+  ) {
     updatedOrigins = {
       ...updatedOrigins,
       pendingFireToken: undefined,
@@ -94,7 +96,10 @@ const handleOriginsSkip = (
   }
 
   const tribe = isTribeMode(game.mode.name);
-  const nextAction = nextOriginsAction(action as typeof playerActions.placeFireToken, tribe);
+  const nextAction = nextOriginsAction(
+    action as typeof playerActions.placeFireToken,
+    tribe,
+  );
 
   const updatedGame = {
     ...game,

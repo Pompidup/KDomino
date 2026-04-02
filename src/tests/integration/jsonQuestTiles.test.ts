@@ -37,7 +37,9 @@ describe("jsonQuestTiles", () => {
     const repository = jsonQuestTiles();
     const tiles = repository.getAll();
     const terrainQuests = tiles.filter(
-      (t) => t.type === questTypes.localTrade || t.type === questTypes.kingdomBorders,
+      (t) =>
+        t.type === questTypes.localTrade ||
+        t.type === questTypes.kingdomBorders,
     );
 
     expect(terrainQuests.length).toBe(8); // 4 localTrade + 4 kingdomBorders
@@ -50,7 +52,9 @@ describe("jsonQuestTiles", () => {
     const repository = jsonQuestTiles();
     const tiles = repository.getAll();
     const nonTerrainQuests = tiles.filter(
-      (t) => t.type !== questTypes.localTrade && t.type !== questTypes.kingdomBorders,
+      (t) =>
+        t.type !== questTypes.localTrade &&
+        t.type !== questTypes.kingdomBorders,
     );
 
     for (const quest of nonTerrainQuests) {

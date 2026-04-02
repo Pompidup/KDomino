@@ -14,11 +14,7 @@ export const countConstructionSquaresInTerritory = (
   const cols = kingdom[0]?.length ?? 0;
   const startTile = kingdom[position.y]?.[position.x];
 
-  if (
-    !startTile ||
-    startTile.type === "empty" ||
-    startTile.type === "castle"
-  ) {
+  if (!startTile || startTile.type === "empty" || startTile.type === "castle") {
     return 0;
   }
 

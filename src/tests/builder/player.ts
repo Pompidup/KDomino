@@ -21,5 +21,5 @@ export const createPlayerBuilder = (player: Partial<Player> = {}) => ({
     ({
       ...defaultPlayer,
       ...player,
-    } as Player),
+    }) as Player,
 });

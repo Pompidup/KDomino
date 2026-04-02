@@ -1,5 +1,5 @@
 import type { GameState } from "@core/domain/types/index.js";
-import { ok, err, type Result } from "@utils/result.js";
+import { err, ok, type Result } from "@utils/result.js";
 
 /**
  * Serialization format version for backwards compatibility.
@@ -50,7 +50,7 @@ export const deserializeGame = (json: string): Result<GameState> => {
     // Check version compatibility
     if (parsed.version > SERIALIZATION_VERSION) {
       return err(
-        `Unsupported serialization version: ${parsed.version}. Current version: ${SERIALIZATION_VERSION}`
+        `Unsupported serialization version: ${parsed.version}. Current version: ${SERIALIZATION_VERSION}`,
       );
     }
 
@@ -103,7 +103,7 @@ export const createSavePoint = (game: GameState): GameSavePoint => {
  * @returns Result containing the restored game state or an error
  */
 export const restoreFromSavePoint = (
-  savePoint: GameSavePoint
+  savePoint: GameSavePoint,
 ): Result<GameState> => {
   return deserializeGame(savePoint.serialized);
 };

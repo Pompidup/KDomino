@@ -1,3 +1,4 @@
+import type { PlayerInput } from "@application/commands/addPlayersCommand.js";
 import type {
   GameState,
   GameWithNextAction,
@@ -5,7 +6,6 @@ import type {
   Rotation,
 } from "@core/domain/types/index.js";
 import type { GameEngine } from "@core/portUserside/engine.js";
-import type { PlayerInput } from "@application/commands/addPlayersCommand.js";
 
 // ─── Types ──────────────────────────────────────────────────────────
 

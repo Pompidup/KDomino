@@ -3,8 +3,8 @@ import type { AgeOfGiantsState } from "./ageOfGiants.js";
 import type { Domino, RevealsDomino } from "./domino.js";
 import type { Lord } from "./lord.js";
 import type { GameMode } from "./mode.js";
-import type { Player, PlayerActions } from "./player.js";
 import type { OriginsState } from "./origins.js";
+import type { Player, PlayerActions } from "./player.js";
 import type { QueenDominoState } from "./queendomino.js";
 import type { SelectedRules } from "./rule.js";
 import type { ObjectValues } from "./utils.js";
@@ -101,7 +101,7 @@ export type GameStateResult = Result<GameState>;
  * @returns True if the game is waiting for a player action
  */
 export const isGameWithNextAction = (
-  game: GameWithNextAction | GameWithNextStep
+  game: GameWithNextAction | GameWithNextStep,
 ): game is GameWithNextAction => {
   return game.nextAction.type === "action";
 };
@@ -112,7 +112,7 @@ export const isGameWithNextAction = (
  * @returns True if the game is transitioning between phases
  */
 export const isGameWithNextStep = (
-  game: GameWithNextAction | GameWithNextStep
+  game: GameWithNextAction | GameWithNextStep,
 ): game is GameWithNextStep => {
   return game.nextAction.type === "step";
 };

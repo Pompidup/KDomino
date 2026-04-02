@@ -1,5 +1,8 @@
 import { isAgeOfGiantsQueenDominoMode } from "@core/domain/entities/ageOfGiantsHelpers.js";
-import { placeGiantOnCrown, takeFromGiantPool } from "@core/domain/entities/giant.js";
+import {
+  placeGiantOnCrown,
+  takeFromGiantPool,
+} from "@core/domain/entities/giant.js";
 import {
   allLordsHavePlayed,
   nextAgeOfGiantsAction,
@@ -7,15 +10,14 @@ import {
 } from "@core/domain/entities/lord.js";
 import { ErrorCode } from "@core/domain/errors/domainErrors.js";
 import {
-  gameSteps,
-  type GameState,
   type GameStateResult,
   type GameWithNextAction,
+  gameSteps,
   type NextAction,
 } from "@core/domain/types/game.js";
 import type { Position } from "@core/domain/types/kingdom.js";
 import { playerActions } from "@core/domain/types/player.js";
-import { err, isErr, isOk, ok } from "@utils/result.js";
+import { err, isErr, ok } from "@utils/result.js";
 
 export type PlaceGiantUseCase = (
   game: GameWithNextAction,
@@ -23,7 +25,11 @@ export type PlaceGiantUseCase = (
   position: Position,
 ) => GameStateResult;
 
-export const placeGiantUseCase: PlaceGiantUseCase = (game, lordId, position) => {
+export const placeGiantUseCase: PlaceGiantUseCase = (
+  game,
+  lordId,
+  position,
+) => {
   const currentAction = game.nextAction;
 
   if (currentAction.nextAction !== playerActions.placeGiant) {

@@ -1,8 +1,8 @@
-import { describe, test, expect } from "vitest";
+import type { NextStep } from "@core/domain/types/game.js";
 import { startGameUseCase } from "@core/useCases/startGame.js";
 import { unwrap } from "@utils/result.js";
+import { describe, expect, test } from "vitest";
 import { createGameBuilder } from "../../builder/game.js";
-import type { NextStep } from "@core/domain/types/game.js";
 
 describe("Start game", () => {
   test("should defined next player and action", () => {
@@ -25,6 +25,7 @@ describe("Start game", () => {
 
     const deps = {
       uuidMethod: () => "lord-id",
+      // biome-ignore lint/suspicious/noExplicitAny: test mock
       shuffleMethod: (array: any[]) => array,
     };
 
@@ -60,6 +61,7 @@ describe("Start game", () => {
 
     const deps = {
       uuidMethod: () => "lord-id",
+      // biome-ignore lint/suspicious/noExplicitAny: test mock
       shuffleMethod: (array: any[]) => array,
     };
 
@@ -107,6 +109,7 @@ describe("Start game", () => {
 
     const deps = {
       uuidMethod: () => `lord-${++callCount}`,
+      // biome-ignore lint/suspicious/noExplicitAny: test mock
       shuffleMethod: (array: any[]) => array,
     };
 
@@ -142,6 +145,7 @@ describe("Start game", () => {
 
     const deps = {
       uuidMethod: () => "lord-id",
+      // biome-ignore lint/suspicious/noExplicitAny: test mock
       shuffleMethod: (array: any[]) => array,
     };
 

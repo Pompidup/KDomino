@@ -1,20 +1,18 @@
-import { ErrorCode } from "@core/domain/errors/domainErrors.js";
 import { isValidFireTokenPosition } from "@core/domain/entities/fireToken.js";
 import {
   allLordsHavePlayed,
   nextLordWithAction,
 } from "@core/domain/entities/lord.js";
-import { isTribeMode } from "@core/domain/entities/originsHelpers.js";
+import { ErrorCode } from "@core/domain/errors/domainErrors.js";
 import {
-  gameSteps,
   type GameState,
   type GameStateResult,
   type GameWithNextAction,
+  gameSteps,
   type NextAction,
 } from "@core/domain/types/game.js";
 import type { Position } from "@core/domain/types/kingdom.js";
 import type { PlacedFireToken } from "@core/domain/types/origins.js";
-import { playerActions } from "@core/domain/types/player.js";
 import { err, ok } from "@utils/result.js";
 
 export type PlaceFireTokenUseCase = (
@@ -84,8 +82,7 @@ export const placeFireTokenUseCase: PlaceFireTokenUseCase = (
   let updatedCavemen = currentPlayer.cavemen;
   if (updatedCavemen) {
     updatedCavemen = updatedCavemen.filter(
-      (c) =>
-        !(c.position.x === position.x && c.position.y === position.y),
+      (c) => !(c.position.x === position.x && c.position.y === position.y),
     );
   }
 

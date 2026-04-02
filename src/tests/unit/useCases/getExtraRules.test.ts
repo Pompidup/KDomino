@@ -1,8 +1,8 @@
+import type { ExtraRule, Rules } from "@core/domain/types/rule.js";
 import type { RuleRepository } from "@core/portServerside/ruleRepository.js";
 import { getExtraRulesUseCase } from "@core/useCases/getExtraRules.js";
-import { describe, test, expect, beforeAll } from "vitest";
 import { unwrap } from "@utils/result.js";
-import type { ExtraRule, Rules } from "@core/domain/types/rule.js";
+import { beforeAll, describe, expect, test } from "vitest";
 
 describe("Get available extra rules", () => {
   let extraRules: ExtraRule[];

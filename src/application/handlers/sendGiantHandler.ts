@@ -21,7 +21,8 @@ export const sendGiantHandler =
     useCase: SendGiantUseCase,
   ): SendGiantHandler =>
   (command: SendGiantCommand) => {
-    const { game, lordId, giantIndex, targetPlayerId, targetCrownPosition } = command;
+    const { game, lordId, giantIndex, targetPlayerId, targetCrownPosition } =
+      command;
     logger.info(
       `Sending giant for lord: ${lordId} to player: ${targetPlayerId} in game: ${game.id}`,
     );
@@ -40,7 +41,13 @@ export const sendGiantHandler =
       );
     }
 
-    const result = useCase(game, lordId, giantIndex, targetPlayerId, targetCrownPosition);
+    const result = useCase(
+      game,
+      lordId,
+      giantIndex,
+      targetPlayerId,
+      targetCrownPosition,
+    );
 
     if (isErr(result)) {
       logger.error(`Error sending giant: ${result.error}`);
@@ -52,6 +59,8 @@ export const sendGiantHandler =
       );
     }
 
-    logger.info(`Giant sent from lord: ${lordId} to player: ${targetPlayerId} in game: ${game.id}`);
+    logger.info(
+      `Giant sent from lord: ${lordId} to player: ${targetPlayerId} in game: ${game.id}`,
+    );
     return result.value;
   };

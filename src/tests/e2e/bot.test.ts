@@ -1,24 +1,24 @@
-import { createGameEngine } from "../../index.js";
 import {
-  randomStrategy,
-  greedyStrategy,
-  advancedStrategy,
-  expertStrategy,
-  playBotTurn,
-  type BotStrategy,
-} from "@core/useCases/bot.js";
-import {
-  isGameWithNextAction,
   type GameState,
   type GameWithNextAction,
+  isGameWithNextAction,
 } from "@core/domain/types/game.js";
-import { describe, expect, test } from "vitest";
 import type { GameEngine } from "@core/portUserside/engine.js";
+import {
+  advancedStrategy,
+  type BotStrategy,
+  expertStrategy,
+  greedyStrategy,
+  playBotTurn,
+  randomStrategy,
+} from "@core/useCases/bot.js";
+import { describe, expect, test } from "vitest";
+import { createGameEngine } from "../../index.js";
 
 const playFullGame = (
   engine: GameEngine,
   strategy: BotStrategy,
-  seed?: string
+  seed?: string,
 ): { scores: number[] } => {
   let game: GameState = engine.createGame({ mode: "Classic", seed });
   game = engine.addPlayers({ game, players: ["Alice", "Bob"] });
@@ -74,8 +74,16 @@ describe("Bot e2e", () => {
       shuffleMethod: (array) => array,
     });
 
-    const randomResult = playFullGame(deterministicEngine, randomStrategy, seed);
-    const greedyResult = playFullGame(deterministicEngine, greedyStrategy, seed);
+    const randomResult = playFullGame(
+      deterministicEngine,
+      randomStrategy,
+      seed,
+    );
+    const greedyResult = playFullGame(
+      deterministicEngine,
+      greedyStrategy,
+      seed,
+    );
 
     const randomTotal = randomResult.scores.reduce((a, b) => a + b, 0);
     const greedyTotal = greedyResult.scores.reduce((a, b) => a + b, 0);
@@ -89,11 +97,15 @@ describe("Bot e2e", () => {
       shuffleMethod: (array) => array,
     });
 
-    const greedyResult = playFullGame(deterministicEngine, greedyStrategy, seed);
+    const greedyResult = playFullGame(
+      deterministicEngine,
+      greedyStrategy,
+      seed,
+    );
     const advancedResult = playFullGame(
       deterministicEngine,
       advancedStrategy,
-      seed
+      seed,
     );
 
     const greedyTotal = greedyResult.scores.reduce((a, b) => a + b, 0);
@@ -108,11 +120,15 @@ describe("Bot e2e", () => {
       shuffleMethod: (array) => array,
     });
 
-    const greedyResult = playFullGame(deterministicEngine, greedyStrategy, seed);
+    const greedyResult = playFullGame(
+      deterministicEngine,
+      greedyStrategy,
+      seed,
+    );
     const expertResult = playFullGame(
       deterministicEngine,
       expertStrategy,
-      seed
+      seed,
     );
 
     const greedyTotal = greedyResult.scores.reduce((a, b) => a + b, 0);

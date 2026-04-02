@@ -210,11 +210,7 @@ export const calculateHunterGathererScore = (
       }
       case "gatherer":
         // Count all resources adjacent (any type)
-        if (
-          resources.some(
-            (r) => r.position.x === nx && r.position.y === ny,
-          )
-        )
+        if (resources.some((r) => r.position.x === nx && r.position.y === ny))
           matches++;
         break;
       case "fireLady": {
@@ -224,9 +220,7 @@ export const calculateHunterGathererScore = (
           matches += tile.crowns;
         }
         if (
-          fireTokens.some(
-            (ft) => ft.position.x === nx && ft.position.y === ny,
-          )
+          fireTokens.some((ft) => ft.position.x === nx && ft.position.y === ny)
         ) {
           const token = fireTokens.find(
             (ft) => ft.position.x === nx && ft.position.y === ny,

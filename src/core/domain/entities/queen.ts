@@ -58,11 +58,7 @@ const findProperties = (kingdom: Kingdom): Property[] => {
   for (let y = 0; y < rows; y++) {
     for (let x = 0; x < cols; x++) {
       const tile = kingdom[y]![x]!;
-      if (
-        visited[y]![x] ||
-        tile.type === "empty" ||
-        tile.type === "castle"
-      ) {
+      if (visited[y]![x] || tile.type === "empty" || tile.type === "castle") {
         continue;
       }
 
@@ -133,9 +129,7 @@ export const getQueenBonus = (kingdom: Kingdom): number => {
 /**
  * Calculate end-game building bonus points for a player.
  */
-export const calculateBuildingEndGameBonus = (
-  player: Player,
-): number => {
+export const calculateBuildingEndGameBonus = (player: Player): number => {
   const buildings = player.buildings ?? [];
   let bonus = 0;
 

@@ -1,7 +1,7 @@
 import { validateGameState } from "@core/domain/entities/validateGameState.js";
 import {
-  isGameWithNextAction,
   type GameState,
+  isGameWithNextAction,
 } from "@core/domain/types/game.js";
 import type { GameEngine } from "@core/portUserside/engine.js";
 import { beforeAll, describe, expect, test } from "vitest";
@@ -44,7 +44,10 @@ describe("validateGameState - e2e", () => {
     const engine = createGameEngine({
       shuffleMethod: (array) => array,
     });
-    let game: GameState = engine.createGame({ mode: "Classic", seed: "e2e-validate" });
+    let game: GameState = engine.createGame({
+      mode: "Classic",
+      seed: "e2e-validate",
+    });
     game = engine.addPlayers({ game, players: ["Alice", "Bobby"] });
     game = engine.startGame({ game });
 

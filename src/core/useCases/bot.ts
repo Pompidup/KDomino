@@ -1,20 +1,19 @@
+import { findCrownsNotCoveredByGiants } from "@core/domain/entities/giant.js";
+import { placeDomino } from "@core/domain/entities/kingdom.js";
+import { isGameWithNextAction } from "@core/domain/types/game.js";
 import type {
   Domino,
-  RevealsDomino,
-  Kingdom,
-  GameWithNextAction,
   GameState,
-  Score,
+  GameWithNextAction,
+  Kingdom,
+  RevealsDomino,
 } from "@core/domain/types/index.js";
-import { isGameWithNextAction } from "@core/domain/types/game.js";
-import type { ValidPlacement } from "./getValidPlacements.js";
 import type { GameEngine } from "@core/portUserside/engine.js";
-import { placeDomino } from "@core/domain/entities/kingdom.js";
-import { calculateScoreUseCase } from "./calculateScore.js";
-import { getValidPlacementsUseCase } from "./getValidPlacements.js";
 import { isOk } from "@utils/result.js";
-import { findCrownsNotCoveredByGiants } from "@core/domain/entities/giant.js";
 import { getStrategy } from "./botRegistry.js";
+import { calculateScoreUseCase } from "./calculateScore.js";
+import type { ValidPlacement } from "./getValidPlacements.js";
+import { getValidPlacementsUseCase } from "./getValidPlacements.js";
 
 // ─── Types ───────────────────────────────────────────────────────────
 
@@ -58,14 +57,14 @@ const simulatePlacement = (
   kingdom: Kingdom,
   domino: Domino,
   placement: ValidPlacement,
-  maxKingdomSize: number
+  maxKingdomSize: number,
 ): Kingdom | null => {
   const result = placeDomino(
     kingdom,
     placement.position,
     placement.rotation,
     domino,
-    maxKingdomSize
+    maxKingdomSize,
   );
   return isOk(result) ? result.value : null;
 };
@@ -74,12 +73,21 @@ const bestPlacementScore = (
   kingdom: Kingdom,
   domino: Domino,
   placements: ValidPlacement[],
-  maxKingdomSize: number
+  maxKingdomSize: number,
 ): { placement: ValidPlacement; score: number; kingdom: Kingdom } | null => {
-  let best: { placement: ValidPlacement; score: number; kingdom: Kingdom } | null = null;
+  let best: {
+    placement: ValidPlacement;
+    score: number;
+    kingdom: Kingdom;
+  } | null = null;
 
   for (const placement of placements) {
-    const newKingdom = simulatePlacement(kingdom, domino, placement, maxKingdomSize);
+    const newKingdom = simulatePlacement(
+      kingdom,
+      domino,
+      placement,
+      maxKingdomSize,
+    );
     if (!newKingdom) continue;
     const score = scoreKingdom(newKingdom);
     if (!best || score > best.score) {
@@ -150,13 +158,13 @@ export const greedyStrategy: BotStrategy = {
       const placements = getValidPlacementsUseCase(
         player.kingdom,
         rd.domino,
-        maxSize
+        maxSize,
       );
       const result = bestPlacementScore(
         player.kingdom,
         rd.domino,
         placements,
-        maxSize
+        maxSize,
       );
       const score = result ? result.score : 0;
       if (score > bestScore) {
@@ -173,7 +181,12 @@ export const greedyStrategy: BotStrategy = {
     if (validPlacements.length === 0) return null;
 
     const maxSize = getMaxKingdomSize(game);
-    const result = bestPlacementScore(kingdom, domino, validPlacements, maxSize);
+    const result = bestPlacementScore(
+      kingdom,
+      domino,
+      validPlacements,
+      maxSize,
+    );
     return result ? result.placement : validPlacements[0]!;
   },
 };
@@ -183,14 +196,23 @@ export const greedyStrategy: BotStrategy = {
 const evaluateWithLookahead = (
   kingdom: Kingdom,
   maxSize: number,
-  nextDominoes: Domino[]
+  nextDominoes: Domino[],
 ): number => {
   if (nextDominoes.length === 0) return 0;
 
   let bestNextScore = 0;
   for (const nextDomino of nextDominoes) {
-    const nextPlacements = getValidPlacementsUseCase(kingdom, nextDomino, maxSize);
-    const result = bestPlacementScore(kingdom, nextDomino, nextPlacements, maxSize);
+    const nextPlacements = getValidPlacementsUseCase(
+      kingdom,
+      nextDomino,
+      maxSize,
+    );
+    const result = bestPlacementScore(
+      kingdom,
+      nextDomino,
+      nextPlacements,
+      maxSize,
+    );
     if (result && result.score > bestNextScore) {
       bestNextScore = result.score;
     }
@@ -221,18 +243,24 @@ export const advancedStrategy: BotStrategy = {
       const placements = getValidPlacementsUseCase(
         player.kingdom,
         rd.domino,
-        maxSize
+        maxSize,
       );
       const result = bestPlacementScore(
         player.kingdom,
         rd.domino,
         placements,
-        maxSize
+        maxSize,
       );
 
-      const immediateScore = result ? result.score : scoreKingdom(player.kingdom);
+      const immediateScore = result
+        ? result.score
+        : scoreKingdom(player.kingdom);
       const kingdomAfter = result ? result.kingdom : player.kingdom;
-      const futureScore = evaluateWithLookahead(kingdomAfter, maxSize, nextBatch);
+      const futureScore = evaluateWithLookahead(
+        kingdomAfter,
+        maxSize,
+        nextBatch,
+      );
       const combined = immediateScore + futureScore * 0.8;
 
       if (combined > bestCombinedScore) {
@@ -289,7 +317,7 @@ const topPlacements = (
   domino: Domino,
   placements: ValidPlacement[],
   maxSize: number,
-  limit: number
+  limit: number,
 ): ValidPlacement[] => {
   if (placements.length <= limit) return placements;
 
@@ -308,7 +336,7 @@ const expertEvaluate = (
   remainingDominoes: Domino[],
   dominoesPerTurn: number,
   maxSize: number,
-  depth: number
+  depth: number,
 ): number => {
   if (depth <= 0 || remainingDominoes.length === 0) {
     return scoreKingdom(kingdom);
@@ -331,7 +359,7 @@ const expertEvaluate = (
         afterBatch,
         dominoesPerTurn,
         maxSize,
-        depth - 1
+        depth - 1,
       );
       if (score > bestScore) bestScore = score;
       continue;
@@ -343,7 +371,7 @@ const expertEvaluate = (
       domino,
       allPlacements,
       maxSize,
-      EXPERT_BEAM_WIDTH
+      EXPERT_BEAM_WIDTH,
     );
 
     for (const placement of candidates) {
@@ -355,7 +383,7 @@ const expertEvaluate = (
         afterBatch,
         dominoesPerTurn,
         maxSize,
-        depth - 1
+        depth - 1,
       );
       if (score > bestScore) bestScore = score;
     }
@@ -380,7 +408,7 @@ export const expertStrategy: BotStrategy = {
     const perTurn = game.rules.basic.dominoesPerTurn;
     const turnsLeft = Math.min(
       game.rules.basic.maxTurns - game.turn,
-      EXPERT_MAX_DEPTH
+      EXPERT_MAX_DEPTH,
     );
 
     let bestScore = -1;
@@ -390,7 +418,7 @@ export const expertStrategy: BotStrategy = {
       const allPlacements = getValidPlacementsUseCase(
         player.kingdom,
         rd.domino,
-        maxSize
+        maxSize,
       );
 
       if (allPlacements.length === 0) {
@@ -399,7 +427,7 @@ export const expertStrategy: BotStrategy = {
           game.dominoes,
           perTurn,
           maxSize,
-          turnsLeft
+          turnsLeft,
         );
         if (score > bestScore) {
           bestScore = score;
@@ -413,7 +441,7 @@ export const expertStrategy: BotStrategy = {
         rd.domino,
         allPlacements,
         maxSize,
-        EXPERT_BEAM_WIDTH
+        EXPERT_BEAM_WIDTH,
       );
 
       for (const placement of candidates) {
@@ -421,7 +449,7 @@ export const expertStrategy: BotStrategy = {
           player.kingdom,
           rd.domino,
           placement,
-          maxSize
+          maxSize,
         );
         if (!newKingdom) continue;
 
@@ -430,7 +458,7 @@ export const expertStrategy: BotStrategy = {
           game.dominoes,
           perTurn,
           maxSize,
-          turnsLeft
+          turnsLeft,
         );
         if (score > bestScore) {
           bestScore = score;
@@ -450,7 +478,7 @@ export const expertStrategy: BotStrategy = {
     const perTurn = game.rules.basic.dominoesPerTurn;
     const turnsLeft = Math.min(
       game.rules.basic.maxTurns - game.turn,
-      EXPERT_MAX_DEPTH
+      EXPERT_MAX_DEPTH,
     );
 
     let bestScore = -1;
@@ -465,7 +493,7 @@ export const expertStrategy: BotStrategy = {
         game.dominoes,
         perTurn,
         maxSize,
-        turnsLeft
+        turnsLeft,
       );
       if (score > bestScore) {
         bestScore = score;
@@ -492,7 +520,7 @@ export const expertStrategy: BotStrategy = {
 export const playBotTurn = (
   engine: GameEngine,
   game: GameWithNextAction,
-  strategy: BotStrategy
+  strategy: BotStrategy,
 ): GameState => {
   const lordId = game.nextAction.nextLord;
   const action = game.nextAction.nextAction;
@@ -546,10 +574,17 @@ export const playBotTurn = (
       return lord && p.id === lord.playerId;
     });
     if (player) {
-      const availableCrowns = findCrownsNotCoveredByGiants(player.kingdom, player.giants ?? []);
+      const availableCrowns = findCrownsNotCoveredByGiants(
+        player.kingdom,
+        player.giants ?? [],
+      );
       if (availableCrowns.length > 0) {
         // Pick first available crown (simple bot behavior)
-        return engine.placeGiant({ game, lordId, position: availableCrowns[0]! });
+        return engine.placeGiant({
+          game,
+          lordId,
+          position: availableCrowns[0]!,
+        });
       }
     }
     return engine.skipOptionalAction({ game, lordId });
@@ -598,7 +633,7 @@ export const isBotTurn = (game: GameWithNextAction): boolean => {
 export const playBotTurns = (
   engine: GameEngine,
   game: GameState,
-  customStrategies?: Record<string, BotStrategy>
+  customStrategies?: Record<string, BotStrategy>,
 ): GameState => {
   let current = game;
 

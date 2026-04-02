@@ -1,14 +1,18 @@
 import { validateGameState } from "@core/domain/entities/validateGameState.js";
 import type { Game } from "@core/domain/types/game.js";
 import type { ValidationIssue } from "@core/domain/types/validation.js";
-import { createGameBuilder } from "../../builder/game.js";
 import { describe, expect, test } from "vitest";
+import { createGameBuilder } from "../../builder/game.js";
 
 /** Helper: build a valid game state */
 const validGame = (): Game =>
   createGameBuilder()
     .withAllDefaults()
-    .withNextAction({ type: "action", nextLord: "lord1-id", nextAction: "pickDomino" })
+    .withNextAction({
+      type: "action",
+      nextLord: "lord1-id",
+      nextAction: "pickDomino",
+    })
     .build();
 
 /** Helper: find issues by code */
@@ -57,7 +61,10 @@ describe("validateGameState - game structure", () => {
   });
 
   test("detects invalid nextAction type", () => {
-    const game = { ...validGame(), nextAction: { type: "invalid" } } as unknown as Game;
+    const game = {
+      ...validGame(),
+      nextAction: { type: "invalid" },
+    } as unknown as Game;
     const issues = validateGameState(game);
     expect(findByCode(issues, "INVALID_NEXT_ACTION_TYPE")).toHaveLength(1);
   });
@@ -78,7 +85,10 @@ describe("validateGameState - game structure", () => {
   });
 
   test("detects invalid mode", () => {
-    const game = { ...validGame(), mode: { name: "", description: "x" } } as unknown as Game;
+    const game = {
+      ...validGame(),
+      mode: { name: "", description: "x" },
+    } as unknown as Game;
     const issues = validateGameState(game);
     expect(findByCode(issues, "INVALID_MODE_NAME")).toHaveLength(1);
   });
@@ -128,7 +138,9 @@ describe("validateGameState - players", () => {
     game.players[0]!.kingdom[0]![0] = { type: "castle", crowns: 0 };
     game.players[0]!.kingdom[0]![1] = { type: "castle", crowns: 0 };
     const issues = validateGameState(game);
-    expect(findByCode(issues, "MULTIPLE_CASTLES").length).toBeGreaterThanOrEqual(1);
+    expect(
+      findByCode(issues, "MULTIPLE_CASTLES").length,
+    ).toBeGreaterThanOrEqual(1);
   });
 
   test("detects invalid tile type in kingdom", () => {
@@ -163,7 +175,16 @@ describe("validateGameState - dominoes", () => {
   test("detects picked domino without lordId", () => {
     const game = validGame();
     game.currentDominoes = [
-      { domino: { left: { type: "wheat", crowns: 0 }, right: { type: "wheat", crowns: 0 }, number: 99 }, picked: true, lordId: null, position: 0 },
+      {
+        domino: {
+          left: { type: "wheat", crowns: 0 },
+          right: { type: "wheat", crowns: 0 },
+          number: 99,
+        },
+        picked: true,
+        lordId: null,
+        position: 0,
+      },
     ];
     const issues = validateGameState(game);
     expect(findByCode(issues, "PICKED_WITHOUT_LORD")).toHaveLength(1);
@@ -172,7 +193,16 @@ describe("validateGameState - dominoes", () => {
   test("detects unpicked domino with lordId", () => {
     const game = validGame();
     game.currentDominoes = [
-      { domino: { left: { type: "wheat", crowns: 0 }, right: { type: "wheat", crowns: 0 }, number: 98 }, picked: false, lordId: "lord1-id", position: 0 },
+      {
+        domino: {
+          left: { type: "wheat", crowns: 0 },
+          right: { type: "wheat", crowns: 0 },
+          number: 98,
+        },
+        picked: false,
+        lordId: "lord1-id",
+        position: 0,
+      },
     ];
     const issues = validateGameState(game);
     expect(findByCode(issues, "UNPICKED_WITH_LORD")).toHaveLength(1);
@@ -180,8 +210,14 @@ describe("validateGameState - dominoes", () => {
 
   test("allows same domino number in currentDominoes and lord's dominoPicked (by design)", () => {
     const game = validGame();
-    const domino = { left: { type: "wheat" as const, crowns: 0 }, right: { type: "wheat" as const, crowns: 0 }, number: 99 };
-    game.currentDominoes = [{ domino, picked: true, lordId: "lord1-id", position: 0 }];
+    const domino = {
+      left: { type: "wheat" as const, crowns: 0 },
+      right: { type: "wheat" as const, crowns: 0 },
+      number: 99,
+    };
+    game.currentDominoes = [
+      { domino, picked: true, lordId: "lord1-id", position: 0 },
+    ];
     game.lords[0]!.dominoPicked = { ...domino };
     const issues = validateGameState(game);
     expect(findByCode(issues, "DUPLICATE_DOMINO_NUMBER")).toHaveLength(0);
@@ -189,7 +225,11 @@ describe("validateGameState - dominoes", () => {
 
   test("detects duplicate domino number among lords' picked dominos", () => {
     const game = validGame();
-    const domino = { left: { type: "wheat" as const, crowns: 0 }, right: { type: "wheat" as const, crowns: 0 }, number: 99 };
+    const domino = {
+      left: { type: "wheat" as const, crowns: 0 },
+      right: { type: "wheat" as const, crowns: 0 },
+      number: 99,
+    };
     game.lords[0]!.dominoPicked = { ...domino };
     game.lords[1]!.dominoPicked = { ...domino };
     const issues = validateGameState(game);
@@ -281,7 +321,13 @@ describe("validateGameState - rules", () => {
 
   test("detects all invalid basic rule fields", () => {
     const game = validGame();
-    game.rules.basic = { lords: 0, maxDominoes: 0, dominoesPerTurn: 0, maxTurns: 0, maxKingdomSize: 0 };
+    game.rules.basic = {
+      lords: 0,
+      maxDominoes: 0,
+      dominoesPerTurn: 0,
+      maxTurns: 0,
+      maxKingdomSize: 0,
+    };
     const issues = validateGameState(game);
     expect(findByCode(issues, "INVALID_BASIC_RULE_VALUE")).toHaveLength(5);
   });

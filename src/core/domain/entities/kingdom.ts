@@ -1,21 +1,21 @@
+import { ErrorCode } from "@core/domain/errors/domainErrors.js";
 import {
   type Domino,
   type EmptyTile,
   GRIDSIZE,
-  MAX_KINGDOM_SIZE,
   type Kingdom,
+  MAX_KINGDOM_SIZE,
   type Position,
   type Rotation,
   type Tile,
 } from "@core/domain/types/index.js";
-import { ErrorCode } from "@core/domain/errors/domainErrors.js";
-import {err, isErr, isOk, ok, type Result} from "@utils/result.js";
-import {createTile} from "./domino.js";
+import { err, isErr, isOk, ok, type Result } from "@utils/result.js";
+import { createTile } from "./domino.js";
 
 export const createEmptyKingdom = (): Kingdom => {
   const emptyTile = createTile("empty");
-  return Array.from({length: GRIDSIZE}, () =>
-      Array.from({length: GRIDSIZE}, () => emptyTile)
+  return Array.from({ length: GRIDSIZE }, () =>
+    Array.from({ length: GRIDSIZE }, () => emptyTile),
   );
 };
 
@@ -29,7 +29,7 @@ export const placeCastle = (kingdom: Kingdom): Kingdom => {
 export const placeTile = (
   kingdom: Kingdom,
   position: Position,
-  tile: Tile
+  tile: Tile,
 ): Kingdom => {
   const newKingdom = deepCopyKingdom(kingdom);
   newKingdom[position.y]![position.x] = tile;
@@ -38,7 +38,7 @@ export const placeTile = (
 
 export const getTile = (
   kingdom: Kingdom,
-  position: Position
+  position: Position,
 ): Result<Tile | EmptyTile> => {
   const tile = kingdom[position.y]?.[position.x];
   if (!tile) {
@@ -50,7 +50,7 @@ export const getTile = (
 export const calculateDominoPosition = (
   position: Position,
   rotation: Rotation,
-  domino: Domino
+  domino: Domino,
 ): [{ tile: Tile; position: Position }, { tile: Tile; position: Position }] => {
   let firstTile: {
     tile: Tile;
@@ -136,31 +136,38 @@ export const placeDomino = (
   position: Position,
   rotation: Rotation,
   domino: Domino,
-  maxKingdomSize: number = MAX_KINGDOM_SIZE
+  maxKingdomSize: number = MAX_KINGDOM_SIZE,
 ): Result<Kingdom> => {
   const [firstTile, secondTile] = calculateDominoPosition(
     position,
     rotation,
-    domino
+    domino,
   );
 
   const isFreePlaceResult = isFreePlace(
     kingdom,
     firstTile.position,
-    secondTile.position
+    secondTile.position,
   );
   if (isErr(isFreePlaceResult)) {
     return isFreePlaceResult;
   }
 
-  if (exceedsMaxSize(kingdom, firstTile.position, secondTile.position, maxKingdomSize)) {
+  if (
+    exceedsMaxSize(
+      kingdom,
+      firstTile.position,
+      secondTile.position,
+      maxKingdomSize,
+    )
+  ) {
     return err(ErrorCode.PLACEMENT_EXCEEDS_KINGDOM_SIZE);
   }
 
   const adjacentTiles = isAdjacent(
     kingdom,
     firstTile.position,
-    secondTile.position
+    secondTile.position,
   );
 
   if (adjacentTiles.length === 0) {
@@ -181,7 +188,7 @@ export const placeDomino = (
 
 const placeTiles = (
   kingdom: Kingdom,
-  tiles: { tile: Tile; position: Position }[]
+  tiles: { tile: Tile; position: Position }[],
 ) => {
   let newKingdom = deepCopyKingdom(kingdom);
   for (const { tile, position } of tiles) {
@@ -193,7 +200,7 @@ const placeTiles = (
 const isFreePlace = (
   kingdom: Kingdom,
   firstPosition: Position,
-  secondPosition: Position
+  secondPosition: Position,
 ): Result<boolean> => {
   const firstTile = getTile(kingdom, firstPosition);
   const secondTile = getTile(kingdom, secondPosition);
@@ -216,7 +223,7 @@ const isFreePlace = (
 const isAdjacent = (
   kingdom: Kingdom,
   firstPosition: Position,
-  secondPosition: Position
+  secondPosition: Position,
 ): Tile[] => {
   const offsets = [
     { x: -1, y: 0 },
@@ -248,7 +255,7 @@ const isAdjacent = (
 
 const hasValidAdjacent = (
   adjacentTiles: (Tile | EmptyTile)[],
-  tiles: Tile[]
+  tiles: Tile[],
 ): boolean => {
   return adjacentTiles.some((adjacentTile) => {
     return tiles.some((tile) => {
@@ -286,7 +293,7 @@ export const checkCastleIsInMiddle = (kingdom: Kingdom): boolean => {
 };
 
 export const getBoundingBox = (
-  kingdom: Kingdom
+  kingdom: Kingdom,
 ): { minX: number; maxX: number; minY: number; maxY: number } | null => {
   let minX = Infinity;
   let maxX = -Infinity;
@@ -312,7 +319,7 @@ const exceedsMaxSize = (
   kingdom: Kingdom,
   firstPosition: Position,
   secondPosition: Position,
-  maxSize: number = MAX_KINGDOM_SIZE
+  maxSize: number = MAX_KINGDOM_SIZE,
 ): boolean => {
   const bbox = getBoundingBox(kingdom);
 
@@ -328,12 +335,12 @@ const exceedsMaxSize = (
     if (pos.y > maxY) maxY = pos.y;
   }
 
-  return (maxX - minX + 1) > maxSize || (maxY - minY + 1) > maxSize;
+  return maxX - minX + 1 > maxSize || maxY - minY + 1 > maxSize;
 };
 
 export const countDominoes = (kingdom: Kingdom): number => {
   const notEmpties = kingdom.flat().filter((tile) => tile.type !== "empty");
-   // -1 because the castle is not a domino
+  // -1 because the castle is not a domino
   return (notEmpties.length - 1) / 2;
 };
 

@@ -85,9 +85,7 @@ export const canSpendResources = (
   requiredDifferentTypes: number,
 ): boolean => {
   const toSpend = positions.map((pos) =>
-    resources.find(
-      (r) => r.position.x === pos.x && r.position.y === pos.y,
-    ),
+    resources.find((r) => r.position.x === pos.x && r.position.y === pos.y),
   );
 
   // All positions must have a resource

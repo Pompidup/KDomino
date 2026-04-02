@@ -1,40 +1,40 @@
+import type { AddExtraRulesCommand } from "@application/commands/addExtraRulesCommand.js";
+import type { AddPlayersCommand } from "@application/commands/addPlayersCommand.js";
+import type { CalculateScoreCommand } from "@application/commands/calculateScoreCommand.js";
+import type { CanPlaceDominoCommand } from "@application/commands/canPlaceDominoCommand.js";
+import type { ChooseDominoCommand } from "@application/commands/chooseDominoCommand.js";
+import type { ConstructBuildingCommand } from "@application/commands/constructBuildingCommand.js";
+import type { CreateGameCommand } from "@application/commands/createGameCommand.js";
+import type { DiscardDominoCommand } from "@application/commands/discardDominoCommand.js";
+import type { GetDynastyResultCommand } from "@application/commands/getDynastyResultCommand.js";
+import type { GetExtraRulesCommand } from "@application/commands/getExtraRulesCommand.js";
+import type { GetModesCommand } from "@application/commands/getModesCommand.js";
+import type { GetResultCommand } from "@application/commands/getResultCommand.js";
+import type { GetValidPlacementsCommand } from "@application/commands/getValidPlacementsCommand.js";
+import type { PlaceDominoCommand } from "@application/commands/placeDominoCommand.js";
+import type { PlaceFireTokenCommand } from "@application/commands/placeFireTokenCommand.js";
+import type { PlaceGiantCommand } from "@application/commands/placeGiantCommand.js";
+import type { PlaceKnightCommand } from "@application/commands/placeKnightCommand.js";
+import type { RecruitCavemanCommand } from "@application/commands/recruitCavemanCommand.js";
+import type { SendGiantCommand } from "@application/commands/sendGiantCommand.js";
 import type {
-  GameMode,
-  GameWithResults,
+  DeserializeGameCommand,
+  SerializeGameCommand,
+} from "@application/commands/serializeGameCommand.js";
+import type { SkipOptionalActionCommand } from "@application/commands/skipOptionalActionCommand.js";
+import type { StartGameCommand } from "@application/commands/startGameCommand.js";
+import type { UseDragonCommand } from "@application/commands/useDragonCommand.js";
+import type {
   ExtraRule,
+  GameMode,
   GameState,
   GameWithNextAction,
   GameWithNextStep,
+  GameWithResults,
   Score,
 } from "@core/domain/types/index.js";
-import type { GetModesCommand } from "@application/commands/getModesCommand.js";
-import type { GetExtraRulesCommand } from "@application/commands/getExtraRulesCommand.js";
-import type { CreateGameCommand } from "@application/commands/createGameCommand.js";
-import type { AddPlayersCommand } from "@application/commands/addPlayersCommand.js";
-import type { AddExtraRulesCommand } from "@application/commands/addExtraRulesCommand.js";
-import type { StartGameCommand } from "@application/commands/startGameCommand.js";
-import type { ChooseDominoCommand } from "@application/commands/chooseDominoCommand.js";
-import type { PlaceDominoCommand } from "@application/commands/placeDominoCommand.js";
-import type { DiscardDominoCommand } from "@application/commands/discardDominoCommand.js";
-import type { GetResultCommand } from "@application/commands/getResultCommand.js";
-import type { CalculateScoreCommand } from "@application/commands/calculateScoreCommand.js";
-import type { GetValidPlacementsCommand } from "@application/commands/getValidPlacementsCommand.js";
-import type { CanPlaceDominoCommand } from "@application/commands/canPlaceDominoCommand.js";
-import type {
-  SerializeGameCommand,
-  DeserializeGameCommand,
-} from "@application/commands/serializeGameCommand.js";
-import type { GetDynastyResultCommand } from "@application/commands/getDynastyResultCommand.js";
-import type { PlaceGiantCommand } from "@application/commands/placeGiantCommand.js";
-import type { PlaceKnightCommand } from "@application/commands/placeKnightCommand.js";
-import type { SendGiantCommand } from "@application/commands/sendGiantCommand.js";
-import type { ConstructBuildingCommand } from "@application/commands/constructBuildingCommand.js";
-import type { UseDragonCommand } from "@application/commands/useDragonCommand.js";
-import type { PlaceFireTokenCommand } from "@application/commands/placeFireTokenCommand.js";
-import type { RecruitCavemanCommand } from "@application/commands/recruitCavemanCommand.js";
-import type { SkipOptionalActionCommand } from "@application/commands/skipOptionalActionCommand.js";
-import type { ValidPlacement } from "@core/useCases/getValidPlacements.js";
 import type { DynastyResult } from "@core/useCases/getDynastyResult.js";
+import type { ValidPlacement } from "@core/useCases/getValidPlacements.js";
 
 /**
  * The main interface for interacting with the Kingdomino game engine.

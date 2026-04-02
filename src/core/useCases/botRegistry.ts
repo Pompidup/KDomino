@@ -1,9 +1,9 @@
 import type { BotStrategy } from "./bot.js";
 import {
-  randomStrategy,
-  greedyStrategy,
   advancedStrategy,
   expertStrategy,
+  greedyStrategy,
+  randomStrategy,
 } from "./bot.js";
 
 /**
@@ -11,12 +11,16 @@ import {
  */
 export type StrategyName = "random" | "greedy" | "advanced" | "expert";
 
-const defaultStrategies: Record<string, BotStrategy> = {
+// Use a getter function to avoid circular dependency issues with bot.ts.
+// When biome sorts imports, bot.ts may not be fully initialized when this
+// module-level code runs. Deferring access to the strategies ensures they
+// are resolved at call time, not at module evaluation time.
+const getDefaultStrategies = (): Record<string, BotStrategy> => ({
   random: randomStrategy,
   greedy: greedyStrategy,
   advanced: advancedStrategy,
   expert: expertStrategy,
-};
+});
 
 /**
  * Resolves a strategy by name. Checks custom strategies first, then defaults.
@@ -24,12 +28,13 @@ const defaultStrategies: Record<string, BotStrategy> = {
  */
 export const getStrategy = (
   name: string,
-  custom?: Record<string, BotStrategy>
+  custom?: Record<string, BotStrategy>,
 ): BotStrategy | undefined => {
-  return custom?.[name] ?? defaultStrategies[name];
+  return custom?.[name] ?? getDefaultStrategies()[name];
 };
 
 /**
  * Returns the list of built-in strategy names.
  */
-export const getStrategyNames = (): string[] => Object.keys(defaultStrategies);
+export const getStrategyNames = (): string[] =>
+  Object.keys(getDefaultStrategies());

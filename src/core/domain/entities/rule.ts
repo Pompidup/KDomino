@@ -1,11 +1,11 @@
 import { ErrorCode } from "@core/domain/errors/domainErrors.js";
 import type { ExtraRule } from "@core/domain/types/rule.js";
-import { ok, err, type Result } from "@utils/result.js";
+import { err, ok, type Result } from "@utils/result.js";
 
 export const getAvailablesExtraRules = (
   extraRules: ExtraRule[],
   mode: string,
-  numberOfPlayers: number
+  numberOfPlayers: number,
 ): Result<ExtraRule[]> => {
   const availableExtraRules = extraRules.filter((rule) => {
     return (
@@ -23,7 +23,7 @@ export const getAvailablesExtraRules = (
 
 export const toExtraRule = (
   rule: string,
-  extraRules: ExtraRule[]
+  extraRules: ExtraRule[],
 ): Result<ExtraRule> => {
   const foundRule = extraRules.find((r) => r.name === rule);
 

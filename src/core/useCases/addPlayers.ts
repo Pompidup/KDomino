@@ -1,4 +1,8 @@
-import { isAgeOfGiantsMode, isAgeOfGiantsQueenDominoMode } from "@core/domain/entities/ageOfGiantsHelpers.js";
+import type { PlayerInput } from "@application/commands/addPlayersCommand.js";
+import {
+  isAgeOfGiantsMode,
+  isAgeOfGiantsQueenDominoMode,
+} from "@core/domain/entities/ageOfGiantsHelpers.js";
 import { STARTING_COINS } from "@core/domain/entities/economy.js";
 import {
   createEmptyKingdom,
@@ -10,6 +14,7 @@ import {
   isTribeMode,
 } from "@core/domain/entities/originsHelpers.js";
 import { createPlayer } from "@core/domain/entities/player.js";
+import { ErrorCode } from "@core/domain/errors/domainErrors.js";
 import type {
   GameWithNextStep,
   NextStep,
@@ -18,18 +23,16 @@ import type {
 import type { RuleRepository } from "@core/portServerside/ruleRepository.js";
 import type { ShuffleMethod } from "@core/portServerside/shuffleMethod.js";
 import type { UuidMethod } from "@core/portServerside/uuidMethod.js";
-import { ErrorCode } from "@core/domain/errors/domainErrors.js";
 import { err, isErr, ok, type Result } from "@utils/result.js";
 import { createSeededShuffle } from "@utils/seededShuffle.js";
-import type { PlayerInput } from "@application/commands/addPlayersCommand.js";
 
 export type AddPlayersUseCase = (
   game: GameWithNextStep,
-  players: PlayerInput[]
+  players: PlayerInput[],
 ) => Result<GameWithNextStep>;
 
 const normalizePlayerInput = (
-  input: PlayerInput
+  input: PlayerInput,
 ): { name: string; bot?: { strategyName: string } } => {
   if (typeof input === "string") {
     return { name: input };
@@ -50,7 +53,11 @@ export const addPlayersUseCase =
     const maxPlayers = isAoG ? 5 : 4;
     const minPlayers = isAoG ? 2 : 1;
 
-    if (!players || players.length < minPlayers || players.length > maxPlayers) {
+    if (
+      !players ||
+      players.length < minPlayers ||
+      players.length > maxPlayers
+    ) {
       return err(ErrorCode.INVALID_PLAYER_COUNT);
     }
 
@@ -60,7 +67,7 @@ export const addPlayersUseCase =
       const { name, bot } = normalizePlayerInput(player);
       let kingdom = createEmptyKingdom();
       kingdom = placeCastle(kingdom);
-      let id = uuidMethod();
+      const id = uuidMethod();
       const newPlayer = createPlayer(name, id, kingdom, bot);
 
       if (isErr(newPlayer)) {
@@ -103,9 +110,10 @@ export const addPlayersUseCase =
 
     // set rules
     const rules = ruleRepository.getAll();
-    const basicRules = isAoG && rules.aogBasic
-      ? rules.aogBasic[newPlayers.length]
-      : rules.basic[newPlayers.length];
+    const basicRules =
+      isAoG && rules.aogBasic
+        ? rules.aogBasic[newPlayers.length]
+        : rules.basic[newPlayers.length];
 
     if (!basicRules) {
       return err(ErrorCode.STEP_EXECUTION_FAILED);

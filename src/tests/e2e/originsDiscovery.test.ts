@@ -106,9 +106,7 @@ describe("Origins Discovery Mode Full Game Simulation", () => {
   test("should show Origins modes in available modes", () => {
     const engine = createGameEngine({});
     const modes = engine.getModes({});
-    expect(modes.map((m) => m.name)).toContain(
-      "KingdominoOrigins-Discovery",
-    );
+    expect(modes.map((m) => m.name)).toContain("KingdominoOrigins-Discovery");
     expect(modes.map((m) => m.name)).toContain("KingdominoOrigins-Totem");
     expect(modes.map((m) => m.name)).toContain("KingdominoOrigins-Tribe");
   });
@@ -123,7 +121,7 @@ describe("Origins Discovery Mode Full Game Simulation", () => {
     game = engine.startGame({ game });
 
     // Play through until we find a volcano domino being placed
-    let foundVolcanoAction = false;
+    let _foundVolcanoAction = false;
     let iterations = 0;
     const maxIterations = 200;
 
@@ -133,7 +131,7 @@ describe("Origins Discovery Mode Full Game Simulation", () => {
       const lordId = game.nextAction.nextLord;
 
       if (action === playerActions.placeFireToken) {
-        foundVolcanoAction = true;
+        _foundVolcanoAction = true;
         // Verify pending fire token exists
         expect(game.origins?.pendingFireToken).toBeDefined();
         // Skip it and continue

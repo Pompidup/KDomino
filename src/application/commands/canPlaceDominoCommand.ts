@@ -1,4 +1,4 @@
-import type { Kingdom, Domino } from "@core/domain/types/index.js";
+import type { Domino, Kingdom } from "@core/domain/types/index.js";
 
 /**
  * Command to check if a domino can be placed anywhere on a kingdom.

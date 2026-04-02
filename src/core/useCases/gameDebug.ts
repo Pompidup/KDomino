@@ -290,12 +290,7 @@ export const wrapWithDebug = (
       logger,
       level,
     ),
-    placeKnight: wrapMethod(
-      "placeKnight",
-      engine.placeKnight,
-      logger,
-      level,
-    ),
+    placeKnight: wrapMethod("placeKnight", engine.placeKnight, logger, level),
     constructBuilding: wrapMethod(
       "constructBuilding",
       engine.constructBuilding,
@@ -321,17 +316,7 @@ export const wrapWithDebug = (
       logger,
       level,
     ),
-    placeGiant: wrapMethod(
-      "placeGiant",
-      engine.placeGiant,
-      logger,
-      level,
-    ),
-    sendGiant: wrapMethod(
-      "sendGiant",
-      engine.sendGiant,
-      logger,
-      level,
-    ),
+    placeGiant: wrapMethod("placeGiant", engine.placeGiant, logger, level),
+    sendGiant: wrapMethod("sendGiant", engine.sendGiant, logger, level),
   };
 };

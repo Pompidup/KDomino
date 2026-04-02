@@ -1,13 +1,15 @@
 import type { PlacedGiant, QuestTile } from "@core/domain/types/ageOfGiants.js";
+import { questTypes } from "@core/domain/types/ageOfGiants.js";
 import type { Ground } from "@core/domain/types/domino.js";
 import type { Kingdom } from "@core/domain/types/kingdom.js";
-import { questTypes } from "@core/domain/types/ageOfGiants.js";
 import { checkCastleIsInMiddle, countDominoes } from "./kingdom.js";
 
 /**
  * Finds the castle position in the kingdom.
  */
-const findCastlePosition = (kingdom: Kingdom): { x: number; y: number } | undefined => {
+const findCastlePosition = (
+  kingdom: Kingdom,
+): { x: number; y: number } | undefined => {
   for (let y = 0; y < kingdom.length; y++) {
     const row = kingdom[y]!;
     for (let x = 0; x < row.length; x++) {
@@ -22,7 +24,9 @@ const findCastlePosition = (kingdom: Kingdom): { x: number; y: number } | undefi
 /**
  * Gets the bounding box of non-empty tiles in the kingdom.
  */
-const getBoundingBox = (kingdom: Kingdom): { minX: number; minY: number; maxX: number; maxY: number } | undefined => {
+const getBoundingBox = (
+  kingdom: Kingdom,
+): { minX: number; minY: number; maxX: number; maxY: number } | undefined => {
   let minX = Number.MAX_SAFE_INTEGER;
   let minY = Number.MAX_SAFE_INTEGER;
   let maxX = -1;
@@ -56,9 +60,14 @@ export const calculateLocalTradeBonus = (
   if (!castle) return 0;
 
   const directions = [
-    [-1, -1], [-1, 0], [-1, 1],
-    [0, -1],           [0, 1],
-    [1, -1],  [1, 0],  [1, 1],
+    [-1, -1],
+    [-1, 0],
+    [-1, 1],
+    [0, -1],
+    [0, 1],
+    [1, -1],
+    [1, 0],
+    [1, 1],
   ];
 
   let count = 0;
@@ -146,7 +155,9 @@ export const calculateMegalomaniaBonus = (
     for (let x = 0; x < cols; x++) {
       const tile = kingdom[y]![x]!;
       if (tile.type !== "empty" && tile.type !== "castle" && tile.crowns > 0) {
-        const coveredByGiant = giants.some((g) => g.position.x === x && g.position.y === y);
+        const coveredByGiant = giants.some(
+          (g) => g.position.x === x && g.position.y === y,
+        );
         if (!coveredByGiant) {
           hasCrown[y]![x] = true;
         }
@@ -158,10 +169,10 @@ export const calculateMegalomaniaBonus = (
 
   // Directions: horizontal (1,0), vertical (0,1), diagonal (1,1), anti-diagonal (1,-1)
   const directions = [
-    { dx: 1, dy: 0 },   // horizontal
-    { dx: 0, dy: 1 },   // vertical
-    { dx: 1, dy: 1 },   // diagonal
-    { dx: 1, dy: -1 },  // anti-diagonal
+    { dx: 1, dy: 0 }, // horizontal
+    { dx: 0, dy: 1 }, // vertical
+    { dx: 1, dy: 1 }, // diagonal
+    { dx: 1, dy: -1 }, // anti-diagonal
   ];
 
   for (const { dx, dy } of directions) {
@@ -179,8 +190,10 @@ export const calculateMegalomaniaBonus = (
         let cx = x;
         let cy = y;
         while (
-          cx >= 0 && cx < cols &&
-          cy >= 0 && cy < rows &&
+          cx >= 0 &&
+          cx < cols &&
+          cy >= 0 &&
+          cy < rows &&
           hasCrown[cy]![cx]
         ) {
           counted[cy]![cx] = true;
@@ -214,7 +227,10 @@ export const calculateAustereKingBonus = (
   );
 
   const directions = [
-    [-1, 0], [1, 0], [0, -1], [0, 1],
+    [-1, 0],
+    [1, 0],
+    [0, -1],
+    [0, 1],
   ];
 
   let qualifyingProperties = 0;
@@ -222,7 +238,8 @@ export const calculateAustereKingBonus = (
   for (let y = 0; y < rows; y++) {
     for (let x = 0; x < cols; x++) {
       const tile = kingdom[y]![x]!;
-      if (visited[y]![x] || !eligibleTerrains.includes(tile.type as Ground)) continue;
+      if (visited[y]![x] || !eligibleTerrains.includes(tile.type as Ground))
+        continue;
       if (tile.type === "empty" || tile.type === "castle") continue;
 
       // BFS for this property
@@ -242,7 +259,10 @@ export const calculateAustereKingBonus = (
           const nx = cx + (dx as number);
           const ny = cy + (dy as number);
           if (
-            nx >= 0 && ny >= 0 && nx < cols && ny < rows &&
+            nx >= 0 &&
+            ny >= 0 &&
+            nx < cols &&
+            ny < rows &&
             !visited[ny]![nx] &&
             kingdom[ny]![nx]!.type === type
           ) {
@@ -276,7 +296,11 @@ export const calculateQuestBonus = (
       return calculateLocalTradeBonus(kingdom, quest.terrain!, quest.points);
 
     case questTypes.kingdomBorders:
-      return calculateKingdomBordersBonus(kingdom, quest.terrain!, quest.points);
+      return calculateKingdomBordersBonus(
+        kingdom,
+        quest.terrain!,
+        quest.points,
+      );
 
     case questTypes.harmony: {
       const totalDominoes = countDominoes(kingdom);

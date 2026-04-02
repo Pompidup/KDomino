@@ -25,11 +25,9 @@ import winston from "winston";
  * @returns A Logger instance using Winston
  */
 export const winstonLogger = (isLoggingEnabled: boolean): Logger => {
-  const myFormat = winston.format.printf(
-    (info) => {
-      return `${info.timestamp} [${info.label}] ${info.level}: ${info.message}`;
-    }
-  );
+  const myFormat = winston.format.printf((info) => {
+    return `${info.timestamp} [${info.label}] ${info.level}: ${info.message}`;
+  });
 
   const logger = winston.createLogger({
     level: "info",
@@ -39,7 +37,7 @@ export const winstonLogger = (isLoggingEnabled: boolean): Logger => {
       winston.format.simple(),
       winston.format.json(),
       winston.format.colorize(),
-      myFormat
+      myFormat,
     ),
     transports: [new winston.transports.Console()],
   });

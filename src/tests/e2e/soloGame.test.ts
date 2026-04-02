@@ -1,21 +1,21 @@
-import { createGameEngine } from "../../index.js";
 import {
-  isGameWithNextAction,
-  isGameWithNextStep,
   type GameState,
   type GameWithNextAction,
   type GameWithNextStep,
+  isGameWithNextAction,
+  isGameWithNextStep,
 } from "@core/domain/types/game.js";
-import {
-  randomStrategy,
-  greedyStrategy,
-  advancedStrategy,
-  expertStrategy,
-  playBotTurn,
-  type BotStrategy,
-} from "@core/useCases/bot.js";
 import type { GameEngine } from "@core/portUserside/engine.js";
+import {
+  advancedStrategy,
+  type BotStrategy,
+  expertStrategy,
+  greedyStrategy,
+  playBotTurn,
+  randomStrategy,
+} from "@core/useCases/bot.js";
 import { describe, expect, test } from "vitest";
+import { createGameEngine } from "../../index.js";
 
 describe("Solo Game", () => {
   const engine = createGameEngine({});
@@ -137,7 +137,10 @@ describe("Solo Game", () => {
           const lord = game.lords.find((l) => l.id === action.nextLord)!;
           const player = game.players.find((p) => p.id === lord.playerId)!;
           const domino = lord.dominoPicked!;
-          const valid = eng.getValidPlacements({ kingdom: player.kingdom, domino });
+          const valid = eng.getValidPlacements({
+            kingdom: player.kingdom,
+            domino,
+          });
           if (valid.length > 0) {
             game = eng.placeDomino({
               game,
@@ -201,7 +204,10 @@ describe("Solo Game - Extra Rules", () => {
         const lord = game.lords.find((l) => l.id === action.nextLord)!;
         const player = game.players.find((p) => p.id === lord.playerId)!;
         const domino = lord.dominoPicked!;
-        const valid = engine.getValidPlacements({ kingdom: player.kingdom, domino });
+        const valid = engine.getValidPlacements({
+          kingdom: player.kingdom,
+          domino,
+        });
         if (valid.length > 0) {
           game = engine.placeDomino({
             game,
@@ -267,8 +273,16 @@ describe("Solo Game - Bot strategies", () => {
       shuffleMethod: (array) => array,
     });
 
-    const randomResult = playSoloBotGame(deterministicEngine, randomStrategy, seed);
-    const greedyResult = playSoloBotGame(deterministicEngine, greedyStrategy, seed);
+    const randomResult = playSoloBotGame(
+      deterministicEngine,
+      randomStrategy,
+      seed,
+    );
+    const greedyResult = playSoloBotGame(
+      deterministicEngine,
+      greedyStrategy,
+      seed,
+    );
 
     expect(greedyResult.score).toBeGreaterThanOrEqual(randomResult.score);
   });

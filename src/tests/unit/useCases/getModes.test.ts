@@ -1,7 +1,7 @@
-import { describe, test, expect } from "vitest";
-import { getModesUseCase } from "@core/useCases/getModes.js";
 import type { GameMode } from "@core/domain/types/mode.js";
+import { getModesUseCase } from "@core/useCases/getModes.js";
 import { unwrap } from "@utils/result.js";
+import { describe, expect, test } from "vitest";
 
 describe("Get available mode", () => {
   test("should retrieve one mode", () => {

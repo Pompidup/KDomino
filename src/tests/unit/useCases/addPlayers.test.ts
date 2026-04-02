@@ -99,6 +99,7 @@ describe("Add players", () => {
     ];
     const dependencies = {
       uuidMethod: () => "uuid-test",
+      // biome-ignore lint/suspicious/noExplicitAny: test mock
       shuffleMethod: (dominoes: any[]) => dominoes,
       ruleRepository: inMemoryRepo,
     };
@@ -132,6 +133,7 @@ describe("Add players", () => {
     ];
     const dependencies = {
       uuidMethod: () => "uuid-test",
+      // biome-ignore lint/suspicious/noExplicitAny: test mock
       shuffleMethod: (dominoes: any[]) => dominoes,
       ruleRepository: inMemoryRepo,
     };
@@ -163,6 +165,7 @@ describe("Add players", () => {
     const payload: string[] = [];
     const dependencies = {
       uuidMethod: () => "uuid-test",
+      // biome-ignore lint/suspicious/noExplicitAny: test mock
       shuffleMethod: (dominoes: any[]) => dominoes,
       ruleRepository: inMemoryRepo,
     };
@@ -190,6 +193,7 @@ describe("Add players", () => {
     ];
     const dependencies = {
       uuidMethod: () => "uuid-test",
+      // biome-ignore lint/suspicious/noExplicitAny: test mock
       shuffleMethod: (dominoes: any[]) => dominoes,
       ruleRepository: inMemoryRepo,
     };
@@ -218,6 +222,7 @@ describe("Add players", () => {
 
     const dependencies = {
       uuidMethod: () => "uuid-test",
+      // biome-ignore lint/suspicious/noExplicitAny: test mock
       shuffleMethod: (dominoes: any[]) => dominoes,
       ruleRepository: inMemoryRepo,
     };
@@ -248,6 +253,7 @@ describe("Add players", () => {
     const payload = ["Pl", "Player 2"];
     const dependencies = {
       uuidMethod: () => "uuid-test",
+      // biome-ignore lint/suspicious/noExplicitAny: test mock
       shuffleMethod: (dominoes: any[]) => dominoes,
       ruleRepository: inMemoryRepo,
     };
@@ -272,6 +278,7 @@ describe("Add players", () => {
     ];
     const dependencies = {
       uuidMethod: () => "uuid-test",
+      // biome-ignore lint/suspicious/noExplicitAny: test mock
       shuffleMethod: (dominoes: any[]) => dominoes,
       ruleRepository: inMemoryRepo,
     };
@@ -295,12 +302,10 @@ describe("Add players", () => {
       .withMode({ name: "Classic", description: "Classic mode" })
       .build();
 
-    const payload = [
-      { name: "Player 1" },
-      { name: "Player 2" },
-    ];
+    const payload = [{ name: "Player 1" }, { name: "Player 2" }];
     const dependencies = {
       uuidMethod: () => "uuid-test",
+      // biome-ignore lint/suspicious/noExplicitAny: test mock
       shuffleMethod: (dominoes: any[]) => dominoes,
       ruleRepository: inMemoryRepo,
     };

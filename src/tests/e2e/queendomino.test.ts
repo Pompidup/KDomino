@@ -30,7 +30,7 @@ describe("Queendomino Full Game Simulation", () => {
     expect(game.queendomino?.buildersBoard.slots.length).toBe(4);
 
     // Game loop
-    let turnCount = 0;
+    const _turnCount = 0;
     const maxIterations = 500;
     let iterations = 0;
 

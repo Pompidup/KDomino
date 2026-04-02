@@ -1,17 +1,19 @@
-import type { AgeOfGiantsState, QuestTile } from "@core/domain/types/ageOfGiants.js";
+import type {
+  AgeOfGiantsState,
+  QuestTile,
+} from "@core/domain/types/ageOfGiants.js";
 import type { BuildingTile } from "@core/domain/types/building.js";
 import {
-  gameSteps,
   type Domino,
   type GameMode,
   type GameWithNextStep,
+  gameSteps,
 } from "@core/domain/types/index.js";
-import type { OriginsState } from "@core/domain/types/origins.js";
+import type { CavemanTile, OriginsState } from "@core/domain/types/origins.js";
 import type { QueenDominoState } from "@core/domain/types/queendomino.js";
 import { isAgeOfGiantsMode } from "./ageOfGiantsHelpers.js";
 import { createFireTokenPool } from "./fireToken.js";
 import { createGiantPool } from "./giant.js";
-import type { CavemanTile } from "@core/domain/types/origins.js";
 import {
   getOriginsSubMode,
   isOriginsMode,
@@ -31,7 +33,10 @@ export const create = (payload: {
   const { id, mode, dominoes, seed, buildings, cavemen, questTiles } = payload;
 
   let queendomino: QueenDominoState | undefined;
-  if ((mode.name === "QueenDomino" || mode.name === "AgeOfGiants-QueenDomino") && buildings) {
+  if (
+    (mode.name === "QueenDomino" || mode.name === "AgeOfGiants-QueenDomino") &&
+    buildings
+  ) {
     queendomino = {
       buildersBoard: {
         slots: [],

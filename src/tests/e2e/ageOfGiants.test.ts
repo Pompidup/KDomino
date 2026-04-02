@@ -5,7 +5,11 @@ import { playerActions } from "@core/domain/types/player.js";
 import { describe, expect, test } from "vitest";
 import { createGameEngine } from "../../index.js";
 
-const playAoGGame = (playerNames: string[], seed: string, mode = "AgeOfGiants") => {
+const playAoGGame = (
+  playerNames: string[],
+  seed: string,
+  mode = "AgeOfGiants",
+) => {
   const engine = createGameEngine({});
   let game: GameState;
 

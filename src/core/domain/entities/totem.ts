@@ -1,5 +1,5 @@
-import type { Player } from "@core/domain/types/player.js";
 import type { ResourceType, TotemState } from "@core/domain/types/origins.js";
+import type { Player } from "@core/domain/types/player.js";
 import { countResourcesByType } from "./resource.js";
 
 /**
@@ -13,12 +13,7 @@ export const TOTEM_BONUSES: Record<ResourceType, number> = {
   flint: 3,
 };
 
-const RESOURCE_TYPES: ResourceType[] = [
-  "mammoth",
-  "fish",
-  "mushroom",
-  "flint",
-];
+const RESOURCE_TYPES: ResourceType[] = ["mammoth", "fish", "mushroom", "flint"];
 
 /**
  * Determines which player holds each totem based on resource majority.

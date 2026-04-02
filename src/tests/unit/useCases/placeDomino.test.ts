@@ -232,7 +232,7 @@ describe("Game Place", () => {
 
     initialGame.currentDominoes = revealsDomino;
 
-    initialGame.lords.map((lord, index) => {
+    initialGame.lords.forEach((lord, index) => {
       if (index !== 3) {
         lord.hasPick = true;
         lord.hasPlace = true;

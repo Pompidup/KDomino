@@ -1,4 +1,4 @@
-import type { FinalResult, GameWithResults } from "@core/domain/types/index.js";
+import type { GameWithResults } from "@core/domain/types/index.js";
 
 export type DynastyResult = {
   playerId: string;
@@ -9,7 +9,7 @@ export type DynastyResult = {
 };
 
 export type GetDynastyResultUseCase = (
-  games: GameWithResults[]
+  games: GameWithResults[],
 ) => DynastyResult[];
 
 export const getDynastyResultUseCase: GetDynastyResultUseCase = (games) => {

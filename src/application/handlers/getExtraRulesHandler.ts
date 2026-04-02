@@ -1,6 +1,5 @@
 import type { GetExtraRulesCommand } from "@application/commands/getExtraRulesCommand.js";
 import {
-  ErrorCode,
   type ErrorCodeType,
   NotFoundError,
 } from "@core/domain/errors/domainErrors.js";

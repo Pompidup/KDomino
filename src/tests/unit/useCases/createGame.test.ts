@@ -52,7 +52,7 @@ describe("Create game", () => {
     const deps = {
       modeRepository: jsonModes(),
       dominoesRepository: {
-        getForMode: (mode: GameMode) => [],
+        getForMode: (_mode: GameMode) => [],
       },
       uuidMethod: fakeUuid,
     };

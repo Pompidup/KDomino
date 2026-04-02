@@ -1,25 +1,25 @@
-import { createGameEngine } from "../../index.js";
 import {
-  isGameWithNextAction,
   type GameState,
   type GameWithNextAction,
+  isGameWithNextAction,
 } from "@core/domain/types/game.js";
-import {
-  isBotTurn,
-  playBotTurns,
-  playBotTurn,
-  greedyStrategy,
-  type BotStrategy,
-} from "@core/useCases/bot.js";
 import type { GameEngine } from "@core/portUserside/engine.js";
-import { serializeGame, deserializeGame } from "@core/useCases/serialization.js";
+import { isBotTurn, playBotTurns } from "@core/useCases/bot.js";
+import {
+  deserializeGame,
+  serializeGame,
+} from "@core/useCases/serialization.js";
 import { unwrap } from "@utils/result.js";
 import { describe, expect, test } from "vitest";
+import { createGameEngine } from "../../index.js";
 
 /**
  * Helper: play a human turn (pick first available domino, place at first valid position).
  */
-const playHumanTurn = (engine: GameEngine, game: GameWithNextAction): GameState => {
+const playHumanTurn = (
+  engine: GameEngine,
+  game: GameWithNextAction,
+): GameState => {
   const action = game.nextAction;
 
   if (action.nextAction === "pickDomino") {
@@ -35,7 +35,10 @@ const playHumanTurn = (engine: GameEngine, game: GameWithNextAction): GameState 
     const lord = game.lords.find((l) => l.id === action.nextLord)!;
     const player = game.players.find((p) => p.id === lord.playerId)!;
     const domino = lord.dominoPicked!;
-    const valid = engine.getValidPlacements({ kingdom: player.kingdom, domino });
+    const valid = engine.getValidPlacements({
+      kingdom: player.kingdom,
+      domino,
+    });
 
     if (valid.length > 0) {
       return engine.placeDomino({
@@ -192,10 +195,7 @@ describe("Mixed Human/Bot Game", () => {
     });
     game = engine.addPlayers({
       game,
-      players: [
-        "Human",
-        { name: "Bot", bot: { strategyName: "greedy" } },
-      ],
+      players: ["Human", { name: "Bot", bot: { strategyName: "greedy" } }],
     });
     game = engine.startGame({ game });
 

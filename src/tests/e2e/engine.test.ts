@@ -106,9 +106,7 @@ describe("Engine", () => {
       maxKingdomSize: 5,
     });
     expect(gameWithExtraRules.rules.extra).toHaveLength(1);
-    expect(gameWithExtraRules.rules.extra[0]?.name).toBe(
-      "The middle Kingdom",
-    );
+    expect(gameWithExtraRules.rules.extra[0]?.name).toBe("The middle Kingdom");
     expect(gameWithExtraRules.nextAction).toEqual({
       type: "step",
       step: "start",
@@ -366,6 +364,7 @@ describe("Engine", () => {
       maxKingdomSize: 5,
     });
     const hasX7Standard = placementsStandard.some(
+      // biome-ignore lint/suspicious/noExplicitAny: test mock
       (p: any) => p.position.x === 7,
     );
     expect(hasX7Standard).toBe(false);
@@ -376,6 +375,7 @@ describe("Engine", () => {
       domino,
       maxKingdomSize: 7,
     });
+    // biome-ignore lint/suspicious/noExplicitAny: test mock
     const hasX7Mighty = placementsMighty.some((p: any) => p.position.x === 7);
     expect(hasX7Mighty).toBe(true);
   });

@@ -1,8 +1,8 @@
 import {
   isAgeOfGiantsMode,
   isAgeOfGiantsQueenDominoMode,
-  isGiantDomino,
   isFootprintDomino,
+  isGiantDomino,
 } from "@core/domain/entities/ageOfGiantsHelpers.js";
 import type { Domino } from "@core/domain/types/domino.js";
 import { describe, expect, it } from "vitest";

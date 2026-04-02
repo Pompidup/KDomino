@@ -12,7 +12,9 @@ import type { Logger } from "@core/portServerside/logger.js";
 import type { ConstructBuildingUseCase } from "@core/useCases/constructBuilding.js";
 import { isErr } from "@utils/result.js";
 
-type ConstructBuildingHandler = (command: ConstructBuildingCommand) => GameState;
+type ConstructBuildingHandler = (
+  command: ConstructBuildingCommand,
+) => GameState;
 
 export const constructBuildingHandler =
   (

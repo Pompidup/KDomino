@@ -36,8 +36,16 @@ describe("knight", () => {
     it("should count construction squares in a territory", () => {
       const kingdom = emptyKingdom();
       kingdom[4]![4] = { type: "castle", crowns: 0 };
-      kingdom[4]![5] = { type: "wheat", crowns: 0, hasConstructionSquare: true };
-      kingdom[4]![6] = { type: "wheat", crowns: 1, hasConstructionSquare: true };
+      kingdom[4]![5] = {
+        type: "wheat",
+        crowns: 0,
+        hasConstructionSquare: true,
+      };
+      kingdom[4]![6] = {
+        type: "wheat",
+        crowns: 1,
+        hasConstructionSquare: true,
+      };
       kingdom[4]![7] = { type: "wheat", crowns: 0 };
 
       const count = countConstructionSquaresInTerritory(kingdom, {
@@ -50,7 +58,11 @@ describe("knight", () => {
     it("should not count across different terrain types", () => {
       const kingdom = emptyKingdom();
       kingdom[4]![4] = { type: "castle", crowns: 0 };
-      kingdom[4]![5] = { type: "wheat", crowns: 0, hasConstructionSquare: true };
+      kingdom[4]![5] = {
+        type: "wheat",
+        crowns: 0,
+        hasConstructionSquare: true,
+      };
       kingdom[4]![6] = {
         type: "forest",
         crowns: 0,
@@ -66,9 +78,9 @@ describe("knight", () => {
 
     it("should return 0 for empty tile", () => {
       const kingdom = emptyKingdom();
-      expect(
-        countConstructionSquaresInTerritory(kingdom, { x: 0, y: 0 }),
-      ).toBe(0);
+      expect(countConstructionSquaresInTerritory(kingdom, { x: 0, y: 0 })).toBe(
+        0,
+      );
     });
   });
 
@@ -138,8 +150,16 @@ describe("knight", () => {
     it("should add knight and collect tax", () => {
       const kingdom = emptyKingdom();
       kingdom[4]![4] = { type: "castle", crowns: 0 };
-      kingdom[4]![5] = { type: "wheat", crowns: 0, hasConstructionSquare: true };
-      kingdom[4]![6] = { type: "wheat", crowns: 0, hasConstructionSquare: true };
+      kingdom[4]![5] = {
+        type: "wheat",
+        crowns: 0,
+        hasConstructionSquare: true,
+      };
+      kingdom[4]![6] = {
+        type: "wheat",
+        crowns: 0,
+        hasConstructionSquare: true,
+      };
 
       const player = makePlayer(0);
       player.coins = 7;

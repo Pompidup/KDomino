@@ -1,13 +1,13 @@
 import { getAvailablesExtraRules } from "@core/domain/entities/rule.js";
+import { ErrorCode } from "@core/domain/errors/domainErrors.js";
 import type { GameMode } from "@core/domain/types/mode.js";
 import type { ExtraRule } from "@core/domain/types/rule.js";
 import type { RuleRepository } from "@core/portServerside/ruleRepository.js";
-import { ErrorCode } from "@core/domain/errors/domainErrors.js";
 import { err, type Result } from "@utils/result.js";
 
 export type GetExtraRulesUseCase = (
   mode: GameMode["name"],
-  players: number
+  players: number,
 ) => Result<ExtraRule[]>;
 
 export const getExtraRulesUseCase =

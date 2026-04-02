@@ -1,5 +1,5 @@
-import { describe, it, expect } from "vitest";
 import { createSeededShuffle } from "@utils/seededShuffle.js";
+import { describe, expect, it } from "vitest";
 
 describe("createSeededShuffle", () => {
   const input = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];

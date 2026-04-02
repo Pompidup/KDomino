@@ -1,6 +1,5 @@
 import type { GetModesCommand } from "@application/commands/getModesCommand.js";
 import {
-  ErrorCode,
   type ErrorCodeType,
   NotFoundError,
 } from "@core/domain/errors/domainErrors.js";

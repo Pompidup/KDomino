@@ -34,6 +34,7 @@ export {
   getStrategyNames,
   type StrategyName,
 } from "@core/useCases/botRegistry.js";
+export type { ConstructBuildingUseCase } from "@core/useCases/constructBuilding.js";
 // Action log (game history / replay)
 export {
   type ActionEntry,
@@ -78,14 +79,11 @@ export {
 export type { DynastyResult } from "@core/useCases/getDynastyResult.js";
 // Use cases (for advanced usage)
 export type { ValidPlacement } from "@core/useCases/getValidPlacements.js";
-export type { PlaceKnightUseCase } from "@core/useCases/placeKnight.js";
-export type { ConstructBuildingUseCase } from "@core/useCases/constructBuilding.js";
-export type { UseDragonUseCase } from "@core/useCases/useDragon.js";
-export type { PlaceGiantUseCase } from "@core/useCases/placeGiant.js";
-export type { SendGiantUseCase } from "@core/useCases/sendGiant.js";
 export type { PlaceFireTokenUseCase } from "@core/useCases/placeFireToken.js";
+export type { PlaceGiantUseCase } from "@core/useCases/placeGiant.js";
+export type { PlaceKnightUseCase } from "@core/useCases/placeKnight.js";
 export type { RecruitCavemanUseCase } from "@core/useCases/recruitCaveman.js";
-export type { SkipOptionalActionUseCase } from "@core/useCases/skipOptionalAction.js";
+export type { SendGiantUseCase } from "@core/useCases/sendGiant.js";
 export {
   createSavePoint,
   deserializeGame,
@@ -93,6 +91,8 @@ export {
   restoreFromSavePoint,
   serializeGame,
 } from "@core/useCases/serialization.js";
+export type { SkipOptionalActionUseCase } from "@core/useCases/skipOptionalAction.js";
+export type { UseDragonUseCase } from "@core/useCases/useDragon.js";
 // Configuration
 export type { EngineConfig };
 

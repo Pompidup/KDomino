@@ -22,7 +22,7 @@ const mulberry32 = (seed: number): (() => number) => {
 
 export const createSeededShuffle = (
   seed: string,
-  salt: string
+  salt: string,
 ): ShuffleMethod => {
   const numericSeed = hashSeed(`${seed}|${salt}`);
   const random = mulberry32(numericSeed);
