@@ -1,3 +1,4 @@
+export * from "./ageOfGiants.js";
 export * from "./building.js";
 export * from "./domino.js";
 export * from "./game.js";

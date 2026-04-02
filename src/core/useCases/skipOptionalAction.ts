@@ -1,5 +1,7 @@
+import { isAgeOfGiantsMode, isAgeOfGiantsQueenDominoMode } from "@core/domain/entities/ageOfGiantsHelpers.js";
 import {
   allLordsHavePlayed,
+  nextAgeOfGiantsAction,
   nextLordWithAction,
   nextOriginsAction,
   nextQueenDominoAction,
@@ -43,8 +45,17 @@ export const skipOptionalActionUseCase: SkipOptionalActionUseCase = (
     action === playerActions.placeFireToken ||
     action === playerActions.recruitCaveman;
 
-  if (!isQueenDominoOptional && !isOriginsOptional) {
+  // Age of Giants optional actions (sendGiant is optional; placeGiant is mandatory but auto-skipped when no crowns)
+  const isAoGOptional =
+    action === playerActions.sendGiant ||
+    action === playerActions.placeGiant;
+
+  if (!isQueenDominoOptional && !isOriginsOptional && !isAoGOptional) {
     return err(ErrorCode.INVALID_OPTIONAL_ACTION);
+  }
+
+  if (isAoGOptional) {
+    return handleAoGSkip(game, lordId, action);
   }
 
   if (isOriginsOptional) {
@@ -103,6 +114,32 @@ const handleOriginsSkip = (
 
   return ok({
     ...updatedGame,
+    nextAction: {
+      type: "action",
+      nextLord: lordId,
+      nextAction: nextAction,
+    },
+  });
+};
+
+const handleAoGSkip = (
+  game: GameWithNextAction,
+  lordId: string,
+  action: string,
+): GameStateResult => {
+  const isAoGQD = isAgeOfGiantsQueenDominoMode(game.mode.name);
+  const nextAction = nextAgeOfGiantsAction(
+    action as typeof playerActions.placeGiant | typeof playerActions.sendGiant,
+    isAoGQD,
+  );
+
+  if (nextAction === playerActions.pickDomino) {
+    return advanceToNextLordOrResult(game);
+  }
+
+  // More optional actions (e.g., QD actions in AoG-QD mode)
+  return ok({
+    ...game,
     nextAction: {
       type: "action",
       nextLord: lordId,

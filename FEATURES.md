@@ -7,7 +7,7 @@
 ## Nouvelles variantes de jeu
 
 1. ~~**Queendomino**~~ - ✅ Implémenté. Mode `QueenDomino` complet avec 48 dominos dédiés (cases construction), 18 tuiles bâtiment, Builders Board, économie (pièces), chevaliers (taxe BFS), tours, la Reine (+1 couronne au meilleur territoire), le Dragon (destruction de bâtiments). Flow de tour étendu : placeDomino → placeKnight → constructBuilding → useDragon → pickDomino (actions optionnelles skippables). Scoring étendu : bonus bâtiments fin de partie (flat, perBuilding, perTower, perCrown, perTerrain), bonus Reine. Compatible extra rules (Middle Kingdom, Harmony, Mighty Duel, Dynasty). 4 nouvelles méthodes engine : `placeKnight`, `constructBuilding`, `useDragon`, `skipOptionalAction`.
-2. **Age of Giants** - Extension avec tuiles géantes qui volent des couronnes et ajoutent des tuiles de 12 nouveaux dominos (numéros 49-60).
+2. ~~**Age of Giants**~~ - ✅ Implémenté. Extension avec 12 nouveaux dominos (6 dominos géant lettrés A-F + 6 dominos empreinte 49-54), 6 figurines géant qui couvrent les couronnes, 17 tuiles Quête (2 tirées au hasard par partie remplaçant les extra rules classiques), support 5 joueurs, lignes de 5 dominos avec défausse avant sélection. Modes `AgeOfGiants` (Classic+AoG) et `AgeOfGiants-QueenDomino` (QD+AoG). 2 nouvelles méthodes engine : `placeGiant`, `sendGiant`. 7 types de quêtes : Commerce de proximité, Aux confins du Royaume, Harmonie, Empire du milieu, Le petit coin perdu, La folie des grandeurs, Le Roi austère. Compatible bot strategies et Dynasty.
 3. ~~**Mode solo**~~ - ✅ Implémenté. Support 1 joueur avec règles solo (48 dominos, 4 révélés par tour, 12 tours, grille 5×5). Le joueur choisit 1 domino sur 4 chaque tour. Compatible avec les extra rules (The middle Kingdom, Harmony, Dynasty) et toutes les stratégies bot.
 4. **Mode "The Court"** - Variante officielle pour 2 joueurs avec un 3e royaume "fantôme".
 
@@ -83,7 +83,7 @@ Les plus impactantes à court terme :
 
 ### Priorité basse — Extensions majeures
 
-8. **Age of Giants (2)** — Extension officielle, nécessite de nouveaux dominos et mécaniques de géants. Effort significatif.
+8. ~~**Age of Giants (2)**~~ — ✅ Done
 9. **Mode "The Court" (4)** — Variante 2 joueurs avec royaume fantôme. Mécanique nouvelle, public restreint.
 10. ~~**Queendomino (1)**~~ — ✅ Done
 11. ~~**Kingdomino Origins (15)**~~ — ✅ Done

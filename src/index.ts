@@ -81,6 +81,8 @@ export type { ValidPlacement } from "@core/useCases/getValidPlacements.js";
 export type { PlaceKnightUseCase } from "@core/useCases/placeKnight.js";
 export type { ConstructBuildingUseCase } from "@core/useCases/constructBuilding.js";
 export type { UseDragonUseCase } from "@core/useCases/useDragon.js";
+export type { PlaceGiantUseCase } from "@core/useCases/placeGiant.js";
+export type { SendGiantUseCase } from "@core/useCases/sendGiant.js";
 export type { PlaceFireTokenUseCase } from "@core/useCases/placeFireToken.js";
 export type { RecruitCavemanUseCase } from "@core/useCases/recruitCaveman.js";
 export type { SkipOptionalActionUseCase } from "@core/useCases/skipOptionalAction.js";
@@ -135,6 +137,8 @@ export const createGameEngine = (config: Partial<EngineConfig>): GameEngine => {
     serializeGameHandler,
     deserializeGameHandler,
     getDynastyResultHandler,
+    placeGiantHandler,
+    sendGiantHandler,
     placeKnightHandler,
     constructBuildingHandler,
     useDragonHandler,
@@ -160,6 +164,8 @@ export const createGameEngine = (config: Partial<EngineConfig>): GameEngine => {
     serialize: (command) => serializeGameHandler(command),
     deserialize: (command) => deserializeGameHandler(command),
     getDynastyResults: (command) => getDynastyResultHandler(command),
+    placeGiant: (command) => placeGiantHandler(command),
+    sendGiant: (command) => sendGiantHandler(command),
     placeKnight: (command) => placeKnightHandler(command),
     constructBuilding: (command) => constructBuildingHandler(command),
     useDragon: (command) => useDragonHandler(command),

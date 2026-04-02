@@ -25,7 +25,9 @@ import type {
   DeserializeGameCommand,
 } from "@application/commands/serializeGameCommand.js";
 import type { GetDynastyResultCommand } from "@application/commands/getDynastyResultCommand.js";
+import type { PlaceGiantCommand } from "@application/commands/placeGiantCommand.js";
 import type { PlaceKnightCommand } from "@application/commands/placeKnightCommand.js";
+import type { SendGiantCommand } from "@application/commands/sendGiantCommand.js";
 import type { ConstructBuildingCommand } from "@application/commands/constructBuildingCommand.js";
 import type { UseDragonCommand } from "@application/commands/useDragonCommand.js";
 import type { PlaceFireTokenCommand } from "@application/commands/placeFireTokenCommand.js";
@@ -182,6 +184,22 @@ export type GameEngine = {
    * @returns Ranked dynasty results per player
    */
   getDynastyResults: (command: GetDynastyResultCommand) => DynastyResult[];
+
+  /**
+   * Places a giant on a crown in the lord's kingdom (Age of Giants).
+   * Mandatory after placing a giant domino (A-F). The giant covers the crown for scoring.
+   * @param command - Contains game state, lord ID, and crown position
+   * @returns Updated game state with next action
+   */
+  placeGiant: (command: PlaceGiantCommand) => GameState;
+
+  /**
+   * Sends a giant from the lord's kingdom to an opponent's kingdom (Age of Giants).
+   * Optional after placing a footprint domino (49-54). The opponent chooses which crown is covered.
+   * @param command - Contains game state, lord ID, giant index, target player ID, and target crown position
+   * @returns Updated game state with next action
+   */
+  sendGiant: (command: SendGiantCommand) => GameState;
 
   /**
    * Places a knight on the lord's kingdom at the specified position (Queendomino).

@@ -18,7 +18,7 @@ describe("jsonRules", () => {
       "4": { lords: 1, maxDominoes: 48, dominoesPerTurn: 4, maxTurns: 12, maxKingdomSize: 5 },
     });
     expect(result).toHaveProperty("extraRules");
-    expect(result.extraRules).toHaveLength(8);
+    expect(result.extraRules).toHaveLength(9);
     expect(result.extraRules.map((r) => r.name)).toEqual([
       "The middle Kingdom",
       "Harmony",
@@ -28,7 +28,15 @@ describe("jsonRules", () => {
       "Homo Habilis",
       "Neolithic",
       "Dynasty",
+      "Dynasty",
     ]);
+    expect(result).toHaveProperty("aogBasic");
+    expect(result.aogBasic).toEqual({
+      "2": { lords: 2, maxDominoes: 30, dominoesPerTurn: 5, maxTurns: 6, maxKingdomSize: 5, dominoesDiscardedPerTurn: 1 },
+      "3": { lords: 1, maxDominoes: 60, dominoesPerTurn: 5, maxTurns: 12, maxKingdomSize: 5, dominoesDiscardedPerTurn: 2 },
+      "4": { lords: 1, maxDominoes: 60, dominoesPerTurn: 5, maxTurns: 12, maxKingdomSize: 5, dominoesDiscardedPerTurn: 1 },
+      "5": { lords: 1, maxDominoes: 60, dominoesPerTurn: 5, maxTurns: 12, maxKingdomSize: 5, dominoesDiscardedPerTurn: 0 },
+    });
   });
 
   test("should return all extra rules", () => {
@@ -39,6 +47,6 @@ describe("jsonRules", () => {
     const result = repository.getAllExtra();
 
     // Assert
-    expect(result.length).toBe(8);
+    expect(result.length).toBe(9);
   });
 });

@@ -1,4 +1,5 @@
 import type { Result } from "@utils/result.js";
+import type { AgeOfGiantsState } from "./ageOfGiants.js";
 import type { Domino, RevealsDomino } from "./domino.js";
 import type { Lord } from "./lord.js";
 import type { GameMode } from "./mode.js";
@@ -37,6 +38,8 @@ export type Game = {
   queendomino?: QueenDominoState;
   /** Origins-specific state (only present in KingdominoOrigins modes) */
   origins?: OriginsState;
+  /** Age of Giants-specific state (only present in AgeOfGiants modes) */
+  ageOfGiants?: AgeOfGiantsState;
 };
 
 /**

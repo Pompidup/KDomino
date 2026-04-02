@@ -1,7 +1,9 @@
+import { isAgeOfGiantsMode } from "@core/domain/entities/ageOfGiantsHelpers.js";
 import {
   checkCastleIsInMiddle,
   countDominoes,
 } from "@core/domain/entities/kingdom.js";
+import { calculateQuestBonus } from "@core/domain/entities/questScore.js";
 import { calculateTribeCavemanScore } from "@core/domain/entities/caveman.js";
 import {
   isOriginsMode,
@@ -55,6 +57,20 @@ export const getResultUseCase: GetResultUseCase = (game, scoreResult) => {
         player.resources ?? [],
         player.fireTokens ?? [],
       );
+    }
+
+    // Age of Giants: quest tile bonuses
+    if (isAgeOfGiantsMode(game.mode.name) && game.ageOfGiants?.questTiles) {
+      const giants = player.giants ?? [];
+      for (const quest of game.ageOfGiants.questTiles) {
+        finalScore += calculateQuestBonus(
+          quest,
+          kingdom,
+          giants,
+          basic.maxDominoes,
+          game.players.length,
+        );
+      }
     }
 
     if (extra.length > 0) {

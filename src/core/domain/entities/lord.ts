@@ -98,6 +98,50 @@ export const nextQueenDominoAction = (
 };
 
 /**
+ * Age of Giants action sequence after placeDomino (when placeGiant/sendGiant is triggered):
+ * placeGiant or sendGiant → pickDomino
+ *
+ * When combined with QueenDomino:
+ * placeGiant or sendGiant → placeKnight → constructBuilding → useDragon → pickDomino
+ */
+const AOG_QD_ACTION_SEQUENCE: PlayerActions[] = [
+  playerActions.placeGiant, // or sendGiant (handled dynamically)
+  playerActions.placeKnight,
+  playerActions.constructBuilding,
+  playerActions.useDragon,
+  playerActions.pickDomino,
+];
+
+/**
+ * Returns the next action after an AoG action.
+ * @param currentAction - The current AoG action being completed or skipped
+ * @param isQueenDomino - Whether the game combines AoG with QueenDomino
+ */
+export const nextAgeOfGiantsAction = (
+  currentAction: PlayerActions,
+  isQueenDomino: boolean,
+): PlayerActions => {
+  if (!isQueenDomino) {
+    // Simple AoG: after giant action, go to pickDomino
+    return playerActions.pickDomino;
+  }
+
+  // AoG + QueenDomino: use the combined sequence
+  const sequence = AOG_QD_ACTION_SEQUENCE;
+  // Map sendGiant to the same position as placeGiant in the sequence
+  const normalizedAction =
+    currentAction === playerActions.sendGiant
+      ? playerActions.placeGiant
+      : currentAction;
+
+  const index = sequence.indexOf(normalizedAction);
+  if (index === -1 || index >= sequence.length - 1) {
+    return playerActions.pickDomino;
+  }
+  return sequence[index + 1]!;
+};
+
+/**
  * Origins Discovery/Totem action sequence after placeDomino:
  * placeFireToken → pickDomino
  *

@@ -1,3 +1,4 @@
+import type { PlacedGiant } from "./ageOfGiants.js";
 import type { PlacedBuilding } from "./building.js";
 import type { Kingdom, Position } from "./kingdom.js";
 import type { PlacedCaveman, PlacedFireToken, Resource } from "./origins.js";
@@ -39,6 +40,8 @@ export type Player = {
   resources?: Resource[];
   /** Cavemen placed on the kingdom (Origins Tribe) */
   cavemen?: PlacedCaveman[];
+  /** Giants placed on the kingdom covering crowns (Age of Giants) */
+  giants?: PlacedGiant[];
 };
 
 /**
@@ -71,8 +74,12 @@ export const playerActions = {
   constructBuilding: "constructBuilding",
   /** Use the Dragon to burn a building tile (Queendomino, optional) */
   useDragon: "useDragon",
-  /** Skip the current optional action (Queendomino/Origins) */
+  /** Skip the current optional action (Queendomino/Origins/AoG) */
   skipOptionalAction: "skipOptionalAction",
+  /** Place a giant on a crown after placing a giant domino (Age of Giants, mandatory) */
+  placeGiant: "placeGiant",
+  /** Send a giant to an opponent after placing a footprint domino (Age of Giants, optional) */
+  sendGiant: "sendGiant",
   /** Place a fire token after placing a volcano domino (Origins, optional) */
   placeFireToken: "placeFireToken",
   /** Recruit a caveman from the cave board (Origins Tribe, optional) */

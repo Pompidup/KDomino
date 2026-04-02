@@ -50,6 +50,14 @@ export type GameEventCallbacks = {
   onTurnEnd?: (event: { game: GameState; turn: number }) => void;
   /** Called when the game reaches the result phase */
   onGameEnd?: (event: { game: GameState }) => void;
+  /** Called after a lord places a giant on a crown in their kingdom */
+  onGiantPlaced?: (event: { game: GameState; lordId: string }) => void;
+  /** Called after a lord sends a giant to an opponent's kingdom */
+  onGiantSent?: (event: {
+    game: GameState;
+    lordId: string;
+    targetPlayerId: string;
+  }) => void;
 };
 
 // ─── Wrapper ─────────────────────────────────────────────────────────
@@ -155,4 +163,21 @@ export const wrapWithEvents = (
   // Origins methods — pass through (no specific events yet)
   placeFireToken: (cmd) => engine.placeFireToken(cmd),
   recruitCaveman: (cmd) => engine.recruitCaveman(cmd),
+
+  // Age of Giants methods — emit events after execution
+  placeGiant: (cmd) => {
+    const game = engine.placeGiant(cmd);
+    callbacks.onGiantPlaced?.({ game, lordId: cmd.lordId });
+    return game;
+  },
+
+  sendGiant: (cmd) => {
+    const game = engine.sendGiant(cmd);
+    callbacks.onGiantSent?.({
+      game,
+      lordId: cmd.lordId,
+      targetPlayerId: cmd.targetPlayerId,
+    });
+    return game;
+  },
 });

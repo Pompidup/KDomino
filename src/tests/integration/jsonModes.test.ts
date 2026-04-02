@@ -10,11 +10,13 @@ describe("jsonModes", () => {
     const result = repository.getAvailables();
 
     // Assert
-    expect(result.length).toBe(5);
+    expect(result.length).toBe(7);
     expect(result.map((m) => m.name)).toContain("Classic");
     expect(result.map((m) => m.name)).toContain("QueenDomino");
     expect(result.map((m) => m.name)).toContain("KingdominoOrigins-Discovery");
     expect(result.map((m) => m.name)).toContain("KingdominoOrigins-Totem");
     expect(result.map((m) => m.name)).toContain("KingdominoOrigins-Tribe");
+    expect(result.map((m) => m.name)).toContain("AgeOfGiants");
+    expect(result.map((m) => m.name)).toContain("AgeOfGiants-QueenDomino");
   });
 });

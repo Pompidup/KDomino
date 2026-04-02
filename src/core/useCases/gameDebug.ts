@@ -321,5 +321,17 @@ export const wrapWithDebug = (
       logger,
       level,
     ),
+    placeGiant: wrapMethod(
+      "placeGiant",
+      engine.placeGiant,
+      logger,
+      level,
+    ),
+    sendGiant: wrapMethod(
+      "sendGiant",
+      engine.sendGiant,
+      logger,
+      level,
+    ),
   };
 };

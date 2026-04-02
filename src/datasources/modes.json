@@ -18,5 +18,13 @@
     {
         "name": "KingdominoOrigins-Tribe",
         "description": "Kingdomino Origins - Tribe mode with resources, cave board, cavemen recruitment and fire mechanics"
+    },
+    {
+        "name": "AgeOfGiants",
+        "description": "Age of Giants extension with giants, quest tiles, 5-player support and 12 new dominos on top of Classic Kingdomino"
+    },
+    {
+        "name": "AgeOfGiants-QueenDomino",
+        "description": "Age of Giants extension combined with Queendomino, adding giants and quest tiles to the Queendomino experience"
     }
 ]

@@ -40,6 +40,10 @@ export type Tile = {
   hasConstructionSquare?: boolean;
   /** Number of volcanic craters on this tile (Origins, 1-3). Determines fire token type. */
   volcanoCraters?: number;
+  /** Whether this tile has a giant icon (Age of Giants, letter dominos A-F) */
+  hasGiant?: boolean;
+  /** Whether this tile has footprint icons (Age of Giants, dominos 49-54) */
+  hasFootprint?: boolean;
 };
 
 /**
@@ -61,8 +65,10 @@ export type Domino = {
   left: Tile;
   /** The right tile of the domino */
   right: Tile;
-  /** Unique number identifying this domino (1-48 in Classic mode) */
+  /** Unique number identifying this domino (1-48 in Classic mode). Letter dominos use fractional numbers (A=0.01...F=0.06). */
   number: number;
+  /** Display letter for Age of Giants giant dominos (A-F). Undefined for numbered dominos. */
+  letter?: string;
 };
 
 /**

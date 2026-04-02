@@ -14,6 +14,8 @@ export type BasicRules = {
   maxTurns: number;
   /** Maximum kingdom grid size (5 for standard, 7 for Mighty Duel) */
   maxKingdomSize: number;
+  /** Number of dominos discarded from each draw before selection (Age of Giants) */
+  dominoesDiscardedPerTurn?: number;
 };
 
 /**
@@ -36,6 +38,8 @@ export type ExtraRule = {
 export type Rules = {
   /** Basic rules indexed by player count (1-4) */
   basic: Record<number, BasicRules>;
+  /** Age of Giants basic rules indexed by player count (2-5) */
+  aogBasic?: Record<number, BasicRules>;
   /** Available extra rules */
   extraRules: ExtraRule[];
 };

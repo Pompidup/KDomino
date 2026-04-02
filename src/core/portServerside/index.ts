@@ -1,4 +1,5 @@
 export * from "./buildingsRepository.js";
+export * from "./questTilesRepository.js";
 export * from "./cavemenRepository.js";
 export * from "./dominoesRepository.js";
 export * from "./logger.js";

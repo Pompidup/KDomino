@@ -58,7 +58,9 @@ export const getResultHandler =
 
     const scoreResult: ScoreResult[] = players.map((player) => {
       const { kingdom } = player;
-      const result = calculateScoreUseCase(kingdom);
+      // Pass giant positions to reduce crowns covered by giants in scoring
+      const giantPositions = player.giants?.map((g) => g.position);
+      const result = calculateScoreUseCase(kingdom, giantPositions);
 
       if (isErr(result)) {
         logger.error(`Error when calculating score: ${result.error}`);

@@ -33,6 +33,44 @@
       "maxKingdomSize": 5
     }
   ],
+  "aog": [
+    {
+      "playersLimit": 2,
+      "lordsPerPlayer": 2,
+      "maxDominoes": 30,
+      "dominoesPerTurn": 5,
+      "maxTurns": 6,
+      "maxKingdomSize": 5,
+      "dominoesDiscardedPerTurn": 1
+    },
+    {
+      "playersLimit": 3,
+      "lordsPerPlayer": 1,
+      "maxDominoes": 60,
+      "dominoesPerTurn": 5,
+      "maxTurns": 12,
+      "maxKingdomSize": 5,
+      "dominoesDiscardedPerTurn": 2
+    },
+    {
+      "playersLimit": 4,
+      "lordsPerPlayer": 1,
+      "maxDominoes": 60,
+      "dominoesPerTurn": 5,
+      "maxTurns": 12,
+      "maxKingdomSize": 5,
+      "dominoesDiscardedPerTurn": 1
+    },
+    {
+      "playersLimit": 5,
+      "lordsPerPlayer": 1,
+      "maxDominoes": 60,
+      "dominoesPerTurn": 5,
+      "maxTurns": 12,
+      "maxKingdomSize": 5,
+      "dominoesDiscardedPerTurn": 0
+    }
+  ],
   "extra": [
     {
       "name": "The middle Kingdom",
@@ -102,6 +140,14 @@
         { "name": "KingdominoOrigins-Discovery", "description": "Kingdomino Origins - Discovery mode" },
         { "name": "KingdominoOrigins-Totem", "description": "Kingdomino Origins - Totem mode" },
         { "name": "KingdominoOrigins-Tribe", "description": "Kingdomino Origins - Tribe mode" }
+      ]
+    },
+    {
+      "name": "Dynasty",
+      "description": "Play 3 games in a row. The player with the highest total points wins.",
+      "mode": [
+        { "name": "AgeOfGiants", "description": "Age of Giants extension on Classic Kingdomino" },
+        { "name": "AgeOfGiants-QueenDomino", "description": "Age of Giants extension on Queendomino" }
       ]
     }
   ]

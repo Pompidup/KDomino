@@ -1,0 +1,129 @@
+[
+  {
+    "id": 1,
+    "type": "localTrade",
+    "name": "Local Trade - Wheat",
+    "description": "Each wheat tile adjacent (orthogonal + diagonal) to your castle scores 5 bonus points.",
+    "points": 5,
+    "terrain": "wheat"
+  },
+  {
+    "id": 2,
+    "type": "localTrade",
+    "name": "Local Trade - Forest",
+    "description": "Each forest tile adjacent (orthogonal + diagonal) to your castle scores 5 bonus points.",
+    "points": 5,
+    "terrain": "forest"
+  },
+  {
+    "id": 3,
+    "type": "localTrade",
+    "name": "Local Trade - Sea",
+    "description": "Each sea tile adjacent (orthogonal + diagonal) to your castle scores 5 bonus points.",
+    "points": 5,
+    "terrain": "sea"
+  },
+  {
+    "id": 4,
+    "type": "localTrade",
+    "name": "Local Trade - Plain",
+    "description": "Each plain tile adjacent (orthogonal + diagonal) to your castle scores 5 bonus points.",
+    "points": 5,
+    "terrain": "plain"
+  },
+  {
+    "id": 5,
+    "type": "kingdomBorders",
+    "name": "Kingdom Borders - Wheat",
+    "description": "Each wheat tile in the 4 corners of your kingdom scores 5 bonus points.",
+    "points": 5,
+    "terrain": "wheat"
+  },
+  {
+    "id": 6,
+    "type": "kingdomBorders",
+    "name": "Kingdom Borders - Forest",
+    "description": "Each forest tile in the 4 corners of your kingdom scores 5 bonus points.",
+    "points": 5,
+    "terrain": "forest"
+  },
+  {
+    "id": 7,
+    "type": "kingdomBorders",
+    "name": "Kingdom Borders - Sea",
+    "description": "Each sea tile in the 4 corners of your kingdom scores 5 bonus points.",
+    "points": 5,
+    "terrain": "sea"
+  },
+  {
+    "id": 8,
+    "type": "kingdomBorders",
+    "name": "Kingdom Borders - Plain",
+    "description": "Each plain tile in the 4 corners of your kingdom scores 5 bonus points.",
+    "points": 5,
+    "terrain": "plain"
+  },
+  {
+    "id": 9,
+    "type": "harmony",
+    "name": "Harmony",
+    "description": "Score 5 bonus points if your kingdom is complete (no discarded dominos).",
+    "points": 5
+  },
+  {
+    "id": 10,
+    "type": "middleKingdom",
+    "name": "Middle Kingdom",
+    "description": "Score 10 bonus points if your castle is in the center of your kingdom.",
+    "points": 10
+  },
+  {
+    "id": 11,
+    "type": "lostCorner",
+    "name": "Lost Corner",
+    "description": "Score 20 bonus points if your castle is in one of the 4 corners of your kingdom.",
+    "points": 20
+  },
+  {
+    "id": 12,
+    "type": "megalomania",
+    "name": "Megalomania",
+    "description": "Score 10 bonus points for each alignment of 3 or more tiles with crowns (horizontal, vertical, or diagonal).",
+    "points": 10
+  },
+  {
+    "id": 13,
+    "type": "megalomania",
+    "name": "Megalomania",
+    "description": "Score 10 bonus points for each alignment of 3 or more tiles with crowns (horizontal, vertical, or diagonal).",
+    "points": 10
+  },
+  {
+    "id": 14,
+    "type": "austereKing",
+    "name": "Austere King",
+    "description": "Score 10 bonus points for each property of 5+ wheat, forest, sea, or plain tiles with zero crowns.",
+    "points": 10
+  },
+  {
+    "id": 15,
+    "type": "austereKing",
+    "name": "Austere King",
+    "description": "Score 10 bonus points for each property of 5+ wheat, forest, sea, or plain tiles with zero crowns.",
+    "points": 10
+  },
+  {
+    "id": 16,
+    "type": "lostCorner",
+    "name": "Lost Corner",
+    "description": "Score 20 bonus points if your castle is in one of the 4 corners of your kingdom.",
+    "points": 20
+  },
+  {
+    "id": 17,
+    "type": "harmony",
+    "name": "Harmony",
+    "description": "Score 5 bonus points if your kingdom is complete (no discarded dominos).",
+    "points": 5
+  }
+]

@@ -3,6 +3,7 @@ import jsonBuildings from "@adapter/jsonBuildings.js";
 import jsonCavemen from "@adapter/jsonCavemen.js";
 import jsonDominoes from "@adapter/jsonDominoes.js";
 import jsonModes from "@adapter/jsonModes.js";
+import jsonQuestTiles from "@adapter/jsonQuestTiles.js";
 import jsonRules from "@adapter/jsonRules.js";
 import { shuffleMethod } from "@adapter/shuffle.js";
 import { uuidMethod } from "@adapter/uuid.js";
@@ -24,7 +25,9 @@ import {
   serializeGameHandler,
 } from "@application/handlers/serializeGameHandler.js";
 import { startGameHandler } from "@application/handlers/startGameHandler.js";
+import { placeGiantHandler } from "@application/handlers/placeGiantHandler.js";
 import { placeKnightHandler } from "@application/handlers/placeKnightHandler.js";
+import { sendGiantHandler } from "@application/handlers/sendGiantHandler.js";
 import { constructBuildingHandler } from "@application/handlers/constructBuildingHandler.js";
 import { useDragonHandler } from "@application/handlers/useDragonHandler.js";
 import { placeFireTokenHandler } from "@application/handlers/placeFireTokenHandler.js";
@@ -53,7 +56,9 @@ import {
   getValidPlacementsUseCase,
 } from "@core/useCases/getValidPlacements.js";
 import { placeDominoUseCase } from "@core/useCases/placeDomino.js";
+import { placeGiantUseCase } from "@core/useCases/placeGiant.js";
 import { placeKnightUseCase } from "@core/useCases/placeKnight.js";
+import { sendGiantUseCase } from "@core/useCases/sendGiant.js";
 import { constructBuildingUseCase } from "@core/useCases/constructBuilding.js";
 import { useDragonUseCase } from "@core/useCases/useDragon.js";
 import { placeFireTokenUseCase } from "@core/useCases/placeFireToken.js";
@@ -98,6 +103,8 @@ export type ConfiguredHandlers = {
   serializeGameHandler: GameEngine["serialize"];
   deserializeGameHandler: GameEngine["deserialize"];
   getDynastyResultHandler: GameEngine["getDynastyResults"];
+  placeGiantHandler: GameEngine["placeGiant"];
+  sendGiantHandler: GameEngine["sendGiant"];
   placeKnightHandler: GameEngine["placeKnight"];
   constructBuildingHandler: GameEngine["constructBuilding"];
   useDragonHandler: GameEngine["useDragon"];
@@ -111,6 +118,7 @@ export const configureEngine = (config: Partial<EngineConfig>): ConfiguredHandle
   const dominoesRepository = jsonDominoes();
   const buildingsRepository = jsonBuildings();
   const cavemenRepository = jsonCavemen();
+  const questTilesRepository = jsonQuestTiles();
   const ruleRepository = jsonRules();
   const uuid = config.uuidMethod || uuidMethod;
   const shuffle = config.shuffleMethod || shuffleMethod;
@@ -131,8 +139,10 @@ export const configureEngine = (config: Partial<EngineConfig>): ConfiguredHandle
         modeRepository,
         dominoesRepository,
         uuidMethod: uuid,
+        shuffleMethod: shuffle,
         buildingsRepository,
         cavemenRepository,
+        questTilesRepository,
       }),
     ),
     getModesHandler: getModesHandler(
@@ -208,6 +218,16 @@ export const configureEngine = (config: Partial<EngineConfig>): ConfiguredHandle
       logger,
       translator,
       getDynastyResultUseCase,
+    ),
+    placeGiantHandler: placeGiantHandler(
+      logger,
+      translator,
+      placeGiantUseCase,
+    ),
+    sendGiantHandler: sendGiantHandler(
+      logger,
+      translator,
+      sendGiantUseCase,
     ),
     placeKnightHandler: placeKnightHandler(
       logger,

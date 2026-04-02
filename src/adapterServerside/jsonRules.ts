@@ -9,6 +9,7 @@ const jsonRules = (): RuleRepository => {
   };
 
   const commonRules = rulesJson.commun;
+  const aogRules = rulesJson.aog;
   const extraRules = rulesJson.extra;
 
   commonRules.forEach((rule) => {
@@ -20,6 +21,20 @@ const jsonRules = (): RuleRepository => {
       maxKingdomSize: rule.maxKingdomSize,
     };
   });
+
+  if (aogRules) {
+    rules.aogBasic = {};
+    aogRules.forEach((rule) => {
+      rules.aogBasic![rule.playersLimit] = {
+        lords: rule.lordsPerPlayer,
+        maxDominoes: rule.maxDominoes,
+        dominoesPerTurn: rule.dominoesPerTurn,
+        maxTurns: rule.maxTurns,
+        maxKingdomSize: rule.maxKingdomSize,
+        dominoesDiscardedPerTurn: rule.dominoesDiscardedPerTurn,
+      };
+    });
+  }
 
   extraRules.forEach((rule) => {
     rules.extraRules.push({

@@ -84,6 +84,13 @@ export const chooseDominoUseCase: ChooseDominoUseCase = (
       game.rules.basic.dominoesPerTurn,
     );
     dominoesDrawn.sort((a, b) => a.number - b.number);
+
+    // Age of Giants: discard some dominos from the sorted line before selection
+    const discardCount = game.rules.basic.dominoesDiscardedPerTurn ?? 0;
+    if (discardCount > 0) {
+      dominoesDrawn.splice(0, discardCount);
+    }
+
     const newCurrentDominoes = dominoesDrawn.map((domino, index) => ({
       domino,
       picked: false,

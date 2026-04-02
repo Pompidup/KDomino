@@ -1,18 +1,26 @@
-import type { Kingdom, Score } from "@core/domain/types/index.js";
+import type { Kingdom, Position, Score } from "@core/domain/types/index.js";
 import { ok, type Result } from "@utils/result.js";
 
-export type CalculateScoreUseCase = (kingdom: Kingdom) => Result<Score>;
+export type CalculateScoreUseCase = (kingdom: Kingdom, giantPositions?: Position[]) => Result<Score>;
 
 type Property = {
   size: number;
   crowns: number;
 };
 
-export const calculateScoreUseCase: CalculateScoreUseCase = (kingdom) => {
+export const calculateScoreUseCase: CalculateScoreUseCase = (kingdom, giantPositions) => {
   const rows = kingdom.length;
   const cols = kingdom[0]!.length;
   const visited: boolean[][] = kingdom.map((row) => row.map(() => false));
   const properties: Property[] = [];
+
+  // Build a set for fast giant position lookup
+  const giantSet = new Set<string>();
+  if (giantPositions) {
+    for (const pos of giantPositions) {
+      giantSet.add(`${pos.x},${pos.y}`);
+    }
+  }
 
   const directions = [
     [-1, 0],
@@ -39,7 +47,13 @@ export const calculateScoreUseCase: CalculateScoreUseCase = (kingdom) => {
         const [cx, cy] = queue.pop()!;
         const current = kingdom[cy]![cx]!;
         size++;
-        crowns += current.crowns;
+
+        // Count crowns, but subtract 1 for each giant covering this position
+        let tileCrowns = current.crowns;
+        if (giantSet.has(`${cx},${cy}`)) {
+          tileCrowns = Math.max(0, tileCrowns - 1);
+        }
+        crowns += tileCrowns;
 
         for (const [dx, dy] of directions) {
           const nx = cx + (dx as number);

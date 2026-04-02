@@ -1,3 +1,4 @@
+import { isAgeOfGiantsQueenDominoMode } from "@core/domain/entities/ageOfGiantsHelpers.js";
 import { createBuildersBoard } from "@core/domain/entities/building.js";
 import { createCaveBoard } from "@core/domain/entities/caveman.js";
 import { createLord } from "@core/domain/entities/lord";
@@ -51,15 +52,22 @@ export const startGameUseCase =
     const dominoesCopy = [...dominoes];
     const dominoesDrawn = dominoesCopy.splice(0, dominoesPerTurn);
     dominoesDrawn.sort((a, b) => a.number - b.number);
+
+    // Age of Giants: discard some dominos from the sorted line before selection
+    const discardCount = game.rules.basic.dominoesDiscardedPerTurn ?? 0;
+    if (discardCount > 0) {
+      dominoesDrawn.splice(0, discardCount);
+    }
+
     const nextAction: NextAction = {
       type: "action",
       nextLord: shuffledLords[0]!.id,
       nextAction: playerActions.pickDomino,
     };
 
-    // Setup Builders Board for QueenDomino mode
+    // Setup Builders Board for QueenDomino mode (including AoG-QD)
     let queendomino = game.queendomino;
-    if (queendomino && game.mode.name === "QueenDomino") {
+    if (queendomino && (game.mode.name === "QueenDomino" || isAgeOfGiantsQueenDominoMode(game.mode.name))) {
       const buildingShuffle = game.seed
         ? createSeededShuffle(game.seed, "buildings")
         : shuffleMethod;

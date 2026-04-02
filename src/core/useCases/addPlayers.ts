@@ -1,3 +1,4 @@
+import { isAgeOfGiantsMode, isAgeOfGiantsQueenDominoMode } from "@core/domain/entities/ageOfGiantsHelpers.js";
 import { STARTING_COINS } from "@core/domain/entities/economy.js";
 import {
   createEmptyKingdom,
@@ -45,7 +46,11 @@ export const addPlayersUseCase =
   (game, players) => {
     const { uuidMethod, shuffleMethod, ruleRepository } = deps;
 
-    if (!players || players.length < 1 || players.length > 4) {
+    const isAoG = isAgeOfGiantsMode(game.mode.name);
+    const maxPlayers = isAoG ? 5 : 4;
+    const minPlayers = isAoG ? 2 : 1;
+
+    if (!players || players.length < minPlayers || players.length > maxPlayers) {
       return err(ErrorCode.INVALID_PLAYER_COUNT);
     }
 
@@ -70,6 +75,18 @@ export const addPlayersUseCase =
         newPlayer.value.buildings = [];
       }
 
+      // Initialize Age of Giants-specific player state
+      if (isAoG) {
+        newPlayer.value.giants = [];
+        // AoG-QueenDomino also needs Queendomino player state
+        if (isAgeOfGiantsQueenDominoMode(game.mode.name)) {
+          newPlayer.value.coins = STARTING_COINS;
+          newPlayer.value.towers = 0;
+          newPlayer.value.knights = [];
+          newPlayer.value.buildings = [];
+        }
+      }
+
       // Initialize Origins-specific player state
       if (isOriginsMode(game.mode.name)) {
         newPlayer.value.fireTokens = [];
@@ -86,7 +103,9 @@ export const addPlayersUseCase =
 
     // set rules
     const rules = ruleRepository.getAll();
-    const basicRules = rules.basic[newPlayers.length];
+    const basicRules = isAoG && rules.aogBasic
+      ? rules.aogBasic[newPlayers.length]
+      : rules.basic[newPlayers.length];
 
     if (!basicRules) {
       return err(ErrorCode.STEP_EXECUTION_FAILED);

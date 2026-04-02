@@ -69,6 +69,12 @@ export const TranslationKey = {
   ERROR_BUILDING_NOT_FOUND: "error.buildingNotFound",
   ERROR_INVALID_OPTIONAL_ACTION: "error.invalidOptionalAction",
 
+  // Age of Giants errors
+  ERROR_GIANT_POOL_EMPTY: "error.giantPoolEmpty",
+  ERROR_GIANT_NOT_FOUND: "error.giantNotFound",
+  ERROR_INVALID_GIANT_PLACEMENT: "error.invalidGiantPlacement",
+  ERROR_NOT_AOG_MODE: "error.notAogMode",
+
   // Origins errors
   ERROR_FIRE_TOKEN_POOL_EMPTY: "error.fireTokenPoolEmpty",
   ERROR_FIRE_TOKEN_INVALID_POSITION: "error.fireTokenInvalidPosition",
@@ -154,6 +160,12 @@ export const defaultTranslations: Record<TranslationKeyType, string> = {
   [TranslationKey.ERROR_BUILDING_NOT_FOUND]: "Building not found on the Builders Board",
   [TranslationKey.ERROR_INVALID_OPTIONAL_ACTION]: "Invalid optional action for this game state",
 
+  // Age of Giants errors
+  [TranslationKey.ERROR_GIANT_POOL_EMPTY]: "No giants remaining in the pool",
+  [TranslationKey.ERROR_GIANT_NOT_FOUND]: "Giant not found on the kingdom",
+  [TranslationKey.ERROR_INVALID_GIANT_PLACEMENT]: "Invalid position for giant placement — must be an uncovered crown",
+  [TranslationKey.ERROR_NOT_AOG_MODE]: "Age of Giants mode is not enabled",
+
   // Origins errors
   [TranslationKey.ERROR_FIRE_TOKEN_POOL_EMPTY]: "No fire tokens remaining in the pool",
   [TranslationKey.ERROR_FIRE_TOKEN_INVALID_POSITION]: "Invalid position for fire token placement",
@@ -208,6 +220,10 @@ export const errorCodeToTranslationKey: Record<
   [ErrorCode.QUEEN_HOLDER_CANNOT_USE_DRAGON]: TranslationKey.ERROR_QUEEN_HOLDER_CANNOT_USE_DRAGON,
   [ErrorCode.BUILDING_NOT_FOUND]: TranslationKey.ERROR_BUILDING_NOT_FOUND,
   [ErrorCode.INVALID_OPTIONAL_ACTION]: TranslationKey.ERROR_INVALID_OPTIONAL_ACTION,
+  [ErrorCode.GIANT_POOL_EMPTY]: TranslationKey.ERROR_GIANT_POOL_EMPTY,
+  [ErrorCode.GIANT_NOT_FOUND]: TranslationKey.ERROR_GIANT_NOT_FOUND,
+  [ErrorCode.INVALID_GIANT_PLACEMENT]: TranslationKey.ERROR_INVALID_GIANT_PLACEMENT,
+  [ErrorCode.NOT_AOG_MODE]: TranslationKey.ERROR_NOT_AOG_MODE,
   [ErrorCode.FIRE_TOKEN_POOL_EMPTY]: TranslationKey.ERROR_FIRE_TOKEN_POOL_EMPTY,
   [ErrorCode.FIRE_TOKEN_INVALID_POSITION]: TranslationKey.ERROR_FIRE_TOKEN_INVALID_POSITION,
   [ErrorCode.NO_PENDING_FIRE_TOKEN]: TranslationKey.ERROR_NO_PENDING_FIRE_TOKEN,

@@ -1,5 +1,6 @@
 import type {
   GameState,
+  GameWithNextAction,
   Position,
   Rotation,
 } from "@core/domain/types/index.js";
@@ -18,7 +19,9 @@ export type ActionType =
   | "startGame"
   | "chooseDomino"
   | "placeDomino"
-  | "discardDomino";
+  | "discardDomino"
+  | "placeGiant"
+  | "sendGiant";
 
 /**
  * Payload types for each action, containing only the command parameters
@@ -32,6 +35,13 @@ export type ActionPayloadMap = {
   chooseDomino: { lordId: string; dominoPick: number };
   placeDomino: { lordId: string; position: Position; rotation: Rotation };
   discardDomino: { lordId: string };
+  placeGiant: { lordId: string; position: Position };
+  sendGiant: {
+    lordId: string;
+    giantIndex: number;
+    targetPlayerId: string;
+    targetCrownPosition: Position;
+  };
 };
 
 /**
@@ -230,6 +240,32 @@ export const wrapWithActionLog = (
     // Origins methods — pass through (no action log recording yet)
     placeFireToken: (cmd) => engine.placeFireToken(cmd),
     recruitCaveman: (cmd) => engine.recruitCaveman(cmd),
+
+    // Age of Giants methods — record after execution
+    placeGiant: (cmd) => {
+      const game = engine.placeGiant(cmd);
+      record(
+        "placeGiant",
+        { lordId: cmd.lordId, position: cmd.position },
+        game.turn,
+      );
+      return game;
+    },
+
+    sendGiant: (cmd) => {
+      const game = engine.sendGiant(cmd);
+      record(
+        "sendGiant",
+        {
+          lordId: cmd.lordId,
+          giantIndex: cmd.giantIndex,
+          targetPlayerId: cmd.targetPlayerId,
+          targetCrownPosition: cmd.targetCrownPosition,
+        },
+        game.turn,
+      );
+      return game;
+    },
   };
 
   return {
@@ -319,6 +355,26 @@ export const replayActions = (
         game = engine.discardDomino({
           game,
           lordId: payload.lordId,
+        });
+        break;
+      }
+      case "placeGiant": {
+        const payload = entry.payload as ActionPayloadMap["placeGiant"];
+        game = engine.placeGiant({
+          game: game as GameWithNextAction,
+          lordId: payload.lordId,
+          position: payload.position,
+        });
+        break;
+      }
+      case "sendGiant": {
+        const payload = entry.payload as ActionPayloadMap["sendGiant"];
+        game = engine.sendGiant({
+          game: game as GameWithNextAction,
+          lordId: payload.lordId,
+          giantIndex: payload.giantIndex,
+          targetPlayerId: payload.targetPlayerId,
+          targetCrownPosition: payload.targetCrownPosition,
         });
         break;
       }

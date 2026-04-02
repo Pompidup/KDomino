@@ -13,6 +13,7 @@ import { placeDomino } from "@core/domain/entities/kingdom.js";
 import { calculateScoreUseCase } from "./calculateScore.js";
 import { getValidPlacementsUseCase } from "./getValidPlacements.js";
 import { isOk } from "@utils/result.js";
+import { findCrownsNotCoveredByGiants } from "@core/domain/entities/giant.js";
 import { getStrategy } from "./botRegistry.js";
 
 // ─── Types ───────────────────────────────────────────────────────────
@@ -537,13 +538,31 @@ export const playBotTurn = (
     });
   }
 
-  // Optional actions (Queendomino and Origins) - skip them
+  // Age of Giants: placeGiant — place on a crown (mandatory, auto-handled)
+  if (action === "placeGiant") {
+    // Find the least valuable crown to cover (one with most crowns in smallest property)
+    const player = game.players.find((p) => {
+      const lord = game.lords.find((l) => l.id === lordId);
+      return lord && p.id === lord.playerId;
+    });
+    if (player) {
+      const availableCrowns = findCrownsNotCoveredByGiants(player.kingdom, player.giants ?? []);
+      if (availableCrowns.length > 0) {
+        // Pick first available crown (simple bot behavior)
+        return engine.placeGiant({ game, lordId, position: availableCrowns[0]! });
+      }
+    }
+    return engine.skipOptionalAction({ game, lordId });
+  }
+
+  // Optional actions (Queendomino, Origins, AoG sendGiant) - skip them
   if (
     action === "placeKnight" ||
     action === "constructBuilding" ||
     action === "useDragon" ||
     action === "placeFireToken" ||
-    action === "recruitCaveman"
+    action === "recruitCaveman" ||
+    action === "sendGiant"
   ) {
     return engine.skipOptionalAction({ game, lordId });
   }

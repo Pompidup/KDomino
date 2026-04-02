@@ -1,3 +1,10 @@
+import {
+  isAgeOfGiantsMode,
+  isAgeOfGiantsQueenDominoMode,
+  isGiantDomino,
+  isFootprintDomino,
+} from "@core/domain/entities/ageOfGiantsHelpers.js";
+import { findCrownsNotCoveredByGiants, playerHasGiant } from "@core/domain/entities/giant.js";
 import { ErrorCode } from "@core/domain/errors/domainErrors.js";
 import { err, isErr, isOk, ok } from "@utils/result.js";
 import {
@@ -17,7 +24,7 @@ import {
   calculateDominoPosition,
   placeDomino,
 } from "@core/domain/entities/kingdom.js";
-import { playerActions } from "@core/domain/types/player.js";
+import { type PlayerActions, playerActions } from "@core/domain/types/player.js";
 import type { Position, Rotation } from "@core/domain/types/kingdom.js";
 import {
   isOriginsMode,
@@ -166,8 +173,10 @@ export const placeDominoUseCase: PlaceDominoUseCase = (
 
   const isQueenDomino = game.mode.name === "QueenDomino";
   const isOrigins = isOriginsMode(game.mode.name);
+  const isAoG = isAgeOfGiantsMode(game.mode.name);
+  const isAoGQD = isAgeOfGiantsQueenDominoMode(game.mode.name);
 
-  if (isLastTurn && allLordsHavePlayed(updatedLords) && !isQueenDomino && !isOrigins) {
+  if (isLastTurn && allLordsHavePlayed(updatedLords) && !isQueenDomino && !isOrigins && !isAoG) {
     updatedGame = {
       ...game,
       lords: updatedLords,
@@ -285,6 +294,70 @@ export const placeDominoUseCase: PlaceDominoUseCase = (
           players: updatedPlayers,
         };
       }
+    }
+  } else if (isAoG) {
+    // Age of Giants: check for giant/footprint domino effects
+    const currentPlayer = updatedPlayers.find((p) => p.id === currentLord.playerId);
+    const isGiant = isGiantDomino(domino);
+    const isFootprint = isFootprintDomino(domino);
+
+    let aogAction: PlayerActions | null = null;
+
+    if (isGiant) {
+      // Giant domino: must place giant on a crown (mandatory)
+      // But auto-skip if player has no uncovered crowns or pool is empty
+      const hasUncoveredCrowns = currentPlayer &&
+        findCrownsNotCoveredByGiants(currentPlayer.kingdom, currentPlayer.giants ?? []).length > 0;
+      const poolAvailable = (game.ageOfGiants?.giantPool ?? 0) > 0;
+
+      if (hasUncoveredCrowns && poolAvailable) {
+        aogAction = playerActions.placeGiant;
+      }
+    } else if (isFootprint) {
+      // Footprint domino: may send a giant to opponent (optional)
+      // But only if player has a giant in their kingdom
+      if (currentPlayer && playerHasGiant(currentPlayer)) {
+        aogAction = playerActions.sendGiant;
+      }
+    }
+
+    if (aogAction) {
+      updatedGame = {
+        ...game,
+        lords: updatedLords,
+        players: updatedPlayers,
+        nextAction: {
+          type: "action",
+          nextLord: currentLord.id,
+          nextAction: aogAction,
+        },
+      };
+    } else if (isAoGQD) {
+      // No AoG action but still need QueenDomino actions
+      updatedGame = {
+        ...game,
+        lords: updatedLords,
+        players: updatedPlayers,
+        nextAction: {
+          type: "action",
+          nextLord: currentLord.id,
+          nextAction: playerActions.placeKnight,
+        },
+      };
+    } else if (isLastTurn && allLordsHavePlayed(updatedLords)) {
+      updatedGame = {
+        ...game,
+        lords: updatedLords,
+        nextAction: resultStep,
+        players: updatedPlayers,
+      };
+    } else {
+      updatedGame = {
+        ...game,
+        lords: updatedLords,
+        nextAction: nextLordWithAction(updatedLords) as NextAction,
+        players: updatedPlayers,
+      };
     }
   } else {
     updatedGame = {

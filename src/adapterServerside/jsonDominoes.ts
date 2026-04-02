@@ -8,6 +8,8 @@ const mapTile = (raw: {
   crowns: number;
   hasConstructionSquare?: boolean;
   volcanoCraters?: number;
+  hasGiant?: boolean;
+  hasFootprint?: boolean;
 }): Tile => {
   const tile: Tile = {
     type: raw.type as Ground,
@@ -18,6 +20,12 @@ const mapTile = (raw: {
   }
   if (raw.volcanoCraters) {
     tile.volcanoCraters = raw.volcanoCraters;
+  }
+  if (raw.hasGiant) {
+    tile.hasGiant = true;
+  }
+  if (raw.hasFootprint) {
+    tile.hasFootprint = true;
   }
   return tile;
 };
@@ -37,11 +45,15 @@ const jsonDominoes = (): DominoesRepository => {
   for (const [key, value] of Object.entries(dominoesJson)) {
     const currentDominoes: Domino[] = [];
     value.forEach((domino) => {
-      currentDominoes.push({
+      const d: Domino = {
         left: mapTile(domino.left),
         right: mapTile(domino.right),
         number: domino.number,
-      });
+      };
+      if ("letter" in domino && typeof domino.letter === "string") {
+        d.letter = domino.letter;
+      }
+      currentDominoes.push(d);
     });
 
     dominoes[key] = currentDominoes;
