@@ -1,9 +1,9 @@
+import { isGameWithNextStep } from "@core/domain/types/game.js";
 import type {
   GameState,
   GameWithNextAction,
   GameWithNextStep,
 } from "@core/domain/types/index.js";
-import { isGameWithNextStep } from "@core/domain/types/game.js";
 import type { GameEngine } from "@core/portUserside/engine.js";
 
 // ─── Event Types ─────────────────────────────────────────────────────
@@ -50,6 +50,28 @@ export type GameEventCallbacks = {
   onTurnEnd?: (event: { game: GameState; turn: number }) => void;
   /** Called when the game reaches the result phase */
   onGameEnd?: (event: { game: GameState }) => void;
+  /** Called after a lord places a knight on their kingdom (QueenDomino) */
+  onKnightPlaced?: (event: { game: GameState; lordId: string }) => void;
+  /** Called after a lord constructs a building (QueenDomino) */
+  onBuildingConstructed?: (event: {
+    game: GameState;
+    lordId: string;
+    buildingId: number;
+  }) => void;
+  /** Called after a lord uses the dragon to destroy a building (QueenDomino) */
+  onDragonUsed?: (event: {
+    game: GameState;
+    lordId: string;
+    buildingId: number;
+  }) => void;
+  /** Called after a lord places a fire token on their kingdom (Origins) */
+  onFireTokenPlaced?: (event: { game: GameState; lordId: string }) => void;
+  /** Called after a lord recruits a caveman from the cave board (Origins Tribe) */
+  onCavemanRecruited?: (event: {
+    game: GameState;
+    lordId: string;
+    cavemanId: number;
+  }) => void;
   /** Called after a lord places a giant on a crown in their kingdom */
   onGiantPlaced?: (event: { game: GameState; lordId: string }) => void;
   /** Called after a lord sends a giant to an opponent's kingdom */
@@ -79,7 +101,7 @@ const isGameEnded = (game: GameState): boolean =>
  */
 export const wrapWithEvents = (
   engine: GameEngine,
-  callbacks: GameEventCallbacks
+  callbacks: GameEventCallbacks,
 ): GameEngine => ({
   // Read-only methods — pass through
   getModes: (cmd) => engine.getModes(cmd),
@@ -154,15 +176,51 @@ export const wrapWithEvents = (
     return game;
   },
 
-  // Queendomino methods — pass through (no specific events yet)
-  placeKnight: (cmd) => engine.placeKnight(cmd),
-  constructBuilding: (cmd) => engine.constructBuilding(cmd),
-  useDragon: (cmd) => engine.useDragon(cmd),
+  // Queendomino methods — emit events after execution
+  placeKnight: (cmd) => {
+    const game = engine.placeKnight(cmd);
+    callbacks.onKnightPlaced?.({ game, lordId: cmd.lordId });
+    return game;
+  },
+
+  constructBuilding: (cmd) => {
+    const game = engine.constructBuilding(cmd);
+    callbacks.onBuildingConstructed?.({
+      game,
+      lordId: cmd.lordId,
+      buildingId: cmd.buildingId,
+    });
+    return game;
+  },
+
+  useDragon: (cmd) => {
+    const game = engine.useDragon(cmd);
+    callbacks.onDragonUsed?.({
+      game,
+      lordId: cmd.lordId,
+      buildingId: cmd.buildingId,
+    });
+    return game;
+  },
+
   skipOptionalAction: (cmd) => engine.skipOptionalAction(cmd),
 
-  // Origins methods — pass through (no specific events yet)
-  placeFireToken: (cmd) => engine.placeFireToken(cmd),
-  recruitCaveman: (cmd) => engine.recruitCaveman(cmd),
+  // Origins methods — emit events after execution
+  placeFireToken: (cmd) => {
+    const game = engine.placeFireToken(cmd);
+    callbacks.onFireTokenPlaced?.({ game, lordId: cmd.lordId });
+    return game;
+  },
+
+  recruitCaveman: (cmd) => {
+    const game = engine.recruitCaveman(cmd);
+    callbacks.onCavemanRecruited?.({
+      game,
+      lordId: cmd.lordId,
+      cavemanId: cmd.cavemanId,
+    });
+    return game;
+  },
 
   // Age of Giants methods — emit events after execution
   placeGiant: (cmd) => {

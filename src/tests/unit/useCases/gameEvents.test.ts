@@ -1,18 +1,16 @@
-import { describe, test, expect, vi } from "vitest";
-import {
-  wrapWithEvents,
-  type GameEventCallbacks,
-} from "@core/useCases/gameEvents.js";
-import type { GameEngine } from "@core/portUserside/engine.js";
 import type {
-  GameWithNextStep,
-  GameWithNextAction,
   GameState,
+  GameWithNextAction,
+  GameWithNextStep,
 } from "@core/domain/types/game.js";
+import type { GameEngine } from "@core/portUserside/engine.js";
+import { wrapWithEvents } from "@core/useCases/gameEvents.js";
+import { describe, expect, test, vi } from "vitest";
 
 // ─── Mock Engine ─────────────────────────────────────────────────────
 
 const stepGame = (step: string, turn = 0): GameWithNextStep =>
+  // biome-ignore lint/suspicious/noExplicitAny: test mock
   ({ id: "g1", turn, nextAction: { type: "step", step } }) as any;
 
 const actionGame = (action: string, turn = 1): GameWithNextAction =>
@@ -20,9 +18,11 @@ const actionGame = (action: string, turn = 1): GameWithNextAction =>
     id: "g1",
     turn,
     nextAction: { type: "action", nextLord: "lord1", nextAction: action },
+    // biome-ignore lint/suspicious/noExplicitAny: test mock
   }) as any;
 
 const resultGame = (): GameState =>
+  // biome-ignore lint/suspicious/noExplicitAny: test mock
   ({ id: "g1", turn: 6, nextAction: { type: "step", step: "result" } }) as any;
 
 const createMockEngine = (overrides: Partial<GameEngine> = {}): GameEngine =>
@@ -44,6 +44,7 @@ const createMockEngine = (overrides: Partial<GameEngine> = {}): GameEngine =>
     deserialize: vi.fn(),
     getDynastyResults: vi.fn(),
     ...overrides,
+    // biome-ignore lint/suspicious/noExplicitAny: test mock
   }) as any;
 
 // ─── Tests ───────────────────────────────────────────────────────────
@@ -244,6 +245,159 @@ describe("GameEvents", () => {
           lordId: "lord1",
         });
       }).not.toThrow();
+    });
+
+    // ─── Queendomino Events ──────────────────────────���───────────────
+
+    test("should call onKnightPlaced after placeKnight", () => {
+      const onKnightPlaced = vi.fn();
+      const engine = createMockEngine({
+        placeKnight: vi
+          .fn()
+          .mockReturnValue(actionGame("constructBuilding", 1)),
+      });
+      const wrapped = wrapWithEvents(engine, { onKnightPlaced });
+
+      wrapped.placeKnight({
+        game: actionGame("placeKnight", 1),
+        lordId: "lord1",
+        position: { x: 3, y: 4 },
+      });
+
+      expect(onKnightPlaced).toHaveBeenCalledWith({
+        game: actionGame("constructBuilding", 1),
+        lordId: "lord1",
+      });
+    });
+
+    test("should call onBuildingConstructed after constructBuilding", () => {
+      const onBuildingConstructed = vi.fn();
+      const engine = createMockEngine({
+        constructBuilding: vi.fn().mockReturnValue(actionGame("useDragon", 1)),
+      });
+      const wrapped = wrapWithEvents(engine, { onBuildingConstructed });
+
+      wrapped.constructBuilding({
+        game: actionGame("constructBuilding", 1),
+        lordId: "lord1",
+        buildingId: 7,
+        position: { x: 3, y: 4 },
+      });
+
+      expect(onBuildingConstructed).toHaveBeenCalledWith({
+        game: actionGame("useDragon", 1),
+        lordId: "lord1",
+        buildingId: 7,
+      });
+    });
+
+    test("should call onDragonUsed after useDragon", () => {
+      const onDragonUsed = vi.fn();
+      const engine = createMockEngine({
+        useDragon: vi.fn().mockReturnValue(actionGame("pickDomino", 1)),
+      });
+      const wrapped = wrapWithEvents(engine, { onDragonUsed });
+
+      wrapped.useDragon({
+        game: actionGame("useDragon", 1),
+        lordId: "lord1",
+        buildingId: 3,
+      });
+
+      expect(onDragonUsed).toHaveBeenCalledWith({
+        game: actionGame("pickDomino", 1),
+        lordId: "lord1",
+        buildingId: 3,
+      });
+    });
+
+    // ─── Origins Events ─────────────────────────────────────────────
+
+    test("should call onFireTokenPlaced after placeFireToken", () => {
+      const onFireTokenPlaced = vi.fn();
+      const engine = createMockEngine({
+        placeFireToken: vi.fn().mockReturnValue(actionGame("pickDomino", 1)),
+      });
+      const wrapped = wrapWithEvents(engine, { onFireTokenPlaced });
+
+      wrapped.placeFireToken({
+        game: actionGame("placeFireToken", 1),
+        lordId: "lord1",
+        position: { x: 3, y: 4 },
+      });
+
+      expect(onFireTokenPlaced).toHaveBeenCalledWith({
+        game: actionGame("pickDomino", 1),
+        lordId: "lord1",
+      });
+    });
+
+    test("should call onCavemanRecruited after recruitCaveman", () => {
+      const onCavemanRecruited = vi.fn();
+      const engine = createMockEngine({
+        recruitCaveman: vi.fn().mockReturnValue(actionGame("pickDomino", 1)),
+      });
+      const wrapped = wrapWithEvents(engine, { onCavemanRecruited });
+
+      wrapped.recruitCaveman({
+        game: actionGame("recruitCaveman", 1),
+        lordId: "lord1",
+        cavemanId: 5,
+        position: { x: 3, y: 4 },
+        resourcePositions: [
+          { x: 2, y: 3 },
+          { x: 4, y: 5 },
+        ],
+      });
+
+      expect(onCavemanRecruited).toHaveBeenCalledWith({
+        game: actionGame("pickDomino", 1),
+        lordId: "lord1",
+        cavemanId: 5,
+      });
+    });
+
+    // ─── Age of Giants Events ───────��───────────────────────────────
+
+    test("should call onGiantPlaced after placeGiant", () => {
+      const onGiantPlaced = vi.fn();
+      const engine = createMockEngine({
+        placeGiant: vi.fn().mockReturnValue(actionGame("sendGiant", 1)),
+      });
+      const wrapped = wrapWithEvents(engine, { onGiantPlaced });
+
+      wrapped.placeGiant({
+        game: actionGame("placeGiant", 1),
+        lordId: "lord1",
+        position: { x: 3, y: 4 },
+      });
+
+      expect(onGiantPlaced).toHaveBeenCalledWith({
+        game: actionGame("sendGiant", 1),
+        lordId: "lord1",
+      });
+    });
+
+    test("should call onGiantSent after sendGiant", () => {
+      const onGiantSent = vi.fn();
+      const engine = createMockEngine({
+        sendGiant: vi.fn().mockReturnValue(actionGame("pickDomino", 1)),
+      });
+      const wrapped = wrapWithEvents(engine, { onGiantSent });
+
+      wrapped.sendGiant({
+        game: actionGame("sendGiant", 1),
+        lordId: "lord1",
+        giantIndex: 0,
+        targetPlayerId: "player2",
+        targetCrownPosition: { x: 5, y: 5 },
+      });
+
+      expect(onGiantSent).toHaveBeenCalledWith({
+        game: actionGame("pickDomino", 1),
+        lordId: "lord1",
+        targetPlayerId: "player2",
+      });
     });
 
     test("should pass through read-only methods unchanged", () => {
