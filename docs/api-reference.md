@@ -12,9 +12,11 @@ Complete API reference for `@pompidup/kingdomino-engine`.
 4. [Game State Types](#game-state-types)
 5. [Domain Types](#domain-types)
 6. [Queendomino Types](#queendomino-types)
-7. [Error Codes](#error-codes)
-8. [Utilities](#utilities)
-9. [Type Guards](#type-guards)
+7. [Origins Types](#origins-types)
+8. [Age of Giants Types](#age-of-giants-types)
+9. [Error Codes](#error-codes)
+10. [Utilities](#utilities)
+11. [Type Guards](#type-guards)
 
 ---
 
@@ -88,6 +90,20 @@ All methods are available on the `GameEngine` object returned by `createGameEngi
 | `constructBuilding` | `ConstructBuildingCommand` | `GameState` | Construct a building on a construction square in the lord's kingdom. |
 | `useDragon` | `UseDragonCommand` | `GameState` | Use the dragon to destroy a building tile on the builders board. |
 | `skipOptionalAction` | `SkipOptionalActionCommand` | `GameState` | Skip the current optional action (knight, building, or dragon). |
+
+### Origins Methods
+
+| Method | Command Type | Return Type | Description |
+|---|---|---|---|
+| `placeFireToken` | `PlaceFireTokenCommand` | `GameState` | Place a fire token on the kingdom after placing a volcano domino. |
+| `recruitCaveman` | `RecruitCavemanCommand` | `GameState` | Recruit a caveman from the cave board (Tribe mode only). |
+
+### Age of Giants Methods
+
+| Method | Command Type | Return Type | Description |
+|---|---|---|---|
+| `placeGiant` | `PlaceGiantCommand` | `GameState` | Place a giant on a crown in the lord's kingdom. |
+| `sendGiant` | `SendGiantCommand` | `GameState` | Send a giant from the lord's kingdom to an opponent's kingdom. |
 
 ### Scoring and Results
 
@@ -297,6 +313,50 @@ type SkipOptionalActionCommand = {
 };
 ```
 
+### `PlaceFireTokenCommand`
+
+```typescript
+type PlaceFireTokenCommand = {
+  game: GameWithNextAction;
+  lordId: string;
+  position: Position;
+};
+```
+
+### `RecruitCavemanCommand`
+
+```typescript
+type RecruitCavemanCommand = {
+  game: GameWithNextAction;
+  lordId: string;
+  cavemanId: number;         // ID of the caveman tile to recruit
+  position: Position;         // Position on the kingdom to place the caveman
+  resourcePositions: Position[]; // Positions of resources to spend as payment
+};
+```
+
+### `PlaceGiantCommand`
+
+```typescript
+type PlaceGiantCommand = {
+  game: GameWithNextAction;
+  lordId: string;
+  position: Position;
+};
+```
+
+### `SendGiantCommand`
+
+```typescript
+type SendGiantCommand = {
+  game: GameWithNextAction;
+  lordId: string;
+  giantIndex: number;            // Index of the giant to send from the player's giants array
+  targetPlayerId: string;        // ID of the opponent to receive the giant
+  targetCrownPosition: Position; // Position on the opponent's kingdom to cover a crown
+};
+```
+
 ---
 
 ## Game State Types
@@ -317,7 +377,9 @@ type Game = {
   rules: SelectedRules;
   mode: GameMode;
   seed?: string;
-  queendomino?: QueenDominoState;
+  queendomino?: QueenDominoState;   // Only present in QueenDomino modes
+  origins?: OriginsState;           // Only present in KingdominoOrigins modes
+  ageOfGiants?: AgeOfGiantsState;   // Only present in AgeOfGiants modes
 };
 ```
 
@@ -516,6 +578,10 @@ type Player = {
   towers?: number;              // Queendomino
   knights?: Knight[];           // Queendomino
   buildings?: PlacedBuilding[]; // Queendomino
+  fireTokens?: PlacedFireToken[];  // Origins
+  resources?: Resource[];          // Origins Totem/Tribe
+  cavemen?: PlacedCaveman[];       // Origins Tribe
+  giants?: PlacedGiant[];          // Age of Giants
 };
 ```
 
@@ -537,7 +603,11 @@ type PlayerActions =
   | "placeKnight"         // Queendomino, optional
   | "constructBuilding"   // Queendomino, optional
   | "useDragon"           // Queendomino, optional
-  | "skipOptionalAction"; // Queendomino
+  | "skipOptionalAction"  // Queendomino / Origins / AoG
+  | "placeGiant"          // Age of Giants, mandatory
+  | "sendGiant"           // Age of Giants, optional
+  | "placeFireToken"      // Origins, optional
+  | "recruitCaveman";     // Origins Tribe, optional
 ```
 
 ### `Lord`
@@ -684,6 +754,156 @@ type PlacedBuilding = {
 
 ---
 
+## Origins Types
+
+These types are only relevant when playing in Origins modes. The `origins` field on `Game` is `undefined` in non-Origins modes.
+
+### `OriginsState`
+
+```typescript
+type OriginsState = {
+  subMode: OriginsSubMode;           // "Discovery" | "Totem" | "Tribe"
+  fireTokenPool: FireTokenPool;
+  pendingFireToken?: PendingFireToken;
+  totems?: TotemState;               // Totem mode only
+  caveBoard?: CaveBoard;            // Tribe mode only
+};
+```
+
+### `FireTokenPool`
+
+```typescript
+type FireTokenPool = {
+  ones: number;    // 1-fire tokens remaining
+  twos: number;    // 2-fire tokens remaining
+  threes: number;  // 3-fire tokens remaining
+};
+```
+
+### `PlacedFireToken`
+
+```typescript
+type PlacedFireToken = {
+  fires: 1 | 2 | 3;
+  position: Position;
+};
+```
+
+### `PendingFireToken`
+
+```typescript
+type PendingFireToken = {
+  fires: 1 | 2 | 3;
+  volcanoPosition: Position;
+};
+```
+
+### `Resource`
+
+```typescript
+type ResourceType = "mammoth" | "fish" | "mushroom" | "flint";
+
+type Resource = {
+  type: ResourceType;
+  position: Position;
+};
+```
+
+### `TotemState`
+
+```typescript
+type TotemState = Record<ResourceType, string | null>;  // maps resource type to holder player ID
+```
+
+### `CaveBoard`
+
+```typescript
+type CaveBoard = {
+  visible: CavemanTile[];   // Up to 4 visible caveman tiles
+  drawPile: CavemanTile[];  // Face-down draw pile
+};
+```
+
+### `CavemanTile`
+
+```typescript
+type CavemanTile = HunterGathererTile | WarriorTile;
+
+type HunterGathererTile = {
+  kind: "hunterGatherer";
+  id: number;
+  hunterType: HunterGathererKind;
+  pointsPerMatch: number;
+};
+
+type WarriorTile = {
+  kind: "warrior";
+  id: number;
+  warriorType: WarriorType;  // "small" | "amazon" | "oafish"
+  power: number;             // 1, 2, or 3
+};
+```
+
+### `PlacedCaveman`
+
+```typescript
+type PlacedCaveman = {
+  caveman: CavemanTile;
+  position: Position;
+};
+```
+
+---
+
+## Age of Giants Types
+
+These types are only relevant when playing in Age of Giants modes. The `ageOfGiants` field on `Game` is `undefined` in non-AoG modes.
+
+### `AgeOfGiantsState`
+
+```typescript
+type AgeOfGiantsState = {
+  giantPool: number;         // Giant figurines remaining (starts at 6)
+  questTiles: QuestTile[];   // 2 quest tiles drawn for this game
+};
+```
+
+### `PlacedGiant`
+
+```typescript
+type PlacedGiant = {
+  position: Position;  // Position on the kingdom covering a crown
+};
+```
+
+### `QuestTile`
+
+```typescript
+type QuestTile = {
+  id: number;
+  type: QuestType;
+  name: string;
+  description: string;
+  points: number;      // Points per match
+  terrain?: Ground;    // Only for localTrade and kingdomBorders quests
+};
+```
+
+### `QuestType`
+
+```typescript
+type QuestType =
+  | "localTrade"       // 5pts per matching terrain tile adjacent to castle
+  | "kingdomBorders"   // 5pts per matching terrain tile in kingdom corners
+  | "harmony"          // 5pts if kingdom is complete
+  | "middleKingdom"    // 10pts if castle is centered
+  | "lostCorner"       // 20pts if castle is in a corner
+  | "megalomania"      // 10pts per alignment of 3+ crowned tiles
+  | "austereKing";     // 10pts per property of 5+ tiles with 0 crowns
+```
+
+---
+
 ## Error Codes
 
 All errors thrown by the engine are instances of `DomainException` (or a subclass) and carry a `code` field from the `ErrorCode` enum.
@@ -763,6 +983,28 @@ try {
 | `QUEEN_HOLDER_CANNOT_USE_DRAGON` | The player holding the Queen cannot use the dragon. |
 | `BUILDING_NOT_FOUND` | The specified building ID does not exist on the builders board. |
 | `INVALID_OPTIONAL_ACTION` | The current optional action does not match the requested action. |
+
+### Age of Giants Errors
+
+| Code | Description |
+|---|---|
+| `GIANT_POOL_EMPTY` | No giant figurines remaining in the pool. |
+| `GIANT_NOT_FOUND` | The specified giant index does not exist on the player's kingdom. |
+| `INVALID_GIANT_PLACEMENT` | The target position does not have an uncovered crown. |
+| `NOT_AOG_MODE` | The current game mode does not support Age of Giants actions. |
+
+### Origins Errors
+
+| Code | Description |
+|---|---|
+| `FIRE_TOKEN_POOL_EMPTY` | No fire tokens of the required type remaining. |
+| `FIRE_TOKEN_INVALID_POSITION` | The target position is not valid for fire token placement. |
+| `NO_PENDING_FIRE_TOKEN` | No fire token is pending placement (no volcano was placed). |
+| `CANNOT_RECRUIT_CAVEMAN` | Caveman recruitment is not allowed at this time. |
+| `INSUFFICIENT_RESOURCES` | The player does not have enough resources to recruit. |
+| `INVALID_CAVEMAN_PLACEMENT` | The target position is not valid for caveman placement. |
+| `CAVEMAN_NOT_FOUND` | The specified caveman ID does not exist on the cave board. |
+| `NOT_TRIBE_MODE` | Caveman recruitment is only available in Tribe mode. |
 
 ### Exception Classes
 
@@ -886,6 +1128,13 @@ Events can be provided via `EngineConfig.events` or by wrapping an engine with `
 | `onTurnStart` | When a new turn begins (derived) |
 | `onTurnEnd` | When a turn ends (derived) |
 | `onGameEnd` | When the game reaches the result phase (derived) |
+| `onKnightPlaced` | After `placeKnight` (QueenDomino) |
+| `onBuildingConstructed` | After `constructBuilding` (QueenDomino) |
+| `onDragonUsed` | After `useDragon` (QueenDomino) |
+| `onFireTokenPlaced` | After `placeFireToken` (Origins) |
+| `onCavemanRecruited` | After `recruitCaveman` (Origins Tribe) |
+| `onGiantPlaced` | After `placeGiant` (Age of Giants) |
+| `onGiantSent` | After `sendGiant` (Age of Giants) |
 
 ### Undo/Redo History
 

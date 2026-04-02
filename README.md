@@ -71,14 +71,18 @@ console.log(results.result);
 | Mode | Description |
 |------|-------------|
 | **Classic** | Original Kingdomino rules. 1-4 players, 5x5 kingdom, terrain-based scoring. |
-| **QueenDomino** | Full Queendomino expansion with buildings, coins, knights, the Queen and the Dragon. Extended turn flow with optional actions. |
+| **QueenDomino** | Full Queendomino expansion with buildings, coins, knights, the Queen and the Dragon. |
+| **KingdominoOrigins-Discovery** | Origins expansion — volcanoes, fire tokens, fire-based scoring. |
+| **KingdominoOrigins-Totem** | Origins — Discovery + wooden resources + totem majority tiles. |
+| **KingdominoOrigins-Tribe** | Origins — Discovery + resources + cave board + cavemen recruitment. |
+| **AgeOfGiants** | Age of Giants extension — giants, quest tiles, 5-player support, 12 new dominos on Classic. |
+| **AgeOfGiants-QueenDomino** | Age of Giants combined with QueenDomino. |
 
 ```typescript
-// Classic
 let game = engine.createGame({ mode: "Classic" });
-
-// Queendomino
 let game = engine.createGame({ mode: "QueenDomino" });
+let game = engine.createGame({ mode: "KingdominoOrigins-Discovery" });
+let game = engine.createGame({ mode: "AgeOfGiants" });
 ```
 
 See [Game Modes](docs/game-modes.md) for rules, player counts, and extra rules details.
@@ -109,6 +113,45 @@ if (nextAction === "placeKnight" || nextAction === "constructBuilding" || nextAc
 ```
 
 See [Queendomino Guide](docs/queendomino.md) for the complete rules, building list, and game loop example.
+
+## Kingdomino Origins
+
+Origins introduces prehistoric terrains and fire-based scoring across three modes:
+
+- **Discovery**: Volcanoes provide fire tokens. Scoring = region size × fire symbols.
+- **Totem**: Discovery + wooden resources + totem majority tiles for bonus points.
+- **Tribe**: Discovery + resources + cave board with 22 cavemen to recruit.
+
+```typescript
+if (nextAction === "placeFireToken") {
+  game = engine.placeFireToken({ game, lordId: nextLord, position });
+}
+if (nextAction === "recruitCaveman") {
+  game = engine.recruitCaveman({ game, lordId: nextLord, cavemanId, position, resourcePositions });
+}
+```
+
+See [Origins Guide](docs/origins.md) for the complete rules and mechanics.
+
+## Age of Giants
+
+Age of Giants extends Classic (or QueenDomino) with giants, quest tiles, and 5-player support:
+
+- **60 dominos** (48 original + 12 new with giant/footprint symbols)
+- **Giants** cover crowns on your kingdom, reducing opponents' scores
+- **Quest tiles** (2 per game) provide end-game bonus scoring conditions
+- **5-player support** with 5 dominos revealed per turn
+
+```typescript
+if (nextAction === "placeGiant") {
+  game = engine.placeGiant({ game, lordId: nextLord, position });
+}
+if (nextAction === "sendGiant") {
+  game = engine.sendGiant({ game, lordId: nextLord, giantIndex, targetPlayerId, targetCrownPosition });
+}
+```
+
+See [Age of Giants Guide](docs/age-of-giants.md) for the complete rules and mechanics.
 
 ## Extra Rules
 
@@ -171,6 +214,20 @@ const engine = createGameEngine({
 | `useDragon` | Destroy a building tile from the board |
 | `skipOptionalAction` | Skip the current optional action |
 
+### Origins Methods
+
+| Method | Description |
+|--------|-------------|
+| `placeFireToken` | Place a fire token after placing a volcano domino |
+| `recruitCaveman` | Recruit a caveman from the cave board (Tribe mode) |
+
+### Age of Giants Methods
+
+| Method | Description |
+|--------|-------------|
+| `placeGiant` | Place a giant on a crown in your kingdom |
+| `sendGiant` | Send a giant to an opponent's kingdom |
+
 See [API Reference](docs/api-reference.md) for complete method signatures, types, and error codes.
 
 ## Additional Features
@@ -191,6 +248,8 @@ See [API Reference](docs/api-reference.md) for complete method signatures, types
 |----------|---------|
 | [Game Modes](docs/game-modes.md) | Modes, rules by player count, extra rules, game flow |
 | [Queendomino Guide](docs/queendomino.md) | Complete Queendomino rules, mechanics, and examples |
+| [Origins Guide](docs/origins.md) | Kingdomino Origins rules, fire tokens, resources, cavemen |
+| [Age of Giants Guide](docs/age-of-giants.md) | Age of Giants rules, giants, quest tiles, 5-player support |
 | [API Reference](docs/api-reference.md) | All methods, types, error codes, and utilities |
 | [WASM Build](wasm/README.md) | Cross-language usage via WebAssembly |
 

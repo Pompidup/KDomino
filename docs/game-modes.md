@@ -13,6 +13,8 @@ KDomino supports multiple game modes with configurable extra rules, for 1 to 4 p
 | KingdominoOrigins-Discovery | Origins expansion - volcanoes, fire tokens, fire-based scoring |
 | KingdominoOrigins-Totem     | Origins - Discovery + resources + totem majority              |
 | KingdominoOrigins-Tribe     | Origins - Discovery + resources + cave board + cavemen        |
+| AgeOfGiants                 | Age of Giants - giants, quest tiles, 5-player support on Classic |
+| AgeOfGiants-QueenDomino     | Age of Giants combined with QueenDomino                       |
 
 All modes share the same base rules (player counts, turn structure, kingdom grid). Each mode has its own set of compatible extra rules.
 
@@ -82,6 +84,30 @@ Additional actions:
 - **skipOptionalAction** -- Skip any of the above optional actions.
 
 For full details, see [origins.md](./origins.md).
+
+---
+
+## Age of Giants Modes
+
+Age of Giants extends Classic Kingdomino (or QueenDomino) with giants, quest tiles, and 5-player support.
+
+**Key differences from Classic:**
+- **60 dominos** (48 original + 12 new with giant and footprint symbols)
+- **5 dominos per turn** (instead of 4), with excess discarded for fewer players
+- **Giants** (6 in pool) cover crowns on kingdoms, reducing scores
+- **Quest tiles** (2 drawn at game start) provide bonus scoring conditions
+- **1-5 players** supported
+
+Two sub-modes:
+- **AgeOfGiants**: Age of Giants on top of Classic Kingdomino rules.
+- **AgeOfGiants-QueenDomino**: Age of Giants combined with QueenDomino (buildings, knights, coins, Queen, Dragon + giants and quests).
+
+Additional actions:
+- **placeGiant** — After placing a domino with a giant symbol, place a giant on a crown in your kingdom (mandatory).
+- **sendGiant** — After placing a domino with a footprint symbol, send one of your giants to an opponent's kingdom (optional).
+- **skipOptionalAction** — Skip sending a giant.
+
+For full details, see [age-of-giants.md](./age-of-giants.md).
 
 ---
 
@@ -185,6 +211,17 @@ startGame()                  <-- step: "start"
 |   [QueenDomino only]      |
 |   placeKnight / construct |
 |   Building / useDragon /  |
+|   skipOptionalAction      |
+|        |                  |
+|        v                  |
+|   [Origins only]          |
+|   placeFireToken /        |
+|   recruitCaveman /        |
+|   skipOptionalAction      |
+|        |                  |
+|        v                  |
+|   [AoG only]              |
+|   placeGiant / sendGiant /|
 |   skipOptionalAction      |
 |        |                  |
 |        v                  |
