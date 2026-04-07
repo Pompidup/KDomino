@@ -13,9 +13,11 @@ import { describe, expect, test } from "vitest";
 
 const wheat: Tile = { type: "wheat", crowns: 0 };
 const forest: Tile = { type: "forest", crowns: 0 };
+const plain: Tile = { type: "plain", crowns: 0 };
 
 const wheatDomino: Domino = { left: wheat, right: wheat, number: 1 };
 const _forestDomino: Domino = { left: forest, right: forest, number: 2 };
+const plainForestDomino: Domino = { left: plain, right: forest, number: 3 };
 
 const buildKingdomWithCastle = () => placeCastle(createEmptyKingdom());
 
@@ -87,6 +89,75 @@ describe("Kingdom - 5x5 constraint", () => {
     // Place at (7,3)-(7,4) vertical → first tile x=7 exceeds, bbox x: 2..7 = 6 ✗
     const result = placeDomino(kingdom, { x: 7, y: 3 }, 90, wheatDomino);
     expect(isErr(result)).toBe(true);
+  });
+});
+
+describe("Kingdom - placeDomino adjacency validation", () => {
+  test("should reject placement where only the non-matching half touches a same-type neighbour (bug repro x=5,y=2)", () => {
+    // Repro from bug report: castle@(4,4), forest@(4,2), forest@(4,3)
+    // Domino plain/forest at (5,2) rotation 0:
+    //   plain@(5,2) touches forest@(4,2) — mismatched types
+    //   forest@(6,2) touches nothing
+    // Only the castle would make this legal, but it's not adjacent.
+    let kingdom = buildKingdomWithCastle();
+    kingdom = placeTile(kingdom, { x: 4, y: 2 }, forest);
+    kingdom = placeTile(kingdom, { x: 4, y: 3 }, forest);
+
+    const result = placeDomino(kingdom, { x: 5, y: 2 }, 0, plainForestDomino);
+    expect(isErr(result)).toBe(true);
+    if (isErr(result)) {
+      expect(result.error).toBe(ErrorCode.PLACEMENT_INVALID_TERRAIN);
+    }
+  });
+
+  test("should reject placement where only the non-matching half touches a same-type neighbour (bug repro x=4,y=1)", () => {
+    // Same seed kingdom. Domino plain/forest at (4,1) rotation 0:
+    //   plain@(4,1) touches forest@(4,2) — mismatched types
+    //   forest@(5,1) touches nothing
+    let kingdom = buildKingdomWithCastle();
+    kingdom = placeTile(kingdom, { x: 4, y: 2 }, forest);
+    kingdom = placeTile(kingdom, { x: 4, y: 3 }, forest);
+
+    const result = placeDomino(kingdom, { x: 4, y: 1 }, 0, plainForestDomino);
+    expect(isErr(result)).toBe(true);
+    if (isErr(result)) {
+      expect(result.error).toBe(ErrorCode.PLACEMENT_INVALID_TERRAIN);
+    }
+  });
+
+  test("should reject symmetric case where plain half touches forest and forest half touches nothing", () => {
+    // Kingdom: castle@(4,4), forest@(2,4). Domino plain/forest at (1,4) rot 90:
+    //   plain@(1,4) touches forest@(2,4) — mismatched
+    //   forest@(1,5) touches nothing
+    let kingdom = buildKingdomWithCastle();
+    kingdom = placeTile(kingdom, { x: 2, y: 4 }, forest);
+
+    const result = placeDomino(kingdom, { x: 1, y: 4 }, 90, plainForestDomino);
+    expect(isErr(result)).toBe(true);
+    if (isErr(result)) {
+      expect(result.error).toBe(ErrorCode.PLACEMENT_INVALID_TERRAIN);
+    }
+  });
+
+  test("should accept placement where the forest half of the new domino touches an existing forest", () => {
+    // Kingdom: castle@(4,4), forest@(4,2). Domino plain/forest at (5,2) rot 180:
+    //   forest@(5,2) touches forest@(4,2) ✓
+    //   plain@(6,2) touches nothing — OK, one valid connection is enough.
+    let kingdom = buildKingdomWithCastle();
+    kingdom = placeTile(kingdom, { x: 4, y: 2 }, forest);
+
+    const result = placeDomino(kingdom, { x: 5, y: 2 }, 180, plainForestDomino);
+    expect(isOk(result)).toBe(true);
+  });
+
+  test("should accept placement where plain half touches the castle (castle is wild)", () => {
+    // Kingdom: castle@(4,4). Domino plain/forest at (5,4) rot 0:
+    //   plain@(5,4) touches castle@(4,4) ✓
+    //   forest@(6,4) touches nothing — OK, castle is wild.
+    const kingdom = buildKingdomWithCastle();
+
+    const result = placeDomino(kingdom, { x: 5, y: 4 }, 0, plainForestDomino);
+    expect(isOk(result)).toBe(true);
   });
 });
 

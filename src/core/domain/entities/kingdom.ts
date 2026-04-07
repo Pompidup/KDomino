@@ -164,22 +164,13 @@ export const placeDomino = (
     return err(ErrorCode.PLACEMENT_EXCEEDS_KINGDOM_SIZE);
   }
 
-  const adjacentTiles = isAdjacent(
-    kingdom,
-    firstTile.position,
-    secondTile.position,
-  );
+  const adjacentPairs = isAdjacent(kingdom, firstTile, secondTile);
 
-  if (adjacentTiles.length === 0) {
+  if (adjacentPairs.length === 0) {
     return err(ErrorCode.PLACEMENT_NOT_ADJACENT);
   }
 
-  const hasValidAdjacentTiles = hasValidAdjacent(adjacentTiles, [
-    firstTile.tile,
-    secondTile.tile,
-  ]);
-
-  if (!hasValidAdjacentTiles) {
+  if (!hasValidAdjacent(adjacentPairs)) {
     return err(ErrorCode.PLACEMENT_INVALID_TERRAIN);
   }
 
@@ -220,11 +211,13 @@ const isFreePlace = (
   return ok(true);
 };
 
+type AdjacentPair = { neighbor: Tile; own: Tile };
+
 const isAdjacent = (
   kingdom: Kingdom,
-  firstPosition: Position,
-  secondPosition: Position,
-): Tile[] => {
+  firstTile: { tile: Tile; position: Position },
+  secondTile: { tile: Tile; position: Position },
+): AdjacentPair[] => {
   const offsets = [
     { x: -1, y: 0 },
     { x: 1, y: 0 },
@@ -233,35 +226,31 @@ const isAdjacent = (
   ];
 
   const isOwnPosition = (x: number, y: number) =>
-    (x === firstPosition.x && y === firstPosition.y) ||
-    (x === secondPosition.x && y === secondPosition.y);
+    (x === firstTile.position.x && y === firstTile.position.y) ||
+    (x === secondTile.position.x && y === secondTile.position.y);
 
-  const adjacentTiles: Tile[] = [];
+  const pairs: AdjacentPair[] = [];
 
-  for (const pos of [firstPosition, secondPosition]) {
+  for (const own of [firstTile, secondTile]) {
     for (const offset of offsets) {
-      const nx = pos.x + offset.x;
-      const ny = pos.y + offset.y;
+      const nx = own.position.x + offset.x;
+      const ny = own.position.y + offset.y;
       if (isOwnPosition(nx, ny)) continue;
       const tile = getTile(kingdom, { x: nx, y: ny });
       if (isOk(tile) && tile.value.type !== "empty") {
-        adjacentTiles.push(tile.value);
+        pairs.push({ neighbor: tile.value, own: own.tile });
       }
     }
   }
 
-  return adjacentTiles;
+  return pairs;
 };
 
-const hasValidAdjacent = (
-  adjacentTiles: (Tile | EmptyTile)[],
-  tiles: Tile[],
-): boolean => {
-  return adjacentTiles.some((adjacentTile) => {
-    return tiles.some((tile) => {
-      return tile.type === adjacentTile.type || adjacentTile.type === "castle";
-    });
-  });
+const hasValidAdjacent = (pairs: AdjacentPair[]): boolean => {
+  return pairs.some(
+    ({ neighbor, own }) =>
+      neighbor.type === "castle" || neighbor.type === own.type,
+  );
 };
 
 export const checkCastleIsInMiddle = (kingdom: Kingdom): boolean => {
