@@ -1,5 +1,6 @@
 import {
   calculateBuildingEndGameBonus,
+  calculateQueenDominoEndGameBonus,
   determineQueenHolder,
   getQueenBonus,
 } from "@core/domain/entities/queen.js";
@@ -54,7 +55,7 @@ describe("queen", () => {
   });
 
   describe("getQueenBonus", () => {
-    it("should return size of territory with most crowns", () => {
+    it("should return size of the largest territory", () => {
       const kingdom = emptyKingdom();
       kingdom[4]![4] = { type: "castle", crowns: 0 };
       // 3-tile wheat territory with 2 crowns total
@@ -65,21 +66,38 @@ describe("queen", () => {
       kingdom[5]![4] = { type: "forest", crowns: 1 };
       kingdom[5]![5] = { type: "forest", crowns: 0 };
 
-      // Queen goes to wheat (2 crowns > 1 crown)
+      // Queen goes to the largest territory (wheat, 3 squares)
       // Bonus = size of that territory = 3
       expect(getQueenBonus(kingdom)).toBe(3);
+    });
+
+    it("should pick the largest territory, not the one with the most crowns", () => {
+      const kingdom = emptyKingdom();
+      kingdom[4]![4] = { type: "castle", crowns: 0 };
+      // 4-square forest territory with 0 crowns
+      kingdom[3]![4] = { type: "forest", crowns: 0 };
+      kingdom[2]![4] = { type: "forest", crowns: 0 };
+      kingdom[1]![4] = { type: "forest", crowns: 0 };
+      kingdom[1]![5] = { type: "forest", crowns: 0 };
+      // 2-square mine territory with 3 crowns
+      kingdom[4]![5] = { type: "mine", crowns: 3 };
+      kingdom[4]![6] = { type: "mine", crowns: 0 };
+
+      // Official rule: the Queen goes on the largest territory where she
+      // counts as a crown: forest 4 squares x 1 crown = +4
+      expect(getQueenBonus(kingdom)).toBe(4);
     });
 
     it("should return 0 for empty kingdom", () => {
       expect(getQueenBonus(emptyKingdom())).toBe(0);
     });
 
-    it("should return 0 when no crowns exist", () => {
+    it("should still count the Queen as a crown when no crowns exist", () => {
       const kingdom = emptyKingdom();
       kingdom[4]![4] = { type: "castle", crowns: 0 };
       kingdom[4]![5] = { type: "wheat", crowns: 0 };
 
-      expect(getQueenBonus(kingdom)).toBe(0);
+      expect(getQueenBonus(kingdom)).toBe(1);
     });
   });
 
@@ -218,6 +236,77 @@ describe("queen", () => {
       expect(
         calculateBuildingEndGameBonus(makePlayer("p1", 0, buildings)),
       ).toBe(8);
+    });
+
+    it("should calculate perCrown bonus, ignoring crowns covered by giants", () => {
+      const kingdom = emptyKingdom();
+      kingdom[4]![4] = { type: "castle", crowns: 0 };
+      kingdom[4]![5] = { type: "mine", crowns: 2 };
+      kingdom[4]![6] = { type: "wheat", crowns: 1 };
+      const player: Player = {
+        ...makePlayer("p1", 0, [
+          {
+            building: {
+              id: 7,
+              name: "The Magic School",
+              cost: 4,
+              crowns: 0,
+              towers: 0,
+              endGameScoring: { type: "perCrown", points: 1 },
+            },
+            position: { x: 6, y: 4 },
+          },
+        ]),
+        kingdom,
+      };
+
+      expect(calculateBuildingEndGameBonus(player)).toBe(3);
+      expect(
+        calculateBuildingEndGameBonus({
+          ...player,
+          giants: [{ position: { x: 5, y: 4 } }],
+        }),
+      ).toBe(2);
+    });
+  });
+
+  describe("calculateQueenDominoEndGameBonus", () => {
+    const buildKingdom = () => {
+      const kingdom = emptyKingdom();
+      kingdom[4]![4] = { type: "castle", crowns: 0 };
+      kingdom[4]![5] = { type: "wheat", crowns: 1 };
+      kingdom[4]![6] = { type: "wheat", crowns: 0 };
+      kingdom[4]![7] = { type: "wheat", crowns: 0 };
+      return kingdom;
+    };
+    const guardTower: PlacedBuilding = {
+      building: {
+        id: 11,
+        name: "The Guard Tower",
+        cost: 1,
+        crowns: 0,
+        towers: 1,
+        endGameScoring: { type: "flat", points: 2 },
+      },
+      position: { x: 6, y: 4 },
+    };
+
+    it("should add the Queen bonus for the Queen holder", () => {
+      const player = {
+        ...makePlayer("p1", 1, [guardTower]),
+        kingdom: buildKingdom(),
+      };
+      // Queen: largest territory (3 squares) + Guard Tower flat 2
+      expect(calculateQueenDominoEndGameBonus(player, "p1")).toBe(5);
+    });
+
+    it("should not add the Queen bonus for other players", () => {
+      const player = {
+        ...makePlayer("p1", 1, [guardTower]),
+        kingdom: buildKingdom(),
+      };
+      expect(calculateQueenDominoEndGameBonus(player, "p2")).toBe(2);
+      expect(calculateQueenDominoEndGameBonus(player, null)).toBe(2);
     });
   });
 });

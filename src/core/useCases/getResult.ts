@@ -10,6 +10,7 @@ import {
   isTribeMode,
 } from "@core/domain/entities/originsHelpers.js";
 import { calculateOriginsFireBonus } from "@core/domain/entities/originsScore.js";
+import { calculateQueenDominoEndGameBonus } from "@core/domain/entities/queen.js";
 import { calculateQuestBonus } from "@core/domain/entities/questScore.js";
 import {
   calculateTotemScore,
@@ -54,6 +55,14 @@ export const getResultUseCase: GetResultUseCase = (game, scoreResult) => {
     }
 
     const { kingdom } = player;
+
+    // Queendomino (incl. AoG-QD): Queen bonus + buildings end-game scoring
+    if (game.queendomino) {
+      finalScore += calculateQueenDominoEndGameBonus(
+        player,
+        game.queendomino.queenHolderId,
+      );
+    }
 
     // Origins fire token scoring bonus
     if (
