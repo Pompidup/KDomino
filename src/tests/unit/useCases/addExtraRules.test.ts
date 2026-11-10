@@ -1,3 +1,5 @@
+import jsonDominoes from "@adapter/jsonDominoes.js";
+import jsonRules from "@adapter/jsonRules.js";
 import { ErrorCode } from "@core/domain/errors/domainErrors.js";
 import type { Domino } from "@core/domain/types/domino.js";
 import type { NextStep } from "@core/domain/types/game.js";
@@ -8,6 +10,7 @@ import { addExtraRulesUseCase } from "@core/useCases/addExtraRules.js";
 import { err, unwrap } from "@utils/result.js";
 import { describe, expect, test } from "vitest";
 import { createGameBuilder } from "../../builder/game.js";
+import { createPlayerBuilder } from "../../builder/player.js";
 
 describe("Add extra rules", () => {
   const mode: GameMode = {
@@ -40,6 +43,14 @@ describe("Add extra rules", () => {
     },
   ];
 
+  const makePlayers = (count: number) =>
+    Array.from({ length: count }, (_, i) =>
+      createPlayerBuilder()
+        .withId(`player${i + 1}-id`)
+        .withName(`player${i + 1}`)
+        .build(),
+    );
+
   const basicRules = {
     2: {
       lords: 2,
@@ -70,6 +81,7 @@ describe("Add extra rules", () => {
       .withId("uuid-test")
       .withMode(mode)
       .withDominoes(dominoes)
+      .withPlayers(makePlayers(4))
       .build();
 
     const extraRules = [
@@ -170,6 +182,7 @@ describe("Add extra rules", () => {
       .withId("uuid-test")
       .withMode(mode)
       .withDominoes(dominoes)
+      .withPlayers(makePlayers(2))
       .withSeed("mighty-seed")
       .build();
 
@@ -198,6 +211,7 @@ describe("Add extra rules", () => {
       .withId("uuid-test")
       .withMode(mode)
       .withDominoes(dominoes)
+      .withPlayers(makePlayers(4))
       .build();
 
     const extraRules = [
@@ -248,5 +262,112 @@ describe("Add extra rules", () => {
 
     // Assert
     expect(result).toEqual(err(ErrorCode.STEP_EXECUTION_FAILED));
+  });
+});
+
+describe("Add extra rules - validation against the real rules data", () => {
+  const ruleRepository = jsonRules();
+  const dominoesRepository = jsonDominoes();
+  const shuffleMethod = <T>(array: T[]) => array;
+  const addExtraRules = addExtraRulesUseCase({
+    ruleRepository,
+    dominoesRepository,
+    shuffleMethod,
+  });
+
+  const gameFor = (modeName: string, playerCount: number) => {
+    const basic = ruleRepository.getAll().basic[playerCount]!;
+    return createGameBuilder<NextStep>()
+      .withMode({ name: modeName, description: "" })
+      .withDominoes(
+        (
+          dominoesRepository.getForMode({ name: modeName, description: "" }) ??
+          []
+        ).slice(0, basic.maxDominoes),
+      )
+      .withPlayers(
+        Array.from({ length: playerCount }, (_, i) =>
+          createPlayerBuilder()
+            .withId(`player${i + 1}-id`)
+            .withName(`player${i + 1}`)
+            .build(),
+        ),
+      )
+      .withRules({ basic, extra: [] })
+      .withNextAction<NextStep>({ type: "step", step: "options" })
+      .build();
+  };
+
+  test.each([
+    1, 3, 4,
+  ])("rejects The Mighty Duel with %i player(s)", (playerCount) => {
+    expect(
+      addExtraRules(gameFor("Classic", playerCount), ["The Mighty Duel"]),
+    ).toEqual(err(ErrorCode.EXTRA_RULE_NOT_AVAILABLE));
+  });
+
+  test.each([1, 3, 4])("rejects Neolithic with %i player(s)", (playerCount) => {
+    expect(
+      addExtraRules(gameFor("KingdominoOrigins-Discovery", playerCount), [
+        "Neolithic",
+      ]),
+    ).toEqual(err(ErrorCode.EXTRA_RULE_NOT_AVAILABLE));
+  });
+
+  test("rejects a rule of another mode", () => {
+    expect(addExtraRules(gameFor("Classic", 2), ["Empire of Fire"])).toEqual(
+      err(ErrorCode.EXTRA_RULE_NOT_AVAILABLE),
+    );
+    expect(
+      addExtraRules(gameFor("KingdominoOrigins-Totem", 2), ["Harmony"]),
+    ).toEqual(err(ErrorCode.EXTRA_RULE_NOT_AVAILABLE));
+    expect(addExtraRules(gameFor("AgeOfGiants", 2), ["Harmony"])).toEqual(
+      err(ErrorCode.EXTRA_RULE_NOT_AVAILABLE),
+    );
+  });
+
+  test("keeps rejecting unknown rule names with STEP_EXECUTION_FAILED", () => {
+    expect(addExtraRules(gameFor("Classic", 2), ["Unknown rule"])).toEqual(
+      err(ErrorCode.STEP_EXECUTION_FAILED),
+    );
+  });
+
+  test("accepts The Mighty Duel with 2 players: 48 dominoes, 12 turns, 7x7", () => {
+    const game = unwrap(
+      addExtraRules(gameFor("Classic", 2), ["The Mighty Duel"]),
+    );
+    expect(game.dominoes).toHaveLength(48);
+    expect(game.rules.basic).toMatchObject({
+      maxDominoes: 48,
+      maxTurns: 12,
+      maxKingdomSize: 7,
+    });
+  });
+
+  test.each([
+    "KingdominoOrigins-Discovery",
+    "KingdominoOrigins-Totem",
+    "KingdominoOrigins-Tribe",
+  ])("Neolithic activates the 7x7 territory with all 48 dominoes (%s)", (modeName) => {
+    const game = unwrap(addExtraRules(gameFor(modeName, 2), ["Neolithic"]));
+    expect(game.dominoes).toHaveLength(48);
+    expect(new Set(game.dominoes.map((d) => d.number)).size).toBe(48);
+    expect(game.rules.basic).toMatchObject({
+      lords: 2,
+      maxDominoes: 48,
+      maxTurns: 12,
+      maxKingdomSize: 7,
+    });
+    expect(game.rules.extra.map((r) => r.name)).toEqual(["Neolithic"]);
+  });
+
+  test("stores the Dynasty entry matching the current mode", () => {
+    const game = unwrap(
+      addExtraRules(gameFor("KingdominoOrigins-Tribe", 3), ["Dynasty"]),
+    );
+    expect(game.rules.extra).toHaveLength(1);
+    expect(game.rules.extra[0]!.mode.map((m) => m.name)).toContain(
+      "KingdominoOrigins-Tribe",
+    );
   });
 });

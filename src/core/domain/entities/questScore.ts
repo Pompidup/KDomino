@@ -283,13 +283,14 @@ export const calculateAustereKingBonus = (
 
 /**
  * Calculates the bonus for a single quest tile.
+ * @param dominoesPerPlayer - Dominoes each player receives over the game
+ * (lords per player x turns); used by the harmony quest.
  */
 export const calculateQuestBonus = (
   quest: QuestTile,
   kingdom: Kingdom,
   giants: PlacedGiant[],
-  dominoLimit: number,
-  playerCount: number,
+  dominoesPerPlayer: number,
 ): number => {
   switch (quest.type) {
     case questTypes.localTrade:
@@ -303,8 +304,8 @@ export const calculateQuestBonus = (
       );
 
     case questTypes.harmony: {
+      // Complete kingdom: every received domino was placed (none discarded)
       const totalDominoes = countDominoes(kingdom);
-      const dominoesPerPlayer = dominoLimit / playerCount;
       return totalDominoes === dominoesPerPlayer ? quest.points : 0;
     }
 

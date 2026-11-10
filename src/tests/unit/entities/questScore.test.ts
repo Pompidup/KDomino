@@ -208,7 +208,7 @@ describe("calculateQuestBonus", () => {
       terrain: "wheat",
     };
 
-    expect(calculateQuestBonus(quest, k, [], 48, 4)).toBe(10);
+    expect(calculateQuestBonus(quest, k, [], 12)).toBe(10);
   });
 
   it("dispatches middleKingdom quest", () => {
@@ -230,6 +230,6 @@ describe("calculateQuestBonus", () => {
       points: 10,
     };
 
-    expect(calculateQuestBonus(quest, k, [], 48, 4)).toBe(10);
+    expect(calculateQuestBonus(quest, k, [], 12)).toBe(10);
   });
 });

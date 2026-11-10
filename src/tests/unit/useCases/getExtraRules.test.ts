@@ -89,4 +89,33 @@ describe("Get available extra rules", () => {
     const unwrapped = unwrap(extraRules);
     expect(unwrapped.length).toBe(1);
   });
+
+  test("should return an empty list when no extra rule matches", () => {
+    // Act
+    const extraRules = getExtraRulesUseCase({
+      ruleRepository: inMemoryRepo,
+    })("KingdominoOrigins-Discovery", 2);
+
+    // Assert
+    expect(unwrap(extraRules)).toEqual([]);
+  });
+
+  test("should return an empty list when no rule is available for the player count", () => {
+    const rules: ExtraRule[] = [
+      {
+        name: "Duel only",
+        description: "2 players only",
+        mode: [{ name: "Classic", description: "Classic mode" }],
+        playersLimit: 2,
+      },
+    ];
+    const repo: RuleRepository = {
+      getAll: () => ({ basic: {}, extraRules: rules }),
+      getAllExtra: () => rules,
+    };
+
+    expect(
+      unwrap(getExtraRulesUseCase({ ruleRepository: repo })("Classic", 4)),
+    ).toEqual([]);
+  });
 });
