@@ -36,6 +36,7 @@ export const TranslationKey = {
   ERROR_DOMINO_ALREADY_PICKED: "error.dominoAlreadyPicked",
   ERROR_INVALID_PLAYER_COUNT: "error.invalidPlayerCount",
   ERROR_INVALID_PLAYER_NAME: "error.invalidPlayerName",
+  ERROR_EXTRA_RULE_NOT_AVAILABLE: "error.extraRuleNotAvailable",
   ERROR_UNDO_UNAVAILABLE: "error.undoUnavailable",
   ERROR_REDO_UNAVAILABLE: "error.redoUnavailable",
 
@@ -174,6 +175,8 @@ export const defaultTranslations: Record<TranslationKeyType, string> = {
     "Invalid number of players (1-4 required)",
   [TranslationKey.ERROR_INVALID_PLAYER_NAME]:
     "Player name must be at least 3 characters",
+  [TranslationKey.ERROR_EXTRA_RULE_NOT_AVAILABLE]:
+    "Extra rule is not available for this game mode or number of players",
   [TranslationKey.ERROR_UNDO_UNAVAILABLE]: "No state to undo",
   [TranslationKey.ERROR_REDO_UNAVAILABLE]: "No state to redo",
 
@@ -329,6 +332,8 @@ export const frenchTranslations: Record<TranslationKeyType, string> = {
     "Nombre de joueurs invalide (1 à 4 requis)",
   [TranslationKey.ERROR_INVALID_PLAYER_NAME]:
     "Le nom du joueur doit contenir au moins 3 caractères",
+  [TranslationKey.ERROR_EXTRA_RULE_NOT_AVAILABLE]:
+    "Cette règle optionnelle n'est pas disponible pour ce mode ou ce nombre de joueurs",
   [TranslationKey.ERROR_UNDO_UNAVAILABLE]: "Aucun état à annuler",
   [TranslationKey.ERROR_REDO_UNAVAILABLE]: "Aucun état à rétablir",
 
@@ -614,6 +619,8 @@ export const errorCodeToTranslationKey: Record<
   [ErrorCode.MODE_NOT_FOUND]: TranslationKey.ERROR_MODE_NOT_FOUND,
   [ErrorCode.INVALID_PLAYER_COUNT]: TranslationKey.ERROR_INVALID_PLAYER_COUNT,
   [ErrorCode.INVALID_PLAYER_NAME]: TranslationKey.ERROR_INVALID_PLAYER_NAME,
+  [ErrorCode.EXTRA_RULE_NOT_AVAILABLE]:
+    TranslationKey.ERROR_EXTRA_RULE_NOT_AVAILABLE,
   [ErrorCode.INVALID_PLACEMENT]: TranslationKey.ERROR_INVALID_PLACEMENT,
   [ErrorCode.PLACEMENT_NOT_EMPTY]: TranslationKey.ERROR_PLACEMENT_NOT_EMPTY,
   [ErrorCode.PLACEMENT_NOT_ADJACENT]:

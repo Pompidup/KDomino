@@ -93,10 +93,10 @@ Age of Giants extends Classic Kingdomino (or QueenDomino) with giants, quest til
 
 **Key differences from Classic:**
 - **60 dominos** (48 original + 12 new with giant and footprint symbols)
-- **5 dominos per turn** (instead of 4), with excess discarded for fewer players
+- **5 dominos per turn** (instead of 4); with fewer than 5 players the dominos at fixed positions of the sorted line are discarded (middle one at 2/4 players, 2nd and 4th at 3 players)
 - **Giants** (6 in pool) cover crowns on kingdoms, reducing scores
 - **Quest tiles** (2 drawn at game start) provide bonus scoring conditions
-- **1-5 players** supported
+- **2-5 players** supported (no solo: `addPlayers` refuses 1 player in Age of Giants modes)
 
 Two sub-modes:
 - **AgeOfGiants**: Age of Giants on top of Classic Kingdomino rules.
@@ -121,6 +121,14 @@ For full details, see [age-of-giants.md](./age-of-giants.md).
 | 4       | 1           | 48          | 4             | 12        | 5x5             |
 
 With 2 players, each player controls 2 lords and only 24 of the 48 dominoes are used (randomly selected). All other player counts use the full set of 48 dominoes.
+
+### 3 players
+
+With 3 players the engine follows the current official rule of Kingdomino (2nd edition rulebook, "3 player games"), Queendomino and Kingdomino Origins: all 48 dominoes are used, **4 dominoes are revealed** each turn, each player picks one, and **the leftover (4th) domino is discarded** when the next line is drawn. Over 12 turns, each player receives 12 dominoes.
+
+> The 1st edition of the Kingdomino rulebook used another setup for 3 players (remove 12 random dominoes, play with 36 and reveal 3 per turn). Both lead to 12 dominoes per player; the engine implements the 2nd edition rule, which is also the one of Queendomino and Origins.
+
+Age of Giants has its own table (5 dominos per line, see [age-of-giants.md](./age-of-giants.md)).
 
 These values are defined in `BasicRules`:
 
@@ -150,7 +158,7 @@ The castle tile must be at the exact center of the grid for the bonus to apply. 
 
 > Gain **5 additional points** if your kingdom is complete (no discarded dominoes).
 
-Every domino picked must be successfully placed. If the player never has to pass/discard, they earn the bonus.
+Every domino the player received must be in their kingdom: the bonus applies when the kingdom holds `lords × maxTurns` dominoes (12 dominoes for a 5x5 kingdom at any player count, solo included; 24 for a 7x7 kingdom with The Mighty Duel). If the player ever had to pass/discard, the kingdom cannot be complete. The same check is used by "Homo Habilis" (Origins) and the Age of Giants *harmony* quest tile.
 
 ### The Mighty Duel
 
@@ -161,7 +169,13 @@ This rule overrides the standard 2-player configuration:
 - Expands the kingdom grid from 5x5 to 7x7
 - Each player still controls 2 lords
 
-Cannot be enabled if there are more than 2 players (`playersLimit: 2`).
+Can only be enabled with exactly 2 players (`playersLimit: 2`). "Neolithic", its Kingdomino Origins counterpart, applies the same setup (48 dominoes, 12 turns, 7x7 territory) to the Origins modes.
+
+> Limitation: the Neolithic rulebook also says the first player of each turn takes dominoes 1 and 4 *or* 2 and 3 of the line; the engine keeps the regular selection order instead.
+
+### Validation
+
+`addExtraRules` refuses a rule that is not available for the game mode or the number of players with a `StepExecutionError` whose code is `EXTRA_RULE_NOT_AVAILABLE` (e.g. The Mighty Duel with 4 players, Harmony in an Origins game). An unknown rule name keeps failing with `STEP_EXECUTION_FAILED`. `getExtraRules` returns the rules available for a mode and player count, or `[]` when none applies.
 
 ### Dynasty
 
@@ -174,6 +188,8 @@ A meta-rule that spans multiple games. Individual game scores are summed across 
 ## Solo Mode
 
 With 1 player, the game uses 1 lord and all 48 dominoes. Each turn, 4 dominoes are revealed; the player picks one and discards the remaining three. The game runs for 12 turns, filling a 5x5 kingdom.
+
+The official Kingdomino rulebooks have no solo mode: the engine implements the common community variant ("Crown of Thorns" in *Solo Kingdomino* on BoardGameGeek). The player receives 12 dominoes, so Harmony is reachable with a complete kingdom.
 
 Solo play supports all extra rules except The Mighty Duel (which requires exactly 2 players). The goal is to maximize your score.
 

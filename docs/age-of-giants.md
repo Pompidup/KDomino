@@ -10,7 +10,7 @@ The base Age of Giants mode, built on Classic Kingdomino rules.
 
 - **60 dominos**: 48 original + 12 new (with giant and footprint symbols)
 - **5 dominos per turn** (excess discarded for fewer players)
-- **1-5 players** supported
+- **2-5 players** supported (no solo: `addPlayers` refuses 1 player in Age of Giants modes)
 - **6 giant figurines** in the pool
 - **2 quest tiles** drawn at game start
 
@@ -30,27 +30,32 @@ After placing a domino that has a **giant symbol**, the player **must** place a 
 
 - The giant covers the crown at the chosen position
 - The covered crown no longer contributes to scoring
-- If the giant pool is empty, this step is skipped
+- This action is mandatory: `skipOptionalAction` is refused for `placeGiant`
+- If the player has no uncovered crown or the giant pool is empty, the engine does not ask for it (the effect is dismissed, as in the rulebook)
 
 ### Sending a Giant
 
 After placing a domino that has a **footprint symbol**, the player **may** send one of their own giants to an opponent's kingdom.
 
-- Pick a giant from your kingdom (by index)
-- Choose an opponent and a crown position on their kingdom
-- The giant moves to cover that crown
+- Pick a giant from your kingdom (by index) and an opponent who has at least one uncovered crown
+- **The opponent chooses the crown** the giant covers (official rule: "This opponent is going to have to choose a crown in their kingdom to place the Giant on"):
+  - if the opponent has a single uncovered crown, the giant covers it automatically;
+  - otherwise the giant leaves your kingdom, `game.ageOfGiants.pendingGiant` is set and `nextAction` becomes `placeGiant` for a lord of the opponent, who calls `placeGiant` with the crown of their choice. The giant does not come from the pool, and your turn then resumes (next optional action in AgeOfGiants-QueenDomino, then `pickDomino`).
+- `targetCrownPosition` is still accepted for backward compatibility, but must then be the crown chosen by the opponent (collected by your UI)
 - This action is optional — use `skipOptionalAction` to skip
 
 ## Dominos Per Turn
 
-Age of Giants always draws 5 dominos per turn. Excess dominos are discarded face-down depending on player count:
+Age of Giants always draws 5 dominos per turn. The line is sorted with the letter dominos (A-F, giants) first in alphabetical order, then by number. With fewer than 5 players, dominos are then discarded **at fixed positions of that line**, as shown in the official rulebook ("Setting up lines of dominoes"):
 
-| Players | Dominos Drawn | Dominos Discarded | Dominos Presented |
-|---------|:------------:|:-----------------:|:-----------------:|
-| 2       | 5            | 1                 | 4                 |
-| 3       | 5            | 2                 | 3                 |
-| 4       | 5            | 1                 | 4                 |
-| 5       | 5            | 0                 | 5                 |
+| Players | Dominos Drawn | Discarded positions (sorted line) | Dominos Presented |
+|---------|:------------:|:---------------------------------:|:-----------------:|
+| 2       | 5            | 3rd (middle)                      | 4                 |
+| 3       | 5            | 2nd and 4th                       | 3                 |
+| 4       | 5            | 3rd (middle)                      | 4                 |
+| 5       | 5            | none                              | 5                 |
+
+The discard is positional and therefore deterministic: the randomness comes from the (seeded) shuffle of the draw pile. Giant dominos can be revealed at every player count.
 
 ## Quest Tiles
 
@@ -94,8 +99,10 @@ placeDomino → [placeGiant] → [sendGiant] → placeKnight → constructBuildi
 // Place a giant on a crown after placing a giant domino (mandatory)
 engine.placeGiant({ game, lordId, position })
 
-// Send a giant to an opponent's kingdom after placing a footprint domino (optional)
-engine.sendGiant({ game, lordId, giantIndex, targetPlayerId, targetCrownPosition })
+// Send a giant to an opponent after placing a footprint domino (optional).
+// The opponent chooses the crown: omit targetCrownPosition and, if the
+// opponent has several free crowns, they answer with placeGiant.
+engine.sendGiant({ game, lordId, giantIndex, targetPlayerId })
 
 // Skip sending a giant (shared with Queendomino/Origins)
 engine.skipOptionalAction({ game, lordId })
@@ -103,7 +110,7 @@ engine.skipOptionalAction({ game, lordId })
 
 ### New Player Actions
 
-- `placeGiant` — Place giant on a crown in your kingdom (mandatory)
+- `placeGiant` — Place giant on a crown in your kingdom (mandatory; also used by the targeted opponent to place a sent giant)
 - `sendGiant` — Send a giant to an opponent (optional)
 
 ### Game State
@@ -112,6 +119,10 @@ engine.skipOptionalAction({ game, lordId })
 game.ageOfGiants?: {
   giantPool: number;         // Giants remaining (starts at 6)
   questTiles: QuestTile[];   // 2 quest tiles for this game
+  pendingGiant?: {           // Sent giant waiting for the opponent's choice
+    fromLordId: string;
+    targetPlayerId: string;
+  };
 }
 ```
 

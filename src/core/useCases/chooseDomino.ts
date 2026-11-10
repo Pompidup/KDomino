@@ -1,3 +1,4 @@
+import { discardFromAgeOfGiantsLine } from "@core/domain/entities/ageOfGiantsHelpers.js";
 import { startNewQueenDominoRound } from "@core/domain/entities/building.js";
 import {
   allLordsHavePlayed,
@@ -80,17 +81,15 @@ export const chooseDominoUseCase: ChooseDominoUseCase = (
     const lords = resetLordsActions(updateLordOrder(updatedLords));
     const updatedTurn = game.turn + 1;
     const dominoesCopy = [...game.dominoes];
-    const dominoesDrawn = dominoesCopy.splice(
-      0,
-      game.rules.basic.dominoesPerTurn,
-    );
-    dominoesDrawn.sort((a, b) => a.number - b.number);
+    const sortedLine = dominoesCopy.splice(0, game.rules.basic.dominoesPerTurn);
+    sortedLine.sort((a, b) => a.number - b.number);
 
-    // Age of Giants: discard some dominos from the sorted line before selection
-    const discardCount = game.rules.basic.dominoesDiscardedPerTurn ?? 0;
-    if (discardCount > 0) {
-      dominoesDrawn.splice(0, discardCount);
-    }
+    // Age of Giants: discard the dominos at the official positions of the
+    // sorted line (middle one at 2/4 players, 2nd and 4th at 3 players)
+    const dominoesDrawn = discardFromAgeOfGiantsLine(
+      sortedLine,
+      game.rules.basic.dominoesDiscardedPerTurn ?? 0,
+    );
 
     const newCurrentDominoes = dominoesDrawn.map((domino, index) => ({
       domino,

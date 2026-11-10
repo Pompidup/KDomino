@@ -40,7 +40,7 @@ export type ActionPayloadMap = {
     lordId: string;
     giantIndex: number;
     targetPlayerId: string;
-    targetCrownPosition: Position;
+    targetCrownPosition?: Position;
   };
 };
 

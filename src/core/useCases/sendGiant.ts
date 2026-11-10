@@ -1,16 +1,17 @@
 import { isAgeOfGiantsQueenDominoMode } from "@core/domain/entities/ageOfGiantsHelpers.js";
-import { sendGiantToOpponent } from "@core/domain/entities/giant.js";
 import {
-  allLordsHavePlayed,
+  findCrownsNotCoveredByGiants,
+  removeGiantFromPlayer,
+  sendGiantToOpponent,
+} from "@core/domain/entities/giant.js";
+import {
+  advanceToNextLordOrResult,
   nextAgeOfGiantsAction,
-  nextLordWithAction,
 } from "@core/domain/entities/lord.js";
 import { ErrorCode } from "@core/domain/errors/domainErrors.js";
-import {
-  type GameStateResult,
-  type GameWithNextAction,
-  gameSteps,
-  type NextAction,
+import type {
+  GameStateResult,
+  GameWithNextAction,
 } from "@core/domain/types/game.js";
 import type { Position } from "@core/domain/types/kingdom.js";
 import { playerActions } from "@core/domain/types/player.js";
@@ -21,8 +22,33 @@ export type SendGiantUseCase = (
   lordId: string,
   giantIndex: number,
   targetPlayerId: string,
-  targetCrownPosition: Position,
+  targetCrownPosition?: Position,
 ) => GameStateResult;
+
+/**
+ * Continues the sender's turn once the sent giant is on the opponent's
+ * kingdom: next AoG-QD optional action, next lord, or the result step.
+ */
+export const continueAfterSendGiant = (
+  game: GameWithNextAction,
+  senderLordId: string,
+): GameStateResult => {
+  const isAoGQD = isAgeOfGiantsQueenDominoMode(game.mode.name);
+  const nextAction = nextAgeOfGiantsAction(playerActions.sendGiant, isAoGQD);
+
+  if (nextAction === playerActions.pickDomino) {
+    return ok(advanceToNextLordOrResult(game, game.lords));
+  }
+
+  return ok({
+    ...game,
+    nextAction: {
+      type: "action",
+      nextLord: senderLordId,
+      nextAction: nextAction,
+    },
+  });
+};
 
 export const sendGiantUseCase: SendGiantUseCase = (
   game,
@@ -64,11 +90,54 @@ export const sendGiantUseCase: SendGiantUseCase = (
     return err(ErrorCode.INVALID_GIANT_PLACEMENT);
   }
 
+  const freeCrowns = findCrownsNotCoveredByGiants(
+    targetPlayer.kingdom,
+    targetPlayer.giants ?? [],
+  );
+  if (freeCrowns.length === 0) {
+    return err(ErrorCode.INVALID_GIANT_PLACEMENT);
+  }
+
+  // Official rule: the targeted opponent chooses the crown. With a single
+  // free crown there is no choice; with several, the opponent is asked
+  // through a `placeGiant` action (unless the caller already passes the
+  // crown the opponent chose, which is kept for backward compatibility).
+  const crown =
+    targetCrownPosition ?? (freeCrowns.length === 1 ? freeCrowns[0] : null);
+
+  if (!crown) {
+    const removed = removeGiantFromPlayer(sourcePlayer, giantIndex);
+    if (isErr(removed)) {
+      return removed;
+    }
+
+    const targetLord = game.lords.find((l) => l.playerId === targetPlayer.id);
+    if (!targetLord) {
+      return err(ErrorCode.LORD_NOT_FOUND);
+    }
+
+    return ok({
+      ...game,
+      players: game.players.map((p) =>
+        p.id === sourcePlayer.id ? removed.value : p,
+      ),
+      ageOfGiants: {
+        ...game.ageOfGiants,
+        pendingGiant: { fromLordId: lordId, targetPlayerId: targetPlayer.id },
+      },
+      nextAction: {
+        type: "action",
+        nextLord: targetLord.id,
+        nextAction: playerActions.placeGiant,
+      },
+    });
+  }
+
   const result = sendGiantToOpponent(
     sourcePlayer,
     targetPlayer,
     giantIndex,
-    targetCrownPosition,
+    crown,
   );
   if (isErr(result)) {
     return result;
@@ -80,33 +149,5 @@ export const sendGiantUseCase: SendGiantUseCase = (
     return p;
   });
 
-  // Determine next action
-  const isAoGQD = isAgeOfGiantsQueenDominoMode(game.mode.name);
-  const nextAction = nextAgeOfGiantsAction(playerActions.sendGiant, isAoGQD);
-
-  if (nextAction === playerActions.pickDomino) {
-    const isLastTurn = game.turn === game.rules.basic.maxTurns;
-    if (isLastTurn && allLordsHavePlayed(game.lords)) {
-      return ok({
-        ...game,
-        players: updatedPlayers,
-        nextAction: { type: "step", step: gameSteps.result },
-      });
-    }
-    return ok({
-      ...game,
-      players: updatedPlayers,
-      nextAction: nextLordWithAction(game.lords) as NextAction,
-    });
-  }
-
-  return ok({
-    ...game,
-    players: updatedPlayers,
-    nextAction: {
-      type: "action",
-      nextLord: lordId,
-      nextAction: nextAction,
-    },
-  });
+  return continueAfterSendGiant({ ...game, players: updatedPlayers }, lordId);
 };

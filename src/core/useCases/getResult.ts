@@ -100,8 +100,7 @@ export const getResultUseCase: GetResultUseCase = (game, scoreResult) => {
           quest,
           kingdom,
           giants,
-          basic.maxDominoes,
-          game.players.length,
+          basic.lords * basic.maxTurns,
         );
       }
     }
@@ -120,12 +119,12 @@ export const getResultUseCase: GetResultUseCase = (game, scoreResult) => {
         }
 
         // Complete kingdom: "Harmony" (Classic/QD) or "Homo Habilis" (Origins)
+        // Every domino the player received (one per lord and per turn) must
+        // be in the kingdom, i.e. none was discarded.
         if (extraRule.name === "Harmony" || extraRule.name === "Homo Habilis") {
           const totalDominoes = countDominoes(kingdom);
-          const dominoLimit = basic.maxDominoes;
-          const totalPlayers = game.players.length;
-          const dominoesPerPlayer = dominoLimit / totalPlayers;
-          if (totalDominoes === dominoesPerPlayer) {
+          const dominoesReceived = basic.lords * basic.maxTurns;
+          if (totalDominoes === dominoesReceived) {
             finalScore += 5;
           }
         }

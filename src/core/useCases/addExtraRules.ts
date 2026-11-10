@@ -1,4 +1,8 @@
-import { toExtraRule } from "@core/domain/entities/rule.js";
+import {
+  isExtraRuleAvailable,
+  isLargeKingdomExtraRule,
+} from "@core/domain/entities/rule.js";
+import { ErrorCode } from "@core/domain/errors/domainErrors.js";
 import {
   type ExtraRule,
   type GameWithNextStep,
@@ -8,7 +12,7 @@ import {
 import type { DominoesRepository } from "@core/portServerside/dominoesRepository.js";
 import type { RuleRepository } from "@core/portServerside/ruleRepository.js";
 import type { ShuffleMethod } from "@core/portServerside/shuffleMethod.js";
-import { isErr, ok, type Result } from "@utils/result.js";
+import { err, ok, type Result } from "@utils/result.js";
 import { createSeededShuffle } from "@utils/seededShuffle.js";
 
 export type AddExtraRulesUseCase = (
@@ -27,24 +31,34 @@ export const addExtraRulesUseCase =
     const availableExtraRules = ruleRepository.getAllExtra();
 
     const newExtraRules: ExtraRule[] = [];
+    const numberOfPlayers = game.players.length;
 
     for (const rule of rules) {
-      const result = toExtraRule(rule, availableExtraRules);
+      const candidates = availableExtraRules.filter((r) => r.name === rule);
 
-      if (isErr(result)) {
-        return result;
+      if (candidates.length === 0) {
+        return err(ErrorCode.STEP_EXECUTION_FAILED);
       }
 
-      newExtraRules.push(result.value);
+      // A rule name may be declared several times (one entry per mode family,
+      // e.g. Dynasty): keep the entry matching this mode and player count.
+      const extraRule = candidates.find((r) =>
+        isExtraRuleAvailable(r, game.mode.name, numberOfPlayers),
+      );
+
+      if (!extraRule) {
+        return err(ErrorCode.EXTRA_RULE_NOT_AVAILABLE);
+      }
+
+      newExtraRules.push(extraRule);
     }
 
-    // The Mighty Duel overrides basic rules for 2-player games
+    // The Mighty Duel (Classic/QueenDomino) and Neolithic (Origins) override
+    // the 2-player setup: all 48 dominoes, 12 turns and a 7x7 kingdom.
     let updatedBasic = game.rules.basic;
     let updatedDominoes = game.dominoes;
-    const hasMightyDuel = newExtraRules.some(
-      (r) => r.name === "The Mighty Duel",
-    );
-    if (hasMightyDuel) {
+    const hasLargeKingdomRule = newExtraRules.some(isLargeKingdomExtraRule);
+    if (hasLargeKingdomRule) {
       updatedBasic = {
         ...updatedBasic,
         maxDominoes: 48,

@@ -8,6 +8,12 @@ export type SendGiantCommand = {
   giantIndex: number;
   /** ID of the opponent player to receive the giant */
   targetPlayerId: string;
-  /** Position on the opponent's kingdom where the giant will cover a crown */
-  targetCrownPosition: Position;
+  /**
+   * Crown of the opponent's kingdom the giant will cover. Per the official
+   * rules the targeted opponent chooses it: omit it and the engine places the
+   * giant automatically when the opponent has a single free crown, or asks
+   * the opponent with a `placeGiant` action otherwise. When provided, it must
+   * be the crown chosen by the opponent.
+   */
+  targetCrownPosition?: Position;
 };

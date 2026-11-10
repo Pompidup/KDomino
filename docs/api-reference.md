@@ -68,10 +68,10 @@ All methods are available on the `GameEngine` object returned by `createGameEngi
 | Method | Command Type | Return Type | Description |
 |---|---|---|---|
 | `getModes` | `GetModesCommand` | `GameMode[]` | Retrieve all available game modes. |
-| `getExtraRules` | `GetExtraRulesCommand` | `ExtraRule[]` | Get available extra rules for a mode and player count. |
+| `getExtraRules` | `GetExtraRulesCommand` | `ExtraRule[]` | Get available extra rules for a mode and player count (`[]` when none applies). |
 | `createGame` | `CreateGameCommand` | `GameWithNextStep` | Create a new game instance with the specified mode. |
 | `addPlayers` | `AddPlayersCommand` | `GameWithNextStep` | Add players (human or bot) and initialize their kingdoms. |
-| `addExtraRules` | `AddExtraRulesCommand` | `GameWithNextStep` | Add optional extra rules to modify gameplay. |
+| `addExtraRules` | `AddExtraRulesCommand` | `GameWithNextStep` | Add optional extra rules to modify gameplay. Each rule must be available for the game mode and player count (see `getExtraRules`). |
 | `startGame` | `StartGameCommand` | `GameWithNextAction` | Start the game, shuffle dominoes, reveal the first set. |
 
 ### Gameplay Methods
@@ -102,8 +102,8 @@ All methods are available on the `GameEngine` object returned by `createGameEngi
 
 | Method | Command Type | Return Type | Description |
 |---|---|---|---|
-| `placeGiant` | `PlaceGiantCommand` | `GameState` | Place a giant on a crown in the lord's kingdom. |
-| `sendGiant` | `SendGiantCommand` | `GameState` | Send a giant from the lord's kingdom to an opponent's kingdom. |
+| `placeGiant` | `PlaceGiantCommand` | `GameState` | Place a giant on a crown in the lord's kingdom (after a giant domino, or when an opponent sent you a giant). Mandatory: cannot be skipped. |
+| `sendGiant` | `SendGiantCommand` | `GameState` | Send a giant from the lord's kingdom to an opponent, who chooses the crown it covers. |
 
 ### Scoring and Results
 
@@ -174,6 +174,11 @@ type AddExtraRulesCommand = {
   extraRules: string[];  // Rule names (e.g., ["The middle Kingdom", "Harmony"])
 };
 ```
+
+Throws a `StepExecutionError` with code `EXTRA_RULE_NOT_AVAILABLE` when a rule
+exists but not for the game mode or the number of players (e.g. "The Mighty
+Duel" with 4 players, "Harmony" in an Origins or Age of Giants game), and with
+code `STEP_EXECUTION_FAILED` for an unknown rule name.
 
 ### `StartGameCommand`
 
@@ -345,6 +350,10 @@ type PlaceGiantCommand = {
 };
 ```
 
+When `game.ageOfGiants.pendingGiant` is set, `placeGiant` is played by a lord of
+the targeted player to choose which of their crowns the sent giant covers. That
+giant does not come from the pool, and the sender's turn resumes afterwards.
+
 ### `SendGiantCommand`
 
 ```typescript
@@ -353,9 +362,20 @@ type SendGiantCommand = {
   lordId: string;
   giantIndex: number;            // Index of the giant to send from the player's giants array
   targetPlayerId: string;        // ID of the opponent to receive the giant
-  targetCrownPosition: Position; // Position on the opponent's kingdom to cover a crown
+  targetCrownPosition?: Position; // Crown chosen BY THE OPPONENT (optional, see below)
 };
 ```
+
+Per the official rules, the targeted opponent chooses the crown:
+
+- Omit `targetCrownPosition` (recommended). If the opponent has a single free
+  crown, the giant covers it immediately. If they have several, the giant is
+  removed from the sender, `game.ageOfGiants.pendingGiant` is set and
+  `nextAction` becomes `placeGiant` for a lord of the opponent, who calls
+  `placeGiant` with the crown of their choice.
+- `targetCrownPosition` is still accepted for backward compatibility; pass it
+  only when your client already collected the opponent's choice.
+- An opponent without a free crown cannot be targeted (`INVALID_GIANT_PLACEMENT`).
 
 ---
 
@@ -879,6 +899,16 @@ These types are only relevant when playing in Age of Giants modes. The `ageOfGia
 type AgeOfGiantsState = {
   giantPool: number;         // Giant figurines remaining (starts at 6)
   questTiles: QuestTile[];   // 2 quest tiles drawn for this game
+  pendingGiant?: PendingGiant; // Sent giant waiting for the opponent's crown choice
+};
+```
+
+### `PendingGiant`
+
+```typescript
+type PendingGiant = {
+  fromLordId: string;      // Lord who sent the giant (their turn resumes afterwards)
+  targetPlayerId: string;  // Player who must choose the crown with placeGiant
 };
 ```
 
@@ -961,6 +991,7 @@ try {
 |---|---|
 | `INVALID_PLAYER_COUNT` | Player count is outside the valid range (1-4). |
 | `INVALID_PLAYER_NAME` | Player name is too short (minimum 3 characters). |
+| `EXTRA_RULE_NOT_AVAILABLE` | The extra rule is not available for this game mode or number of players. |
 | `INVALID_PLACEMENT` | General invalid domino placement. |
 | `PLACEMENT_NOT_EMPTY` | One or both target cells are already occupied. |
 | `PLACEMENT_NOT_ADJACENT` | The domino is not adjacent to any existing tile. |
