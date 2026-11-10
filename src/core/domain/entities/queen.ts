@@ -1,3 +1,4 @@
+import type { PlacedBuilding } from "@core/domain/types/building.js";
 import type { Kingdom, Position } from "@core/domain/types/kingdom.js";
 import type { Player } from "@core/domain/types/player.js";
 import { getTowerCount } from "./economy.js";
@@ -123,46 +124,47 @@ export const getQueenBonus = (kingdom: Kingdom): number => {
 };
 
 /**
+ * End-game scoring of one building constructed in a player's kingdom
+ * (0 for a building without end-game scoring).
+ */
+export const calculateBuildingEndGameScore = (
+  placed: PlacedBuilding,
+  player: Player,
+): number => {
+  const scoring = placed.building.endGameScoring;
+  if (!scoring) return 0;
+
+  switch (scoring.type) {
+    case "flat":
+      return scoring.points;
+    case "perBuilding":
+      return (player.buildings ?? []).length * scoring.points;
+    case "perTower":
+      return getTowerCount(player) * scoring.points;
+    case "perCrown": {
+      const totalCrowns = countKingdomCrowns(
+        player.kingdom,
+        (player.giants ?? []).map((g) => g.position),
+      );
+      return totalCrowns * scoring.points;
+    }
+    case "perTerrain":
+      return scoring.terrain
+        ? countTerrainTiles(player.kingdom, scoring.terrain) * scoring.points
+        : 0;
+    default:
+      return 0;
+  }
+};
+
+/**
  * Calculate end-game building bonus points for a player.
  */
-export const calculateBuildingEndGameBonus = (player: Player): number => {
-  const buildings = player.buildings ?? [];
-  let bonus = 0;
-
-  for (const placed of buildings) {
-    const scoring = placed.building.endGameScoring;
-    if (!scoring) continue;
-
-    switch (scoring.type) {
-      case "flat":
-        bonus += scoring.points;
-        break;
-      case "perBuilding":
-        bonus += buildings.length * scoring.points;
-        break;
-      case "perTower":
-        bonus += getTowerCount(player) * scoring.points;
-        break;
-      case "perCrown": {
-        const totalCrowns = countKingdomCrowns(
-          player.kingdom,
-          (player.giants ?? []).map((g) => g.position),
-        );
-        bonus += totalCrowns * scoring.points;
-        break;
-      }
-      case "perTerrain": {
-        if (scoring.terrain) {
-          const count = countTerrainTiles(player.kingdom, scoring.terrain);
-          bonus += count * scoring.points;
-        }
-        break;
-      }
-    }
-  }
-
-  return bonus;
-};
+export const calculateBuildingEndGameBonus = (player: Player): number =>
+  (player.buildings ?? []).reduce(
+    (bonus, placed) => bonus + calculateBuildingEndGameScore(placed, player),
+    0,
+  );
 
 /**
  * Total crowns in a kingdom. Crowns covered by a giant (Age of Giants +

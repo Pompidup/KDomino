@@ -19,6 +19,7 @@ const ENGINE_METHODS: ReadonlySet<string> = new Set<keyof GameEngine>([
   "serialize",
   "deserialize",
   "getDynastyResults",
+  "calculatePlayerScore",
 ]);
 
 export const dispatch = (

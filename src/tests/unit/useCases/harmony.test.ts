@@ -88,15 +88,7 @@ const scoreWith = (options: {
     }),
   };
 
-  const scores = players.map((p) => ({
-    playerId: p.id,
-    playerName: p.name,
-    details: { points: 0, maxPropertiesSize: 24, totalCrowns: 0 },
-  }));
-
-  return unwrap(getResultUseCase(game, scores)).result.map(
-    (r) => r.details.points,
-  );
+  return unwrap(getResultUseCase(game)).result.map((r) => r.details.points);
 };
 
 describe("Harmony / Homo Habilis / harmony quest: complete kingdom bonus", () => {

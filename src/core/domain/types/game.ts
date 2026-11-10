@@ -7,6 +7,7 @@ import type { OriginsState } from "./origins.js";
 import type { Player, PlayerActions } from "./player.js";
 import type { QueenDominoState } from "./queendomino.js";
 import type { SelectedRules } from "./rule.js";
+import type { ScoreBreakdown } from "./score.js";
 import type { ObjectValues } from "./utils.js";
 
 /**
@@ -139,6 +140,12 @@ export type ScoreResult = {
   playerName: string;
   /** Detailed score breakdown */
   details: Score;
+  /**
+   * Territory-by-territory and bonus-by-bonus score, computed by the same
+   * function as `calculatePlayerScore` (`breakdown.total === details.points`).
+   * Always set by `getResults`.
+   */
+  breakdown?: ScoreBreakdown;
 };
 
 /**

@@ -1,7 +1,10 @@
 import type { NextStep } from "@core/domain/types/game.js";
 import type { Kingdom } from "@core/domain/types/kingdom.js";
 import type { ExtraRule } from "@core/domain/types/rule.js";
-import { getResultUseCase } from "@core/useCases/getResult.js";
+import {
+  getResultUseCase,
+  rankScoreResults,
+} from "@core/useCases/getResult.js";
 import { unwrap } from "@utils/result.js";
 import { describe, expect, test } from "vitest";
 import { createGameBuilder } from "../../builder/game.js";
@@ -10,19 +13,6 @@ import { createPlayerBuilder } from "../../builder/player.js";
 describe("Get result of a game", () => {
   test("should return player ranking, decide on score (no tie)", async () => {
     // Arrange
-
-    const players = [
-      { id: "player1-id", name: "player1" },
-      { id: "player2-id", name: "player2" },
-    ].map((player, _index) =>
-      createPlayerBuilder().withId(player.id).withName(player.name).build(),
-    );
-
-    const initialGame = createGameBuilder<NextStep>()
-      .withDefaultDominoes()
-      .withPlayers(players)
-      .withTurn(6)
-      .build();
 
     const scoreResult = [
       {
@@ -38,43 +28,27 @@ describe("Get result of a game", () => {
     ];
 
     // Act
-    const result = getResultUseCase(initialGame, scoreResult);
+    const result = rankScoreResults(scoreResult);
 
     // Assert
-    const unwrapResult = unwrap(result);
-    expect(unwrapResult).toEqual({
-      ...initialGame,
-      result: [
-        {
-          playerId: "player1-id",
-          playerName: "player1",
-          details: { points: 24, maxPropertiesSize: 5, totalCrowns: 6 },
-          position: 1,
-        },
-        {
-          playerId: "player2-id",
-          playerName: "player2",
-          details: { points: 0, maxPropertiesSize: 0, totalCrowns: 0 },
-          position: 2,
-        },
-      ],
-    });
+    expect(result).toEqual([
+      {
+        playerId: "player1-id",
+        playerName: "player1",
+        details: { points: 24, maxPropertiesSize: 5, totalCrowns: 6 },
+        position: 1,
+      },
+      {
+        playerId: "player2-id",
+        playerName: "player2",
+        details: { points: 0, maxPropertiesSize: 0, totalCrowns: 0 },
+        position: 2,
+      },
+    ]);
   });
 
   test("should return player ranking with tie, decide on maxPropertiesSize", async () => {
     // Arrange
-    const players = [
-      { id: "player1-id", name: "player1" },
-      { id: "player2-id", name: "player2" },
-    ].map((player) =>
-      createPlayerBuilder().withId(player.id).withName(player.name).build(),
-    );
-
-    const initialGame = createGameBuilder<NextStep>()
-      .withDefaultDominoes()
-      .withPlayers(players)
-      .withTurn(6)
-      .build();
 
     const scoreResult = [
       {
@@ -90,43 +64,27 @@ describe("Get result of a game", () => {
     ];
 
     // Act
-    const result = getResultUseCase(initialGame, scoreResult);
+    const result = rankScoreResults(scoreResult);
 
     // Assert
-    const unwrapResult = unwrap(result);
-    expect(unwrapResult).toEqual({
-      ...initialGame,
-      result: [
-        {
-          playerId: "player1-id",
-          playerName: "player1",
-          details: { points: 24, maxPropertiesSize: 5, totalCrowns: 6 },
-          position: 1,
-        },
-        {
-          playerId: "player2-id",
-          playerName: "player2",
-          details: { points: 24, maxPropertiesSize: 4, totalCrowns: 7 },
-          position: 2,
-        },
-      ],
-    });
+    expect(result).toEqual([
+      {
+        playerId: "player1-id",
+        playerName: "player1",
+        details: { points: 24, maxPropertiesSize: 5, totalCrowns: 6 },
+        position: 1,
+      },
+      {
+        playerId: "player2-id",
+        playerName: "player2",
+        details: { points: 24, maxPropertiesSize: 4, totalCrowns: 7 },
+        position: 2,
+      },
+    ]);
   });
 
   test("should return shared victory when points and maxPropertiesSize are equal", async () => {
     // Arrange
-    const players = [
-      { id: "player1-id", name: "player1" },
-      { id: "player2-id", name: "player2" },
-    ].map((player) =>
-      createPlayerBuilder().withId(player.id).withName(player.name).build(),
-    );
-
-    const initialGame = createGameBuilder<NextStep>()
-      .withDefaultDominoes()
-      .withPlayers(players)
-      .withTurn(6)
-      .build();
 
     const scoreResult = [
       {
@@ -142,27 +100,23 @@ describe("Get result of a game", () => {
     ];
 
     // Act
-    const result = getResultUseCase(initialGame, scoreResult);
+    const result = rankScoreResults(scoreResult);
 
     // Assert — per official rules, tied players share the victory
-    const unwrapResult = unwrap(result);
-    expect(unwrapResult).toEqual({
-      ...initialGame,
-      result: [
-        {
-          playerId: "player2-id",
-          playerName: "player2",
-          details: { points: 4, maxPropertiesSize: 2, totalCrowns: 3 },
-          position: 1,
-        },
-        {
-          playerId: "player1-id",
-          playerName: "player1",
-          details: { points: 4, maxPropertiesSize: 2, totalCrowns: 2 },
-          position: 1,
-        },
-      ],
-    });
+    expect(result).toEqual([
+      {
+        playerId: "player2-id",
+        playerName: "player2",
+        details: { points: 4, maxPropertiesSize: 2, totalCrowns: 3 },
+        position: 1,
+      },
+      {
+        playerId: "player1-id",
+        playerName: "player1",
+        details: { points: 4, maxPropertiesSize: 2, totalCrowns: 2 },
+        position: 1,
+      },
+    ]);
   });
 
   test("should apply bonus for rules 'The middle Kingdom'", () => {
@@ -295,36 +249,23 @@ describe("Get result of a game", () => {
 
     initialGame.rules.extra.push(extraRules);
 
-    const scoreResult = [
-      {
-        playerId: "player2-id",
-        playerName: "player2",
-        details: { points: 0, maxPropertiesSize: 24, totalCrowns: 0 },
-      },
-      {
-        playerId: "player1-id",
-        playerName: "player1",
-        details: { points: 0, maxPropertiesSize: 24, totalCrowns: 0 },
-      },
-    ];
-
     // Act
-    const result = getResultUseCase(initialGame, scoreResult);
+    const result = getResultUseCase(initialGame);
 
     // Assert
     const unwrapResult = unwrap(result);
-    expect(unwrapResult).toEqual({
+    expect(unwrapResult).toMatchObject({
       ...initialGame,
       result: [
         {
-          playerId: "player2-id",
-          playerName: "player2",
+          playerId: "player1-id",
+          playerName: "player1",
           details: { points: 10, maxPropertiesSize: 24, totalCrowns: 0 },
           position: 1,
         },
         {
-          playerId: "player1-id",
-          playerName: "player1",
+          playerId: "player2-id",
+          playerName: "player2",
           details: { points: 10, maxPropertiesSize: 24, totalCrowns: 0 },
           position: 1,
         },
@@ -462,36 +403,23 @@ describe("Get result of a game", () => {
 
     initialGame.rules.extra.push(extraRules);
 
-    const scoreResult = [
-      {
-        playerId: "player2-id",
-        playerName: "player2",
-        details: { points: 0, maxPropertiesSize: 24, totalCrowns: 0 },
-      },
-      {
-        playerId: "player1-id",
-        playerName: "player1",
-        details: { points: 0, maxPropertiesSize: 24, totalCrowns: 0 },
-      },
-    ];
-
     // Act
-    const result = getResultUseCase(initialGame, scoreResult);
+    const result = getResultUseCase(initialGame);
 
     // Assert
     const unwrapResult = unwrap(result);
-    expect(unwrapResult).toEqual({
+    expect(unwrapResult).toMatchObject({
       ...initialGame,
       result: [
         {
-          playerId: "player2-id",
-          playerName: "player2",
+          playerId: "player1-id",
+          playerName: "player1",
           details: { points: 0, maxPropertiesSize: 24, totalCrowns: 0 },
           position: 1,
         },
         {
-          playerId: "player1-id",
-          playerName: "player1",
+          playerId: "player2-id",
+          playerName: "player2",
           details: { points: 0, maxPropertiesSize: 24, totalCrowns: 0 },
           position: 1,
         },
@@ -629,36 +557,23 @@ describe("Get result of a game", () => {
 
     initialGame.rules.extra.push(extraRules);
 
-    const scoreResult = [
-      {
-        playerId: "player2-id",
-        playerName: "player2",
-        details: { points: 0, maxPropertiesSize: 24, totalCrowns: 0 },
-      },
-      {
-        playerId: "player1-id",
-        playerName: "player1",
-        details: { points: 0, maxPropertiesSize: 24, totalCrowns: 0 },
-      },
-    ];
-
     // Act
-    const result = getResultUseCase(initialGame, scoreResult);
+    const result = getResultUseCase(initialGame);
 
     // Assert
     const unwrapResult = unwrap(result);
-    expect(unwrapResult).toEqual({
+    expect(unwrapResult).toMatchObject({
       ...initialGame,
       result: [
         {
-          playerId: "player2-id",
-          playerName: "player2",
+          playerId: "player1-id",
+          playerName: "player1",
           details: { points: 5, maxPropertiesSize: 24, totalCrowns: 0 },
           position: 1,
         },
         {
-          playerId: "player1-id",
-          playerName: "player1",
+          playerId: "player2-id",
+          playerName: "player2",
           details: { points: 5, maxPropertiesSize: 24, totalCrowns: 0 },
           position: 1,
         },

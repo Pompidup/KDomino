@@ -231,6 +231,7 @@ export const wrapWithActionLog = (
     deserialize: (cmd) => engine.deserialize(cmd),
     getResults: (cmd) => engine.getResults(cmd),
     getDynastyResults: (cmd) => engine.getDynastyResults(cmd),
+    calculatePlayerScore: (cmd) => engine.calculatePlayerScore(cmd),
 
     // State-changing methods — record after execution
     createGame: (cmd) => {

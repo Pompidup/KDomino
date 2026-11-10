@@ -2,6 +2,7 @@ import {
   ErrorCode,
   type ErrorCodeType,
 } from "@core/domain/errors/domainErrors.js";
+import type { QuestType } from "@core/domain/types/ageOfGiants.js";
 import type { Ground } from "@core/domain/types/domino.js";
 import type {
   CavemanKind,
@@ -140,6 +141,25 @@ export const TranslationKey = {
   ERROR_CAVEMAN_NOT_FOUND: "error.cavemanNotFound",
   ERROR_NOT_TRIBE_MODE: "error.notTribeMode",
   ERROR_INVALID_PLAYER_ID: "error.invalidPlayerId",
+
+  // Score breakdown labels (extra rules reuse the RULE_* keys,
+  // hunter-gatherers reuse the CAVEMAN_* keys)
+  SCORE_QUEEN: "score.queen",
+  SCORE_BUILDING: "score.building",
+  SCORE_TOTEM_MAMMOTH: "score.totemMammoth",
+  SCORE_TOTEM_FISH: "score.totemFish",
+  SCORE_TOTEM_MUSHROOM: "score.totemMushroom",
+  SCORE_TOTEM_FLINT: "score.totemFlint",
+  SCORE_RESOURCES: "score.resources",
+  SCORE_WARRIORS: "score.warriors",
+  SCORE_FIRE: "score.fire",
+  QUEST_LOCAL_TRADE: "quest.localTrade",
+  QUEST_KINGDOM_BORDERS: "quest.kingdomBorders",
+  QUEST_HARMONY: "quest.harmony",
+  QUEST_MIDDLE_KINGDOM: "quest.middleKingdom",
+  QUEST_LOST_CORNER: "quest.lostCorner",
+  QUEST_MEGALOMANIA: "quest.megalomania",
+  QUEST_AUSTERE_KING: "quest.austereKing",
 } as const;
 
 export type TranslationKeyType =
@@ -296,6 +316,24 @@ export const defaultTranslations: Record<TranslationKeyType, string> = {
   [TranslationKey.ERROR_NOT_TRIBE_MODE]: "Tribe mode is not enabled",
   [TranslationKey.ERROR_INVALID_PLAYER_ID]:
     "Player ids must be non-empty and unique",
+
+  // Score breakdown labels
+  [TranslationKey.SCORE_QUEEN]: "Queen",
+  [TranslationKey.SCORE_BUILDING]: "Building: {{name}}",
+  [TranslationKey.SCORE_TOTEM_MAMMOTH]: "Mammoth totem",
+  [TranslationKey.SCORE_TOTEM_FISH]: "Fish totem",
+  [TranslationKey.SCORE_TOTEM_MUSHROOM]: "Mushroom totem",
+  [TranslationKey.SCORE_TOTEM_FLINT]: "Flint totem",
+  [TranslationKey.SCORE_RESOURCES]: "Resources",
+  [TranslationKey.SCORE_WARRIORS]: "Warrior groups",
+  [TranslationKey.SCORE_FIRE]: "Fire tokens",
+  [TranslationKey.QUEST_LOCAL_TRADE]: "Local Trade",
+  [TranslationKey.QUEST_KINGDOM_BORDERS]: "Kingdom Borders",
+  [TranslationKey.QUEST_HARMONY]: "Harmony",
+  [TranslationKey.QUEST_MIDDLE_KINGDOM]: "Middle Kingdom",
+  [TranslationKey.QUEST_LOST_CORNER]: "Lost Corner",
+  [TranslationKey.QUEST_MEGALOMANIA]: "Megalomania",
+  [TranslationKey.QUEST_AUSTERE_KING]: "Austere King",
 };
 
 /** English translations (alias of `defaultTranslations`). */
@@ -458,6 +496,24 @@ export const frenchTranslations: Record<TranslationKeyType, string> = {
   [TranslationKey.ERROR_NOT_TRIBE_MODE]: "Le mode Tribu n'est pas activé",
   [TranslationKey.ERROR_INVALID_PLAYER_ID]:
     "Les identifiants des joueurs doivent être non vides et uniques",
+
+  // Score breakdown labels
+  [TranslationKey.SCORE_QUEEN]: "Reine",
+  [TranslationKey.SCORE_BUILDING]: "Bâtiment : {{name}}",
+  [TranslationKey.SCORE_TOTEM_MAMMOTH]: "Totem mammouth",
+  [TranslationKey.SCORE_TOTEM_FISH]: "Totem poisson",
+  [TranslationKey.SCORE_TOTEM_MUSHROOM]: "Totem champignon",
+  [TranslationKey.SCORE_TOTEM_FLINT]: "Totem silex",
+  [TranslationKey.SCORE_RESOURCES]: "Ressources",
+  [TranslationKey.SCORE_WARRIORS]: "Groupes de guerriers",
+  [TranslationKey.SCORE_FIRE]: "Jetons feu",
+  [TranslationKey.QUEST_LOCAL_TRADE]: "Commerce local",
+  [TranslationKey.QUEST_KINGDOM_BORDERS]: "Frontières du royaume",
+  [TranslationKey.QUEST_HARMONY]: "Harmonie",
+  [TranslationKey.QUEST_MIDDLE_KINGDOM]: "Empire du Milieu",
+  [TranslationKey.QUEST_LOST_CORNER]: "Coin perdu",
+  [TranslationKey.QUEST_MEGALOMANIA]: "Mégalomanie",
+  [TranslationKey.QUEST_AUSTERE_KING]: "Roi austère",
 };
 
 /** Locales shipped with the engine. */
@@ -740,3 +796,29 @@ export const createTranslator = (
  * Default translator using English translations.
  */
 export const defaultTranslator: Translator = createTranslator();
+
+/**
+ * Maps every Age of Giants quest type to the translation key of its name
+ * (used as `label` of `quest` score bonuses).
+ */
+export const questTypeToTranslationKey: Record<QuestType, TranslationKeyType> =
+  {
+    localTrade: TranslationKey.QUEST_LOCAL_TRADE,
+    kingdomBorders: TranslationKey.QUEST_KINGDOM_BORDERS,
+    harmony: TranslationKey.QUEST_HARMONY,
+    middleKingdom: TranslationKey.QUEST_MIDDLE_KINGDOM,
+    lostCorner: TranslationKey.QUEST_LOST_CORNER,
+    megalomania: TranslationKey.QUEST_MEGALOMANIA,
+    austereKing: TranslationKey.QUEST_AUSTERE_KING,
+  };
+
+/**
+ * Maps every Origins totem (by resource type) to the translation key of its
+ * name (used as `label` of `totem` score bonuses).
+ */
+export const totemToTranslationKey: Record<ResourceType, TranslationKeyType> = {
+  mammoth: TranslationKey.SCORE_TOTEM_MAMMOTH,
+  fish: TranslationKey.SCORE_TOTEM_FISH,
+  mushroom: TranslationKey.SCORE_TOTEM_MUSHROOM,
+  flint: TranslationKey.SCORE_TOTEM_FLINT,
+};

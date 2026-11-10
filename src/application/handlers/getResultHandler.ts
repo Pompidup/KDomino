@@ -4,17 +4,14 @@ import {
   type ErrorCodeType,
   InvalidStepError,
   NotFoundError,
-  StepExecutionError,
 } from "@core/domain/errors/domainErrors.js";
 import {
   type GameWithResults,
   isGameWithNextStep,
-  type ScoreResult,
 } from "@core/domain/types/game.js";
 import type { Translator } from "@core/i18n/translations.js";
 import { translateErrorCode } from "@core/i18n/translations.js";
 import type { Logger } from "@core/portServerside/logger.js";
-import type { CalculateScoreUseCase } from "@core/useCases/calculateScore.js";
 import type { GetResultUseCase } from "@core/useCases/getResult.js";
 import { isErr } from "@utils/result.js";
 
@@ -26,11 +23,10 @@ export const getResultHandler =
     translator: Translator,
     useCases: {
       getResultUseCase: GetResultUseCase;
-      calculateScoreUseCase: CalculateScoreUseCase;
     },
   ): GetResultHandler =>
   (command: GetResultCommand) => {
-    const { getResultUseCase, calculateScoreUseCase } = useCases;
+    const { getResultUseCase } = useCases;
     const { game } = command;
     logger.info(`Getting result for game: ${game.id}`);
 
@@ -54,36 +50,9 @@ export const getResultHandler =
       );
     }
 
-    const { players } = game;
-
-    const scoreResult: ScoreResult[] = players.map((player) => {
-      const { kingdom } = player;
-      // Pass giant positions to reduce crowns covered by giants in scoring
-      const giantPositions = player.giants?.map((g) => g.position);
-      const result = calculateScoreUseCase(kingdom, giantPositions);
-
-      if (isErr(result)) {
-        logger.error(`Error when calculating score: ${result.error}`);
-        const code = result.error as ErrorCodeType;
-        throw new StepExecutionError(
-          translateErrorCode(translator, code),
-          code,
-          {
-            gameId: game.id,
-          },
-        );
-      }
-
-      return {
-        playerId: player.id,
-        playerName: player.name,
-        details: {
-          ...result.value,
-        },
-      };
-    });
-
-    const result = getResultUseCase(game, scoreResult);
+    // Every player is scored by the mode-aware score breakdown (same
+    // computation as calculatePlayerScore), then ranked.
+    const result = getResultUseCase(game);
 
     if (isErr(result)) {
       logger.error(`Error getting result: ${result.error}`);

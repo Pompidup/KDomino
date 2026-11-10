@@ -169,6 +169,7 @@ export const wrapWithEvents = (
     getValidGiantPositions: (cmd) => engine.getValidGiantPositions(cmd),
     getValidGiantTargets: (cmd) => engine.getValidGiantTargets(cmd),
     canSkipOptionalAction: (cmd) => engine.canSkipOptionalAction(cmd),
+    calculatePlayerScore: (cmd) => engine.calculatePlayerScore(cmd),
 
     // Setup methods — emit events after execution
     createGame: (cmd) => {
