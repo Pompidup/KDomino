@@ -1,4 +1,4 @@
-import type { Kingdom } from "@core/domain/types/kingdom.js";
+import type { Kingdom, Position } from "@core/domain/types/kingdom.js";
 import type { Player } from "@core/domain/types/player.js";
 import { getTowerCount } from "./economy.js";
 
@@ -99,31 +99,27 @@ const findProperties = (kingdom: Kingdom): Property[] => {
 };
 
 /**
- * Calculate the Queen bonus: +1 crown to the territory with the most crowns.
- * Returns the additional points the Queen grants.
+ * Calculate the Queen bonus.
+ *
+ * Official Queendomino rule (Blue Orange rulebook, "End of the Game"): the
+ * player hosting the Queen places her on their **largest territory** (the one
+ * with the most connecting squares) where she counts as an extra crown.
+ *
+ * Adding 1 crown to a territory of `size` squares and `crowns` crowns changes
+ * its score from `size * crowns` to `size * (crowns + 1)`: the bonus is always
+ * the territory size, even when that territory had no crown.
+ *
+ * Returns the additional points the Queen grants (0 for an empty kingdom).
  */
 export const getQueenBonus = (kingdom: Kingdom): number => {
   const properties = findProperties(kingdom);
-  if (properties.length === 0) return 0;
-
-  // Find the property with the most crowns
-  let maxCrowns = 0;
-  let maxCrownProperty: Property | null = null;
-
+  let largest = 0;
   for (const prop of properties) {
-    if (prop.crowns > maxCrowns) {
-      maxCrowns = prop.crowns;
-      maxCrownProperty = prop;
+    if (prop.size > largest) {
+      largest = prop.size;
     }
   }
-
-  if (!maxCrownProperty || maxCrownProperty.crowns === 0) return 0;
-
-  // Queen adds +1 crown to this territory
-  // Original score: size * crowns
-  // New score: size * (crowns + 1)
-  // Bonus = size * (crowns + 1) - size * crowns = size
-  return maxCrownProperty.size;
+  return largest;
 };
 
 /**
@@ -148,7 +144,10 @@ export const calculateBuildingEndGameBonus = (player: Player): number => {
         bonus += getTowerCount(player) * scoring.points;
         break;
       case "perCrown": {
-        const totalCrowns = countKingdomCrowns(player.kingdom);
+        const totalCrowns = countKingdomCrowns(
+          player.kingdom,
+          (player.giants ?? []).map((g) => g.position),
+        );
         bonus += totalCrowns * scoring.points;
         break;
       }
@@ -165,16 +164,44 @@ export const calculateBuildingEndGameBonus = (player: Player): number => {
   return bonus;
 };
 
-const countKingdomCrowns = (kingdom: Kingdom): number => {
+/**
+ * Total crowns in a kingdom. Crowns covered by a giant (Age of Giants +
+ * Queendomino) do not count, consistently with territory scoring.
+ */
+const countKingdomCrowns = (
+  kingdom: Kingdom,
+  giantPositions: Position[] = [],
+): number => {
+  const covered = new Set(giantPositions.map((p) => `${p.x},${p.y}`));
   let total = 0;
-  for (const row of kingdom) {
-    for (const tile of row) {
+  for (let y = 0; y < kingdom.length; y++) {
+    const row = kingdom[y]!;
+    for (let x = 0; x < row.length; x++) {
+      const tile = row[x]!;
       if (tile.type !== "empty" && tile.type !== "castle") {
-        total += tile.crowns;
+        total += covered.has(`${x},${y}`)
+          ? Math.max(0, tile.crowns - 1)
+          : tile.crowns;
       }
     }
   }
   return total;
+};
+
+/**
+ * End-game Queendomino bonus for one player: Queen bonus (if the player hosts
+ * the Queen at the end of the game) plus the end-game scoring of every
+ * building constructed in their kingdom.
+ */
+export const calculateQueenDominoEndGameBonus = (
+  player: Player,
+  queenHolderId: string | null,
+): number => {
+  const queenBonus =
+    queenHolderId !== null && queenHolderId === player.id
+      ? getQueenBonus(player.kingdom)
+      : 0;
+  return queenBonus + calculateBuildingEndGameBonus(player);
 };
 
 const countTerrainTiles = (kingdom: Kingdom, terrain: string): number => {

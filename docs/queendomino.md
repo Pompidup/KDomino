@@ -11,7 +11,7 @@ Key additions over the base game:
 - **Buildings** -- tiles purchased from the Builders Board that add crowns, towers, and end-game scoring bonuses
 - **Knights** -- placed on territories to collect tax (coins) based on construction squares
 - **Towers** -- accumulated through buildings, determine who holds the Queen
-- **The Queen** -- grants +1 crown to your strongest territory
+- **The Queen** -- at the end of the game, counts as +1 crown on your largest territory
 - **The Dragon** -- destroys a building on the Builders Board (costs coins, once per round)
 
 The game uses 48 dominoes (instead of the Classic mode's 48), some of which have construction squares on their tiles.
@@ -79,6 +79,8 @@ Coins are earned through:
 
 Towers are accumulated through building construction. The player with the most towers holds the Queen. Some buildings grant towers directly (via `towers` property), and others grant towers as an immediate bonus.
 
+> In the official game, a player hosts the Queen as soon as they reach the most towers "even in the case of a tie"; the engine keeps her with the current holder on a tie (see [Rule decisions](#rule-decisions-and-simplifications)).
+
 ### Buildings
 
 Buildings are tiles purchased from the Builders Board and placed on construction squares in your kingdom. They can provide:
@@ -90,15 +92,15 @@ Buildings are tiles purchased from the Builders Board and placed on construction
 
 ### Knights
 
-Knights are placed on your kingdom to collect taxes. When a knight is placed, you receive coins equal to the number of construction squares in that territory (determined by BFS flood-fill). Each player can place a maximum of **3 knights**, and each territory can only have **one knight**.
+Knights are placed **on the domino you have just placed** to collect taxes. When a knight is placed, you receive coins equal to the number of construction squares in that territory (determined by BFS flood-fill). Each player can place a maximum of **3 knights** (plus one per knight granted by a building's immediate bonus), and each territory can only have **one knight**.
 
 ### The Queen
 
-The Queen is held by the player with the most towers. She grants a bonus of **+1 crown** to the holder's territory with the most crowns (effectively adding `size` bonus points to that territory's score). If tower counts are tied, the Queen stays with the current holder.
+The Queen is held by the player with the most towers. At the end of the game she is placed on the holder's **largest territory** (most squares) where she counts as **+1 crown** (effectively adding `size` bonus points). If tower counts are tied, the Queen stays with the current holder.
 
 ### The Dragon
 
-The Dragon can be used once per round by any player who does **not** hold the Queen. Using the Dragon costs coins equal to the target building's cost and removes that building from the Builders Board. The slot is then refilled from the draw pile.
+The Dragon can be used once per round by any player who does **not** hold the Queen. Using the Dragon costs coins equal to the target building's cost and removes that building from the Builders Board. The emptied slot stays empty until the end of the round, when the board is refilled from the draw pile.
 
 ## Turn Flow
 
@@ -109,24 +111,35 @@ placeDomino --> placeKnight --> constructBuilding --> useDragon --> pickDomino
                 (optional)       (optional)          (optional)
 ```
 
-After placing (or discarding) a domino, the engine automatically sets the next action to `placeKnight`. The player can either execute the optional action or skip it with `skipOptionalAction`. Skipping advances to the next optional action in the sequence. After all optional actions are handled (executed or skipped), the engine advances to `pickDomino` for the next lord.
+After placing a domino, the engine automatically sets the next action to `placeKnight`. The player can either execute the optional action or skip it with `skipOptionalAction`. Skipping advances to the next optional action in the sequence. After all optional actions are handled (executed or skipped), the engine advances to `pickDomino` (the same lord picks a new domino, then the next lord plays).
+
+After **discarding** a domino, the engine sets the next action to `constructBuilding`: a knight can only be placed on the domino just placed, so `placeKnight` is skipped, but the player may still construct a building and use the Dragon (official rule: only the placement step A is replaced by the discard, actions C and D remain available).
+
+On the last round there is no domino left to pick: after the optional actions of the last lord, the game goes to the `result` step.
+
+### New round
+
+When every lord has picked a new domino, a new round starts and the engine:
+
+1. sends the Dragon back to its cave (`dragonUsedThisRound` is reset to `false`);
+2. refills the empty slots of the Builders Board from the draw pile (as long as it is not empty).
 
 ### Action Sequence Diagram
 
 ```
-                        +----------------+
-                        |  placeDomino   |
-                        |  (or discard)  |
-                        +-------+--------+
-                                |
-                                v
-                     +----------+----------+
-                     |    placeKnight      |
-                     | (optional - skip?)  |
-                     +----------+----------+
-                      execute   |   skip
-                        |       |     |
-                        +---+---+-----+
+        +----------------+          +----------------+
+        |  placeDomino   |          | discardDomino  |
+        +-------+--------+          +-------+--------+
+                |                           |
+                v                           |
+     +----------+----------+                |
+     |    placeKnight      |                |
+     | (optional - skip?)  |                |
+     +----------+----------+                |
+       execute   |   skip                   |
+         |       |     |                    |
+         +---+---+-----+                    |
+             +--------------+---------------+
                             |
                             v
                    +--------+-----------+
@@ -165,8 +178,9 @@ while (isGameWithNextAction(game)) {
     // Place or discard domino (same as base game)
     // ...
   } else if (action === playerActions.placeKnight) {
-    // Option A: Place a knight
-    game = engine.placeKnight({ game, lordId, position: { x: 3, y: 2 } });
+    // Option A: Place a knight on one of the squares of the domino just placed
+    const [square] = game.queendomino?.lastPlacedPositions ?? [];
+    game = engine.placeKnight({ game, lordId, position: square! });
 
     // Option B: Skip
     game = engine.skipOptionalAction({ game, lordId });
@@ -198,7 +212,7 @@ while (isGameWithNextAction(game)) {
 
 ### The Builders Board
 
-The Builders Board holds **4 visible building slots** at any time, drawn from a shuffled draw pile. When a building is purchased or destroyed by the Dragon, the empty slot is refilled from the draw pile.
+The Builders Board holds **4 visible building slots**, drawn from a shuffled draw pile. When a building is purchased or destroyed by the Dragon, its slot stays empty (`null`) for the rest of the round. At the start of each new round, every empty slot is refilled from the draw pile, as long as the pile is not empty (official rule: "When a building is constructed, it leaves an empty spot on the Builders' Board for the duration of the round" and, when starting a new round, "fill the empty spots with Building Tiles from the draw pile").
 
 Access the board through the game state:
 
@@ -227,11 +241,11 @@ game = engine.constructBuilding({
 When a building is purchased:
 
 1. The cost is deducted from the player's coins.
-2. Any **immediate bonus** is applied (coins, towers, or knights).
+2. Any **immediate bonus** is applied (coins, towers, or extra knights).
 3. The building's **towers** are added to the player's tower count.
 4. The building's **crowns** are added to the kingdom tile at the placement position.
 5. The **Queen holder** is recalculated based on the new tower counts.
-6. The building slot on the Builders Board is emptied (and refilled later).
+6. The building slot on the Builders Board is emptied (and refilled at the start of the next round).
 
 ### Building Properties
 
@@ -257,7 +271,7 @@ Some buildings grant a bonus immediately when purchased:
 |------------|--------|
 | `coins`    | Add coins to the player |
 | `tower`    | Add towers to the player |
-| `knight`   | Add a knight for the player |
+| `knight`   | Raise the player's knight limit by `amount` (`player.bonusKnights`) |
 
 ### End-Game Scoring Types
 
@@ -297,17 +311,21 @@ The game includes 18 buildings:
 
 ### Placing a Knight
 
-A knight can be placed on any non-empty, non-castle tile in your kingdom, subject to these rules:
+A knight can only be placed on one of the two squares of the **domino you have just placed** (official rule: "Take a Knight and place it on the domino you just added"). These squares are exposed as `game.queendomino.lastPlacedPositions`. Other rules:
 
-- Maximum **3 knights** per player
+- Maximum **3 knights** per player, plus `player.bonusKnights` (knights granted by building immediate bonuses)
 - Only **one knight per territory** (contiguous group of same-terrain tiles)
-- The knight must be placed on a tile that is part of a territory (not empty, not castle)
+- One knight per turn (`placeKnight` then moves on to `constructBuilding`)
+- No knight can be placed after discarding a domino
+
+Any other position is rejected with `CANNOT_PLACE_KNIGHT`.
 
 ```typescript
+const [square] = game.queendomino?.lastPlacedPositions ?? [];
 game = engine.placeKnight({
   game,
   lordId: "lord-1",
-  position: { x: 3, y: 2 }, // Position on your kingdom grid
+  position: square!, // One of the squares of the domino just placed
 });
 ```
 
@@ -329,9 +347,9 @@ After each building is constructed, the engine recalculates who holds the Queen.
 
 ### The +1 Crown Bonus
 
-The Queen holder receives a scoring bonus: **+1 crown** is added to the territory that already has the most crowns. Since territory score = `size * crowns`, adding 1 crown to a territory with `C` crowns and `S` tiles changes the score from `S * C` to `S * (C + 1)`, granting a net bonus of `S` points (the territory's size).
+At the end of the game, the Queen holder places her on their **largest territory** (the territory with the most connecting squares), where she counts as **+1 crown** (official rule, "End of the Game"). Since territory score = `size * crowns`, adding 1 crown to a territory with `C` crowns and `S` tiles changes the score from `S * C` to `S * (C + 1)`, granting a net bonus of `S` points (the territory's size) -- even if that territory had no crown.
 
-The Queen bonus is calculated at scoring time and does not modify the kingdom grid.
+The Queen bonus is calculated by `getResults` and does not modify the kingdom grid.
 
 ## The Dragon
 
@@ -354,7 +372,8 @@ Using the Dragon costs coins equal to the **target building's cost**. For exampl
 ### Restrictions
 
 - **Queen holder cannot use the Dragon.** The player currently holding the Queen is blocked from using the Dragon (error: `QUEEN_HOLDER_CANNOT_USE_DRAGON`).
-- **Once per round.** The Dragon can only be used once per round across all players. After use, `dragonUsedThisRound` is set to `true` and the Dragon becomes unavailable until the next round.
+- **Once per round.** The Dragon can only be used once per round across all players. After use, `dragonUsedThisRound` is set to `true` and the Dragon becomes unavailable until the next round, when it is reset to `false`.
+- **No immediate refill.** The burned building's slot stays empty until the board is refilled at the start of the next round.
 - **Must be available.** The `dragonAvailable` flag must be `true` and `dragonUsedThisRound` must be `false`.
 
 ## Scoring
@@ -363,11 +382,11 @@ Queendomino scoring builds on the base Kingdomino scoring (territory size multip
 
 1. **Building crowns** -- When a building with crowns is placed on a construction square, those crowns are added directly to the tile. They count as regular crowns for territory scoring.
 
-2. **Queen bonus** -- If a player holds the Queen, +1 crown is added to their territory with the most crowns. This grants bonus points equal to the size of that territory.
+2. **Queen bonus** -- If a player holds the Queen at the end of the game, +1 crown is added to their largest territory. This grants bonus points equal to the size of that territory.
 
-3. **End-game building bonuses** -- Each building with an `endGameScoring` property grants additional points based on its scoring type (see the Buildings section above).
+3. **End-game building bonuses** -- Each building with an `endGameScoring` property grants additional points based on its scoring type (see the Buildings section above). In Age of Giants + Queendomino, crowns covered by a giant are not counted by `perCrown`.
 
-The final score is: `base territory score + queen bonus + end-game building bonuses`.
+The final score returned by `getResults` (in `QueenDomino` and `AgeOfGiants-QueenDomino`) is: `base territory score + queen bonus + end-game building bonuses` (+ extra rules / Age of Giants quests when applicable).
 
 ## Complete Game Loop Example
 
@@ -432,17 +451,12 @@ while (isGameWithNextAction(game)) {
     }
 
     case playerActions.placeKnight: {
-      const lord = game.lords.find((l) => l.id === lordId);
-      const player = game.players.find((p) => p.id === lord?.playerId);
-
-      // Example: try to place a knight if we have fewer than 3
-      // In a real implementation, you would choose a strategic position
-      if (player && (player.knights?.length ?? 0) < 3) {
-        // Find a tile on the kingdom that is not empty/castle
-        // and whose territory does not already have a knight
-        // For simplicity, skip here:
-        game = engine.skipOptionalAction({ game, lordId });
-      } else {
+      // Knights can only go on the domino just placed
+      const [square] = game.queendomino?.lastPlacedPositions ?? [];
+      try {
+        game = engine.placeKnight({ game, lordId, position: square! });
+      } catch {
+        // Knight limit reached or territory already taxed
         game = engine.skipOptionalAction({ game, lordId });
       }
       break;
@@ -499,7 +513,7 @@ for (const result of results.result) {
 
 | Method | Command Type | Parameters | Description |
 |--------|-------------|------------|-------------|
-| `placeKnight` | `PlaceKnightCommand` | `game`, `lordId`, `position: { x, y }` | Places a knight on the lord's kingdom. Collects tax (coins) equal to the number of construction squares in the territory. |
+| `placeKnight` | `PlaceKnightCommand` | `game`, `lordId`, `position: { x, y }` | Places a knight on one of the squares of the domino just placed (`queendomino.lastPlacedPositions`). Collects tax (coins) equal to the number of construction squares in the territory. |
 | `constructBuilding` | `ConstructBuildingCommand` | `game`, `lordId`, `buildingId`, `position: { x, y }` | Purchases a building from the Builders Board and places it on a construction square. Deducts cost, applies bonuses, recalculates Queen holder. |
 | `useDragon` | `UseDragonCommand` | `game`, `lordId`, `buildingId` | Destroys a building on the Builders Board. Costs coins equal to the building's cost. Cannot be used by the Queen holder. Once per round. |
 | `skipOptionalAction` | `SkipOptionalActionCommand` | `game`, `lordId` | Skips the current optional action (`placeKnight`, `constructBuilding`, or `useDragon`) and advances to the next one in the sequence. |
@@ -516,7 +530,8 @@ type QueenDominoState = {
   buildersBoard: BuildersBoard;
   queenHolderId: string | null;
   dragonAvailable: boolean;
-  dragonUsedThisRound: boolean;
+  dragonUsedThisRound: boolean;   // reset to false at each new round
+  lastPlacedPositions?: Position[]; // squares of the domino just placed
 };
 
 // The Builders Board
@@ -567,6 +582,7 @@ type Player = {
   coins?: number;
   towers?: number;
   knights?: Knight[];
+  bonusKnights?: number;   // extra knights granted by building bonuses
   buildings?: PlacedBuilding[];
 };
 
@@ -579,3 +595,21 @@ const playerActions = {
   skipOptionalAction: "skipOptionalAction",
 };
 ```
+
+## Rule Decisions and Simplifications
+
+The engine follows the official Queendomino rulebook (Blue Orange, 2017) for:
+
+- **Turn order** -- A (place or discard) → B (knight, only on the domino just placed) → C (construct) → D (Dragon) → E (pick). A player who discards skips B but may still do C and D.
+- **Builders Board** -- emptied slots stay empty for the round and are refilled at the start of the next round.
+- **Dragon** -- once per round for all players, back in its cave at each new round; the Queen holder cannot use it.
+- **Queen** -- at the end of the game, +1 crown on the holder's largest territory.
+
+It keeps some simplifications of the board game:
+
+- 4 Builders Board slots and 18 building tiles with intrinsic costs (the board game has 6 slots and 32 tiles; remaining tiles are not slid to the cheapest spots since slot position carries no cost).
+- The Dragon costs the target building's cost (1 coin in the board game).
+- Knight tax counts construction squares in the territory (the board game counts all squares), at most one knight per territory and one knight per turn (the board game allows 2 per turn and several per territory), and a base limit of 3 knights (the board game starts with 1 knight).
+- The Queen stays with her current holder on a tower tie and grants no construction discount.
+- Unused coins are not converted into points at the end of the game (1 point per 3 coins in the board game).
+- In 2-player games the default kingdom is 5x5 with 24 dominoes; the official 7x7 / 48-domino setup is available through the `The Mighty Duel` extra rule.

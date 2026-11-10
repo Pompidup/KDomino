@@ -348,5 +348,18 @@ export const placeDominoUseCase: PlaceDominoUseCase = (
     };
   }
 
+  // Queendomino (incl. AoG-QD): remember the squares of the domino just
+  // placed, since knights may only be placed on them.
+  if (updatedGame.queendomino) {
+    const [first, second] = calculateDominoPosition(position, rotation, domino);
+    updatedGame = {
+      ...updatedGame,
+      queendomino: {
+        ...updatedGame.queendomino,
+        lastPlacedPositions: [first.position, second.position],
+      },
+    };
+  }
+
   return ok(updatedGame);
 };

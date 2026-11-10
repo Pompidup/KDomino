@@ -8,7 +8,9 @@ import {
   purchaseBuilding,
   refillBuildersBoard,
   removeBuildingFromBoard,
+  startNewQueenDominoRound,
 } from "@core/domain/entities/building.js";
+import { canPlaceKnight } from "@core/domain/entities/knight.js";
 import type {
   BuildersBoard,
   BuildingTile,
@@ -179,6 +181,98 @@ describe("building", () => {
 
       const result = purchaseBuilding(board, makePlayer(5), 1);
       expect(result?.updatedPlayer.towers).toBe(2);
+    });
+
+    it("should apply immediate tower bonus", () => {
+      const tile: BuildingTile = {
+        ...makeTile(1, 1, 0, 1),
+        immediateBonus: { type: "tower", amount: 2 },
+      };
+      const board: BuildersBoard = {
+        slots: [tile, null, null, null],
+        drawPile: [],
+      };
+
+      const result = purchaseBuilding(board, makePlayer(5), 1);
+      expect(result?.updatedPlayer.towers).toBe(3);
+    });
+
+    it("should apply immediate knight bonus by raising the knight limit", () => {
+      const tile: BuildingTile = {
+        ...makeTile(1, 2),
+        immediateBonus: { type: "knight", amount: 1 },
+      };
+      const board: BuildersBoard = {
+        slots: [tile, null, null, null],
+        drawPile: [],
+      };
+
+      const result = purchaseBuilding(board, makePlayer(5), 1);
+      expect(result?.updatedPlayer.bonusKnights).toBe(1);
+      expect(result?.updatedPlayer.coins).toBe(3);
+
+      // A player who already placed the 3 base knights can place a 4th one
+      const kingdom: Kingdom = Array.from({ length: 9 }, () =>
+        Array.from({ length: 9 }, () => ({
+          type: "empty" as const,
+          crowns: 0 as const,
+        })),
+      );
+      kingdom[0]![0] = { type: "wheat", crowns: 0 };
+      kingdom[2]![0] = { type: "forest", crowns: 0 };
+      kingdom[4]![0] = { type: "sea", crowns: 0 };
+      kingdom[6]![0] = { type: "mine", crowns: 0 };
+      const knights = [0, 2, 4].map((y) => ({
+        playerId: "p1",
+        position: { x: 0, y },
+      }));
+      const withThreeKnights: Player = { ...makePlayer(5), kingdom, knights };
+
+      expect(canPlaceKnight(withThreeKnights, kingdom, { x: 0, y: 6 })).toBe(
+        false,
+      );
+      expect(
+        canPlaceKnight({ ...withThreeKnights, bonusKnights: 1 }, kingdom, {
+          x: 0,
+          y: 6,
+        }),
+      ).toBe(true);
+    });
+  });
+
+  describe("startNewQueenDominoRound", () => {
+    it("should refill empty slots and send the Dragon back to its cave", () => {
+      const state = {
+        buildersBoard: {
+          slots: [null, makeTile(2), null, makeTile(4)],
+          drawPile: [makeTile(5), makeTile(6), makeTile(7)],
+        },
+        queenHolderId: null,
+        dragonAvailable: true,
+        dragonUsedThisRound: true,
+      };
+
+      const next = startNewQueenDominoRound(state);
+      expect(next.dragonUsedThisRound).toBe(false);
+      expect(next.buildersBoard.slots.map((s) => s?.id)).toEqual([5, 2, 6, 4]);
+      expect(next.buildersBoard.drawPile.map((t) => t.id)).toEqual([7]);
+      // Original state is not mutated
+      expect(state.buildersBoard.slots[0]).toBeNull();
+    });
+
+    it("should leave slots empty once the draw pile is exhausted", () => {
+      const next = startNewQueenDominoRound({
+        buildersBoard: { slots: [null, null, makeTile(3), null], drawPile: [] },
+        queenHolderId: "p1",
+        dragonAvailable: true,
+        dragonUsedThisRound: false,
+      });
+      expect(next.buildersBoard.slots.map((s) => s?.id ?? null)).toEqual([
+        null,
+        null,
+        3,
+        null,
+      ]);
     });
   });
 

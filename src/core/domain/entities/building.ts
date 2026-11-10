@@ -5,8 +5,15 @@ import type {
 } from "@core/domain/types/building.js";
 import type { Kingdom, Position } from "@core/domain/types/kingdom.js";
 import type { Player } from "@core/domain/types/player.js";
+import type { QueenDominoState } from "@core/domain/types/queendomino.js";
 import type { ShuffleMethod } from "@core/portServerside/shuffleMethod.js";
-import { addCoins, addTowers, canAfford, removeCoins } from "./economy.js";
+import {
+  addBonusKnights,
+  addCoins,
+  addTowers,
+  canAfford,
+  removeCoins,
+} from "./economy.js";
 
 /** Number of visible building slots on the Builders Board */
 const BOARD_SLOTS = 4;
@@ -25,6 +32,10 @@ export const createBuildersBoard = (
   };
 };
 
+/**
+ * Fill every empty slot of the Builders Board from the draw pile (in slot
+ * order), as long as the draw pile is not empty.
+ */
 export const refillBuildersBoard = (board: BuildersBoard): BuildersBoard => {
   const newSlots = [...board.slots];
   const newDrawPile = [...board.drawPile];
@@ -37,6 +48,21 @@ export const refillBuildersBoard = (board: BuildersBoard): BuildersBoard => {
 
   return { slots: newSlots, drawPile: newDrawPile };
 };
+
+/**
+ * Prepare the Queendomino state for a new round.
+ *
+ * Official rule ("Starting a New Round"): send the Dragon back to its cave and
+ * fill the empty spots of the Builders' Board from the draw pile. Spots emptied
+ * by a construction or by the Dragon stay empty for the rest of the round.
+ */
+export const startNewQueenDominoRound = (
+  state: QueenDominoState,
+): QueenDominoState => ({
+  ...state,
+  buildersBoard: refillBuildersBoard(state.buildersBoard),
+  dragonUsedThisRound: false,
+});
 
 export const findBuildingOnBoard = (
   board: BuildersBoard,
@@ -85,6 +111,12 @@ export const purchaseBuilding = (
         break;
       case "tower":
         updatedPlayer = addTowers(
+          updatedPlayer,
+          building.immediateBonus.amount,
+        );
+        break;
+      case "knight":
+        updatedPlayer = addBonusKnights(
           updatedPlayer,
           building.immediateBonus.amount,
         );

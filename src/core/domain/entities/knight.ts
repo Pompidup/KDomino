@@ -1,6 +1,6 @@
 import type { Kingdom, Position } from "@core/domain/types/kingdom.js";
 import type { Knight, Player } from "@core/domain/types/player.js";
-import { addCoins, MAX_KNIGHTS } from "./economy.js";
+import { addCoins, getMaxKnights } from "./economy.js";
 
 /**
  * Count construction squares in the contiguous territory containing the given position.
@@ -128,13 +128,28 @@ const territoryHasKnight = (
   );
 };
 
+/**
+ * Whether a knight can be placed at `position`.
+ *
+ * Official Queendomino rule (action B): the knight must be placed on the
+ * domino the player has just added to their kingdom. When `allowedPositions`
+ * is given (the squares of that domino), the position must be one of them.
+ */
 export const canPlaceKnight = (
   player: Player,
   kingdom: Kingdom,
   position: Position,
+  allowedPositions?: Position[],
 ): boolean => {
   const knights = player.knights ?? [];
-  if (knights.length >= MAX_KNIGHTS) return false;
+  if (knights.length >= getMaxKnights(player)) return false;
+
+  if (
+    allowedPositions !== undefined &&
+    !allowedPositions.some((p) => p.x === position.x && p.y === position.y)
+  ) {
+    return false;
+  }
 
   const tile = kingdom[position.y]?.[position.x];
   if (!tile || tile.type === "empty" || tile.type === "castle") return false;

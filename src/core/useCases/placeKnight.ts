@@ -36,7 +36,17 @@ export const placeKnightUseCase: PlaceKnightUseCase = (
   const currentPlayer = game.players.find((p) => p.id === currentLord.playerId);
   if (!currentPlayer) return err(ErrorCode.PLAYER_NOT_FOUND);
 
-  if (!canPlaceKnight(currentPlayer, currentPlayer.kingdom, position)) {
+  // Knights may only be placed on the domino the lord has just placed
+  const allowedPositions = game.queendomino?.lastPlacedPositions ?? [];
+
+  if (
+    !canPlaceKnight(
+      currentPlayer,
+      currentPlayer.kingdom,
+      position,
+      allowedPositions,
+    )
+  ) {
     return err(ErrorCode.CANNOT_PLACE_KNIGHT);
   }
 

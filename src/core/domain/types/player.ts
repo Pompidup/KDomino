@@ -32,6 +32,11 @@ export type Player = {
   towers?: number;
   /** Knights placed on the kingdom (Queendomino) */
   knights?: Knight[];
+  /**
+   * Extra knights granted by building immediate bonuses (Queendomino).
+   * Each one raises the player's knight limit above the base maximum.
+   */
+  bonusKnights?: number;
   /** Buildings placed on the kingdom (Queendomino) */
   buildings?: PlacedBuilding[];
   /** Fire tokens placed on the kingdom (Origins) */
