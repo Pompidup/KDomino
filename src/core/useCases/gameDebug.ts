@@ -318,5 +318,53 @@ export const wrapWithDebug = (
     ),
     placeGiant: wrapMethod("placeGiant", engine.placeGiant, logger, level),
     sendGiant: wrapMethod("sendGiant", engine.sendGiant, logger, level),
+    getValidFireTokenPositions: wrapMethod(
+      "getValidFireTokenPositions",
+      engine.getValidFireTokenPositions,
+      logger,
+      level,
+    ),
+    getValidKnightPositions: wrapMethod(
+      "getValidKnightPositions",
+      engine.getValidKnightPositions,
+      logger,
+      level,
+    ),
+    getValidBuildingPositions: wrapMethod(
+      "getValidBuildingPositions",
+      engine.getValidBuildingPositions,
+      logger,
+      level,
+    ),
+    getAffordableBuildings: wrapMethod(
+      "getAffordableBuildings",
+      engine.getAffordableBuildings,
+      logger,
+      level,
+    ),
+    getValidCavemanPlacements: wrapMethod(
+      "getValidCavemanPlacements",
+      engine.getValidCavemanPlacements,
+      logger,
+      level,
+    ),
+    getValidGiantPositions: wrapMethod(
+      "getValidGiantPositions",
+      engine.getValidGiantPositions,
+      logger,
+      level,
+    ),
+    getValidGiantTargets: wrapMethod(
+      "getValidGiantTargets",
+      engine.getValidGiantTargets,
+      logger,
+      level,
+    ),
+    canSkipOptionalAction: wrapMethod(
+      "canSkipOptionalAction",
+      engine.canSkipOptionalAction,
+      logger,
+      level,
+    ),
   };
 };

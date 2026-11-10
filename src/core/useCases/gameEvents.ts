@@ -161,6 +161,14 @@ export const wrapWithEvents = (
     deserialize: (cmd) => engine.deserialize(cmd),
     getResults: (cmd) => engine.getResults(cmd),
     getDynastyResults: (cmd) => engine.getDynastyResults(cmd),
+    getValidFireTokenPositions: (cmd) => engine.getValidFireTokenPositions(cmd),
+    getValidKnightPositions: (cmd) => engine.getValidKnightPositions(cmd),
+    getValidBuildingPositions: (cmd) => engine.getValidBuildingPositions(cmd),
+    getAffordableBuildings: (cmd) => engine.getAffordableBuildings(cmd),
+    getValidCavemanPlacements: (cmd) => engine.getValidCavemanPlacements(cmd),
+    getValidGiantPositions: (cmd) => engine.getValidGiantPositions(cmd),
+    getValidGiantTargets: (cmd) => engine.getValidGiantTargets(cmd),
+    canSkipOptionalAction: (cmd) => engine.canSkipOptionalAction(cmd),
 
     // Setup methods — emit events after execution
     createGame: (cmd) => {

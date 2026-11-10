@@ -17,6 +17,7 @@ Complete API reference for `@pompidup/kingdomino-engine`.
 9. [Error Codes](#error-codes)
 10. [Utilities](#utilities)
 11. [Type Guards](#type-guards)
+12. [Valid targets for extension actions](#valid-targets-for-extension-actions)
 
 ---
 
@@ -1423,4 +1424,129 @@ for (const caveman of game.origins?.caveBoard?.visible ?? []) {
     console.log(`${caveman.hunterType}: ${caveman.pointsPerMatch} pts/match`);
   }
 }
+```
+
+---
+
+## Valid targets for extension actions
+
+Read-only queries listing the valid targets of the extension actions (Queendomino, Origins, Age of Giants), so a client never has to re-implement a game rule to highlight squares, buildings, cavemen or opponents.
+
+Each query is built on the **same checks** as the matching action (the use case's `resolve*` function and the very predicate it applies to its target):
+
+- every target returned is accepted by the action;
+- every target left out is refused by it.
+
+All queries share the same command and never throw:
+
+```typescript
+type GetValidActionTargetsCommand = {
+  game: GameState;   // any state is accepted
+  lordId?: string;   // default: the lord to play (game.nextAction.nextLord)
+};
+```
+
+They answer empty (`[]`, empty lists, or `false`) when the game does not wait for the matching action (other action, setup or result step, other mode) or when `lordId` is not the lord to play.
+
+| Method | Command Type | Return Type | Action |
+|---|---|---|---|
+| `getValidFireTokenPositions` | `GetValidFireTokenPositionsCommand` | `Position[]` | `placeFireToken` (Origins) |
+| `getValidKnightPositions` | `GetValidKnightPositionsCommand` | `Position[]` | `placeKnight` (Queendomino, AoG-QD) |
+| `getValidBuildingPositions` | `GetValidBuildingPositionsCommand` | `Position[]` | `constructBuilding` (Queendomino, AoG-QD) |
+| `getAffordableBuildings` | `GetAffordableBuildingsCommand` | `BuildingTile[]` | `constructBuilding` (Queendomino, AoG-QD) |
+| `getValidCavemanPlacements` | `GetValidCavemanPlacementsCommand` | `ValidCavemanPlacements` | `recruitCaveman` (Origins Tribe) |
+| `getValidGiantPositions` | `GetValidGiantPositionsCommand` | `Position[]` | `placeGiant` (Age of Giants) |
+| `getValidGiantTargets` | `GetValidGiantTargetsCommand` | `ValidGiantTargets` | `sendGiant` (Age of Giants) |
+| `canSkipOptionalAction` | `CanSkipOptionalActionCommand` | `boolean` | `skipOptionalAction` |
+
+All command types are aliases of `GetValidActionTargetsCommand`.
+
+### `getValidFireTokenPositions`
+
+Squares where the pending fire token (`game.origins.pendingFireToken`) can land: exactly `fires` squares away from the volcano (8 directions, direction changes allowed), on a placed tile that is neither a volcano nor the castle, without fire symbol and without fire token.
+
+```typescript
+if (game.nextAction.nextAction === 'placeFireToken') {
+  const squares = engine.getValidFireTokenPositions({ game });
+  game = squares.length > 0
+    ? engine.placeFireToken({ game, lordId, position: squares[0] })
+    : engine.skipOptionalAction({ game, lordId });
+}
+```
+
+### `getValidKnightPositions`
+
+Squares where `placeKnight` accepts a knight: the squares of the domino the lord has just placed (`queendomino.lastPlacedPositions`), while the player is below its knight limit (3 + `bonusKnights`), and only in a territory without knight.
+
+### `getValidBuildingPositions` / `getAffordableBuildings`
+
+`getValidBuildingPositions` returns the free construction squares of the player and `getAffordableBuildings` the buildings of the Builders Board the player can pay for. **Any** building of the second list can be built on **any** square of the first one. Both are empty as soon as one of them is (a construction needs a square and a building).
+
+```typescript
+const squares = engine.getValidBuildingPositions({ game });
+const buildings = engine.getAffordableBuildings({ game });
+if (buildings.length > 0) {
+  game = engine.constructBuilding({
+    game, lordId, buildingId: buildings[0].id, position: squares[0],
+  });
+}
+```
+
+### `getValidCavemanPlacements`
+
+```typescript
+type CavemanRecruitmentOption = {
+  cavemanId: number;                 // cavemanId for recruitCaveman
+  source: 'visible' | 'drawPile';    // 2 or 4 different resources
+  resourceCombinations: Position[][]; // every valid resourcePositions payment
+};
+
+type ValidCavemanPlacements = {
+  options: CavemanRecruitmentOption[]; // recruitable cavemen
+  positions: Position[];               // squares for the recruited caveman
+};
+```
+
+Any option, any of its resource combinations and any position can be combined into a valid `recruitCaveman` call. A combination lists the positions of the resources to spend, each set of resources once (`recruitCaveman` accepts them in any order). Draw-pile cavemen share the same combinations (4 different resources); visible ones share theirs (2 different resources). Both lists are empty when no recruitment is possible (no valid payment or no free square).
+
+```typescript
+const { options, positions } = engine.getValidCavemanPlacements({ game });
+if (options.length > 0) {
+  const [option] = options;
+  game = engine.recruitCaveman({
+    game,
+    lordId,
+    cavemanId: option.cavemanId,
+    position: positions[0],
+    resourcePositions: option.resourceCombinations[0],
+  });
+}
+```
+
+### `getValidGiantPositions`
+
+Crowns where `placeGiant` accepts the giant: crowns not covered by a giant yet, in the kingdom of the lord to play. When a giant was sent by an opponent (`game.ageOfGiants.pendingGiant`), the lord to play belongs to the targeted player and the positions are that player's own free crowns. `placeGiant` is mandatory: the engine only asks for it when at least one crown is free, so the list is never empty during a `placeGiant` action.
+
+### `getValidGiantTargets`
+
+```typescript
+type ValidGiantTargets = {
+  giantIndexes: number[];    // indexes in the sender's `giants` array
+  targetPlayerIds: string[]; // opponents with at least one free crown
+};
+```
+
+Any giant index can be sent to any target player. Both lists are empty when no giant can be sent. The crown is chosen by the targeted opponent: call `sendGiant` without `targetCrownPosition`; when the opponent has several free crowns, the game then waits for a `placeGiant` of that opponent (see `getValidGiantPositions`).
+
+### `canSkipOptionalAction`
+
+Whether `skipOptionalAction` accepts to skip the current action for the lord: `true` for the optional actions (`placeKnight`, `constructBuilding`, `useDragon`, `placeFireToken`, `recruitCaveman`, `sendGiant`), `false` for `placeGiant` (mandatory), `pickDomino`, `placeDomino`, `pass` and outside an action.
+
+The underlying rule is also exported as a pure helper:
+
+```typescript
+import { isSkippableAction } from '@pompidup/kingdomino-engine';
+
+isSkippableAction('sendGiant');  // true
+isSkippableAction('placeGiant'); // false
 ```

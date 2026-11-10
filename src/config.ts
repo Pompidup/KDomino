@@ -19,6 +19,7 @@ import { getDynastyResultHandler } from "@application/handlers/getDynastyResultH
 import { getExtraRulesHandler } from "@application/handlers/getExtraRulesHandler.js";
 import { getModesHandler } from "@application/handlers/getModesHandler.js";
 import { getResultHandler } from "@application/handlers/getResultHandler.js";
+import { getValidActionTargetsHandler } from "@application/handlers/getValidActionTargetsHandler.js";
 import { getValidPlacementsHandler } from "@application/handlers/getValidPlacementsHandler.js";
 import { placeDominoHandler } from "@application/handlers/placeDominoHandler.js";
 import { placeFireTokenHandler } from "@application/handlers/placeFireTokenHandler.js";
@@ -52,6 +53,16 @@ import { getDynastyResultUseCase } from "@core/useCases/getDynastyResult.js";
 import { getExtraRulesUseCase } from "@core/useCases/getExtraRules.js";
 import { getModesUseCase } from "@core/useCases/getModes.js";
 import { getResultUseCase } from "@core/useCases/getResult.js";
+import {
+  canSkipOptionalActionUseCase,
+  getAffordableBuildingsUseCase,
+  getValidBuildingPositionsUseCase,
+  getValidCavemanPlacementsUseCase,
+  getValidFireTokenPositionsUseCase,
+  getValidGiantPositionsUseCase,
+  getValidGiantTargetsUseCase,
+  getValidKnightPositionsUseCase,
+} from "@core/useCases/getValidActionTargets.js";
 import {
   canPlaceDominoUseCase,
   getValidPlacementsUseCase,
@@ -111,6 +122,14 @@ export type ConfiguredHandlers = {
   placeFireTokenHandler: GameEngine["placeFireToken"];
   recruitCavemanHandler: GameEngine["recruitCaveman"];
   skipOptionalActionHandler: GameEngine["skipOptionalAction"];
+  getValidFireTokenPositionsHandler: GameEngine["getValidFireTokenPositions"];
+  getValidKnightPositionsHandler: GameEngine["getValidKnightPositions"];
+  getValidBuildingPositionsHandler: GameEngine["getValidBuildingPositions"];
+  getAffordableBuildingsHandler: GameEngine["getAffordableBuildings"];
+  getValidCavemanPlacementsHandler: GameEngine["getValidCavemanPlacements"];
+  getValidGiantPositionsHandler: GameEngine["getValidGiantPositions"];
+  getValidGiantTargetsHandler: GameEngine["getValidGiantTargets"];
+  canSkipOptionalActionHandler: GameEngine["canSkipOptionalAction"];
 };
 
 export const configureEngine = (
@@ -248,6 +267,64 @@ export const configureEngine = (
       logger,
       translator,
       skipOptionalActionUseCase,
+    ),
+    getValidFireTokenPositionsHandler: getValidActionTargetsHandler(
+      logger,
+      translator,
+      "getValidFireTokenPositions",
+      getValidFireTokenPositionsUseCase,
+      (positions) => `${positions.length} positions`,
+    ),
+    getValidKnightPositionsHandler: getValidActionTargetsHandler(
+      logger,
+      translator,
+      "getValidKnightPositions",
+      getValidKnightPositionsUseCase,
+      (positions) => `${positions.length} positions`,
+    ),
+    getValidBuildingPositionsHandler: getValidActionTargetsHandler(
+      logger,
+      translator,
+      "getValidBuildingPositions",
+      getValidBuildingPositionsUseCase,
+      (positions) => `${positions.length} positions`,
+    ),
+    getAffordableBuildingsHandler: getValidActionTargetsHandler(
+      logger,
+      translator,
+      "getAffordableBuildings",
+      getAffordableBuildingsUseCase,
+      (buildings) => `${buildings.length} buildings`,
+    ),
+    getValidCavemanPlacementsHandler: getValidActionTargetsHandler(
+      logger,
+      translator,
+      "getValidCavemanPlacements",
+      getValidCavemanPlacementsUseCase,
+      ({ options, positions }) =>
+        `${options.length} cavemen, ${positions.length} positions`,
+    ),
+    getValidGiantPositionsHandler: getValidActionTargetsHandler(
+      logger,
+      translator,
+      "getValidGiantPositions",
+      getValidGiantPositionsUseCase,
+      (positions) => `${positions.length} positions`,
+    ),
+    getValidGiantTargetsHandler: getValidActionTargetsHandler(
+      logger,
+      translator,
+      "getValidGiantTargets",
+      getValidGiantTargetsUseCase,
+      ({ giantIndexes, targetPlayerIds }) =>
+        `${giantIndexes.length} giants, ${targetPlayerIds.length} targets`,
+    ),
+    canSkipOptionalActionHandler: getValidActionTargetsHandler(
+      logger,
+      translator,
+      "canSkipOptionalAction",
+      canSkipOptionalActionUseCase,
+      (canSkip) => `${canSkip}`,
     ),
   };
 };
