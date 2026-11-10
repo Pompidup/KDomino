@@ -65,6 +65,7 @@ import {
   getValidGiantTargetsUseCase,
   getValidKnightPositionsUseCase,
 } from "@core/useCases/getValidActionTargets.js";
+import { getValidDominoPicksUseCase } from "@core/useCases/getValidDominoPicks.js";
 import {
   canPlaceDominoUseCase,
   getValidPlacementsUseCase,
@@ -113,6 +114,7 @@ export type ConfiguredHandlers = {
   calculateScoreHandler: GameEngine["calculateScore"];
   getValidPlacementsHandler: GameEngine["getValidPlacements"];
   canPlaceDominoHandler: GameEngine["canPlaceDomino"];
+  getValidDominoPicksHandler: GameEngine["getValidDominoPicks"];
   serializeGameHandler: GameEngine["serialize"];
   deserializeGameHandler: GameEngine["deserialize"];
   getDynastyResultHandler: GameEngine["getDynastyResults"];
@@ -234,6 +236,13 @@ export const configureEngine = (
       logger,
       translator,
       canPlaceDominoUseCase,
+    ),
+    getValidDominoPicksHandler: getValidActionTargetsHandler(
+      logger,
+      translator,
+      "getValidDominoPicks",
+      getValidDominoPicksUseCase,
+      (numbers) => `dominoes [${numbers.join(", ")}]`,
     ),
     serializeGameHandler: serializeGameHandler(logger, translator),
     deserializeGameHandler: deserializeGameHandler(logger, translator),

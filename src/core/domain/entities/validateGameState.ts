@@ -356,6 +356,22 @@ const validateDominoes = (game: Game): ValidationIssue[] => {
           ),
         );
       }
+
+      // Neolithic reservation: must name a player of the game
+      if (
+        revealed.reservedFor !== undefined &&
+        (!isNonEmptyString(revealed.reservedFor) ||
+          (Array.isArray(game.players) &&
+            !game.players.some((p) => p.id === revealed.reservedFor)))
+      ) {
+        issues.push(
+          issue(
+            `${path}.reservedFor`,
+            "RESERVED_PLAYER_NOT_FOUND",
+            `Domino is reserved for a non-existent player: ${String(revealed.reservedFor)}`,
+          ),
+        );
+      }
     }
   }
 

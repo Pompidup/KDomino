@@ -1,3 +1,4 @@
+import { canLordPickRevealed } from "@core/domain/entities/neolithic.js";
 import { isGameWithNextAction } from "@core/domain/types/game.js";
 import type {
   Domino,
@@ -689,7 +690,12 @@ export const playBotTurn = (
   const defaults = greedyStrategy;
 
   if (action === "pickDomino") {
-    const availableDominoes = game.currentDominoes.filter((d) => !d.picked);
+    // Dominoes chooseDomino accepts: not picked and, with the Origins
+    // "Neolithic" rule, not reserved for the other player
+    const { lord } = getLordAndPlayer(game, lordId);
+    const availableDominoes = game.currentDominoes.filter((d) =>
+      lord ? canLordPickRevealed(lord, d) : !d.picked,
+    );
     const dominoPick = strategy.chooseDomino({
       game,
       lordId,

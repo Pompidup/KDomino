@@ -282,6 +282,12 @@ export const wrapWithDebug = (
       logger,
       level,
     ),
+    getValidDominoPicks: wrapMethod(
+      "getValidDominoPicks",
+      engine.getValidDominoPicks,
+      logger,
+      level,
+    ),
     serialize: wrapMethod("serialize", engine.serialize, logger, level),
     deserialize: wrapMethod("deserialize", engine.deserialize, logger, level),
     getDynastyResults: wrapMethod(

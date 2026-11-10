@@ -35,6 +35,7 @@ export const TranslationKey = {
   ERROR_CANNOT_PICK: "error.cannotPick",
   ERROR_CANNOT_PLACE: "error.cannotPlace",
   ERROR_DOMINO_ALREADY_PICKED: "error.dominoAlreadyPicked",
+  ERROR_DOMINO_RESERVED: "error.dominoReserved",
   ERROR_INVALID_PLAYER_COUNT: "error.invalidPlayerCount",
   ERROR_INVALID_PLAYER_NAME: "error.invalidPlayerName",
   ERROR_EXTRA_RULE_NOT_AVAILABLE: "error.extraRuleNotAvailable",
@@ -192,6 +193,8 @@ export const defaultTranslations: Record<TranslationKeyType, string> = {
   [TranslationKey.ERROR_CANNOT_PLACE]: "Cannot place a domino now",
   [TranslationKey.ERROR_DOMINO_ALREADY_PICKED]:
     "Domino has already been picked",
+  [TranslationKey.ERROR_DOMINO_RESERVED]:
+    "This domino is reserved for the other player (Neolithic: pairs 1 & 4 and 2 & 3)",
   [TranslationKey.ERROR_INVALID_PLAYER_COUNT]:
     "Invalid number of players (1-4 required)",
   [TranslationKey.ERROR_INVALID_PLAYER_NAME]:
@@ -369,6 +372,8 @@ export const frenchTranslations: Record<TranslationKeyType, string> = {
   [TranslationKey.ERROR_CANNOT_PLACE]:
     "Impossible de placer un domino maintenant",
   [TranslationKey.ERROR_DOMINO_ALREADY_PICKED]: "Ce domino a déjà été choisi",
+  [TranslationKey.ERROR_DOMINO_RESERVED]:
+    "Ce domino est réservé à l'autre joueur (Néolithique : paires 1 et 4, 2 et 3)",
   [TranslationKey.ERROR_INVALID_PLAYER_COUNT]:
     "Nombre de joueurs invalide (1 à 4 requis)",
   [TranslationKey.ERROR_INVALID_PLAYER_NAME]:
@@ -696,6 +701,7 @@ export const errorCodeToTranslationKey: Record<
   [ErrorCode.CANNOT_PICK]: TranslationKey.ERROR_CANNOT_PICK,
   [ErrorCode.CANNOT_PLACE]: TranslationKey.ERROR_CANNOT_PLACE,
   [ErrorCode.DOMINO_ALREADY_PICKED]: TranslationKey.ERROR_DOMINO_ALREADY_PICKED,
+  [ErrorCode.DOMINO_RESERVED]: TranslationKey.ERROR_DOMINO_RESERVED,
   [ErrorCode.UNDO_UNAVAILABLE]: TranslationKey.ERROR_UNDO_UNAVAILABLE,
   [ErrorCode.REDO_UNAVAILABLE]: TranslationKey.ERROR_REDO_UNAVAILABLE,
   [ErrorCode.CANNOT_PLACE_KNIGHT]: TranslationKey.ERROR_CANNOT_PLACE_KNIGHT,

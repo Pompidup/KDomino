@@ -7,6 +7,7 @@ import {
   resetLordsActions,
   updateLordOrder,
 } from "@core/domain/entities/lord.js";
+import { reserveNeolithicPairs } from "@core/domain/entities/neolithic.js";
 import { isTribeMode } from "@core/domain/entities/originsHelpers.js";
 import { ErrorCode } from "@core/domain/errors/domainErrors.js";
 import type { GameWithNextAction } from "@core/domain/types/game.js";
@@ -53,8 +54,23 @@ export const chooseDominoUseCase: ChooseDominoUseCase = (
     return err(ErrorCode.DOMINO_ALREADY_PICKED);
   }
 
-  // update currentDominoes
-  const updatedCurrentDominoes = game.currentDominoes.map((domino) =>
+  // Neolithic (Origins, 2 players): a domino reserved for the other player
+  if (
+    selectedDomino.reservedFor !== undefined &&
+    selectedDomino.reservedFor !== currentLord.playerId
+  ) {
+    return err(ErrorCode.DOMINO_RESERVED);
+  }
+
+  // update currentDominoes (Neolithic: the first pick of the line reserves
+  // the pair 1 & 4 or 2 & 3 for the lord's player, the other pair for the
+  // opponent)
+  const updatedCurrentDominoes = reserveNeolithicPairs(
+    game,
+    game.currentDominoes,
+    currentLord,
+    dominoPick,
+  ).map((domino) =>
     domino.domino.number === dominoPick
       ? { ...domino, picked: true, lordId: currentLord.id }
       : domino,

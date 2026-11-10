@@ -84,4 +84,11 @@ export type RevealsDomino = {
   lordId: string | null;
   /** Display position in the revealed set (for UI ordering) */
   position: number;
+  /**
+   * Id of the player this domino is reserved for (Kingdomino Origins
+   * "Neolithic" rule): set on the whole line by its first pick, the pair
+   * 1 & 4 or 2 & 3 going to that lord's player and the two other dominoes to
+   * the opponent. Only lords of this player can pick it. Absent otherwise.
+   */
+  reservedFor?: string;
 };
