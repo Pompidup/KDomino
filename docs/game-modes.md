@@ -169,9 +169,7 @@ This rule overrides the standard 2-player configuration:
 - Expands the kingdom grid from 5x5 to 7x7
 - Each player still controls 2 lords
 
-Can only be enabled with exactly 2 players (`playersLimit: 2`). "Neolithic", its Kingdomino Origins counterpart, applies the same setup (48 dominoes, 12 turns, 7x7 territory) to the Origins modes.
-
-> Limitation: the Neolithic rulebook also says the first player of each turn takes dominoes 1 and 4 *or* 2 and 3 of the line; the engine keeps the regular selection order instead.
+Can only be enabled with exactly 2 players (`playersLimit: 2`). "Neolithic", its Kingdomino Origins counterpart, applies the same setup (48 dominoes, 12 turns, 7x7 territory) to the Origins modes, plus the official pair choice: the first pick of each line takes the dominoes 1 and 4 *or* 2 and 3 for that player, the other player gets the two remaining ones (see [Origins Guide](origins.md#neolithic-2-players) and `getValidDominoPicks`).
 
 ### Validation
 

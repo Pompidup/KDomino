@@ -64,8 +64,26 @@ Extends Discovery with **resources** (like Totem) and a **cave board** for recru
 |---|---|---|
 | Empire of Fire | The middle Kingdom | +10 pts if castle in center |
 | Homo Habilis | Harmony | +5 pts if kingdom complete |
-| Neolithic | The Mighty Duel | 7×7 kingdom, 2 players |
+| Neolithic | The Mighty Duel | 7×7 kingdom, 2 players, pair choice (see below) |
 | Dynasty | Dynasty | Play 3 games, sum points |
+
+### Neolithic (2 players)
+
+Neolithic uses all 48 dominoes, 12 turns and a 7×7 territory, each player having 2 tribe chiefs. The rulebook adds (Special two player rules, *During Turns*): "the player whose chief was drawn first chooses to take dominos 1 and 4 OR 2 and 3 (in the column, from the top). The other player takes the 2 remaining dominoes."
+
+The engine applies this pair choice to **every line** of 4 dominoes, through the regular `chooseDomino`:
+
+1. The first lord to pick in the line chooses the pair with its own pick: the domino at `position` 1 or 4 takes the pair 1 & 4, position 2 or 3 the pair 2 & 3 (positions follow the sorted line, 1 = lowest number).
+2. The whole line is reserved (`RevealsDomino.reservedFor`): the pair for that lord's player, the two other dominoes for the opponent (`onNeolithicPairChosen` event).
+3. Each lord then picks, in the usual order (Tribe: with its `recruitCaveman` after each pick), one of the dominoes reserved for its player. A domino reserved for the other player is refused with `DOMINO_RESERVED`.
+
+```typescript
+// Dominoes the lord to play may pick (pair choice included)
+const picks = engine.getValidDominoPicks({ game });
+game = engine.chooseDomino({ game, lordId: game.nextAction.nextLord, dominoPick: picks[0] });
+```
+
+The bots only consider these dominoes, and the action log replays the reservations identically.
 
 ## Turn Flow
 

@@ -227,6 +227,7 @@ export const wrapWithActionLog = (
     calculateScore: (cmd) => engine.calculateScore(cmd),
     getValidPlacements: (cmd) => engine.getValidPlacements(cmd),
     canPlaceDomino: (cmd) => engine.canPlaceDomino(cmd),
+    getValidDominoPicks: (cmd) => engine.getValidDominoPicks(cmd),
     serialize: (cmd) => engine.serialize(cmd),
     deserialize: (cmd) => engine.deserialize(cmd),
     getResults: (cmd) => engine.getResults(cmd),

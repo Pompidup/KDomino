@@ -21,6 +21,7 @@ import type {
   GetValidGiantTargetsCommand,
   GetValidKnightPositionsCommand,
 } from "@application/commands/getValidActionTargetsCommand.js";
+import type { GetValidDominoPicksCommand } from "@application/commands/getValidDominoPicksCommand.js";
 import type { GetValidPlacementsCommand } from "@application/commands/getValidPlacementsCommand.js";
 import type { PlaceDominoCommand } from "@application/commands/placeDominoCommand.js";
 import type { PlaceFireTokenCommand } from "@application/commands/placeFireTokenCommand.js";
@@ -179,6 +180,16 @@ export type GameEngine = {
    * @returns True if at least one valid placement exists
    */
   canPlaceDomino: (command: CanPlaceDominoCommand) => boolean;
+
+  /**
+   * Numbers of the revealed dominoes `chooseDomino` accepts for the lord
+   * (default: the lord to play): the dominoes not picked yet and, with the
+   * Origins "Neolithic" rule, not reserved for the other player (the first
+   * pick of each line takes the pair 1 & 4 or 2 & 3 for the lord's player).
+   * @param command - Contains game state and optional lord ID
+   * @returns Domino numbers, or [] when the game does not wait for this lord to pick
+   */
+  getValidDominoPicks: (command: GetValidDominoPicksCommand) => number[];
 
   /**
    * Serializes the game state to a JSON string for persistence.

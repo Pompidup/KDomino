@@ -42,10 +42,8 @@ while (isGameWithNextAction(game)) {
   const { nextLord, nextAction } = game.nextAction;
 
   if (nextAction === "pickDomino") {
-    const domino = game.currentDominoes.find((d) => !d.picked);
-    if (domino) {
-      game = engine.chooseDomino({ game, lordId: nextLord, dominoPick: domino.domino.number });
-    }
+    const [dominoPick] = engine.getValidDominoPicks({ game });
+    game = engine.chooseDomino({ game, lordId: nextLord, dominoPick });
   } else if (nextAction === "placeDomino") {
     const lord = game.lords.find((l) => l.id === nextLord);
     const player = game.players.find((p) => p.id === lord?.playerId);
@@ -147,9 +145,12 @@ if (nextAction === "placeGiant") {
   game = engine.placeGiant({ game, lordId: nextLord, position });
 }
 if (nextAction === "sendGiant") {
-  game = engine.sendGiant({ game, lordId: nextLord, giantIndex, targetPlayerId, targetCrownPosition });
+  // The targeted opponent chooses the crown the giant covers
+  game = engine.sendGiant({ game, lordId: nextLord, giantIndex, targetPlayerId });
 }
 ```
+
+After `sendGiant`, a single free crown of the opponent is covered automatically. With several free crowns, `game.ageOfGiants.pendingGiant` is set and the game waits for a `placeGiant` played by a lord of the **targeted** player (`getValidGiantPositions` lists its crowns). `targetCrownPosition` is still accepted for backward compatibility.
 
 See [Age of Giants Guide](docs/age-of-giants.md) for the complete rules and mechanics.
 
@@ -162,10 +163,13 @@ See [Age of Giants Guide](docs/age-of-giants.md) for the complete rules and mech
 | **The Mighty Duel** | All 48 dominos, 7x7 kingdom | 2 players only |
 | **Dynasty** | Play 3 games, highest total wins | — |
 
+Origins has its own equivalents: **Empire of Fire**, **Homo Habilis**, **Neolithic** (2 players, 7x7, and the first pick of each line takes the dominoes 1 & 4 or 2 & 3 — see [Origins Guide](docs/origins.md#neolithic-2-players)) and **Dynasty**.
+
 ```typescript
 game = engine.addExtraRules({ game, extraRules: ["The middle Kingdom", "Harmony"] });
 
-// Dynasty: aggregate results from multiple games
+// Dynasty: aggregate results from multiple games (grouped by player id: pass
+// the same stable ids to addPlayers in every game, e.g. { id: "alice", name: "Alice" })
 const dynastyResults = engine.getDynastyResults({ games: [game1, game2, game3] });
 ```
 
@@ -202,6 +206,8 @@ const engine = createGameEngine({
 | `calculateScore` | Calculate score for any kingdom |
 | `getValidPlacements` | Find all valid placements for a domino |
 | `canPlaceDomino` | Check if any placement exists |
+| `getValidDominoPicks` | Dominoes the lord to play may pick (Neolithic reservations included) |
+| `calculatePlayerScore` | Mode-aware live (or final) score of one player, with its breakdown |
 | `serialize` / `deserialize` | Save and restore game state |
 | `getDynastyResults` | Aggregate scores from multiple games |
 
@@ -228,6 +234,10 @@ const engine = createGameEngine({
 | `placeGiant` | Place a giant on a crown in your kingdom |
 | `sendGiant` | Send a giant to an opponent's kingdom |
 
+### Valid targets
+
+`getValidFireTokenPositions`, `getValidKnightPositions`, `getValidBuildingPositions`, `getAffordableBuildings`, `getValidCavemanPlacements`, `getValidGiantPositions`, `getValidGiantTargets` and `canSkipOptionalAction` list what the extension actions accept, with the same checks as the actions (see [Valid targets](docs/api-reference.md#valid-targets-for-extension-actions)).
+
 See [API Reference](docs/api-reference.md) for complete method signatures, types, and error codes.
 
 ## Additional Features
@@ -235,7 +245,7 @@ See [API Reference](docs/api-reference.md) for complete method signatures, types
 - **Bot / AI**: 4 built-in strategies (`randomStrategy`, `greedyStrategy`, `advancedStrategy`, `expertStrategy`) with `playBotTurn()` helper; mode-aware (they evaluate with the mode-aware score and play the Queendomino, Origins and Age of Giants actions — see [Bot Strategies](docs/api-reference.md#bot-strategies))
 - **Mixed games**: Human and bot players in the same game via `bot: { strategyName }` on player input
 - **Undo / Redo**: Snapshot-based history with `createGameHistory()`, `pushState()`, `undo()`, `redo()`
-- **Action Log**: Immutable log via `wrapWithActionLog(engine)` for replay with `replayActions()`
+- **Action Log**: Immutable log via `wrapWithActionLog(engine)` for replay with `replayActions()`; format v2 records the seed and the game, player and lord ids, so a replay gives a strictly identical state (v1 logs remain replayable)
 - **Events**: Callbacks via `EngineConfig.events` (`onDominoPlaced`, `onGameEnd`, etc.)
 - **Debug Mode**: `wrapWithDebug(engine)` with 3 verbosity levels
 - **Seeded games**: Deterministic shuffle via `createGame({ mode, seed: "my-seed" })`

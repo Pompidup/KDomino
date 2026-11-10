@@ -41,6 +41,19 @@ export type GameEventCallbacks = {
     lordId: string;
     dominoNumber: number;
   }) => void;
+  /**
+   * Called after the first pick of a line chose the Neolithic pair (Origins,
+   * 2 players): `dominoNumbers` (pair 1 & 4 or 2 & 3) are reserved for the
+   * picking lord's player, `opponentDominoNumbers` for the other player.
+   * Emitted after `onDominoPicked`.
+   */
+  onNeolithicPairChosen?: (event: {
+    game: GameState;
+    lordId: string;
+    playerId: string;
+    dominoNumbers: number[];
+    opponentDominoNumbers: number[];
+  }) => void;
   /** Called after a lord places a domino on their kingdom */
   onDominoPlaced?: (event: { game: GameState; lordId: string }) => void;
   /** Called after a lord discards a domino (no valid placement) */
@@ -135,6 +148,35 @@ export const wrapWithEvents = (
   };
 
   /**
+   * Emits `onNeolithicPairChosen` when a pick reserved the line (Neolithic):
+   * no reservation before, reservations after.
+   */
+  const emitNeolithicPair = (
+    before: GameState,
+    after: GameState,
+    lordId: string,
+  ): void => {
+    if (!callbacks.onNeolithicPairChosen) return;
+    if (before.currentDominoes.some((d) => d.reservedFor !== undefined)) return;
+    const playerId = before.lords.find((l) => l.id === lordId)?.playerId;
+    const reserved = after.currentDominoes.filter(
+      (d) => d.reservedFor !== undefined,
+    );
+    if (!playerId || reserved.length === 0) return;
+    const numbersFor = (own: boolean) =>
+      reserved
+        .filter((d) => (d.reservedFor === playerId) === own)
+        .map((d) => d.domino.number);
+    callbacks.onNeolithicPairChosen({
+      game: after,
+      lordId,
+      playerId,
+      dominoNumbers: numbersFor(true),
+      opponentDominoNumbers: numbersFor(false),
+    });
+  };
+
+  /**
    * Wraps a gameplay method: runs it, emits its specific event, then the
    * derived turn / game-end events.
    */
@@ -157,6 +199,7 @@ export const wrapWithEvents = (
     calculateScore: (cmd) => engine.calculateScore(cmd),
     getValidPlacements: (cmd) => engine.getValidPlacements(cmd),
     canPlaceDomino: (cmd) => engine.canPlaceDomino(cmd),
+    getValidDominoPicks: (cmd) => engine.getValidDominoPicks(cmd),
     serialize: (cmd) => engine.serialize(cmd),
     deserialize: (cmd) => engine.deserialize(cmd),
     getResults: (cmd) => engine.getResults(cmd),
@@ -200,12 +243,14 @@ export const wrapWithEvents = (
     // Gameplay methods — specific event, then derived turn / game-end events
     chooseDomino: gameplay(
       (cmd) => engine.chooseDomino(cmd),
-      (game, cmd) =>
+      (game, cmd) => {
         callbacks.onDominoPicked?.({
           game,
           lordId: cmd.lordId,
           dominoNumber: cmd.dominoPick,
-        }),
+        });
+        emitNeolithicPair(cmd.game, game, cmd.lordId);
+      },
     ),
 
     placeDomino: gameplay(
