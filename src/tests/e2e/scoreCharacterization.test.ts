@@ -9,6 +9,10 @@
  *
  * The snapshot was recorded BEFORE the score breakdown refactor (issue #13):
  * final scores, positions and tie-breaks must never change.
+ *
+ * Deliberate rule changes regenerate only the scenarios of the modes they
+ * touch: the Queendomino rules aligned on the official rulebook (issue #26)
+ * regenerated the QueenDomino and AgeOfGiants-QueenDomino scenarios only.
  */
 import { describe, expect, test } from "vitest";
 import {

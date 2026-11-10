@@ -88,9 +88,9 @@ All methods are available on the `GameEngine` object returned by `createGameEngi
 
 | Method | Command Type | Return Type | Description |
 |---|---|---|---|
-| `placeKnight` | `PlaceKnightCommand` | `GameState` | Place a knight on one of the squares of the domino the lord has just placed (`queendomino.lastPlacedPositions`). |
-| `constructBuilding` | `ConstructBuildingCommand` | `GameState` | Construct a building on a construction square in the lord's kingdom. |
-| `useDragon` | `UseDragonCommand` | `GameState` | Use the dragon to destroy a building tile on the builders board. |
+| `placeKnight` | `PlaceKnightCommand` | `GameState` | Place a knight on a free square of the domino the lord has just placed (`queendomino.lastPlacedPositions`) and collect 1 coin per square of its territory. Up to 2 knights per turn: `placeKnight` stays the next action while a second knight can be placed. |
+| `constructBuilding` | `ConstructBuildingCommand` | `GameState` | Construct a building on a construction square in the lord's kingdom, for the price of its spot on the Builders Board (−1 coin for the Queen's host). |
+| `useDragon` | `UseDragonCommand` | `GameState` | Bribe the dragon (1 coin) to destroy a building tile on the builders board. |
 | `skipOptionalAction` | `SkipOptionalActionCommand` | `GameState` | Skip the current optional action (knight, building, or dragon). |
 
 ### Origins Methods
@@ -270,7 +270,7 @@ type CalculateScoreCommand = {
 type GetValidPlacementsCommand = {
   kingdom: Kingdom;
   domino: Domino;
-  maxKingdomSize?: number;  // Default: 5, use 7 for Mighty Duel
+  maxKingdomSize?: number;  // Default: 5; pass game.rules.basic.maxKingdomSize (7 for a 7x7 kingdom)
 };
 ```
 
@@ -280,7 +280,7 @@ type GetValidPlacementsCommand = {
 type CanPlaceDominoCommand = {
   kingdom: Kingdom;
   domino: Domino;
-  maxKingdomSize?: number;  // Default: 5, use 7 for Mighty Duel
+  maxKingdomSize?: number;  // Default: 5; pass game.rules.basic.maxKingdomSize (7 for a 7x7 kingdom)
 };
 ```
 
@@ -596,7 +596,7 @@ type RevealsDomino = {
 
 ### `Kingdom`
 
-A 9x9 grid of tiles. The playable area is 5x5 (or 7x7 for Mighty Duel) with the castle at the center.
+A 9x9 grid of tiles. The playable area is 5x5 (or 7x7 with The Mighty Duel / Neolithic, and in QueenDomino / AgeOfGiants-QueenDomino at 2 players) with the castle at the center.
 
 ```typescript
 type Kingdom = (Tile | EmptyTile)[][];
@@ -638,7 +638,7 @@ type Player = {
   coins?: number;               // Queendomino
   towers?: number;              // Queendomino
   knights?: Knight[];           // Queendomino
-  bonusKnights?: number;        // Queendomino (extra knights from building bonuses)
+  bonusKnights?: number;        // Queendomino (knights from building bonuses, on top of the starting knight)
   buildings?: PlacedBuilding[]; // Queendomino
   fireTokens?: PlacedFireToken[];  // Origins
   resources?: Resource[];          // Origins Totem/Tribe
@@ -715,9 +715,12 @@ type BasicRules = {
   maxDominoes: number;
   dominoesPerTurn: number;
   maxTurns: number;
-  maxKingdomSize: number;
+  maxKingdomSize: number;             // 5, or 7 (7x7 kingdom)
+  dominoesDiscardedPerTurn?: number;  // Age of Giants
 };
 ```
+
+The basic rules depend on the mode and the number of players (`src/datasources/rules.json`): a mode-specific setup first (`modes` section, `Rules.modeBasic`), then the Age of Giants setup (`aog`, `Rules.aogBasic`), then the common one (`commun`, `Rules.basic`). QueenDomino at 2 players plays a 7x7 kingdom with the 48 dominoes over 12 rounds, and AgeOfGiants-QueenDomino at 2 players a 7x7 kingdom with the 60 dominoes over 12 rounds (official Queendomino rule). Pass `maxKingdomSize: game.rules.basic.maxKingdomSize` to `getValidPlacements` / `canPlaceDomino`.
 
 ### `SelectedRules`
 
@@ -750,12 +753,15 @@ type QueenDominoState = {
 
 ```typescript
 type BuildersBoard = {
-  slots: BuildingSlot[];       // 4 visible slots, each holds a building or null
+  slots: BuildingSlot[];       // 6 spots, each holds a building or null
   drawPile: BuildingTile[];    // Remaining building tiles
+  slotCosts?: number[];        // Price of each spot, aligned with slots: [5, 4, 3, 2, 1, 0]
 };
 
 type BuildingSlot = BuildingTile | null;
 ```
+
+The construction cost is carried by the **spot**: a building costs `slotCosts[index]`, minus 1 coin (never below 0) for the player hosting the Queen. At each new round, the remaining buildings slide to the cheapest spots (end of `slots`) and the empty spots are filled from the draw pile. A board without `slotCosts` (game saved before the official board, 4 slots) keeps its former behaviour: each building costs its own `cost` and empty slots are refilled in place.
 
 ### `BuildingTile`
 
@@ -763,7 +769,7 @@ type BuildingSlot = BuildingTile | null;
 type BuildingTile = {
   id: number;
   name: string;
-  cost: number;                      // Cost in coins
+  cost: number;                      // Own cost, only used by boards without slotCosts
   immediateBonus?: ImmediateBonus;   // Bonus granted on construction
   crowns: number;                    // Permanent crowns added
   towers: number;                    // Towers granted
@@ -1059,7 +1065,7 @@ try {
 |---|---|
 | `CANNOT_PLACE_KNIGHT` | Knight placement is not allowed at this time. |
 | `MAX_KNIGHTS_REACHED` | The player has reached the maximum number of knights. |
-| `KNIGHT_TERRITORY_OCCUPIED` | The target territory already has a knight. |
+| `KNIGHT_TERRITORY_OCCUPIED` | The target territory already has a knight (not returned by the engine: several knights may tax the same territory, and `placeKnight` refuses an invalid square with `CANNOT_PLACE_KNIGHT`). |
 | `CANNOT_AFFORD_BUILDING` | The player does not have enough coins for the building. |
 | `NO_CONSTRUCTION_SQUARE` | No construction square is available at the target position. |
 | `DRAGON_UNAVAILABLE` | The dragon is not available (already used this round or not unlocked). |
@@ -1154,19 +1160,19 @@ The built-in bots (except `randomStrategy`) evaluate every decision with the **m
 
 | Asset | Value per unit | Mode |
 |---|---|---|
-| Coin | 0.5 point | Queendomino, Age of Giants + Queendomino |
+| Coin | 0.5 point (on top of the Wealth counted by the score: 1 point per 3 coins) | Queendomino, Age of Giants + Queendomino |
 | Knight not placed yet | 0.75 point | Queendomino, Age of Giants + Queendomino |
 | Resource | 0.5 point | Origins Tribe (resources pay cavemen; in Totem they already score) |
 
 Asset values decrease linearly with the turns left and are worth nothing during the last turn, so the bots spend their coins and resources before the end. With these values a knight is placed for a tax of 2 coins or more, and a building is bought when its points (crowns, end-game scoring, Queen) beat the value of the coins spent.
 
-For an extension action, a bot enumerates the valid targets of the action (`getValidKnightPositions`, `getValidBuildingPositions` × `getAffordableBuildings`, `getValidFireTokenPositions`, `getValidCavemanPlacements`, `getValidGiantPositions`, `getValidGiantTargets`), plus "skip" when `canSkipOptionalAction` allows it, simulates each target with the action itself and keeps the best evaluation ("skip" first: a target must be strictly better than doing nothing). The strategies differ by how much the best opponent's score counts: 0 for `greedyStrategy`, ½ for `advancedStrategy`, 1 for `expertStrategy` (maximize the lead); the opponents' total only breaks ties (e.g. which opponent receives a giant).
+For an extension action, a bot enumerates the valid targets of the action (`getValidKnightPositions`, `getValidBuildingPositions` × `getAffordableBuildings`, `getValidDragonTargets`, `getValidFireTokenPositions`, `getValidCavemanPlacements`, `getValidGiantPositions`, `getValidGiantTargets`), plus "skip" when `canSkipOptionalAction` allows it, simulates each target with the action itself and keeps the best evaluation ("skip" first: a target must be strictly better than doing nothing). The strategies differ by how much the best opponent's score counts: 0 for `greedyStrategy`, ½ for `advancedStrategy`, 1 for `expertStrategy` (maximize the lead); the opponents' total only breaks ties (e.g. which opponent receives a giant).
 
 | Action | Mode-aware choice |
 |---|---|
 | `placeKnight` | Square with the most taxes, when worth spending a knight. |
 | `constructBuilding` | Building and square with the best points (crowns, end-game scoring, Queen) against its cost. |
-| `useDragon` | Never used: burning a building costs coins and brings the player no points. |
+| `useDragon` | Never used: burning a building costs a coin and brings the player no points. |
 | `placeFireToken` | Square multiplying the largest region. |
 | `recruitCaveman` | Best visible caveman, square and payment. The face-down draw pile is not considered (simulating one of its cavemen would reveal it). The search is bounded: best square with the first payment of each caveman, then the best of its first 8 payments. |
 | `placeGiant` (mandatory) | Crown that costs the deciding player the least — including a giant sent by an opponent (`ageOfGiants.pendingGiant`), where the targeted bot chooses the crown of its own kingdom. |
@@ -1569,6 +1575,7 @@ They answer empty (`[]`, empty lists, or `false`) when the game does not wait fo
 | `getValidKnightPositions` | `GetValidKnightPositionsCommand` | `Position[]` | `placeKnight` (Queendomino, AoG-QD) |
 | `getValidBuildingPositions` | `GetValidBuildingPositionsCommand` | `Position[]` | `constructBuilding` (Queendomino, AoG-QD) |
 | `getAffordableBuildings` | `GetAffordableBuildingsCommand` | `BuildingTile[]` | `constructBuilding` (Queendomino, AoG-QD) |
+| `getValidDragonTargets` | `GetValidDragonTargetsCommand` | `BuildingTile[]` | `useDragon` (Queendomino, AoG-QD) |
 | `getValidCavemanPlacements` | `GetValidCavemanPlacementsCommand` | `ValidCavemanPlacements` | `recruitCaveman` (Origins Tribe) |
 | `getValidGiantPositions` | `GetValidGiantPositionsCommand` | `Position[]` | `placeGiant` (Age of Giants) |
 | `getValidGiantTargets` | `GetValidGiantTargetsCommand` | `ValidGiantTargets` | `sendGiant` (Age of Giants) |
@@ -1591,11 +1598,11 @@ if (game.nextAction.nextAction === 'placeFireToken') {
 
 ### `getValidKnightPositions`
 
-Squares where `placeKnight` accepts a knight: the squares of the domino the lord has just placed (`queendomino.lastPlacedPositions`), while the player is below its knight limit (3 + `bonusKnights`), and only in a territory without knight.
+Squares where `placeKnight` accepts a knight: the squares of the domino the lord has just placed (`queendomino.lastPlacedPositions`) that hold no knight yet, while the player still has a knight available (1 starting knight + `bonusKnights`, minus the knights placed). Several knights may tax the same territory; after a first knight, the query lists the other square of the domino when a second knight can be placed.
 
 ### `getValidBuildingPositions` / `getAffordableBuildings`
 
-`getValidBuildingPositions` returns the free construction squares of the player and `getAffordableBuildings` the buildings of the Builders Board the player can pay for. **Any** building of the second list can be built on **any** square of the first one. Both are empty as soon as one of them is (a construction needs a square and a building).
+`getValidBuildingPositions` returns the free construction squares of the player and `getAffordableBuildings` the buildings of the Builders Board the player can pay for (price of the spot, minus 1 coin for the Queen's host). **Any** building of the second list can be built on **any** square of the first one. Both are empty as soon as one of them is (a construction needs a square and a building).
 
 ```typescript
 const squares = engine.getValidBuildingPositions({ game });
@@ -1604,6 +1611,19 @@ if (buildings.length > 0) {
   game = engine.constructBuilding({
     game, lordId, buildingId: buildings[0].id, position: squares[0],
   });
+}
+```
+
+### `getValidDragonTargets`
+
+Buildings of the Builders Board that `useDragon` accepts to burn: every building still on the board when the Dragon is in its cave this round (`dragonAvailable`, not `dragonUsedThisRound`), the lord's player does not host the Queen and has at least 1 coin (the Dragon always costs 1 coin). `[]` otherwise.
+
+```typescript
+if (game.nextAction.nextAction === 'useDragon') {
+  const targets = engine.getValidDragonTargets({ game });
+  game = targets.length > 0
+    ? engine.useDragon({ game, lordId, buildingId: targets[0].id })
+    : engine.skipOptionalAction({ game, lordId });
 }
 ```
 
@@ -1768,6 +1788,7 @@ type ScoreBonus = {
 | `homoHabilis` | Origins | `rule.homoHabilis` | "Homo Habilis" rule is active, **end of game only** (5 or 0) |
 | `queen` | Queendomino, AoG-QD | `score.queen` | The player hosts the Queen (size of the largest territory) |
 | `building` | Queendomino, AoG-QD | `score.building` (`{{name}}`) | One per constructed building with an end-game scoring |
+| `wealth` | Queendomino, AoG-QD | `score.wealth` | Always (1 point per 3 unused coins) |
 | `quest` | Age of Giants | `quest.<questType>` | One per quest tile; the Harmony quest at the end of game only |
 | `totem` | Origins Totem | `score.totem<Resource>` | One per totem held by the player |
 | `resources` | Origins Totem | `score.resources` | Always (1 point per resource left) |

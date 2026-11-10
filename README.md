@@ -48,7 +48,13 @@ while (isGameWithNextAction(game)) {
     const lord = game.lords.find((l) => l.id === nextLord);
     const player = game.players.find((p) => p.id === lord?.playerId);
     if (lord?.dominoPicked && player) {
-      const placements = engine.getValidPlacements({ kingdom: player.kingdom, domino: lord.dominoPicked });
+      // maxKingdomSize: 5, or 7 for a 7x7 kingdom (The Mighty Duel, Neolithic,
+      // QueenDomino and AgeOfGiants-QueenDomino at 2 players)
+      const placements = engine.getValidPlacements({
+        kingdom: player.kingdom,
+        domino: lord.dominoPicked,
+        maxKingdomSize: game.rules.basic.maxKingdomSize,
+      });
       if (placements.length > 0) {
         game = engine.placeDomino({ game, lordId: nextLord, position: placements[0].position, rotation: placements[0].rotation });
       } else {
@@ -69,12 +75,12 @@ console.log(results.result);
 | Mode | Description |
 |------|-------------|
 | **Classic** | Original Kingdomino rules. 1-4 players, 5x5 kingdom, terrain-based scoring. |
-| **QueenDomino** | Full Queendomino expansion with buildings, coins, knights, the Queen and the Dragon. |
+| **QueenDomino** | Full Queendomino expansion with buildings, coins, knights, the Queen and the Dragon. 2-4 players (7x7 kingdom with the 48 dominoes at 2 players). |
 | **KingdominoOrigins-Discovery** | Origins expansion — volcanoes, fire tokens, fire-based scoring. |
 | **KingdominoOrigins-Totem** | Origins — Discovery + wooden resources + totem majority tiles. |
 | **KingdominoOrigins-Tribe** | Origins — Discovery + resources + cave board + cavemen recruitment. |
 | **AgeOfGiants** | Age of Giants extension — giants, quest tiles, 5-player support, 12 new dominos on Classic. |
-| **AgeOfGiants-QueenDomino** | Age of Giants combined with QueenDomino. |
+| **AgeOfGiants-QueenDomino** | Age of Giants combined with QueenDomino (7x7 kingdom with the 60 dominoes at 2 players). |
 
 ```typescript
 let game = engine.createGame({ mode: "Classic" });
@@ -90,11 +96,12 @@ See [Game Modes](docs/game-modes.md) for rules, player counts, and extra rules d
 The QueenDomino mode adds significant new mechanics to the base game:
 
 - **Construction squares** on some domino tiles where buildings can be placed
-- **Coins** (7 starting) used to purchase buildings or use the Dragon
-- **Knights** (max 3) placed on dominos to collect tax from construction squares
-- **Buildings** (18 types) purchased from the Builders Board, granting crowns, towers, and end-game bonuses
-- **The Queen** goes to the player with the most towers, granting +1 crown to the best territory
-- **The Dragon** burns a building tile from the Builders Board
+- **Coins** (7 starting) used to purchase buildings or bribe the Dragon; 1 point per 3 unused coins at the end of the game
+- **Knights** (1 at the start, more from building bonuses) placed on the domino just placed, up to 2 per turn, collecting 1 coin per square of the territory
+- **Buildings** purchased from the 6-spot Builders Board (spots costing 5 to 0 coins), granting crowns, towers, and end-game bonuses
+- **The Queen** hosted by the player who reaches the most towers (even on a tie): -1 coin on her host's constructions, +1 crown on their largest territory at the end
+- **The Dragon** burns a building tile from the Builders Board for 1 coin
+- **2 players**: 7x7 kingdoms with all 48 dominoes (official rule)
 
 The turn flow is extended with optional actions after placing a domino:
 
@@ -160,7 +167,7 @@ See [Age of Giants Guide](docs/age-of-giants.md) for the complete rules and mech
 |------|-------------|-------------|
 | **The Middle Kingdom** | +10 points if castle is centered | — |
 | **Harmony** | +5 points if no dominos were discarded | — |
-| **The Mighty Duel** | All 48 dominos, 7x7 kingdom | 2 players only |
+| **The Mighty Duel** | All 48 dominos, 7x7 kingdom | 2 players only (QueenDomino already plays 7x7 at 2 players: accepted, without further effect) |
 | **Dynasty** | Play 3 games, highest total wins | — |
 
 Origins has its own equivalents: **Empire of Fire**, **Homo Habilis**, **Neolithic** (2 players, 7x7, and the first pick of each line takes the dominoes 1 & 4 or 2 & 3 — see [Origins Guide](docs/origins.md#neolithic-2-players)) and **Dynasty**.
@@ -217,7 +224,7 @@ const engine = createGameEngine({
 |--------|-------------|
 | `placeKnight` | Place a knight and collect tax |
 | `constructBuilding` | Buy and place a building |
-| `useDragon` | Destroy a building tile from the board |
+| `useDragon` | Destroy a building tile from the board (1 coin) |
 | `skipOptionalAction` | Skip the current optional action |
 
 ### Origins Methods
@@ -236,7 +243,7 @@ const engine = createGameEngine({
 
 ### Valid targets
 
-`getValidFireTokenPositions`, `getValidKnightPositions`, `getValidBuildingPositions`, `getAffordableBuildings`, `getValidCavemanPlacements`, `getValidGiantPositions`, `getValidGiantTargets` and `canSkipOptionalAction` list what the extension actions accept, with the same checks as the actions (see [Valid targets](docs/api-reference.md#valid-targets-for-extension-actions)).
+`getValidFireTokenPositions`, `getValidKnightPositions`, `getValidBuildingPositions`, `getAffordableBuildings`, `getValidDragonTargets`, `getValidCavemanPlacements`, `getValidGiantPositions`, `getValidGiantTargets` and `canSkipOptionalAction` list what the extension actions accept, with the same checks as the actions (see [Valid targets](docs/api-reference.md#valid-targets-for-extension-actions)).
 
 See [API Reference](docs/api-reference.md) for complete method signatures, types, and error codes.
 
