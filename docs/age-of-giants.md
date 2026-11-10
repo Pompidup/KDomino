@@ -123,11 +123,10 @@ player.giants?: PlacedGiant[];  // Giants placed on the kingdom covering crowns
 
 ## Extra Rules
 
-Age of Giants modes support the same extra rules as Classic:
+Age of Giants modes (`AgeOfGiants` and `AgeOfGiants-QueenDomino`) support a **single** optional rule (see `src/datasources/rules.json`, `getExtraRules`):
 
 | Rule | Effect |
 |------|--------|
-| The middle Kingdom | +10 pts if castle in center |
-| Harmony | +5 pts if kingdom complete |
-| The Mighty Duel | 7×7 kingdom, 2 players |
-| Dynasty | Play 3 games, sum points |
+| Dynasty | Play 3 games in a row; the player with the highest total points wins (see `getDynastyResults`) |
+
+The middle Kingdom, Harmony and The Mighty Duel are **not** optional rules of Age of Giants modes: `getExtraRules` does not return them for `AgeOfGiants` / `AgeOfGiants-QueenDomino`. The middle Kingdom and Harmony bonuses can still apply through the quest tiles of the same name (`middleKingdom`, `harmony`, see [Quest Types](#quest-types)).

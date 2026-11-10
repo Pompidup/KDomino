@@ -155,8 +155,38 @@ export type WarriorTile = {
   power: number;
 };
 
-/** Discriminated union of all caveman tile types. */
+/**
+ * Discriminant values of `CavemanTile["kind"]`.
+ */
+export const cavemanKinds = {
+  hunterGatherer: "hunterGatherer",
+  warrior: "warrior",
+} as const;
+
+export type CavemanKind = ObjectValues<typeof cavemanKinds>;
+
+/** Discriminated union of all caveman tile types (discriminant: `kind`). */
 export type CavemanTile = HunterGathererTile | WarriorTile;
+
+/**
+ * Type guard to check if a caveman tile is a hunter-gatherer.
+ * @param caveman - The caveman tile to check
+ * @returns True if the tile is a `HunterGathererTile`
+ */
+export const isHunterGathererTile = (
+  caveman: CavemanTile,
+): caveman is HunterGathererTile => {
+  return caveman.kind === cavemanKinds.hunterGatherer;
+};
+
+/**
+ * Type guard to check if a caveman tile is a warrior.
+ * @param caveman - The caveman tile to check
+ * @returns True if the tile is a `WarriorTile`
+ */
+export const isWarriorTile = (caveman: CavemanTile): caveman is WarriorTile => {
+  return caveman.kind === cavemanKinds.warrior;
+};
 
 /**
  * A caveman tile placed on a player's kingdom.

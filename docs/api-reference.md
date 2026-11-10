@@ -503,8 +503,14 @@ type EmptyTile = {
 ### `Ground`
 
 ```typescript
-type Ground = "castle" | "wheat" | "forest" | "sea" | "plain" | "swamp" | "mine";
+type Ground =
+  // Classic / Queendomino / Age of Giants
+  | "castle" | "wheat" | "forest" | "sea" | "plain" | "swamp" | "mine"
+  // Kingdomino Origins
+  | "grassland" | "lake" | "jungle" | "quarry" | "desert" | "volcano";
 ```
+
+The runtime list is exported as `GROUND`.
 
 ### `Crown`
 
@@ -842,7 +848,13 @@ type WarriorTile = {
   warriorType: WarriorType;  // "small" | "amazon" | "oafish"
   power: number;             // 1, 2, or 3
 };
+
+// Discriminant values of CavemanTile["kind"]
+const cavemanKinds = { hunterGatherer: "hunterGatherer", warrior: "warrior" } as const;
+type CavemanKind = "hunterGatherer" | "warrior";
 ```
+
+Narrow a `CavemanTile` with `kind` or with the [`isHunterGathererTile` / `isWarriorTile`](#ishuntergatherertile--iswarriortile) type guards.
 
 ### `PlacedCaveman`
 
@@ -1190,11 +1202,68 @@ import {
 
 The engine also provides `serialize` and `deserialize` methods directly on the `GameEngine` interface (see [Core Methods](#serialization-methods)).
 
+### Internationalization (i18n)
+
+The engine ships translation dictionaries for error messages, game modes, extra rules, terrains, resources, cavemen, game phases and player actions.
+
+```typescript
+import {
+  TranslationKey,
+  createTranslator,
+  defaultTranslator,
+  translateErrorCode,
+  localeTranslations,
+  supportedLocales,          // ["en", "fr"]
+  englishTranslations,       // === defaultTranslations
+  frenchTranslations,
+  groundToTranslationKey,
+  playerActionToTranslationKey,
+  modeNameToTranslationKey,
+  extraRuleNameToTranslationKey,
+  resourceToTranslationKey,
+  cavemanKindToTranslationKey,
+  hunterGathererKindToTranslationKey,
+  warriorTypeToTranslationKey,
+} from '@pompidup/kingdomino-engine';
+
+const t = createTranslator(localeTranslations.fr); // or frenchTranslations
+t.t(groundToTranslationKey.volcano);                // "Volcan"
+t.t(playerActionToTranslationKey.recruitCaveman);   // "Recruter un homme préhistorique"
+t.t(modeNameToTranslationKey["KingdominoOrigins-Tribe"]); // "Kingdomino Origins — Tribu"
+
+const engine = createGameEngine({ translator: t }); // localized error messages
+```
+
+| Export | Description |
+|---|---|
+| `TranslationKey` / `TranslationKeyType` | All translation keys (`error.*`, `mode.*`, `rule.*`, `ground.*`, `resource.*`, `caveman.*`, `phase.*`, `action.*`). |
+| `defaultTranslations` / `englishTranslations` | English dictionary (fallback for missing keys). |
+| `frenchTranslations` | French dictionary. |
+| `localeTranslations`, `supportedLocales`, `SupportedLocale` | Built-in dictionaries indexed by locale (`"en"`, `"fr"`); every dictionary defines every key. |
+| `createTranslator(translations?)` | Create a `Translator`; missing keys fall back to English. Supports `{{param}}` interpolation. |
+| `defaultTranslator` | English translator. |
+| `translateErrorCode(translator, code, params?)` | Translate an `ErrorCode`. |
+| `errorCodeToTranslationKey` | `ErrorCode` → key. |
+| `groundToTranslationKey` | `Ground` → key (all Classic and Origins terrains). |
+| `playerActionToTranslationKey` | `PlayerActions` → key (`pickDomino`, `placeDomino`, `pass`, `placeKnight`, `constructBuilding`, `useDragon`, `skipOptionalAction`, `placeGiant`, `sendGiant`, `placeFireToken`, `recruitCaveman`). |
+| `modeNameToTranslationKey` | `GameMode["name"]` (as returned by `getModes`) → key. |
+| `extraRuleNameToTranslationKey` | `ExtraRule["name"]` (as returned by `getExtraRules`) → key. |
+| `resourceToTranslationKey` | `ResourceType` → key. |
+| `cavemanKindToTranslationKey`, `hunterGathererKindToTranslationKey`, `warriorTypeToTranslationKey` | Caveman kind / hunter-gatherer type / warrior type → key. |
+
 ---
 
 ## Type Guards
 
-Two type guards are exported to narrow `GameState` to its specific variant:
+The following type guards are exported:
+
+| Guard | Narrows |
+|---|---|
+| `isGameWithNextAction(game)` | `GameState` → `GameWithNextAction` |
+| `isGameWithNextStep(game)` | `GameState` → `GameWithNextStep` |
+| `isGameWithResults(game)` | `Game` → `GameWithResults` |
+| `isHunterGathererTile(caveman)` | `CavemanTile` → `HunterGathererTile` |
+| `isWarriorTile(caveman)` | `CavemanTile` → `WarriorTile` |
 
 ### `isGameWithNextAction`
 
@@ -1225,3 +1294,41 @@ Returns `true` when the game is in a phase transition (setup or game end). Check
 - `"options"` -- optional rules selection
 - `"start"` -- ready to start the game
 - `"result"` -- game has ended, call `getResults` to compute final scores
+
+### `isGameWithResults`
+
+```typescript
+const isGameWithResults: (game: Game | GameWithResults) => game is GameWithResults;
+```
+
+Returns `true` when the game carries a `result: FinalResult[]` array, i.e. the state returned by `getResults`. Note that a game in the `"result"` step (`isGameWithNextStep(game) && game.nextAction.step === "result"`) does not carry results until `getResults` has been called.
+
+```typescript
+import { isGameWithResults } from '@pompidup/kingdomino-engine';
+
+const stored: Game = loadGame();
+if (isGameWithResults(stored)) {
+  const winner = stored.result.find((r) => r.position === 1);
+}
+```
+
+### `isHunterGathererTile` / `isWarriorTile`
+
+```typescript
+const isHunterGathererTile: (caveman: CavemanTile) => caveman is HunterGathererTile;
+const isWarriorTile: (caveman: CavemanTile) => caveman is WarriorTile;
+```
+
+Narrow a caveman tile (Origins Tribe mode) on its `kind` discriminant (`cavemanKinds.hunterGatherer` / `cavemanKinds.warrior`).
+
+```typescript
+import { isWarriorTile, isHunterGathererTile } from '@pompidup/kingdomino-engine';
+
+for (const caveman of game.origins?.caveBoard?.visible ?? []) {
+  if (isWarriorTile(caveman)) {
+    console.log(`Warrior (${caveman.warriorType}), power ${caveman.power}`);
+  } else if (isHunterGathererTile(caveman)) {
+    console.log(`${caveman.hunterType}: ${caveman.pointsPerMatch} pts/match`);
+  }
+}
+```
