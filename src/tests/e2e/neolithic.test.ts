@@ -407,7 +407,9 @@ describe("Neolithic: complete bot games", () => {
       [advancedStrategy, expertStrategy],
     );
     expect(isGameWithNextStep(game) && game.nextAction.step).toBe("result");
-  }, 30_000);
+    // ~3 s locally, but over 40 s on the CI runner under coverage while the
+    // other bot games run in parallel (expert beam search on a 7x7 kingdom)
+  }, 120_000);
 });
 
 describe("Neolithic: action log replay", () => {
