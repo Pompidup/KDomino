@@ -1,3 +1,4 @@
+import { startNewQueenDominoRound } from "@core/domain/entities/building.js";
 import {
   allLordsHavePlayed,
   canPick,
@@ -114,6 +115,11 @@ export const chooseDominoUseCase: ChooseDominoUseCase = (
       });
     }
 
+    // Queendomino (incl. AoG-QD): new round, refill the Builders Board and
+    // send the Dragon back to its cave
+    const queendomino =
+      game.queendomino && startNewQueenDominoRound(game.queendomino);
+
     const next = nextLordWithAction(lords);
     return ok({
       ...game,
@@ -122,6 +128,7 @@ export const chooseDominoUseCase: ChooseDominoUseCase = (
       lords,
       turn: updatedTurn,
       nextAction: next,
+      ...(queendomino && { queendomino }),
     });
   }
 

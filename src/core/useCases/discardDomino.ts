@@ -12,6 +12,7 @@ import {
   type NextAction,
   type NextStep,
 } from "@core/domain/types/game.js";
+import { playerActions } from "@core/domain/types/player.js";
 import { err, ok } from "@utils/result.js";
 import { canPlaceDominoUseCase } from "./getValidPlacements.js";
 
@@ -77,6 +78,22 @@ export const discardDominoUseCase: DiscardDominoUseCase = (game, lordId) => {
     }
     return lord;
   });
+
+  // Queendomino (incl. AoG-QD): discarding only replaces action A. The player
+  // still may construct a building and bribe the Dragon (actions C and D), but
+  // cannot tax with a knight since no domino was just placed (action B).
+  if (game.queendomino) {
+    return ok({
+      ...game,
+      lords: updatedLord,
+      queendomino: { ...game.queendomino, lastPlacedPositions: [] },
+      nextAction: {
+        type: "action",
+        nextLord: currentLord.id,
+        nextAction: playerActions.constructBuilding,
+      },
+    });
+  }
 
   let updatedGame: GameState;
 

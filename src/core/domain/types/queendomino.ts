@@ -1,4 +1,5 @@
 import type { BuildersBoard } from "./building.js";
+import type { Position } from "./kingdom.js";
 
 /**
  * Complete Queendomino-specific game state.
@@ -13,4 +14,10 @@ export type QueenDominoState = {
   dragonAvailable: boolean;
   /** Whether the Dragon has been used this round (resets each round) */
   dragonUsedThisRound: boolean;
+  /**
+   * Kingdom positions of the two squares of the domino the current lord has
+   * just placed. Knights may only be placed on these squares. Empty when the
+   * lord discarded their domino.
+   */
+  lastPlacedPositions?: Position[];
 };

@@ -27,3 +27,13 @@ export const addTowers = (player: Player, amount: number): Player => ({
 });
 
 export const getTowerCount = (player: Player): number => player.towers ?? 0;
+
+/** Grant extra knights (building immediate bonus), raising the knight limit. */
+export const addBonusKnights = (player: Player, amount: number): Player => ({
+  ...player,
+  bonusKnights: (player.bonusKnights ?? 0) + amount,
+});
+
+/** Maximum number of knights the player may place (base + building bonuses). */
+export const getMaxKnights = (player: Player): number =>
+  MAX_KNIGHTS + (player.bonusKnights ?? 0);

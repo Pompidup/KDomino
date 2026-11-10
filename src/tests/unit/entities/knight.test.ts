@@ -146,6 +146,49 @@ describe("knight", () => {
     });
   });
 
+  describe("canPlaceKnight with allowed positions (domino just placed)", () => {
+    const buildKingdom = () => {
+      const kingdom = emptyKingdom();
+      kingdom[4]![4] = { type: "castle", crowns: 0 };
+      // Older domino
+      kingdom[4]![5] = { type: "wheat", crowns: 0 };
+      kingdom[4]![6] = { type: "forest", crowns: 0 };
+      // Domino just placed
+      kingdom[5]![4] = { type: "sea", crowns: 0 };
+      kingdom[6]![4] = { type: "mine", crowns: 1 };
+      return kingdom;
+    };
+    const justPlaced = [
+      { x: 4, y: 5 },
+      { x: 4, y: 6 },
+    ];
+
+    it("should allow both squares of the domino just placed", () => {
+      const kingdom = buildKingdom();
+      const player = { ...makePlayer(), kingdom };
+      expect(canPlaceKnight(player, kingdom, { x: 4, y: 5 }, justPlaced)).toBe(
+        true,
+      );
+      expect(canPlaceKnight(player, kingdom, { x: 4, y: 6 }, justPlaced)).toBe(
+        true,
+      );
+    });
+
+    it("should reject a square of an older domino", () => {
+      const kingdom = buildKingdom();
+      const player = { ...makePlayer(), kingdom };
+      expect(canPlaceKnight(player, kingdom, { x: 5, y: 4 }, justPlaced)).toBe(
+        false,
+      );
+    });
+
+    it("should reject everything when no domino was just placed", () => {
+      const kingdom = buildKingdom();
+      const player = { ...makePlayer(), kingdom };
+      expect(canPlaceKnight(player, kingdom, { x: 4, y: 5 }, [])).toBe(false);
+    });
+  });
+
   describe("placeKnight", () => {
     it("should add knight and collect tax", () => {
       const kingdom = emptyKingdom();
