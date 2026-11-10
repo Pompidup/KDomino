@@ -1,0 +1,5155 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`Score characterization (final results must never change) > AgeOfGiants 2p / seed alpha 1`] = `
+{
+  "extensions": [
+    {
+      "buildings": 0,
+      "cavemen": 0,
+      "fireTokens": 0,
+      "giants": 1,
+      "knights": 0,
+      "name": "Alice",
+      "resources": 0,
+      "towers": 0,
+    },
+    {
+      "buildings": 0,
+      "cavemen": 0,
+      "fireTokens": 0,
+      "giants": 1,
+      "knights": 0,
+      "name": "Bob",
+      "resources": 0,
+      "towers": 0,
+    },
+  ],
+  "queenHolder": null,
+  "results": [
+    {
+      "maxPropertiesSize": 7,
+      "name": "Alice",
+      "points": 64,
+      "position": 1,
+      "totalCrowns": 13,
+    },
+    {
+      "maxPropertiesSize": 5,
+      "name": "Bob",
+      "points": 13,
+      "position": 2,
+      "totalCrowns": 3,
+    },
+  ],
+}
+`;
+
+exports[`Score characterization (final results must never change) > AgeOfGiants 2p / seed bravo 1`] = `
+{
+  "extensions": [
+    {
+      "buildings": 0,
+      "cavemen": 0,
+      "fireTokens": 0,
+      "giants": 2,
+      "knights": 0,
+      "name": "Alice",
+      "resources": 0,
+      "towers": 0,
+    },
+    {
+      "buildings": 0,
+      "cavemen": 0,
+      "fireTokens": 0,
+      "giants": 1,
+      "knights": 0,
+      "name": "Bob",
+      "resources": 0,
+      "towers": 0,
+    },
+  ],
+  "queenHolder": null,
+  "results": [
+    {
+      "maxPropertiesSize": 5,
+      "name": "Alice",
+      "points": 39,
+      "position": 1,
+      "totalCrowns": 9,
+    },
+    {
+      "maxPropertiesSize": 5,
+      "name": "Bob",
+      "points": 21,
+      "position": 2,
+      "totalCrowns": 5,
+    },
+  ],
+}
+`;
+
+exports[`Score characterization (final results must never change) > AgeOfGiants 2p / seed charlie 1`] = `
+{
+  "extensions": [
+    {
+      "buildings": 0,
+      "cavemen": 0,
+      "fireTokens": 0,
+      "giants": 3,
+      "knights": 0,
+      "name": "Alice",
+      "resources": 0,
+      "towers": 0,
+    },
+    {
+      "buildings": 0,
+      "cavemen": 0,
+      "fireTokens": 0,
+      "giants": 2,
+      "knights": 0,
+      "name": "Bob",
+      "resources": 0,
+      "towers": 0,
+    },
+  ],
+  "queenHolder": null,
+  "results": [
+    {
+      "maxPropertiesSize": 5,
+      "name": "Bob",
+      "points": 46,
+      "position": 1,
+      "totalCrowns": 6,
+    },
+    {
+      "maxPropertiesSize": 6,
+      "name": "Alice",
+      "points": 34,
+      "position": 2,
+      "totalCrowns": 11,
+    },
+  ],
+}
+`;
+
+exports[`Score characterization (final results must never change) > AgeOfGiants 3p / seed alpha 1`] = `
+{
+  "extensions": [
+    {
+      "buildings": 0,
+      "cavemen": 0,
+      "fireTokens": 0,
+      "giants": 6,
+      "knights": 0,
+      "name": "Alice",
+      "resources": 0,
+      "towers": 0,
+    },
+    {
+      "buildings": 0,
+      "cavemen": 0,
+      "fireTokens": 0,
+      "giants": 0,
+      "knights": 0,
+      "name": "Bob",
+      "resources": 0,
+      "towers": 0,
+    },
+    {
+      "buildings": 0,
+      "cavemen": 0,
+      "fireTokens": 0,
+      "giants": 0,
+      "knights": 0,
+      "name": "Carol",
+      "resources": 0,
+      "towers": 0,
+    },
+  ],
+  "queenHolder": null,
+  "results": [
+    {
+      "maxPropertiesSize": 3,
+      "name": "Bob",
+      "points": 22,
+      "position": 1,
+      "totalCrowns": 8,
+    },
+    {
+      "maxPropertiesSize": 6,
+      "name": "Carol",
+      "points": 18,
+      "position": 2,
+      "totalCrowns": 9,
+    },
+    {
+      "maxPropertiesSize": 3,
+      "name": "Alice",
+      "points": 15,
+      "position": 3,
+      "totalCrowns": 6,
+    },
+  ],
+}
+`;
+
+exports[`Score characterization (final results must never change) > AgeOfGiants 3p / seed bravo 1`] = `
+{
+  "extensions": [
+    {
+      "buildings": 0,
+      "cavemen": 0,
+      "fireTokens": 0,
+      "giants": 0,
+      "knights": 0,
+      "name": "Alice",
+      "resources": 0,
+      "towers": 0,
+    },
+    {
+      "buildings": 0,
+      "cavemen": 0,
+      "fireTokens": 0,
+      "giants": 3,
+      "knights": 0,
+      "name": "Bob",
+      "resources": 0,
+      "towers": 0,
+    },
+    {
+      "buildings": 0,
+      "cavemen": 0,
+      "fireTokens": 0,
+      "giants": 3,
+      "knights": 0,
+      "name": "Carol",
+      "resources": 0,
+      "towers": 0,
+    },
+  ],
+  "queenHolder": null,
+  "results": [
+    {
+      "maxPropertiesSize": 6,
+      "name": "Carol",
+      "points": 42,
+      "position": 1,
+      "totalCrowns": 6,
+    },
+    {
+      "maxPropertiesSize": 6,
+      "name": "Alice",
+      "points": 39,
+      "position": 2,
+      "totalCrowns": 16,
+    },
+    {
+      "maxPropertiesSize": 6,
+      "name": "Bob",
+      "points": 26,
+      "position": 3,
+      "totalCrowns": 4,
+    },
+  ],
+}
+`;
+
+exports[`Score characterization (final results must never change) > AgeOfGiants 3p / seed charlie 1`] = `
+{
+  "extensions": [
+    {
+      "buildings": 0,
+      "cavemen": 0,
+      "fireTokens": 0,
+      "giants": 0,
+      "knights": 0,
+      "name": "Alice",
+      "resources": 0,
+      "towers": 0,
+    },
+    {
+      "buildings": 0,
+      "cavemen": 0,
+      "fireTokens": 0,
+      "giants": 3,
+      "knights": 0,
+      "name": "Bob",
+      "resources": 0,
+      "towers": 0,
+    },
+    {
+      "buildings": 0,
+      "cavemen": 0,
+      "fireTokens": 0,
+      "giants": 1,
+      "knights": 0,
+      "name": "Carol",
+      "resources": 0,
+      "towers": 0,
+    },
+  ],
+  "queenHolder": null,
+  "results": [
+    {
+      "maxPropertiesSize": 7,
+      "name": "Alice",
+      "points": 57,
+      "position": 1,
+      "totalCrowns": 13,
+    },
+    {
+      "maxPropertiesSize": 6,
+      "name": "Carol",
+      "points": 36,
+      "position": 2,
+      "totalCrowns": 5,
+    },
+    {
+      "maxPropertiesSize": 5,
+      "name": "Bob",
+      "points": 10,
+      "position": 3,
+      "totalCrowns": 1,
+    },
+  ],
+}
+`;
+
+exports[`Score characterization (final results must never change) > AgeOfGiants 4p / seed alpha 1`] = `
+{
+  "extensions": [
+    {
+      "buildings": 0,
+      "cavemen": 0,
+      "fireTokens": 0,
+      "giants": 4,
+      "knights": 0,
+      "name": "Alice",
+      "resources": 0,
+      "towers": 0,
+    },
+    {
+      "buildings": 0,
+      "cavemen": 0,
+      "fireTokens": 0,
+      "giants": 0,
+      "knights": 0,
+      "name": "Bob",
+      "resources": 0,
+      "towers": 0,
+    },
+    {
+      "buildings": 0,
+      "cavemen": 0,
+      "fireTokens": 0,
+      "giants": 0,
+      "knights": 0,
+      "name": "Carol",
+      "resources": 0,
+      "towers": 0,
+    },
+    {
+      "buildings": 0,
+      "cavemen": 0,
+      "fireTokens": 0,
+      "giants": 2,
+      "knights": 0,
+      "name": "Dave",
+      "resources": 0,
+      "towers": 0,
+    },
+  ],
+  "queenHolder": null,
+  "results": [
+    {
+      "maxPropertiesSize": 5,
+      "name": "Carol",
+      "points": 22,
+      "position": 1,
+      "totalCrowns": 10,
+    },
+    {
+      "maxPropertiesSize": 6,
+      "name": "Alice",
+      "points": 20,
+      "position": 2,
+      "totalCrowns": 8,
+    },
+    {
+      "maxPropertiesSize": 4,
+      "name": "Bob",
+      "points": 19,
+      "position": 3,
+      "totalCrowns": 12,
+    },
+    {
+      "maxPropertiesSize": 7,
+      "name": "Dave",
+      "points": 9,
+      "position": 4,
+      "totalCrowns": 3,
+    },
+  ],
+}
+`;
+
+exports[`Score characterization (final results must never change) > AgeOfGiants 4p / seed bravo 1`] = `
+{
+  "extensions": [
+    {
+      "buildings": 0,
+      "cavemen": 0,
+      "fireTokens": 0,
+      "giants": 2,
+      "knights": 0,
+      "name": "Alice",
+      "resources": 0,
+      "towers": 0,
+    },
+    {
+      "buildings": 0,
+      "cavemen": 0,
+      "fireTokens": 0,
+      "giants": 3,
+      "knights": 0,
+      "name": "Bob",
+      "resources": 0,
+      "towers": 0,
+    },
+    {
+      "buildings": 0,
+      "cavemen": 0,
+      "fireTokens": 0,
+      "giants": 0,
+      "knights": 0,
+      "name": "Carol",
+      "resources": 0,
+      "towers": 0,
+    },
+    {
+      "buildings": 0,
+      "cavemen": 0,
+      "fireTokens": 0,
+      "giants": 1,
+      "knights": 0,
+      "name": "Dave",
+      "resources": 0,
+      "towers": 0,
+    },
+  ],
+  "queenHolder": null,
+  "results": [
+    {
+      "maxPropertiesSize": 6,
+      "name": "Alice",
+      "points": 43,
+      "position": 1,
+      "totalCrowns": 11,
+    },
+    {
+      "maxPropertiesSize": 5,
+      "name": "Carol",
+      "points": 32,
+      "position": 2,
+      "totalCrowns": 6,
+    },
+    {
+      "maxPropertiesSize": 8,
+      "name": "Bob",
+      "points": 27,
+      "position": 3,
+      "totalCrowns": 5,
+    },
+    {
+      "maxPropertiesSize": 6,
+      "name": "Dave",
+      "points": 26,
+      "position": 4,
+      "totalCrowns": 10,
+    },
+  ],
+}
+`;
+
+exports[`Score characterization (final results must never change) > AgeOfGiants 4p / seed charlie 1`] = `
+{
+  "extensions": [
+    {
+      "buildings": 0,
+      "cavemen": 0,
+      "fireTokens": 0,
+      "giants": 5,
+      "knights": 0,
+      "name": "Alice",
+      "resources": 0,
+      "towers": 0,
+    },
+    {
+      "buildings": 0,
+      "cavemen": 0,
+      "fireTokens": 0,
+      "giants": 0,
+      "knights": 0,
+      "name": "Bob",
+      "resources": 0,
+      "towers": 0,
+    },
+    {
+      "buildings": 0,
+      "cavemen": 0,
+      "fireTokens": 0,
+      "giants": 1,
+      "knights": 0,
+      "name": "Carol",
+      "resources": 0,
+      "towers": 0,
+    },
+    {
+      "buildings": 0,
+      "cavemen": 0,
+      "fireTokens": 0,
+      "giants": 0,
+      "knights": 0,
+      "name": "Dave",
+      "resources": 0,
+      "towers": 0,
+    },
+  ],
+  "queenHolder": null,
+  "results": [
+    {
+      "maxPropertiesSize": 4,
+      "name": "Carol",
+      "points": 40,
+      "position": 1,
+      "totalCrowns": 11,
+    },
+    {
+      "maxPropertiesSize": 6,
+      "name": "Dave",
+      "points": 33,
+      "position": 2,
+      "totalCrowns": 11,
+    },
+    {
+      "maxPropertiesSize": 4,
+      "name": "Bob",
+      "points": 33,
+      "position": 3,
+      "totalCrowns": 12,
+    },
+    {
+      "maxPropertiesSize": 9,
+      "name": "Alice",
+      "points": 27,
+      "position": 4,
+      "totalCrowns": 4,
+    },
+  ],
+}
+`;
+
+exports[`Score characterization (final results must never change) > AgeOfGiants 5p / seed alpha 1`] = `
+{
+  "extensions": [
+    {
+      "buildings": 0,
+      "cavemen": 0,
+      "fireTokens": 0,
+      "giants": 3,
+      "knights": 0,
+      "name": "Alice",
+      "resources": 0,
+      "towers": 0,
+    },
+    {
+      "buildings": 0,
+      "cavemen": 0,
+      "fireTokens": 0,
+      "giants": 0,
+      "knights": 0,
+      "name": "Bob",
+      "resources": 0,
+      "towers": 0,
+    },
+    {
+      "buildings": 0,
+      "cavemen": 0,
+      "fireTokens": 0,
+      "giants": 3,
+      "knights": 0,
+      "name": "Carol",
+      "resources": 0,
+      "towers": 0,
+    },
+    {
+      "buildings": 0,
+      "cavemen": 0,
+      "fireTokens": 0,
+      "giants": 0,
+      "knights": 0,
+      "name": "Dave",
+      "resources": 0,
+      "towers": 0,
+    },
+    {
+      "buildings": 0,
+      "cavemen": 0,
+      "fireTokens": 0,
+      "giants": 0,
+      "knights": 0,
+      "name": "Erin",
+      "resources": 0,
+      "towers": 0,
+    },
+  ],
+  "queenHolder": null,
+  "results": [
+    {
+      "maxPropertiesSize": 6,
+      "name": "Alice",
+      "points": 51,
+      "position": 1,
+      "totalCrowns": 13,
+    },
+    {
+      "maxPropertiesSize": 7,
+      "name": "Carol",
+      "points": 20,
+      "position": 2,
+      "totalCrowns": 6,
+    },
+    {
+      "maxPropertiesSize": 4,
+      "name": "Dave",
+      "points": 15,
+      "position": 3,
+      "totalCrowns": 8,
+    },
+    {
+      "maxPropertiesSize": 4,
+      "name": "Bob",
+      "points": 14,
+      "position": 4,
+      "totalCrowns": 6,
+    },
+    {
+      "maxPropertiesSize": 5,
+      "name": "Erin",
+      "points": 7,
+      "position": 5,
+      "totalCrowns": 4,
+    },
+  ],
+}
+`;
+
+exports[`Score characterization (final results must never change) > AgeOfGiants 5p / seed bravo 1`] = `
+{
+  "extensions": [
+    {
+      "buildings": 0,
+      "cavemen": 0,
+      "fireTokens": 0,
+      "giants": 2,
+      "knights": 0,
+      "name": "Alice",
+      "resources": 0,
+      "towers": 0,
+    },
+    {
+      "buildings": 0,
+      "cavemen": 0,
+      "fireTokens": 0,
+      "giants": 2,
+      "knights": 0,
+      "name": "Bob",
+      "resources": 0,
+      "towers": 0,
+    },
+    {
+      "buildings": 0,
+      "cavemen": 0,
+      "fireTokens": 0,
+      "giants": 0,
+      "knights": 0,
+      "name": "Carol",
+      "resources": 0,
+      "towers": 0,
+    },
+    {
+      "buildings": 0,
+      "cavemen": 0,
+      "fireTokens": 0,
+      "giants": 1,
+      "knights": 0,
+      "name": "Dave",
+      "resources": 0,
+      "towers": 0,
+    },
+    {
+      "buildings": 0,
+      "cavemen": 0,
+      "fireTokens": 0,
+      "giants": 1,
+      "knights": 0,
+      "name": "Erin",
+      "resources": 0,
+      "towers": 0,
+    },
+  ],
+  "queenHolder": null,
+  "results": [
+    {
+      "maxPropertiesSize": 7,
+      "name": "Alice",
+      "points": 46,
+      "position": 1,
+      "totalCrowns": 8,
+    },
+    {
+      "maxPropertiesSize": 7,
+      "name": "Bob",
+      "points": 31,
+      "position": 2,
+      "totalCrowns": 2,
+    },
+    {
+      "maxPropertiesSize": 6,
+      "name": "Dave",
+      "points": 24,
+      "position": 3,
+      "totalCrowns": 12,
+    },
+    {
+      "maxPropertiesSize": 5,
+      "name": "Erin",
+      "points": 24,
+      "position": 4,
+      "totalCrowns": 12,
+    },
+    {
+      "maxPropertiesSize": 5,
+      "name": "Carol",
+      "points": 21,
+      "position": 5,
+      "totalCrowns": 9,
+    },
+  ],
+}
+`;
+
+exports[`Score characterization (final results must never change) > AgeOfGiants 5p / seed charlie 1`] = `
+{
+  "extensions": [
+    {
+      "buildings": 0,
+      "cavemen": 0,
+      "fireTokens": 0,
+      "giants": 1,
+      "knights": 0,
+      "name": "Alice",
+      "resources": 0,
+      "towers": 0,
+    },
+    {
+      "buildings": 0,
+      "cavemen": 0,
+      "fireTokens": 0,
+      "giants": 3,
+      "knights": 0,
+      "name": "Bob",
+      "resources": 0,
+      "towers": 0,
+    },
+    {
+      "buildings": 0,
+      "cavemen": 0,
+      "fireTokens": 0,
+      "giants": 0,
+      "knights": 0,
+      "name": "Carol",
+      "resources": 0,
+      "towers": 0,
+    },
+    {
+      "buildings": 0,
+      "cavemen": 0,
+      "fireTokens": 0,
+      "giants": 1,
+      "knights": 0,
+      "name": "Dave",
+      "resources": 0,
+      "towers": 0,
+    },
+    {
+      "buildings": 0,
+      "cavemen": 0,
+      "fireTokens": 0,
+      "giants": 1,
+      "knights": 0,
+      "name": "Erin",
+      "resources": 0,
+      "towers": 0,
+    },
+  ],
+  "queenHolder": null,
+  "results": [
+    {
+      "maxPropertiesSize": 5,
+      "name": "Alice",
+      "points": 48,
+      "position": 1,
+      "totalCrowns": 13,
+    },
+    {
+      "maxPropertiesSize": 2,
+      "name": "Dave",
+      "points": 40,
+      "position": 2,
+      "totalCrowns": 9,
+    },
+    {
+      "maxPropertiesSize": 5,
+      "name": "Carol",
+      "points": 34,
+      "position": 3,
+      "totalCrowns": 11,
+    },
+    {
+      "maxPropertiesSize": 4,
+      "name": "Erin",
+      "points": 28,
+      "position": 4,
+      "totalCrowns": 4,
+    },
+    {
+      "maxPropertiesSize": 6,
+      "name": "Bob",
+      "points": 16,
+      "position": 5,
+      "totalCrowns": 4,
+    },
+  ],
+}
+`;
+
+exports[`Score characterization (final results must never change) > AgeOfGiants-QueenDomino 2p / seed alpha 1`] = `
+{
+  "extensions": [
+    {
+      "buildings": 5,
+      "cavemen": 0,
+      "fireTokens": 0,
+      "giants": 1,
+      "knights": 3,
+      "name": "Alice",
+      "resources": 0,
+      "towers": 1,
+    },
+    {
+      "buildings": 2,
+      "cavemen": 0,
+      "fireTokens": 0,
+      "giants": 1,
+      "knights": 3,
+      "name": "Bob",
+      "resources": 0,
+      "towers": 1,
+    },
+  ],
+  "queenHolder": "Bob",
+  "results": [
+    {
+      "maxPropertiesSize": 5,
+      "name": "Alice",
+      "points": 79,
+      "position": 1,
+      "totalCrowns": 17,
+    },
+    {
+      "maxPropertiesSize": 3,
+      "name": "Bob",
+      "points": 24,
+      "position": 2,
+      "totalCrowns": 8,
+    },
+  ],
+}
+`;
+
+exports[`Score characterization (final results must never change) > AgeOfGiants-QueenDomino 2p / seed bravo 1`] = `
+{
+  "extensions": [
+    {
+      "buildings": 4,
+      "cavemen": 0,
+      "fireTokens": 0,
+      "giants": 2,
+      "knights": 3,
+      "name": "Alice",
+      "resources": 0,
+      "towers": 1,
+    },
+    {
+      "buildings": 1,
+      "cavemen": 0,
+      "fireTokens": 0,
+      "giants": 1,
+      "knights": 3,
+      "name": "Bob",
+      "resources": 0,
+      "towers": 1,
+    },
+  ],
+  "queenHolder": "Alice",
+  "results": [
+    {
+      "maxPropertiesSize": 6,
+      "name": "Alice",
+      "points": 63,
+      "position": 1,
+      "totalCrowns": 9,
+    },
+    {
+      "maxPropertiesSize": 5,
+      "name": "Bob",
+      "points": 24,
+      "position": 2,
+      "totalCrowns": 10,
+    },
+  ],
+}
+`;
+
+exports[`Score characterization (final results must never change) > AgeOfGiants-QueenDomino 2p / seed charlie 1`] = `
+{
+  "extensions": [
+    {
+      "buildings": 3,
+      "cavemen": 0,
+      "fireTokens": 0,
+      "giants": 2,
+      "knights": 3,
+      "name": "Alice",
+      "resources": 0,
+      "towers": 2,
+    },
+    {
+      "buildings": 4,
+      "cavemen": 0,
+      "fireTokens": 0,
+      "giants": 3,
+      "knights": 3,
+      "name": "Bob",
+      "resources": 0,
+      "towers": 0,
+    },
+  ],
+  "queenHolder": "Alice",
+  "results": [
+    {
+      "maxPropertiesSize": 8,
+      "name": "Alice",
+      "points": 113,
+      "position": 1,
+      "totalCrowns": 18,
+    },
+    {
+      "maxPropertiesSize": 6,
+      "name": "Bob",
+      "points": 72,
+      "position": 2,
+      "totalCrowns": 15,
+    },
+  ],
+}
+`;
+
+exports[`Score characterization (final results must never change) > AgeOfGiants-QueenDomino 3p / seed alpha 1`] = `
+{
+  "extensions": [
+    {
+      "buildings": 3,
+      "cavemen": 0,
+      "fireTokens": 0,
+      "giants": 1,
+      "knights": 3,
+      "name": "Alice",
+      "resources": 0,
+      "towers": 0,
+    },
+    {
+      "buildings": 1,
+      "cavemen": 0,
+      "fireTokens": 0,
+      "giants": 4,
+      "knights": 3,
+      "name": "Bob",
+      "resources": 0,
+      "towers": 0,
+    },
+    {
+      "buildings": 4,
+      "cavemen": 0,
+      "fireTokens": 0,
+      "giants": 1,
+      "knights": 3,
+      "name": "Carol",
+      "resources": 0,
+      "towers": 1,
+    },
+  ],
+  "queenHolder": "Carol",
+  "results": [
+    {
+      "maxPropertiesSize": 4,
+      "name": "Alice",
+      "points": 93,
+      "position": 1,
+      "totalCrowns": 20,
+    },
+    {
+      "maxPropertiesSize": 5,
+      "name": "Carol",
+      "points": 40,
+      "position": 2,
+      "totalCrowns": 14,
+    },
+    {
+      "maxPropertiesSize": 5,
+      "name": "Bob",
+      "points": 23,
+      "position": 3,
+      "totalCrowns": 6,
+    },
+  ],
+}
+`;
+
+exports[`Score characterization (final results must never change) > AgeOfGiants-QueenDomino 3p / seed bravo 1`] = `
+{
+  "extensions": [
+    {
+      "buildings": 2,
+      "cavemen": 0,
+      "fireTokens": 0,
+      "giants": 1,
+      "knights": 3,
+      "name": "Alice",
+      "resources": 0,
+      "towers": 1,
+    },
+    {
+      "buildings": 3,
+      "cavemen": 0,
+      "fireTokens": 0,
+      "giants": 3,
+      "knights": 3,
+      "name": "Bob",
+      "resources": 0,
+      "towers": 0,
+    },
+    {
+      "buildings": 4,
+      "cavemen": 0,
+      "fireTokens": 0,
+      "giants": 2,
+      "knights": 3,
+      "name": "Carol",
+      "resources": 0,
+      "towers": 2,
+    },
+  ],
+  "queenHolder": "Carol",
+  "results": [
+    {
+      "maxPropertiesSize": 5,
+      "name": "Alice",
+      "points": 79,
+      "position": 1,
+      "totalCrowns": 22,
+    },
+    {
+      "maxPropertiesSize": 3,
+      "name": "Carol",
+      "points": 63,
+      "position": 2,
+      "totalCrowns": 17,
+    },
+    {
+      "maxPropertiesSize": 4,
+      "name": "Bob",
+      "points": 43,
+      "position": 3,
+      "totalCrowns": 3,
+    },
+  ],
+}
+`;
+
+exports[`Score characterization (final results must never change) > AgeOfGiants-QueenDomino 3p / seed charlie 1`] = `
+{
+  "extensions": [
+    {
+      "buildings": 3,
+      "cavemen": 0,
+      "fireTokens": 0,
+      "giants": 3,
+      "knights": 3,
+      "name": "Alice",
+      "resources": 0,
+      "towers": 1,
+    },
+    {
+      "buildings": 5,
+      "cavemen": 0,
+      "fireTokens": 0,
+      "giants": 0,
+      "knights": 3,
+      "name": "Bob",
+      "resources": 0,
+      "towers": 2,
+    },
+    {
+      "buildings": 2,
+      "cavemen": 0,
+      "fireTokens": 0,
+      "giants": 1,
+      "knights": 3,
+      "name": "Carol",
+      "resources": 0,
+      "towers": 0,
+    },
+  ],
+  "queenHolder": "Bob",
+  "results": [
+    {
+      "maxPropertiesSize": 7,
+      "name": "Bob",
+      "points": 94,
+      "position": 1,
+      "totalCrowns": 13,
+    },
+    {
+      "maxPropertiesSize": 7,
+      "name": "Alice",
+      "points": 81,
+      "position": 2,
+      "totalCrowns": 14,
+    },
+    {
+      "maxPropertiesSize": 3,
+      "name": "Carol",
+      "points": 32,
+      "position": 3,
+      "totalCrowns": 8,
+    },
+  ],
+}
+`;
+
+exports[`Score characterization (final results must never change) > AgeOfGiants-QueenDomino 4p / seed alpha 1`] = `
+{
+  "extensions": [
+    {
+      "buildings": 4,
+      "cavemen": 0,
+      "fireTokens": 0,
+      "giants": 2,
+      "knights": 3,
+      "name": "Alice",
+      "resources": 0,
+      "towers": 0,
+    },
+    {
+      "buildings": 2,
+      "cavemen": 0,
+      "fireTokens": 0,
+      "giants": 3,
+      "knights": 3,
+      "name": "Bob",
+      "resources": 0,
+      "towers": 1,
+    },
+    {
+      "buildings": 6,
+      "cavemen": 0,
+      "fireTokens": 0,
+      "giants": 1,
+      "knights": 3,
+      "name": "Carol",
+      "resources": 0,
+      "towers": 3,
+    },
+    {
+      "buildings": 2,
+      "cavemen": 0,
+      "fireTokens": 0,
+      "giants": 0,
+      "knights": 3,
+      "name": "Dave",
+      "resources": 0,
+      "towers": 1,
+    },
+  ],
+  "queenHolder": "Carol",
+  "results": [
+    {
+      "maxPropertiesSize": 5,
+      "name": "Alice",
+      "points": 115,
+      "position": 1,
+      "totalCrowns": 23,
+    },
+    {
+      "maxPropertiesSize": 6,
+      "name": "Carol",
+      "points": 72,
+      "position": 2,
+      "totalCrowns": 10,
+    },
+    {
+      "maxPropertiesSize": 6,
+      "name": "Dave",
+      "points": 19,
+      "position": 3,
+      "totalCrowns": 10,
+    },
+    {
+      "maxPropertiesSize": 5,
+      "name": "Bob",
+      "points": 12,
+      "position": 4,
+      "totalCrowns": 4,
+    },
+  ],
+}
+`;
+
+exports[`Score characterization (final results must never change) > AgeOfGiants-QueenDomino 4p / seed bravo 1`] = `
+{
+  "extensions": [
+    {
+      "buildings": 3,
+      "cavemen": 0,
+      "fireTokens": 0,
+      "giants": 2,
+      "knights": 3,
+      "name": "Alice",
+      "resources": 0,
+      "towers": 1,
+    },
+    {
+      "buildings": 2,
+      "cavemen": 0,
+      "fireTokens": 0,
+      "giants": 0,
+      "knights": 3,
+      "name": "Bob",
+      "resources": 0,
+      "towers": 2,
+    },
+    {
+      "buildings": 3,
+      "cavemen": 0,
+      "fireTokens": 0,
+      "giants": 2,
+      "knights": 3,
+      "name": "Carol",
+      "resources": 0,
+      "towers": 1,
+    },
+    {
+      "buildings": 5,
+      "cavemen": 0,
+      "fireTokens": 0,
+      "giants": 2,
+      "knights": 3,
+      "name": "Dave",
+      "resources": 0,
+      "towers": 1,
+    },
+  ],
+  "queenHolder": "Bob",
+  "results": [
+    {
+      "maxPropertiesSize": 6,
+      "name": "Alice",
+      "points": 82,
+      "position": 1,
+      "totalCrowns": 23,
+    },
+    {
+      "maxPropertiesSize": 5,
+      "name": "Bob",
+      "points": 58,
+      "position": 2,
+      "totalCrowns": 15,
+    },
+    {
+      "maxPropertiesSize": 6,
+      "name": "Carol",
+      "points": 48,
+      "position": 3,
+      "totalCrowns": 9,
+    },
+    {
+      "maxPropertiesSize": 5,
+      "name": "Dave",
+      "points": 36,
+      "position": 4,
+      "totalCrowns": 7,
+    },
+  ],
+}
+`;
+
+exports[`Score characterization (final results must never change) > AgeOfGiants-QueenDomino 4p / seed charlie 1`] = `
+{
+  "extensions": [
+    {
+      "buildings": 1,
+      "cavemen": 0,
+      "fireTokens": 0,
+      "giants": 2,
+      "knights": 3,
+      "name": "Alice",
+      "resources": 0,
+      "towers": 0,
+    },
+    {
+      "buildings": 5,
+      "cavemen": 0,
+      "fireTokens": 0,
+      "giants": 1,
+      "knights": 3,
+      "name": "Bob",
+      "resources": 0,
+      "towers": 3,
+    },
+    {
+      "buildings": 2,
+      "cavemen": 0,
+      "fireTokens": 0,
+      "giants": 1,
+      "knights": 3,
+      "name": "Carol",
+      "resources": 0,
+      "towers": 0,
+    },
+    {
+      "buildings": 3,
+      "cavemen": 0,
+      "fireTokens": 0,
+      "giants": 2,
+      "knights": 3,
+      "name": "Dave",
+      "resources": 0,
+      "towers": 0,
+    },
+  ],
+  "queenHolder": "Bob",
+  "results": [
+    {
+      "maxPropertiesSize": 3,
+      "name": "Carol",
+      "points": 72,
+      "position": 1,
+      "totalCrowns": 12,
+    },
+    {
+      "maxPropertiesSize": 5,
+      "name": "Alice",
+      "points": 71,
+      "position": 2,
+      "totalCrowns": 23,
+    },
+    {
+      "maxPropertiesSize": 4,
+      "name": "Bob",
+      "points": 59,
+      "position": 3,
+      "totalCrowns": 14,
+    },
+    {
+      "maxPropertiesSize": 6,
+      "name": "Dave",
+      "points": 54,
+      "position": 4,
+      "totalCrowns": 11,
+    },
+  ],
+}
+`;
+
+exports[`Score characterization (final results must never change) > Classic 1p / seed alpha 1`] = `
+{
+  "extensions": [
+    {
+      "buildings": 0,
+      "cavemen": 0,
+      "fireTokens": 0,
+      "giants": 0,
+      "knights": 0,
+      "name": "Alice",
+      "resources": 0,
+      "towers": 0,
+    },
+  ],
+  "queenHolder": null,
+  "results": [
+    {
+      "maxPropertiesSize": 9,
+      "name": "Alice",
+      "points": 69,
+      "position": 1,
+      "totalCrowns": 15,
+    },
+  ],
+}
+`;
+
+exports[`Score characterization (final results must never change) > Classic 1p / seed bravo 1`] = `
+{
+  "extensions": [
+    {
+      "buildings": 0,
+      "cavemen": 0,
+      "fireTokens": 0,
+      "giants": 0,
+      "knights": 0,
+      "name": "Alice",
+      "resources": 0,
+      "towers": 0,
+    },
+  ],
+  "queenHolder": null,
+  "results": [
+    {
+      "maxPropertiesSize": 7,
+      "name": "Alice",
+      "points": 60,
+      "position": 1,
+      "totalCrowns": 13,
+    },
+  ],
+}
+`;
+
+exports[`Score characterization (final results must never change) > Classic 1p / seed charlie 1`] = `
+{
+  "extensions": [
+    {
+      "buildings": 0,
+      "cavemen": 0,
+      "fireTokens": 0,
+      "giants": 0,
+      "knights": 0,
+      "name": "Alice",
+      "resources": 0,
+      "towers": 0,
+    },
+  ],
+  "queenHolder": null,
+  "results": [
+    {
+      "maxPropertiesSize": 11,
+      "name": "Alice",
+      "points": 83,
+      "position": 1,
+      "totalCrowns": 15,
+    },
+  ],
+}
+`;
+
+exports[`Score characterization (final results must never change) > Classic 2p / seed alpha 1`] = `
+{
+  "extensions": [
+    {
+      "buildings": 0,
+      "cavemen": 0,
+      "fireTokens": 0,
+      "giants": 0,
+      "knights": 0,
+      "name": "Alice",
+      "resources": 0,
+      "towers": 0,
+    },
+    {
+      "buildings": 0,
+      "cavemen": 0,
+      "fireTokens": 0,
+      "giants": 0,
+      "knights": 0,
+      "name": "Bob",
+      "resources": 0,
+      "towers": 0,
+    },
+  ],
+  "queenHolder": null,
+  "results": [
+    {
+      "maxPropertiesSize": 6,
+      "name": "Alice",
+      "points": 34,
+      "position": 1,
+      "totalCrowns": 14,
+    },
+    {
+      "maxPropertiesSize": 4,
+      "name": "Bob",
+      "points": 13,
+      "position": 2,
+      "totalCrowns": 8,
+    },
+  ],
+}
+`;
+
+exports[`Score characterization (final results must never change) > Classic 2p / seed bravo 1`] = `
+{
+  "extensions": [
+    {
+      "buildings": 0,
+      "cavemen": 0,
+      "fireTokens": 0,
+      "giants": 0,
+      "knights": 0,
+      "name": "Alice",
+      "resources": 0,
+      "towers": 0,
+    },
+    {
+      "buildings": 0,
+      "cavemen": 0,
+      "fireTokens": 0,
+      "giants": 0,
+      "knights": 0,
+      "name": "Bob",
+      "resources": 0,
+      "towers": 0,
+    },
+  ],
+  "queenHolder": null,
+  "results": [
+    {
+      "maxPropertiesSize": 6,
+      "name": "Alice",
+      "points": 26,
+      "position": 1,
+      "totalCrowns": 11,
+    },
+    {
+      "maxPropertiesSize": 4,
+      "name": "Bob",
+      "points": 16,
+      "position": 2,
+      "totalCrowns": 7,
+    },
+  ],
+}
+`;
+
+exports[`Score characterization (final results must never change) > Classic 2p / seed charlie 1`] = `
+{
+  "extensions": [
+    {
+      "buildings": 0,
+      "cavemen": 0,
+      "fireTokens": 0,
+      "giants": 0,
+      "knights": 0,
+      "name": "Alice",
+      "resources": 0,
+      "towers": 0,
+    },
+    {
+      "buildings": 0,
+      "cavemen": 0,
+      "fireTokens": 0,
+      "giants": 0,
+      "knights": 0,
+      "name": "Bob",
+      "resources": 0,
+      "towers": 0,
+    },
+  ],
+  "queenHolder": null,
+  "results": [
+    {
+      "maxPropertiesSize": 5,
+      "name": "Alice",
+      "points": 39,
+      "position": 1,
+      "totalCrowns": 12,
+    },
+    {
+      "maxPropertiesSize": 6,
+      "name": "Bob",
+      "points": 12,
+      "position": 2,
+      "totalCrowns": 7,
+    },
+  ],
+}
+`;
+
+exports[`Score characterization (final results must never change) > Classic 2p [The Mighty Duel, The middle Kingdom, Harmony] / seed alpha 1`] = `
+{
+  "extensions": [
+    {
+      "buildings": 0,
+      "cavemen": 0,
+      "fireTokens": 0,
+      "giants": 0,
+      "knights": 0,
+      "name": "Alice",
+      "resources": 0,
+      "towers": 0,
+    },
+    {
+      "buildings": 0,
+      "cavemen": 0,
+      "fireTokens": 0,
+      "giants": 0,
+      "knights": 0,
+      "name": "Bob",
+      "resources": 0,
+      "towers": 0,
+    },
+  ],
+  "queenHolder": null,
+  "results": [
+    {
+      "maxPropertiesSize": 6,
+      "name": "Alice",
+      "points": 72,
+      "position": 1,
+      "totalCrowns": 23,
+    },
+    {
+      "maxPropertiesSize": 8,
+      "name": "Bob",
+      "points": 32,
+      "position": 2,
+      "totalCrowns": 13,
+    },
+  ],
+}
+`;
+
+exports[`Score characterization (final results must never change) > Classic 2p [The Mighty Duel, The middle Kingdom, Harmony] / seed bravo 1`] = `
+{
+  "extensions": [
+    {
+      "buildings": 0,
+      "cavemen": 0,
+      "fireTokens": 0,
+      "giants": 0,
+      "knights": 0,
+      "name": "Alice",
+      "resources": 0,
+      "towers": 0,
+    },
+    {
+      "buildings": 0,
+      "cavemen": 0,
+      "fireTokens": 0,
+      "giants": 0,
+      "knights": 0,
+      "name": "Bob",
+      "resources": 0,
+      "towers": 0,
+    },
+  ],
+  "queenHolder": null,
+  "results": [
+    {
+      "maxPropertiesSize": 15,
+      "name": "Alice",
+      "points": 110,
+      "position": 1,
+      "totalCrowns": 22,
+    },
+    {
+      "maxPropertiesSize": 10,
+      "name": "Bob",
+      "points": 38,
+      "position": 2,
+      "totalCrowns": 15,
+    },
+  ],
+}
+`;
+
+exports[`Score characterization (final results must never change) > Classic 2p [The Mighty Duel, The middle Kingdom, Harmony] / seed charlie 1`] = `
+{
+  "extensions": [
+    {
+      "buildings": 0,
+      "cavemen": 0,
+      "fireTokens": 0,
+      "giants": 0,
+      "knights": 0,
+      "name": "Alice",
+      "resources": 0,
+      "towers": 0,
+    },
+    {
+      "buildings": 0,
+      "cavemen": 0,
+      "fireTokens": 0,
+      "giants": 0,
+      "knights": 0,
+      "name": "Bob",
+      "resources": 0,
+      "towers": 0,
+    },
+  ],
+  "queenHolder": null,
+  "results": [
+    {
+      "maxPropertiesSize": 8,
+      "name": "Alice",
+      "points": 117,
+      "position": 1,
+      "totalCrowns": 25,
+    },
+    {
+      "maxPropertiesSize": 9,
+      "name": "Bob",
+      "points": 50,
+      "position": 2,
+      "totalCrowns": 13,
+    },
+  ],
+}
+`;
+
+exports[`Score characterization (final results must never change) > Classic 2p [The middle Kingdom] / seed alpha 1`] = `
+{
+  "extensions": [
+    {
+      "buildings": 0,
+      "cavemen": 0,
+      "fireTokens": 0,
+      "giants": 0,
+      "knights": 0,
+      "name": "Alice",
+      "resources": 0,
+      "towers": 0,
+    },
+    {
+      "buildings": 0,
+      "cavemen": 0,
+      "fireTokens": 0,
+      "giants": 0,
+      "knights": 0,
+      "name": "Bob",
+      "resources": 0,
+      "towers": 0,
+    },
+  ],
+  "queenHolder": null,
+  "results": [
+    {
+      "maxPropertiesSize": 5,
+      "name": "Alice",
+      "points": 32,
+      "position": 1,
+      "totalCrowns": 10,
+    },
+    {
+      "maxPropertiesSize": 6,
+      "name": "Bob",
+      "points": 27,
+      "position": 2,
+      "totalCrowns": 11,
+    },
+  ],
+}
+`;
+
+exports[`Score characterization (final results must never change) > Classic 2p [The middle Kingdom] / seed bravo 1`] = `
+{
+  "extensions": [
+    {
+      "buildings": 0,
+      "cavemen": 0,
+      "fireTokens": 0,
+      "giants": 0,
+      "knights": 0,
+      "name": "Alice",
+      "resources": 0,
+      "towers": 0,
+    },
+    {
+      "buildings": 0,
+      "cavemen": 0,
+      "fireTokens": 0,
+      "giants": 0,
+      "knights": 0,
+      "name": "Bob",
+      "resources": 0,
+      "towers": 0,
+    },
+  ],
+  "queenHolder": null,
+  "results": [
+    {
+      "maxPropertiesSize": 6,
+      "name": "Alice",
+      "points": 22,
+      "position": 1,
+      "totalCrowns": 9,
+    },
+    {
+      "maxPropertiesSize": 4,
+      "name": "Bob",
+      "points": 11,
+      "position": 2,
+      "totalCrowns": 9,
+    },
+  ],
+}
+`;
+
+exports[`Score characterization (final results must never change) > Classic 2p [The middle Kingdom] / seed charlie 1`] = `
+{
+  "extensions": [
+    {
+      "buildings": 0,
+      "cavemen": 0,
+      "fireTokens": 0,
+      "giants": 0,
+      "knights": 0,
+      "name": "Alice",
+      "resources": 0,
+      "towers": 0,
+    },
+    {
+      "buildings": 0,
+      "cavemen": 0,
+      "fireTokens": 0,
+      "giants": 0,
+      "knights": 0,
+      "name": "Bob",
+      "resources": 0,
+      "towers": 0,
+    },
+  ],
+  "queenHolder": null,
+  "results": [
+    {
+      "maxPropertiesSize": 5,
+      "name": "Alice",
+      "points": 50,
+      "position": 1,
+      "totalCrowns": 14,
+    },
+    {
+      "maxPropertiesSize": 7,
+      "name": "Bob",
+      "points": 22,
+      "position": 2,
+      "totalCrowns": 6,
+    },
+  ],
+}
+`;
+
+exports[`Score characterization (final results must never change) > Classic 3p / seed alpha 1`] = `
+{
+  "extensions": [
+    {
+      "buildings": 0,
+      "cavemen": 0,
+      "fireTokens": 0,
+      "giants": 0,
+      "knights": 0,
+      "name": "Alice",
+      "resources": 0,
+      "towers": 0,
+    },
+    {
+      "buildings": 0,
+      "cavemen": 0,
+      "fireTokens": 0,
+      "giants": 0,
+      "knights": 0,
+      "name": "Bob",
+      "resources": 0,
+      "towers": 0,
+    },
+    {
+      "buildings": 0,
+      "cavemen": 0,
+      "fireTokens": 0,
+      "giants": 0,
+      "knights": 0,
+      "name": "Carol",
+      "resources": 0,
+      "towers": 0,
+    },
+  ],
+  "queenHolder": null,
+  "results": [
+    {
+      "maxPropertiesSize": 9,
+      "name": "Alice",
+      "points": 56,
+      "position": 1,
+      "totalCrowns": 12,
+    },
+    {
+      "maxPropertiesSize": 4,
+      "name": "Bob",
+      "points": 19,
+      "position": 2,
+      "totalCrowns": 9,
+    },
+    {
+      "maxPropertiesSize": 4,
+      "name": "Carol",
+      "points": 18,
+      "position": 3,
+      "totalCrowns": 7,
+    },
+  ],
+}
+`;
+
+exports[`Score characterization (final results must never change) > Classic 3p / seed bravo 1`] = `
+{
+  "extensions": [
+    {
+      "buildings": 0,
+      "cavemen": 0,
+      "fireTokens": 0,
+      "giants": 0,
+      "knights": 0,
+      "name": "Alice",
+      "resources": 0,
+      "towers": 0,
+    },
+    {
+      "buildings": 0,
+      "cavemen": 0,
+      "fireTokens": 0,
+      "giants": 0,
+      "knights": 0,
+      "name": "Bob",
+      "resources": 0,
+      "towers": 0,
+    },
+    {
+      "buildings": 0,
+      "cavemen": 0,
+      "fireTokens": 0,
+      "giants": 0,
+      "knights": 0,
+      "name": "Carol",
+      "resources": 0,
+      "towers": 0,
+    },
+  ],
+  "queenHolder": null,
+  "results": [
+    {
+      "maxPropertiesSize": 7,
+      "name": "Alice",
+      "points": 51,
+      "position": 1,
+      "totalCrowns": 11,
+    },
+    {
+      "maxPropertiesSize": 4,
+      "name": "Carol",
+      "points": 17,
+      "position": 2,
+      "totalCrowns": 8,
+    },
+    {
+      "maxPropertiesSize": 7,
+      "name": "Bob",
+      "points": 13,
+      "position": 3,
+      "totalCrowns": 6,
+    },
+  ],
+}
+`;
+
+exports[`Score characterization (final results must never change) > Classic 3p / seed charlie 1`] = `
+{
+  "extensions": [
+    {
+      "buildings": 0,
+      "cavemen": 0,
+      "fireTokens": 0,
+      "giants": 0,
+      "knights": 0,
+      "name": "Alice",
+      "resources": 0,
+      "towers": 0,
+    },
+    {
+      "buildings": 0,
+      "cavemen": 0,
+      "fireTokens": 0,
+      "giants": 0,
+      "knights": 0,
+      "name": "Bob",
+      "resources": 0,
+      "towers": 0,
+    },
+    {
+      "buildings": 0,
+      "cavemen": 0,
+      "fireTokens": 0,
+      "giants": 0,
+      "knights": 0,
+      "name": "Carol",
+      "resources": 0,
+      "towers": 0,
+    },
+  ],
+  "queenHolder": null,
+  "results": [
+    {
+      "maxPropertiesSize": 10,
+      "name": "Alice",
+      "points": 70,
+      "position": 1,
+      "totalCrowns": 12,
+    },
+    {
+      "maxPropertiesSize": 5,
+      "name": "Bob",
+      "points": 18,
+      "position": 2,
+      "totalCrowns": 8,
+    },
+    {
+      "maxPropertiesSize": 5,
+      "name": "Carol",
+      "points": 16,
+      "position": 3,
+      "totalCrowns": 7,
+    },
+  ],
+}
+`;
+
+exports[`Score characterization (final results must never change) > Classic 3p [Harmony] / seed alpha 1`] = `
+{
+  "extensions": [
+    {
+      "buildings": 0,
+      "cavemen": 0,
+      "fireTokens": 0,
+      "giants": 0,
+      "knights": 0,
+      "name": "Alice",
+      "resources": 0,
+      "towers": 0,
+    },
+    {
+      "buildings": 0,
+      "cavemen": 0,
+      "fireTokens": 0,
+      "giants": 0,
+      "knights": 0,
+      "name": "Bob",
+      "resources": 0,
+      "towers": 0,
+    },
+    {
+      "buildings": 0,
+      "cavemen": 0,
+      "fireTokens": 0,
+      "giants": 0,
+      "knights": 0,
+      "name": "Carol",
+      "resources": 0,
+      "towers": 0,
+    },
+  ],
+  "queenHolder": null,
+  "results": [
+    {
+      "maxPropertiesSize": 5,
+      "name": "Alice",
+      "points": 67,
+      "position": 1,
+      "totalCrowns": 17,
+    },
+    {
+      "maxPropertiesSize": 5,
+      "name": "Bob",
+      "points": 26,
+      "position": 2,
+      "totalCrowns": 10,
+    },
+    {
+      "maxPropertiesSize": 7,
+      "name": "Carol",
+      "points": 17,
+      "position": 3,
+      "totalCrowns": 9,
+    },
+  ],
+}
+`;
+
+exports[`Score characterization (final results must never change) > Classic 3p [Harmony] / seed bravo 1`] = `
+{
+  "extensions": [
+    {
+      "buildings": 0,
+      "cavemen": 0,
+      "fireTokens": 0,
+      "giants": 0,
+      "knights": 0,
+      "name": "Alice",
+      "resources": 0,
+      "towers": 0,
+    },
+    {
+      "buildings": 0,
+      "cavemen": 0,
+      "fireTokens": 0,
+      "giants": 0,
+      "knights": 0,
+      "name": "Bob",
+      "resources": 0,
+      "towers": 0,
+    },
+    {
+      "buildings": 0,
+      "cavemen": 0,
+      "fireTokens": 0,
+      "giants": 0,
+      "knights": 0,
+      "name": "Carol",
+      "resources": 0,
+      "towers": 0,
+    },
+  ],
+  "queenHolder": null,
+  "results": [
+    {
+      "maxPropertiesSize": 7,
+      "name": "Alice",
+      "points": 57,
+      "position": 1,
+      "totalCrowns": 12,
+    },
+    {
+      "maxPropertiesSize": 5,
+      "name": "Bob",
+      "points": 23,
+      "position": 2,
+      "totalCrowns": 11,
+    },
+    {
+      "maxPropertiesSize": 6,
+      "name": "Carol",
+      "points": 8,
+      "position": 3,
+      "totalCrowns": 2,
+    },
+  ],
+}
+`;
+
+exports[`Score characterization (final results must never change) > Classic 3p [Harmony] / seed charlie 1`] = `
+{
+  "extensions": [
+    {
+      "buildings": 0,
+      "cavemen": 0,
+      "fireTokens": 0,
+      "giants": 0,
+      "knights": 0,
+      "name": "Alice",
+      "resources": 0,
+      "towers": 0,
+    },
+    {
+      "buildings": 0,
+      "cavemen": 0,
+      "fireTokens": 0,
+      "giants": 0,
+      "knights": 0,
+      "name": "Bob",
+      "resources": 0,
+      "towers": 0,
+    },
+    {
+      "buildings": 0,
+      "cavemen": 0,
+      "fireTokens": 0,
+      "giants": 0,
+      "knights": 0,
+      "name": "Carol",
+      "resources": 0,
+      "towers": 0,
+    },
+  ],
+  "queenHolder": null,
+  "results": [
+    {
+      "maxPropertiesSize": 11,
+      "name": "Alice",
+      "points": 85,
+      "position": 1,
+      "totalCrowns": 12,
+    },
+    {
+      "maxPropertiesSize": 6,
+      "name": "Carol",
+      "points": 30,
+      "position": 2,
+      "totalCrowns": 8,
+    },
+    {
+      "maxPropertiesSize": 4,
+      "name": "Bob",
+      "points": 18,
+      "position": 3,
+      "totalCrowns": 9,
+    },
+  ],
+}
+`;
+
+exports[`Score characterization (final results must never change) > Classic 4p / seed alpha 1`] = `
+{
+  "extensions": [
+    {
+      "buildings": 0,
+      "cavemen": 0,
+      "fireTokens": 0,
+      "giants": 0,
+      "knights": 0,
+      "name": "Alice",
+      "resources": 0,
+      "towers": 0,
+    },
+    {
+      "buildings": 0,
+      "cavemen": 0,
+      "fireTokens": 0,
+      "giants": 0,
+      "knights": 0,
+      "name": "Bob",
+      "resources": 0,
+      "towers": 0,
+    },
+    {
+      "buildings": 0,
+      "cavemen": 0,
+      "fireTokens": 0,
+      "giants": 0,
+      "knights": 0,
+      "name": "Carol",
+      "resources": 0,
+      "towers": 0,
+    },
+    {
+      "buildings": 0,
+      "cavemen": 0,
+      "fireTokens": 0,
+      "giants": 0,
+      "knights": 0,
+      "name": "Dave",
+      "resources": 0,
+      "towers": 0,
+    },
+  ],
+  "queenHolder": null,
+  "results": [
+    {
+      "maxPropertiesSize": 6,
+      "name": "Alice",
+      "points": 43,
+      "position": 1,
+      "totalCrowns": 14,
+    },
+    {
+      "maxPropertiesSize": 5,
+      "name": "Dave",
+      "points": 17,
+      "position": 2,
+      "totalCrowns": 8,
+    },
+    {
+      "maxPropertiesSize": 5,
+      "name": "Carol",
+      "points": 11,
+      "position": 3,
+      "totalCrowns": 4,
+    },
+    {
+      "maxPropertiesSize": 7,
+      "name": "Bob",
+      "points": 10,
+      "position": 4,
+      "totalCrowns": 8,
+    },
+  ],
+}
+`;
+
+exports[`Score characterization (final results must never change) > Classic 4p / seed bravo 1`] = `
+{
+  "extensions": [
+    {
+      "buildings": 0,
+      "cavemen": 0,
+      "fireTokens": 0,
+      "giants": 0,
+      "knights": 0,
+      "name": "Alice",
+      "resources": 0,
+      "towers": 0,
+    },
+    {
+      "buildings": 0,
+      "cavemen": 0,
+      "fireTokens": 0,
+      "giants": 0,
+      "knights": 0,
+      "name": "Bob",
+      "resources": 0,
+      "towers": 0,
+    },
+    {
+      "buildings": 0,
+      "cavemen": 0,
+      "fireTokens": 0,
+      "giants": 0,
+      "knights": 0,
+      "name": "Carol",
+      "resources": 0,
+      "towers": 0,
+    },
+    {
+      "buildings": 0,
+      "cavemen": 0,
+      "fireTokens": 0,
+      "giants": 0,
+      "knights": 0,
+      "name": "Dave",
+      "resources": 0,
+      "towers": 0,
+    },
+  ],
+  "queenHolder": null,
+  "results": [
+    {
+      "maxPropertiesSize": 7,
+      "name": "Alice",
+      "points": 55,
+      "position": 1,
+      "totalCrowns": 11,
+    },
+    {
+      "maxPropertiesSize": 5,
+      "name": "Bob",
+      "points": 15,
+      "position": 2,
+      "totalCrowns": 8,
+    },
+    {
+      "maxPropertiesSize": 5,
+      "name": "Dave",
+      "points": 15,
+      "position": 2,
+      "totalCrowns": 9,
+    },
+    {
+      "maxPropertiesSize": 5,
+      "name": "Carol",
+      "points": 14,
+      "position": 4,
+      "totalCrowns": 8,
+    },
+  ],
+}
+`;
+
+exports[`Score characterization (final results must never change) > Classic 4p / seed charlie 1`] = `
+{
+  "extensions": [
+    {
+      "buildings": 0,
+      "cavemen": 0,
+      "fireTokens": 0,
+      "giants": 0,
+      "knights": 0,
+      "name": "Alice",
+      "resources": 0,
+      "towers": 0,
+    },
+    {
+      "buildings": 0,
+      "cavemen": 0,
+      "fireTokens": 0,
+      "giants": 0,
+      "knights": 0,
+      "name": "Bob",
+      "resources": 0,
+      "towers": 0,
+    },
+    {
+      "buildings": 0,
+      "cavemen": 0,
+      "fireTokens": 0,
+      "giants": 0,
+      "knights": 0,
+      "name": "Carol",
+      "resources": 0,
+      "towers": 0,
+    },
+    {
+      "buildings": 0,
+      "cavemen": 0,
+      "fireTokens": 0,
+      "giants": 0,
+      "knights": 0,
+      "name": "Dave",
+      "resources": 0,
+      "towers": 0,
+    },
+  ],
+  "queenHolder": null,
+  "results": [
+    {
+      "maxPropertiesSize": 6,
+      "name": "Alice",
+      "points": 47,
+      "position": 1,
+      "totalCrowns": 14,
+    },
+    {
+      "maxPropertiesSize": 4,
+      "name": "Carol",
+      "points": 16,
+      "position": 2,
+      "totalCrowns": 7,
+    },
+    {
+      "maxPropertiesSize": 6,
+      "name": "Bob",
+      "points": 15,
+      "position": 3,
+      "totalCrowns": 5,
+    },
+    {
+      "maxPropertiesSize": 3,
+      "name": "Dave",
+      "points": 12,
+      "position": 4,
+      "totalCrowns": 8,
+    },
+  ],
+}
+`;
+
+exports[`Score characterization (final results must never change) > Classic 4p [The middle Kingdom, Harmony] / seed alpha 1`] = `
+{
+  "extensions": [
+    {
+      "buildings": 0,
+      "cavemen": 0,
+      "fireTokens": 0,
+      "giants": 0,
+      "knights": 0,
+      "name": "Alice",
+      "resources": 0,
+      "towers": 0,
+    },
+    {
+      "buildings": 0,
+      "cavemen": 0,
+      "fireTokens": 0,
+      "giants": 0,
+      "knights": 0,
+      "name": "Bob",
+      "resources": 0,
+      "towers": 0,
+    },
+    {
+      "buildings": 0,
+      "cavemen": 0,
+      "fireTokens": 0,
+      "giants": 0,
+      "knights": 0,
+      "name": "Carol",
+      "resources": 0,
+      "towers": 0,
+    },
+    {
+      "buildings": 0,
+      "cavemen": 0,
+      "fireTokens": 0,
+      "giants": 0,
+      "knights": 0,
+      "name": "Dave",
+      "resources": 0,
+      "towers": 0,
+    },
+  ],
+  "queenHolder": null,
+  "results": [
+    {
+      "maxPropertiesSize": 8,
+      "name": "Alice",
+      "points": 41,
+      "position": 1,
+      "totalCrowns": 11,
+    },
+    {
+      "maxPropertiesSize": 10,
+      "name": "Carol",
+      "points": 36,
+      "position": 2,
+      "totalCrowns": 8,
+    },
+    {
+      "maxPropertiesSize": 4,
+      "name": "Dave",
+      "points": 21,
+      "position": 3,
+      "totalCrowns": 7,
+    },
+    {
+      "maxPropertiesSize": 6,
+      "name": "Bob",
+      "points": 19,
+      "position": 4,
+      "totalCrowns": 10,
+    },
+  ],
+}
+`;
+
+exports[`Score characterization (final results must never change) > Classic 4p [The middle Kingdom, Harmony] / seed bravo 1`] = `
+{
+  "extensions": [
+    {
+      "buildings": 0,
+      "cavemen": 0,
+      "fireTokens": 0,
+      "giants": 0,
+      "knights": 0,
+      "name": "Alice",
+      "resources": 0,
+      "towers": 0,
+    },
+    {
+      "buildings": 0,
+      "cavemen": 0,
+      "fireTokens": 0,
+      "giants": 0,
+      "knights": 0,
+      "name": "Bob",
+      "resources": 0,
+      "towers": 0,
+    },
+    {
+      "buildings": 0,
+      "cavemen": 0,
+      "fireTokens": 0,
+      "giants": 0,
+      "knights": 0,
+      "name": "Carol",
+      "resources": 0,
+      "towers": 0,
+    },
+    {
+      "buildings": 0,
+      "cavemen": 0,
+      "fireTokens": 0,
+      "giants": 0,
+      "knights": 0,
+      "name": "Dave",
+      "resources": 0,
+      "towers": 0,
+    },
+  ],
+  "queenHolder": null,
+  "results": [
+    {
+      "maxPropertiesSize": 6,
+      "name": "Alice",
+      "points": 47,
+      "position": 1,
+      "totalCrowns": 9,
+    },
+    {
+      "maxPropertiesSize": 7,
+      "name": "Dave",
+      "points": 38,
+      "position": 2,
+      "totalCrowns": 9,
+    },
+    {
+      "maxPropertiesSize": 6,
+      "name": "Bob",
+      "points": 23,
+      "position": 3,
+      "totalCrowns": 8,
+    },
+    {
+      "maxPropertiesSize": 3,
+      "name": "Carol",
+      "points": 22,
+      "position": 4,
+      "totalCrowns": 10,
+    },
+  ],
+}
+`;
+
+exports[`Score characterization (final results must never change) > Classic 4p [The middle Kingdom, Harmony] / seed charlie 1`] = `
+{
+  "extensions": [
+    {
+      "buildings": 0,
+      "cavemen": 0,
+      "fireTokens": 0,
+      "giants": 0,
+      "knights": 0,
+      "name": "Alice",
+      "resources": 0,
+      "towers": 0,
+    },
+    {
+      "buildings": 0,
+      "cavemen": 0,
+      "fireTokens": 0,
+      "giants": 0,
+      "knights": 0,
+      "name": "Bob",
+      "resources": 0,
+      "towers": 0,
+    },
+    {
+      "buildings": 0,
+      "cavemen": 0,
+      "fireTokens": 0,
+      "giants": 0,
+      "knights": 0,
+      "name": "Carol",
+      "resources": 0,
+      "towers": 0,
+    },
+    {
+      "buildings": 0,
+      "cavemen": 0,
+      "fireTokens": 0,
+      "giants": 0,
+      "knights": 0,
+      "name": "Dave",
+      "resources": 0,
+      "towers": 0,
+    },
+  ],
+  "queenHolder": null,
+  "results": [
+    {
+      "maxPropertiesSize": 8,
+      "name": "Alice",
+      "points": 53,
+      "position": 1,
+      "totalCrowns": 7,
+    },
+    {
+      "maxPropertiesSize": 6,
+      "name": "Carol",
+      "points": 25,
+      "position": 2,
+      "totalCrowns": 14,
+    },
+    {
+      "maxPropertiesSize": 3,
+      "name": "Dave",
+      "points": 15,
+      "position": 3,
+      "totalCrowns": 8,
+    },
+    {
+      "maxPropertiesSize": 4,
+      "name": "Bob",
+      "points": 10,
+      "position": 4,
+      "totalCrowns": 7,
+    },
+  ],
+}
+`;
+
+exports[`Score characterization (final results must never change) > KingdominoOrigins-Discovery 2p / seed alpha 1`] = `
+{
+  "extensions": [
+    {
+      "buildings": 0,
+      "cavemen": 0,
+      "fireTokens": 2,
+      "giants": 0,
+      "knights": 0,
+      "name": "Alice",
+      "resources": 0,
+      "towers": 0,
+    },
+    {
+      "buildings": 0,
+      "cavemen": 0,
+      "fireTokens": 2,
+      "giants": 0,
+      "knights": 0,
+      "name": "Bob",
+      "resources": 0,
+      "towers": 0,
+    },
+  ],
+  "queenHolder": null,
+  "results": [
+    {
+      "maxPropertiesSize": 5,
+      "name": "Alice",
+      "points": 47,
+      "position": 1,
+      "totalCrowns": 12,
+    },
+    {
+      "maxPropertiesSize": 9,
+      "name": "Bob",
+      "points": 44,
+      "position": 2,
+      "totalCrowns": 6,
+    },
+  ],
+}
+`;
+
+exports[`Score characterization (final results must never change) > KingdominoOrigins-Discovery 2p / seed bravo 1`] = `
+{
+  "extensions": [
+    {
+      "buildings": 0,
+      "cavemen": 0,
+      "fireTokens": 2,
+      "giants": 0,
+      "knights": 0,
+      "name": "Alice",
+      "resources": 0,
+      "towers": 0,
+    },
+    {
+      "buildings": 0,
+      "cavemen": 0,
+      "fireTokens": 3,
+      "giants": 0,
+      "knights": 0,
+      "name": "Bob",
+      "resources": 0,
+      "towers": 0,
+    },
+  ],
+  "queenHolder": null,
+  "results": [
+    {
+      "maxPropertiesSize": 5,
+      "name": "Alice",
+      "points": 45,
+      "position": 1,
+      "totalCrowns": 10,
+    },
+    {
+      "maxPropertiesSize": 4,
+      "name": "Bob",
+      "points": 25,
+      "position": 2,
+      "totalCrowns": 5,
+    },
+  ],
+}
+`;
+
+exports[`Score characterization (final results must never change) > KingdominoOrigins-Discovery 2p / seed charlie 1`] = `
+{
+  "extensions": [
+    {
+      "buildings": 0,
+      "cavemen": 0,
+      "fireTokens": 2,
+      "giants": 0,
+      "knights": 0,
+      "name": "Alice",
+      "resources": 0,
+      "towers": 0,
+    },
+    {
+      "buildings": 0,
+      "cavemen": 0,
+      "fireTokens": 3,
+      "giants": 0,
+      "knights": 0,
+      "name": "Bob",
+      "resources": 0,
+      "towers": 0,
+    },
+  ],
+  "queenHolder": null,
+  "results": [
+    {
+      "maxPropertiesSize": 8,
+      "name": "Alice",
+      "points": 71,
+      "position": 1,
+      "totalCrowns": 9,
+    },
+    {
+      "maxPropertiesSize": 4,
+      "name": "Bob",
+      "points": 32,
+      "position": 2,
+      "totalCrowns": 6,
+    },
+  ],
+}
+`;
+
+exports[`Score characterization (final results must never change) > KingdominoOrigins-Discovery 3p [Empire of Fire, Homo Habilis] / seed alpha 1`] = `
+{
+  "extensions": [
+    {
+      "buildings": 0,
+      "cavemen": 0,
+      "fireTokens": 0,
+      "giants": 0,
+      "knights": 0,
+      "name": "Alice",
+      "resources": 0,
+      "towers": 0,
+    },
+    {
+      "buildings": 0,
+      "cavemen": 0,
+      "fireTokens": 2,
+      "giants": 0,
+      "knights": 0,
+      "name": "Bob",
+      "resources": 0,
+      "towers": 0,
+    },
+    {
+      "buildings": 0,
+      "cavemen": 0,
+      "fireTokens": 3,
+      "giants": 0,
+      "knights": 0,
+      "name": "Carol",
+      "resources": 0,
+      "towers": 0,
+    },
+  ],
+  "queenHolder": null,
+  "results": [
+    {
+      "maxPropertiesSize": 7,
+      "name": "Alice",
+      "points": 67,
+      "position": 1,
+      "totalCrowns": 15,
+    },
+    {
+      "maxPropertiesSize": 5,
+      "name": "Bob",
+      "points": 29,
+      "position": 2,
+      "totalCrowns": 6,
+    },
+    {
+      "maxPropertiesSize": 4,
+      "name": "Carol",
+      "points": 28,
+      "position": 3,
+      "totalCrowns": 6,
+    },
+  ],
+}
+`;
+
+exports[`Score characterization (final results must never change) > KingdominoOrigins-Discovery 3p [Empire of Fire, Homo Habilis] / seed bravo 1`] = `
+{
+  "extensions": [
+    {
+      "buildings": 0,
+      "cavemen": 0,
+      "fireTokens": 0,
+      "giants": 0,
+      "knights": 0,
+      "name": "Alice",
+      "resources": 0,
+      "towers": 0,
+    },
+    {
+      "buildings": 0,
+      "cavemen": 0,
+      "fireTokens": 3,
+      "giants": 0,
+      "knights": 0,
+      "name": "Bob",
+      "resources": 0,
+      "towers": 0,
+    },
+    {
+      "buildings": 0,
+      "cavemen": 0,
+      "fireTokens": 1,
+      "giants": 0,
+      "knights": 0,
+      "name": "Carol",
+      "resources": 0,
+      "towers": 0,
+    },
+  ],
+  "queenHolder": null,
+  "results": [
+    {
+      "maxPropertiesSize": 11,
+      "name": "Alice",
+      "points": 59,
+      "position": 1,
+      "totalCrowns": 8,
+    },
+    {
+      "maxPropertiesSize": 3,
+      "name": "Bob",
+      "points": 29,
+      "position": 2,
+      "totalCrowns": 5,
+    },
+    {
+      "maxPropertiesSize": 5,
+      "name": "Carol",
+      "points": 24,
+      "position": 3,
+      "totalCrowns": 9,
+    },
+  ],
+}
+`;
+
+exports[`Score characterization (final results must never change) > KingdominoOrigins-Discovery 3p [Empire of Fire, Homo Habilis] / seed charlie 1`] = `
+{
+  "extensions": [
+    {
+      "buildings": 0,
+      "cavemen": 0,
+      "fireTokens": 1,
+      "giants": 0,
+      "knights": 0,
+      "name": "Alice",
+      "resources": 0,
+      "towers": 0,
+    },
+    {
+      "buildings": 0,
+      "cavemen": 0,
+      "fireTokens": 3,
+      "giants": 0,
+      "knights": 0,
+      "name": "Bob",
+      "resources": 0,
+      "towers": 0,
+    },
+    {
+      "buildings": 0,
+      "cavemen": 0,
+      "fireTokens": 1,
+      "giants": 0,
+      "knights": 0,
+      "name": "Carol",
+      "resources": 0,
+      "towers": 0,
+    },
+  ],
+  "queenHolder": null,
+  "results": [
+    {
+      "maxPropertiesSize": 10,
+      "name": "Alice",
+      "points": 92,
+      "position": 1,
+      "totalCrowns": 14,
+    },
+    {
+      "maxPropertiesSize": 3,
+      "name": "Bob",
+      "points": 27,
+      "position": 2,
+      "totalCrowns": 9,
+    },
+    {
+      "maxPropertiesSize": 4,
+      "name": "Carol",
+      "points": 10,
+      "position": 3,
+      "totalCrowns": 4,
+    },
+  ],
+}
+`;
+
+exports[`Score characterization (final results must never change) > KingdominoOrigins-Discovery 4p / seed alpha 1`] = `
+{
+  "extensions": [
+    {
+      "buildings": 0,
+      "cavemen": 0,
+      "fireTokens": 1,
+      "giants": 0,
+      "knights": 0,
+      "name": "Alice",
+      "resources": 0,
+      "towers": 0,
+    },
+    {
+      "buildings": 0,
+      "cavemen": 0,
+      "fireTokens": 0,
+      "giants": 0,
+      "knights": 0,
+      "name": "Bob",
+      "resources": 0,
+      "towers": 0,
+    },
+    {
+      "buildings": 0,
+      "cavemen": 0,
+      "fireTokens": 6,
+      "giants": 0,
+      "knights": 0,
+      "name": "Carol",
+      "resources": 0,
+      "towers": 0,
+    },
+    {
+      "buildings": 0,
+      "cavemen": 0,
+      "fireTokens": 2,
+      "giants": 0,
+      "knights": 0,
+      "name": "Dave",
+      "resources": 0,
+      "towers": 0,
+    },
+  ],
+  "queenHolder": null,
+  "results": [
+    {
+      "maxPropertiesSize": 6,
+      "name": "Alice",
+      "points": 52,
+      "position": 1,
+      "totalCrowns": 10,
+    },
+    {
+      "maxPropertiesSize": 5,
+      "name": "Carol",
+      "points": 50,
+      "position": 2,
+      "totalCrowns": 8,
+    },
+    {
+      "maxPropertiesSize": 6,
+      "name": "Dave",
+      "points": 34,
+      "position": 3,
+      "totalCrowns": 6,
+    },
+    {
+      "maxPropertiesSize": 6,
+      "name": "Bob",
+      "points": 23,
+      "position": 4,
+      "totalCrowns": 6,
+    },
+  ],
+}
+`;
+
+exports[`Score characterization (final results must never change) > KingdominoOrigins-Discovery 4p / seed bravo 1`] = `
+{
+  "extensions": [
+    {
+      "buildings": 0,
+      "cavemen": 0,
+      "fireTokens": 0,
+      "giants": 0,
+      "knights": 0,
+      "name": "Alice",
+      "resources": 0,
+      "towers": 0,
+    },
+    {
+      "buildings": 0,
+      "cavemen": 0,
+      "fireTokens": 3,
+      "giants": 0,
+      "knights": 0,
+      "name": "Bob",
+      "resources": 0,
+      "towers": 0,
+    },
+    {
+      "buildings": 0,
+      "cavemen": 0,
+      "fireTokens": 2,
+      "giants": 0,
+      "knights": 0,
+      "name": "Carol",
+      "resources": 0,
+      "towers": 0,
+    },
+    {
+      "buildings": 0,
+      "cavemen": 0,
+      "fireTokens": 3,
+      "giants": 0,
+      "knights": 0,
+      "name": "Dave",
+      "resources": 0,
+      "towers": 0,
+    },
+  ],
+  "queenHolder": null,
+  "results": [
+    {
+      "maxPropertiesSize": 8,
+      "name": "Alice",
+      "points": 48,
+      "position": 1,
+      "totalCrowns": 12,
+    },
+    {
+      "maxPropertiesSize": 5,
+      "name": "Dave",
+      "points": 19,
+      "position": 2,
+      "totalCrowns": 7,
+    },
+    {
+      "maxPropertiesSize": 3,
+      "name": "Bob",
+      "points": 19,
+      "position": 3,
+      "totalCrowns": 5,
+    },
+    {
+      "maxPropertiesSize": 3,
+      "name": "Carol",
+      "points": 18,
+      "position": 4,
+      "totalCrowns": 6,
+    },
+  ],
+}
+`;
+
+exports[`Score characterization (final results must never change) > KingdominoOrigins-Discovery 4p / seed charlie 1`] = `
+{
+  "extensions": [
+    {
+      "buildings": 0,
+      "cavemen": 0,
+      "fireTokens": 1,
+      "giants": 0,
+      "knights": 0,
+      "name": "Alice",
+      "resources": 0,
+      "towers": 0,
+    },
+    {
+      "buildings": 0,
+      "cavemen": 0,
+      "fireTokens": 0,
+      "giants": 0,
+      "knights": 0,
+      "name": "Bob",
+      "resources": 0,
+      "towers": 0,
+    },
+    {
+      "buildings": 0,
+      "cavemen": 0,
+      "fireTokens": 2,
+      "giants": 0,
+      "knights": 0,
+      "name": "Carol",
+      "resources": 0,
+      "towers": 0,
+    },
+    {
+      "buildings": 0,
+      "cavemen": 0,
+      "fireTokens": 2,
+      "giants": 0,
+      "knights": 0,
+      "name": "Dave",
+      "resources": 0,
+      "towers": 0,
+    },
+  ],
+  "queenHolder": null,
+  "results": [
+    {
+      "maxPropertiesSize": 6,
+      "name": "Dave",
+      "points": 33,
+      "position": 1,
+      "totalCrowns": 6,
+    },
+    {
+      "maxPropertiesSize": 3,
+      "name": "Alice",
+      "points": 32,
+      "position": 2,
+      "totalCrowns": 14,
+    },
+    {
+      "maxPropertiesSize": 5,
+      "name": "Carol",
+      "points": 23,
+      "position": 3,
+      "totalCrowns": 4,
+    },
+    {
+      "maxPropertiesSize": 5,
+      "name": "Bob",
+      "points": 11,
+      "position": 4,
+      "totalCrowns": 6,
+    },
+  ],
+}
+`;
+
+exports[`Score characterization (final results must never change) > KingdominoOrigins-Totem 2p / seed alpha 1`] = `
+{
+  "extensions": [
+    {
+      "buildings": 0,
+      "cavemen": 0,
+      "fireTokens": 2,
+      "giants": 0,
+      "knights": 0,
+      "name": "Alice",
+      "resources": 7,
+      "towers": 0,
+    },
+    {
+      "buildings": 0,
+      "cavemen": 0,
+      "fireTokens": 2,
+      "giants": 0,
+      "knights": 0,
+      "name": "Bob",
+      "resources": 12,
+      "towers": 0,
+    },
+  ],
+  "queenHolder": null,
+  "results": [
+    {
+      "maxPropertiesSize": 7,
+      "name": "Bob",
+      "points": 61,
+      "position": 1,
+      "totalCrowns": 5,
+    },
+    {
+      "maxPropertiesSize": 4,
+      "name": "Alice",
+      "points": 54,
+      "position": 2,
+      "totalCrowns": 13,
+    },
+  ],
+}
+`;
+
+exports[`Score characterization (final results must never change) > KingdominoOrigins-Totem 2p / seed bravo 1`] = `
+{
+  "extensions": [
+    {
+      "buildings": 0,
+      "cavemen": 0,
+      "fireTokens": 1,
+      "giants": 0,
+      "knights": 0,
+      "name": "Alice",
+      "resources": 11,
+      "towers": 0,
+    },
+    {
+      "buildings": 0,
+      "cavemen": 0,
+      "fireTokens": 5,
+      "giants": 0,
+      "knights": 0,
+      "name": "Bob",
+      "resources": 6,
+      "towers": 0,
+    },
+  ],
+  "queenHolder": null,
+  "results": [
+    {
+      "maxPropertiesSize": 6,
+      "name": "Alice",
+      "points": 53,
+      "position": 1,
+      "totalCrowns": 8,
+    },
+    {
+      "maxPropertiesSize": 4,
+      "name": "Bob",
+      "points": 42,
+      "position": 2,
+      "totalCrowns": 6,
+    },
+  ],
+}
+`;
+
+exports[`Score characterization (final results must never change) > KingdominoOrigins-Totem 2p / seed charlie 1`] = `
+{
+  "extensions": [
+    {
+      "buildings": 0,
+      "cavemen": 0,
+      "fireTokens": 1,
+      "giants": 0,
+      "knights": 0,
+      "name": "Alice",
+      "resources": 9,
+      "towers": 0,
+    },
+    {
+      "buildings": 0,
+      "cavemen": 0,
+      "fireTokens": 3,
+      "giants": 0,
+      "knights": 0,
+      "name": "Bob",
+      "resources": 11,
+      "towers": 0,
+    },
+  ],
+  "queenHolder": null,
+  "results": [
+    {
+      "maxPropertiesSize": 7,
+      "name": "Alice",
+      "points": 56,
+      "position": 1,
+      "totalCrowns": 9,
+    },
+    {
+      "maxPropertiesSize": 5,
+      "name": "Bob",
+      "points": 54,
+      "position": 2,
+      "totalCrowns": 5,
+    },
+  ],
+}
+`;
+
+exports[`Score characterization (final results must never change) > KingdominoOrigins-Totem 2p [Neolithic, Homo Habilis] / seed alpha 1`] = `
+{
+  "extensions": [
+    {
+      "buildings": 0,
+      "cavemen": 0,
+      "fireTokens": 5,
+      "giants": 0,
+      "knights": 0,
+      "name": "Alice",
+      "resources": 16,
+      "towers": 0,
+    },
+    {
+      "buildings": 0,
+      "cavemen": 0,
+      "fireTokens": 3,
+      "giants": 0,
+      "knights": 0,
+      "name": "Bob",
+      "resources": 26,
+      "towers": 0,
+    },
+  ],
+  "queenHolder": null,
+  "results": [
+    {
+      "maxPropertiesSize": 10,
+      "name": "Alice",
+      "points": 216,
+      "position": 1,
+      "totalCrowns": 20,
+    },
+    {
+      "maxPropertiesSize": 9,
+      "name": "Bob",
+      "points": 74,
+      "position": 2,
+      "totalCrowns": 9,
+    },
+  ],
+}
+`;
+
+exports[`Score characterization (final results must never change) > KingdominoOrigins-Totem 2p [Neolithic, Homo Habilis] / seed bravo 1`] = `
+{
+  "extensions": [
+    {
+      "buildings": 0,
+      "cavemen": 0,
+      "fireTokens": 5,
+      "giants": 0,
+      "knights": 0,
+      "name": "Alice",
+      "resources": 16,
+      "towers": 0,
+    },
+    {
+      "buildings": 0,
+      "cavemen": 0,
+      "fireTokens": 4,
+      "giants": 0,
+      "knights": 0,
+      "name": "Bob",
+      "resources": 27,
+      "towers": 0,
+    },
+  ],
+  "queenHolder": null,
+  "results": [
+    {
+      "maxPropertiesSize": 10,
+      "name": "Alice",
+      "points": 189,
+      "position": 1,
+      "totalCrowns": 24,
+    },
+    {
+      "maxPropertiesSize": 6,
+      "name": "Bob",
+      "points": 72,
+      "position": 2,
+      "totalCrowns": 6,
+    },
+  ],
+}
+`;
+
+exports[`Score characterization (final results must never change) > KingdominoOrigins-Totem 2p [Neolithic, Homo Habilis] / seed charlie 1`] = `
+{
+  "extensions": [
+    {
+      "buildings": 0,
+      "cavemen": 0,
+      "fireTokens": 3,
+      "giants": 0,
+      "knights": 0,
+      "name": "Alice",
+      "resources": 20,
+      "towers": 0,
+    },
+    {
+      "buildings": 0,
+      "cavemen": 0,
+      "fireTokens": 6,
+      "giants": 0,
+      "knights": 0,
+      "name": "Bob",
+      "resources": 17,
+      "towers": 0,
+    },
+  ],
+  "queenHolder": null,
+  "results": [
+    {
+      "maxPropertiesSize": 11,
+      "name": "Alice",
+      "points": 216,
+      "position": 1,
+      "totalCrowns": 24,
+    },
+    {
+      "maxPropertiesSize": 7,
+      "name": "Bob",
+      "points": 74,
+      "position": 2,
+      "totalCrowns": 8,
+    },
+  ],
+}
+`;
+
+exports[`Score characterization (final results must never change) > KingdominoOrigins-Totem 3p [Empire of Fire] / seed alpha 1`] = `
+{
+  "extensions": [
+    {
+      "buildings": 0,
+      "cavemen": 0,
+      "fireTokens": 1,
+      "giants": 0,
+      "knights": 0,
+      "name": "Alice",
+      "resources": 10,
+      "towers": 0,
+    },
+    {
+      "buildings": 0,
+      "cavemen": 0,
+      "fireTokens": 3,
+      "giants": 0,
+      "knights": 0,
+      "name": "Bob",
+      "resources": 14,
+      "towers": 0,
+    },
+    {
+      "buildings": 0,
+      "cavemen": 0,
+      "fireTokens": 3,
+      "giants": 0,
+      "knights": 0,
+      "name": "Carol",
+      "resources": 9,
+      "towers": 0,
+    },
+  ],
+  "queenHolder": null,
+  "results": [
+    {
+      "maxPropertiesSize": 8,
+      "name": "Alice",
+      "points": 65,
+      "position": 1,
+      "totalCrowns": 15,
+    },
+    {
+      "maxPropertiesSize": 4,
+      "name": "Bob",
+      "points": 55,
+      "position": 2,
+      "totalCrowns": 5,
+    },
+    {
+      "maxPropertiesSize": 3,
+      "name": "Carol",
+      "points": 25,
+      "position": 3,
+      "totalCrowns": 6,
+    },
+  ],
+}
+`;
+
+exports[`Score characterization (final results must never change) > KingdominoOrigins-Totem 3p [Empire of Fire] / seed bravo 1`] = `
+{
+  "extensions": [
+    {
+      "buildings": 0,
+      "cavemen": 0,
+      "fireTokens": 0,
+      "giants": 0,
+      "knights": 0,
+      "name": "Alice",
+      "resources": 9,
+      "towers": 0,
+    },
+    {
+      "buildings": 0,
+      "cavemen": 0,
+      "fireTokens": 4,
+      "giants": 0,
+      "knights": 0,
+      "name": "Bob",
+      "resources": 8,
+      "towers": 0,
+    },
+    {
+      "buildings": 0,
+      "cavemen": 0,
+      "fireTokens": 3,
+      "giants": 0,
+      "knights": 0,
+      "name": "Carol",
+      "resources": 7,
+      "towers": 0,
+    },
+  ],
+  "queenHolder": null,
+  "results": [
+    {
+      "maxPropertiesSize": 9,
+      "name": "Alice",
+      "points": 74,
+      "position": 1,
+      "totalCrowns": 15,
+    },
+    {
+      "maxPropertiesSize": 3,
+      "name": "Bob",
+      "points": 32,
+      "position": 2,
+      "totalCrowns": 4,
+    },
+    {
+      "maxPropertiesSize": 4,
+      "name": "Carol",
+      "points": 31,
+      "position": 3,
+      "totalCrowns": 8,
+    },
+  ],
+}
+`;
+
+exports[`Score characterization (final results must never change) > KingdominoOrigins-Totem 3p [Empire of Fire] / seed charlie 1`] = `
+{
+  "extensions": [
+    {
+      "buildings": 0,
+      "cavemen": 0,
+      "fireTokens": 1,
+      "giants": 0,
+      "knights": 0,
+      "name": "Alice",
+      "resources": 12,
+      "towers": 0,
+    },
+    {
+      "buildings": 0,
+      "cavemen": 0,
+      "fireTokens": 2,
+      "giants": 0,
+      "knights": 0,
+      "name": "Bob",
+      "resources": 12,
+      "towers": 0,
+    },
+    {
+      "buildings": 0,
+      "cavemen": 0,
+      "fireTokens": 3,
+      "giants": 0,
+      "knights": 0,
+      "name": "Carol",
+      "resources": 5,
+      "towers": 0,
+    },
+  ],
+  "queenHolder": null,
+  "results": [
+    {
+      "maxPropertiesSize": 11,
+      "name": "Alice",
+      "points": 109,
+      "position": 1,
+      "totalCrowns": 11,
+    },
+    {
+      "maxPropertiesSize": 3,
+      "name": "Bob",
+      "points": 43,
+      "position": 2,
+      "totalCrowns": 4,
+    },
+    {
+      "maxPropertiesSize": 3,
+      "name": "Carol",
+      "points": 33,
+      "position": 3,
+      "totalCrowns": 10,
+    },
+  ],
+}
+`;
+
+exports[`Score characterization (final results must never change) > KingdominoOrigins-Totem 4p [Homo Habilis] / seed alpha 1`] = `
+{
+  "extensions": [
+    {
+      "buildings": 0,
+      "cavemen": 0,
+      "fireTokens": 2,
+      "giants": 0,
+      "knights": 0,
+      "name": "Alice",
+      "resources": 4,
+      "towers": 0,
+    },
+    {
+      "buildings": 0,
+      "cavemen": 0,
+      "fireTokens": 2,
+      "giants": 0,
+      "knights": 0,
+      "name": "Bob",
+      "resources": 11,
+      "towers": 0,
+    },
+    {
+      "buildings": 0,
+      "cavemen": 0,
+      "fireTokens": 3,
+      "giants": 0,
+      "knights": 0,
+      "name": "Carol",
+      "resources": 10,
+      "towers": 0,
+    },
+    {
+      "buildings": 0,
+      "cavemen": 0,
+      "fireTokens": 2,
+      "giants": 0,
+      "knights": 0,
+      "name": "Dave",
+      "resources": 13,
+      "towers": 0,
+    },
+  ],
+  "queenHolder": null,
+  "results": [
+    {
+      "maxPropertiesSize": 8,
+      "name": "Bob",
+      "points": 52,
+      "position": 1,
+      "totalCrowns": 7,
+    },
+    {
+      "maxPropertiesSize": 7,
+      "name": "Alice",
+      "points": 49,
+      "position": 2,
+      "totalCrowns": 11,
+    },
+    {
+      "maxPropertiesSize": 3,
+      "name": "Carol",
+      "points": 37,
+      "position": 3,
+      "totalCrowns": 6,
+    },
+    {
+      "maxPropertiesSize": 3,
+      "name": "Dave",
+      "points": 34,
+      "position": 4,
+      "totalCrowns": 6,
+    },
+  ],
+}
+`;
+
+exports[`Score characterization (final results must never change) > KingdominoOrigins-Totem 4p [Homo Habilis] / seed bravo 1`] = `
+{
+  "extensions": [
+    {
+      "buildings": 0,
+      "cavemen": 0,
+      "fireTokens": 0,
+      "giants": 0,
+      "knights": 0,
+      "name": "Alice",
+      "resources": 10,
+      "towers": 0,
+    },
+    {
+      "buildings": 0,
+      "cavemen": 0,
+      "fireTokens": 4,
+      "giants": 0,
+      "knights": 0,
+      "name": "Bob",
+      "resources": 5,
+      "towers": 0,
+    },
+    {
+      "buildings": 0,
+      "cavemen": 0,
+      "fireTokens": 3,
+      "giants": 0,
+      "knights": 0,
+      "name": "Carol",
+      "resources": 10,
+      "towers": 0,
+    },
+    {
+      "buildings": 0,
+      "cavemen": 0,
+      "fireTokens": 1,
+      "giants": 0,
+      "knights": 0,
+      "name": "Dave",
+      "resources": 15,
+      "towers": 0,
+    },
+  ],
+  "queenHolder": null,
+  "results": [
+    {
+      "maxPropertiesSize": 8,
+      "name": "Alice",
+      "points": 84,
+      "position": 1,
+      "totalCrowns": 14,
+    },
+    {
+      "maxPropertiesSize": 5,
+      "name": "Bob",
+      "points": 44,
+      "position": 2,
+      "totalCrowns": 11,
+    },
+    {
+      "maxPropertiesSize": 8,
+      "name": "Dave",
+      "points": 39,
+      "position": 3,
+      "totalCrowns": 3,
+    },
+    {
+      "maxPropertiesSize": 4,
+      "name": "Carol",
+      "points": 35,
+      "position": 4,
+      "totalCrowns": 3,
+    },
+  ],
+}
+`;
+
+exports[`Score characterization (final results must never change) > KingdominoOrigins-Totem 4p [Homo Habilis] / seed charlie 1`] = `
+{
+  "extensions": [
+    {
+      "buildings": 0,
+      "cavemen": 0,
+      "fireTokens": 2,
+      "giants": 0,
+      "knights": 0,
+      "name": "Alice",
+      "resources": 8,
+      "towers": 0,
+    },
+    {
+      "buildings": 0,
+      "cavemen": 0,
+      "fireTokens": 0,
+      "giants": 0,
+      "knights": 0,
+      "name": "Bob",
+      "resources": 14,
+      "towers": 0,
+    },
+    {
+      "buildings": 0,
+      "cavemen": 0,
+      "fireTokens": 4,
+      "giants": 0,
+      "knights": 0,
+      "name": "Carol",
+      "resources": 11,
+      "towers": 0,
+    },
+    {
+      "buildings": 0,
+      "cavemen": 0,
+      "fireTokens": 1,
+      "giants": 0,
+      "knights": 0,
+      "name": "Dave",
+      "resources": 9,
+      "towers": 0,
+    },
+  ],
+  "queenHolder": null,
+  "results": [
+    {
+      "maxPropertiesSize": 11,
+      "name": "Alice",
+      "points": 94,
+      "position": 1,
+      "totalCrowns": 16,
+    },
+    {
+      "maxPropertiesSize": 5,
+      "name": "Carol",
+      "points": 37,
+      "position": 2,
+      "totalCrowns": 3,
+    },
+    {
+      "maxPropertiesSize": 4,
+      "name": "Bob",
+      "points": 31,
+      "position": 3,
+      "totalCrowns": 5,
+    },
+    {
+      "maxPropertiesSize": 4,
+      "name": "Dave",
+      "points": 26,
+      "position": 4,
+      "totalCrowns": 7,
+    },
+  ],
+}
+`;
+
+exports[`Score characterization (final results must never change) > KingdominoOrigins-Tribe 2p / seed alpha 1`] = `
+{
+  "extensions": [
+    {
+      "buildings": 0,
+      "cavemen": 4,
+      "fireTokens": 2,
+      "giants": 0,
+      "knights": 0,
+      "name": "Alice",
+      "resources": 4,
+      "towers": 0,
+    },
+    {
+      "buildings": 0,
+      "cavemen": 4,
+      "fireTokens": 2,
+      "giants": 0,
+      "knights": 0,
+      "name": "Bob",
+      "resources": 4,
+      "towers": 0,
+    },
+  ],
+  "queenHolder": null,
+  "results": [
+    {
+      "maxPropertiesSize": 7,
+      "name": "Alice",
+      "points": 54,
+      "position": 1,
+      "totalCrowns": 8,
+    },
+    {
+      "maxPropertiesSize": 5,
+      "name": "Bob",
+      "points": 33,
+      "position": 2,
+      "totalCrowns": 5,
+    },
+  ],
+}
+`;
+
+exports[`Score characterization (final results must never change) > KingdominoOrigins-Tribe 2p / seed bravo 1`] = `
+{
+  "extensions": [
+    {
+      "buildings": 0,
+      "cavemen": 4,
+      "fireTokens": 0,
+      "giants": 0,
+      "knights": 0,
+      "name": "Alice",
+      "resources": 4,
+      "towers": 0,
+    },
+    {
+      "buildings": 0,
+      "cavemen": 3,
+      "fireTokens": 4,
+      "giants": 0,
+      "knights": 0,
+      "name": "Bob",
+      "resources": 2,
+      "towers": 0,
+    },
+  ],
+  "queenHolder": null,
+  "results": [
+    {
+      "maxPropertiesSize": 6,
+      "name": "Alice",
+      "points": 51,
+      "position": 1,
+      "totalCrowns": 10,
+    },
+    {
+      "maxPropertiesSize": 6,
+      "name": "Bob",
+      "points": 16,
+      "position": 2,
+      "totalCrowns": 5,
+    },
+  ],
+}
+`;
+
+exports[`Score characterization (final results must never change) > KingdominoOrigins-Tribe 2p / seed charlie 1`] = `
+{
+  "extensions": [
+    {
+      "buildings": 0,
+      "cavemen": 4,
+      "fireTokens": 2,
+      "giants": 0,
+      "knights": 0,
+      "name": "Alice",
+      "resources": 1,
+      "towers": 0,
+    },
+    {
+      "buildings": 0,
+      "cavemen": 4,
+      "fireTokens": 2,
+      "giants": 0,
+      "knights": 0,
+      "name": "Bob",
+      "resources": 3,
+      "towers": 0,
+    },
+  ],
+  "queenHolder": null,
+  "results": [
+    {
+      "maxPropertiesSize": 7,
+      "name": "Alice",
+      "points": 50,
+      "position": 1,
+      "totalCrowns": 8,
+    },
+    {
+      "maxPropertiesSize": 3,
+      "name": "Bob",
+      "points": 23,
+      "position": 2,
+      "totalCrowns": 7,
+    },
+  ],
+}
+`;
+
+exports[`Score characterization (final results must never change) > KingdominoOrigins-Tribe 3p / seed alpha 1`] = `
+{
+  "extensions": [
+    {
+      "buildings": 0,
+      "cavemen": 3,
+      "fireTokens": 3,
+      "giants": 0,
+      "knights": 0,
+      "name": "Alice",
+      "resources": 0,
+      "towers": 0,
+    },
+    {
+      "buildings": 0,
+      "cavemen": 4,
+      "fireTokens": 1,
+      "giants": 0,
+      "knights": 0,
+      "name": "Bob",
+      "resources": 0,
+      "towers": 0,
+    },
+    {
+      "buildings": 0,
+      "cavemen": 7,
+      "fireTokens": 0,
+      "giants": 0,
+      "knights": 0,
+      "name": "Carol",
+      "resources": 0,
+      "towers": 0,
+    },
+  ],
+  "queenHolder": null,
+  "results": [
+    {
+      "maxPropertiesSize": 4,
+      "name": "Alice",
+      "points": 72,
+      "position": 1,
+      "totalCrowns": 14,
+    },
+    {
+      "maxPropertiesSize": 3,
+      "name": "Bob",
+      "points": 18,
+      "position": 2,
+      "totalCrowns": 8,
+    },
+    {
+      "maxPropertiesSize": 5,
+      "name": "Carol",
+      "points": 10,
+      "position": 3,
+      "totalCrowns": 3,
+    },
+  ],
+}
+`;
+
+exports[`Score characterization (final results must never change) > KingdominoOrigins-Tribe 3p / seed bravo 1`] = `
+{
+  "extensions": [
+    {
+      "buildings": 0,
+      "cavemen": 3,
+      "fireTokens": 0,
+      "giants": 0,
+      "knights": 0,
+      "name": "Alice",
+      "resources": 4,
+      "towers": 0,
+    },
+    {
+      "buildings": 0,
+      "cavemen": 4,
+      "fireTokens": 3,
+      "giants": 0,
+      "knights": 0,
+      "name": "Bob",
+      "resources": 1,
+      "towers": 0,
+    },
+    {
+      "buildings": 0,
+      "cavemen": 5,
+      "fireTokens": 3,
+      "giants": 0,
+      "knights": 0,
+      "name": "Carol",
+      "resources": 0,
+      "towers": 0,
+    },
+  ],
+  "queenHolder": null,
+  "results": [
+    {
+      "maxPropertiesSize": 10,
+      "name": "Alice",
+      "points": 62,
+      "position": 1,
+      "totalCrowns": 14,
+    },
+    {
+      "maxPropertiesSize": 3,
+      "name": "Carol",
+      "points": 23,
+      "position": 2,
+      "totalCrowns": 4,
+    },
+    {
+      "maxPropertiesSize": 3,
+      "name": "Bob",
+      "points": 21,
+      "position": 3,
+      "totalCrowns": 5,
+    },
+  ],
+}
+`;
+
+exports[`Score characterization (final results must never change) > KingdominoOrigins-Tribe 3p / seed charlie 1`] = `
+{
+  "extensions": [
+    {
+      "buildings": 0,
+      "cavemen": 2,
+      "fireTokens": 1,
+      "giants": 0,
+      "knights": 0,
+      "name": "Alice",
+      "resources": 4,
+      "towers": 0,
+    },
+    {
+      "buildings": 0,
+      "cavemen": 5,
+      "fireTokens": 4,
+      "giants": 0,
+      "knights": 0,
+      "name": "Bob",
+      "resources": 0,
+      "towers": 0,
+    },
+    {
+      "buildings": 0,
+      "cavemen": 5,
+      "fireTokens": 0,
+      "giants": 0,
+      "knights": 0,
+      "name": "Carol",
+      "resources": 1,
+      "towers": 0,
+    },
+  ],
+  "queenHolder": null,
+  "results": [
+    {
+      "maxPropertiesSize": 7,
+      "name": "Alice",
+      "points": 101,
+      "position": 1,
+      "totalCrowns": 19,
+    },
+    {
+      "maxPropertiesSize": 5,
+      "name": "Bob",
+      "points": 33,
+      "position": 2,
+      "totalCrowns": 2,
+    },
+    {
+      "maxPropertiesSize": 4,
+      "name": "Carol",
+      "points": 20,
+      "position": 3,
+      "totalCrowns": 5,
+    },
+  ],
+}
+`;
+
+exports[`Score characterization (final results must never change) > KingdominoOrigins-Tribe 4p [Empire of Fire, Homo Habilis] / seed alpha 1`] = `
+{
+  "extensions": [
+    {
+      "buildings": 0,
+      "cavemen": 2,
+      "fireTokens": 2,
+      "giants": 0,
+      "knights": 0,
+      "name": "Alice",
+      "resources": 1,
+      "towers": 0,
+    },
+    {
+      "buildings": 0,
+      "cavemen": 1,
+      "fireTokens": 3,
+      "giants": 0,
+      "knights": 0,
+      "name": "Bob",
+      "resources": 2,
+      "towers": 0,
+    },
+    {
+      "buildings": 0,
+      "cavemen": 8,
+      "fireTokens": 1,
+      "giants": 0,
+      "knights": 0,
+      "name": "Carol",
+      "resources": 1,
+      "towers": 0,
+    },
+    {
+      "buildings": 0,
+      "cavemen": 4,
+      "fireTokens": 2,
+      "giants": 0,
+      "knights": 0,
+      "name": "Dave",
+      "resources": 2,
+      "towers": 0,
+    },
+  ],
+  "queenHolder": null,
+  "results": [
+    {
+      "maxPropertiesSize": 8,
+      "name": "Alice",
+      "points": 97,
+      "position": 1,
+      "totalCrowns": 11,
+    },
+    {
+      "maxPropertiesSize": 4,
+      "name": "Carol",
+      "points": 38,
+      "position": 2,
+      "totalCrowns": 2,
+    },
+    {
+      "maxPropertiesSize": 6,
+      "name": "Dave",
+      "points": 36,
+      "position": 3,
+      "totalCrowns": 6,
+    },
+    {
+      "maxPropertiesSize": 3,
+      "name": "Bob",
+      "points": 25,
+      "position": 4,
+      "totalCrowns": 9,
+    },
+  ],
+}
+`;
+
+exports[`Score characterization (final results must never change) > KingdominoOrigins-Tribe 4p [Empire of Fire, Homo Habilis] / seed bravo 1`] = `
+{
+  "extensions": [
+    {
+      "buildings": 0,
+      "cavemen": 4,
+      "fireTokens": 1,
+      "giants": 0,
+      "knights": 0,
+      "name": "Alice",
+      "resources": 1,
+      "towers": 0,
+    },
+    {
+      "buildings": 0,
+      "cavemen": 4,
+      "fireTokens": 1,
+      "giants": 0,
+      "knights": 0,
+      "name": "Bob",
+      "resources": 2,
+      "towers": 0,
+    },
+    {
+      "buildings": 0,
+      "cavemen": 3,
+      "fireTokens": 3,
+      "giants": 0,
+      "knights": 0,
+      "name": "Carol",
+      "resources": 1,
+      "towers": 0,
+    },
+    {
+      "buildings": 0,
+      "cavemen": 6,
+      "fireTokens": 2,
+      "giants": 0,
+      "knights": 0,
+      "name": "Dave",
+      "resources": 3,
+      "towers": 0,
+    },
+  ],
+  "queenHolder": null,
+  "results": [
+    {
+      "maxPropertiesSize": 5,
+      "name": "Alice",
+      "points": 41,
+      "position": 1,
+      "totalCrowns": 11,
+    },
+    {
+      "maxPropertiesSize": 3,
+      "name": "Carol",
+      "points": 39,
+      "position": 2,
+      "totalCrowns": 8,
+    },
+    {
+      "maxPropertiesSize": 6,
+      "name": "Bob",
+      "points": 24,
+      "position": 3,
+      "totalCrowns": 7,
+    },
+    {
+      "maxPropertiesSize": 4,
+      "name": "Dave",
+      "points": 22,
+      "position": 4,
+      "totalCrowns": 3,
+    },
+  ],
+}
+`;
+
+exports[`Score characterization (final results must never change) > KingdominoOrigins-Tribe 4p [Empire of Fire, Homo Habilis] / seed charlie 1`] = `
+{
+  "extensions": [
+    {
+      "buildings": 0,
+      "cavemen": 2,
+      "fireTokens": 1,
+      "giants": 0,
+      "knights": 0,
+      "name": "Alice",
+      "resources": 4,
+      "towers": 0,
+    },
+    {
+      "buildings": 0,
+      "cavemen": 6,
+      "fireTokens": 1,
+      "giants": 0,
+      "knights": 0,
+      "name": "Bob",
+      "resources": 2,
+      "towers": 0,
+    },
+    {
+      "buildings": 0,
+      "cavemen": 4,
+      "fireTokens": 3,
+      "giants": 0,
+      "knights": 0,
+      "name": "Carol",
+      "resources": 1,
+      "towers": 0,
+    },
+    {
+      "buildings": 0,
+      "cavemen": 2,
+      "fireTokens": 2,
+      "giants": 0,
+      "knights": 0,
+      "name": "Dave",
+      "resources": 4,
+      "towers": 0,
+    },
+  ],
+  "queenHolder": null,
+  "results": [
+    {
+      "maxPropertiesSize": 9,
+      "name": "Alice",
+      "points": 77,
+      "position": 1,
+      "totalCrowns": 10,
+    },
+    {
+      "maxPropertiesSize": 5,
+      "name": "Dave",
+      "points": 34,
+      "position": 2,
+      "totalCrowns": 11,
+    },
+    {
+      "maxPropertiesSize": 4,
+      "name": "Bob",
+      "points": 33,
+      "position": 3,
+      "totalCrowns": 3,
+    },
+    {
+      "maxPropertiesSize": 4,
+      "name": "Carol",
+      "points": 29,
+      "position": 4,
+      "totalCrowns": 7,
+    },
+  ],
+}
+`;
+
+exports[`Score characterization (final results must never change) > QueenDomino 2p / seed alpha 1`] = `
+{
+  "extensions": [
+    {
+      "buildings": 5,
+      "cavemen": 0,
+      "fireTokens": 0,
+      "giants": 0,
+      "knights": 3,
+      "name": "Alice",
+      "resources": 0,
+      "towers": 1,
+    },
+    {
+      "buildings": 2,
+      "cavemen": 0,
+      "fireTokens": 0,
+      "giants": 0,
+      "knights": 3,
+      "name": "Bob",
+      "resources": 0,
+      "towers": 0,
+    },
+  ],
+  "queenHolder": "Alice",
+  "results": [
+    {
+      "maxPropertiesSize": 4,
+      "name": "Alice",
+      "points": 104,
+      "position": 1,
+      "totalCrowns": 23,
+    },
+    {
+      "maxPropertiesSize": 4,
+      "name": "Bob",
+      "points": 37,
+      "position": 2,
+      "totalCrowns": 13,
+    },
+  ],
+}
+`;
+
+exports[`Score characterization (final results must never change) > QueenDomino 2p / seed bravo 1`] = `
+{
+  "extensions": [
+    {
+      "buildings": 3,
+      "cavemen": 0,
+      "fireTokens": 0,
+      "giants": 0,
+      "knights": 3,
+      "name": "Alice",
+      "resources": 0,
+      "towers": 1,
+    },
+    {
+      "buildings": 1,
+      "cavemen": 0,
+      "fireTokens": 0,
+      "giants": 0,
+      "knights": 3,
+      "name": "Bob",
+      "resources": 0,
+      "towers": 1,
+    },
+  ],
+  "queenHolder": "Alice",
+  "results": [
+    {
+      "maxPropertiesSize": 5,
+      "name": "Alice",
+      "points": 72,
+      "position": 1,
+      "totalCrowns": 20,
+    },
+    {
+      "maxPropertiesSize": 5,
+      "name": "Bob",
+      "points": 34,
+      "position": 2,
+      "totalCrowns": 15,
+    },
+  ],
+}
+`;
+
+exports[`Score characterization (final results must never change) > QueenDomino 2p / seed charlie 1`] = `
+{
+  "extensions": [
+    {
+      "buildings": 4,
+      "cavemen": 0,
+      "fireTokens": 0,
+      "giants": 0,
+      "knights": 3,
+      "name": "Alice",
+      "resources": 0,
+      "towers": 1,
+    },
+    {
+      "buildings": 3,
+      "cavemen": 0,
+      "fireTokens": 0,
+      "giants": 0,
+      "knights": 3,
+      "name": "Bob",
+      "resources": 0,
+      "towers": 1,
+    },
+  ],
+  "queenHolder": "Alice",
+  "results": [
+    {
+      "maxPropertiesSize": 5,
+      "name": "Alice",
+      "points": 81,
+      "position": 1,
+      "totalCrowns": 20,
+    },
+    {
+      "maxPropertiesSize": 5,
+      "name": "Bob",
+      "points": 60,
+      "position": 2,
+      "totalCrowns": 19,
+    },
+  ],
+}
+`;
+
+exports[`Score characterization (final results must never change) > QueenDomino 2p [The Mighty Duel] / seed alpha 1`] = `
+{
+  "extensions": [
+    {
+      "buildings": 4,
+      "cavemen": 0,
+      "fireTokens": 0,
+      "giants": 0,
+      "knights": 3,
+      "name": "Alice",
+      "resources": 0,
+      "towers": 2,
+    },
+    {
+      "buildings": 2,
+      "cavemen": 0,
+      "fireTokens": 0,
+      "giants": 0,
+      "knights": 3,
+      "name": "Bob",
+      "resources": 0,
+      "towers": 0,
+    },
+  ],
+  "queenHolder": "Alice",
+  "results": [
+    {
+      "maxPropertiesSize": 13,
+      "name": "Alice",
+      "points": 244,
+      "position": 1,
+      "totalCrowns": 44,
+    },
+    {
+      "maxPropertiesSize": 9,
+      "name": "Bob",
+      "points": 104,
+      "position": 2,
+      "totalCrowns": 15,
+    },
+  ],
+}
+`;
+
+exports[`Score characterization (final results must never change) > QueenDomino 2p [The Mighty Duel] / seed bravo 1`] = `
+{
+  "extensions": [
+    {
+      "buildings": 3,
+      "cavemen": 0,
+      "fireTokens": 0,
+      "giants": 0,
+      "knights": 3,
+      "name": "Alice",
+      "resources": 0,
+      "towers": 1,
+    },
+    {
+      "buildings": 3,
+      "cavemen": 0,
+      "fireTokens": 0,
+      "giants": 0,
+      "knights": 3,
+      "name": "Bob",
+      "resources": 0,
+      "towers": 1,
+    },
+  ],
+  "queenHolder": "Bob",
+  "results": [
+    {
+      "maxPropertiesSize": 7,
+      "name": "Alice",
+      "points": 187,
+      "position": 1,
+      "totalCrowns": 39,
+    },
+    {
+      "maxPropertiesSize": 8,
+      "name": "Bob",
+      "points": 87,
+      "position": 2,
+      "totalCrowns": 25,
+    },
+  ],
+}
+`;
+
+exports[`Score characterization (final results must never change) > QueenDomino 2p [The Mighty Duel] / seed charlie 1`] = `
+{
+  "extensions": [
+    {
+      "buildings": 4,
+      "cavemen": 0,
+      "fireTokens": 0,
+      "giants": 0,
+      "knights": 3,
+      "name": "Alice",
+      "resources": 0,
+      "towers": 0,
+    },
+    {
+      "buildings": 6,
+      "cavemen": 0,
+      "fireTokens": 0,
+      "giants": 0,
+      "knights": 3,
+      "name": "Bob",
+      "resources": 0,
+      "towers": 3,
+    },
+  ],
+  "queenHolder": "Bob",
+  "results": [
+    {
+      "maxPropertiesSize": 11,
+      "name": "Alice",
+      "points": 261,
+      "position": 1,
+      "totalCrowns": 37,
+    },
+    {
+      "maxPropertiesSize": 9,
+      "name": "Bob",
+      "points": 135,
+      "position": 2,
+      "totalCrowns": 25,
+    },
+  ],
+}
+`;
+
+exports[`Score characterization (final results must never change) > QueenDomino 3p / seed alpha 1`] = `
+{
+  "extensions": [
+    {
+      "buildings": 5,
+      "cavemen": 0,
+      "fireTokens": 0,
+      "giants": 0,
+      "knights": 3,
+      "name": "Alice",
+      "resources": 0,
+      "towers": 2,
+    },
+    {
+      "buildings": 2,
+      "cavemen": 0,
+      "fireTokens": 0,
+      "giants": 0,
+      "knights": 3,
+      "name": "Bob",
+      "resources": 0,
+      "towers": 0,
+    },
+    {
+      "buildings": 3,
+      "cavemen": 0,
+      "fireTokens": 0,
+      "giants": 0,
+      "knights": 3,
+      "name": "Carol",
+      "resources": 0,
+      "towers": 0,
+    },
+  ],
+  "queenHolder": "Alice",
+  "results": [
+    {
+      "maxPropertiesSize": 8,
+      "name": "Alice",
+      "points": 107,
+      "position": 1,
+      "totalCrowns": 24,
+    },
+    {
+      "maxPropertiesSize": 7,
+      "name": "Carol",
+      "points": 49,
+      "position": 2,
+      "totalCrowns": 12,
+    },
+    {
+      "maxPropertiesSize": 5,
+      "name": "Bob",
+      "points": 46,
+      "position": 3,
+      "totalCrowns": 12,
+    },
+  ],
+}
+`;
+
+exports[`Score characterization (final results must never change) > QueenDomino 3p / seed bravo 1`] = `
+{
+  "extensions": [
+    {
+      "buildings": 2,
+      "cavemen": 0,
+      "fireTokens": 0,
+      "giants": 0,
+      "knights": 3,
+      "name": "Alice",
+      "resources": 0,
+      "towers": 0,
+    },
+    {
+      "buildings": 4,
+      "cavemen": 0,
+      "fireTokens": 0,
+      "giants": 0,
+      "knights": 3,
+      "name": "Bob",
+      "resources": 0,
+      "towers": 1,
+    },
+    {
+      "buildings": 5,
+      "cavemen": 0,
+      "fireTokens": 0,
+      "giants": 0,
+      "knights": 3,
+      "name": "Carol",
+      "resources": 0,
+      "towers": 2,
+    },
+  ],
+  "queenHolder": "Carol",
+  "results": [
+    {
+      "maxPropertiesSize": 6,
+      "name": "Alice",
+      "points": 100,
+      "position": 1,
+      "totalCrowns": 22,
+    },
+    {
+      "maxPropertiesSize": 6,
+      "name": "Bob",
+      "points": 49,
+      "position": 2,
+      "totalCrowns": 12,
+    },
+    {
+      "maxPropertiesSize": 4,
+      "name": "Carol",
+      "points": 44,
+      "position": 3,
+      "totalCrowns": 18,
+    },
+  ],
+}
+`;
+
+exports[`Score characterization (final results must never change) > QueenDomino 3p / seed charlie 1`] = `
+{
+  "extensions": [
+    {
+      "buildings": 3,
+      "cavemen": 0,
+      "fireTokens": 0,
+      "giants": 0,
+      "knights": 3,
+      "name": "Alice",
+      "resources": 0,
+      "towers": 0,
+    },
+    {
+      "buildings": 5,
+      "cavemen": 0,
+      "fireTokens": 0,
+      "giants": 0,
+      "knights": 3,
+      "name": "Bob",
+      "resources": 0,
+      "towers": 2,
+    },
+    {
+      "buildings": 3,
+      "cavemen": 0,
+      "fireTokens": 0,
+      "giants": 0,
+      "knights": 3,
+      "name": "Carol",
+      "resources": 0,
+      "towers": 1,
+    },
+  ],
+  "queenHolder": "Bob",
+  "results": [
+    {
+      "maxPropertiesSize": 7,
+      "name": "Alice",
+      "points": 152,
+      "position": 1,
+      "totalCrowns": 32,
+    },
+    {
+      "maxPropertiesSize": 4,
+      "name": "Bob",
+      "points": 45,
+      "position": 2,
+      "totalCrowns": 12,
+    },
+    {
+      "maxPropertiesSize": 4,
+      "name": "Carol",
+      "points": 38,
+      "position": 3,
+      "totalCrowns": 16,
+    },
+  ],
+}
+`;
+
+exports[`Score characterization (final results must never change) > QueenDomino 4p [The middle Kingdom, Harmony] / seed alpha 1`] = `
+{
+  "extensions": [
+    {
+      "buildings": 7,
+      "cavemen": 0,
+      "fireTokens": 0,
+      "giants": 0,
+      "knights": 3,
+      "name": "Alice",
+      "resources": 0,
+      "towers": 2,
+    },
+    {
+      "buildings": 3,
+      "cavemen": 0,
+      "fireTokens": 0,
+      "giants": 0,
+      "knights": 3,
+      "name": "Bob",
+      "resources": 0,
+      "towers": 3,
+    },
+    {
+      "buildings": 3,
+      "cavemen": 0,
+      "fireTokens": 0,
+      "giants": 0,
+      "knights": 3,
+      "name": "Carol",
+      "resources": 0,
+      "towers": 1,
+    },
+    {
+      "buildings": 3,
+      "cavemen": 0,
+      "fireTokens": 0,
+      "giants": 0,
+      "knights": 3,
+      "name": "Dave",
+      "resources": 0,
+      "towers": 0,
+    },
+  ],
+  "queenHolder": "Bob",
+  "results": [
+    {
+      "maxPropertiesSize": 10,
+      "name": "Alice",
+      "points": 112,
+      "position": 1,
+      "totalCrowns": 14,
+    },
+    {
+      "maxPropertiesSize": 5,
+      "name": "Dave",
+      "points": 74,
+      "position": 2,
+      "totalCrowns": 15,
+    },
+    {
+      "maxPropertiesSize": 5,
+      "name": "Carol",
+      "points": 66,
+      "position": 3,
+      "totalCrowns": 20,
+    },
+    {
+      "maxPropertiesSize": 5,
+      "name": "Bob",
+      "points": 48,
+      "position": 4,
+      "totalCrowns": 14,
+    },
+  ],
+}
+`;
+
+exports[`Score characterization (final results must never change) > QueenDomino 4p [The middle Kingdom, Harmony] / seed bravo 1`] = `
+{
+  "extensions": [
+    {
+      "buildings": 3,
+      "cavemen": 0,
+      "fireTokens": 0,
+      "giants": 0,
+      "knights": 3,
+      "name": "Alice",
+      "resources": 0,
+      "towers": 2,
+    },
+    {
+      "buildings": 4,
+      "cavemen": 0,
+      "fireTokens": 0,
+      "giants": 0,
+      "knights": 3,
+      "name": "Bob",
+      "resources": 0,
+      "towers": 1,
+    },
+    {
+      "buildings": 4,
+      "cavemen": 0,
+      "fireTokens": 0,
+      "giants": 0,
+      "knights": 3,
+      "name": "Carol",
+      "resources": 0,
+      "towers": 1,
+    },
+    {
+      "buildings": 3,
+      "cavemen": 0,
+      "fireTokens": 0,
+      "giants": 0,
+      "knights": 3,
+      "name": "Dave",
+      "resources": 0,
+      "towers": 3,
+    },
+  ],
+  "queenHolder": "Dave",
+  "results": [
+    {
+      "maxPropertiesSize": 4,
+      "name": "Alice",
+      "points": 74,
+      "position": 1,
+      "totalCrowns": 21,
+    },
+    {
+      "maxPropertiesSize": 4,
+      "name": "Bob",
+      "points": 63,
+      "position": 2,
+      "totalCrowns": 17,
+    },
+    {
+      "maxPropertiesSize": 6,
+      "name": "Dave",
+      "points": 50,
+      "position": 3,
+      "totalCrowns": 11,
+    },
+    {
+      "maxPropertiesSize": 4,
+      "name": "Carol",
+      "points": 46,
+      "position": 4,
+      "totalCrowns": 16,
+    },
+  ],
+}
+`;
+
+exports[`Score characterization (final results must never change) > QueenDomino 4p [The middle Kingdom, Harmony] / seed charlie 1`] = `
+{
+  "extensions": [
+    {
+      "buildings": 5,
+      "cavemen": 0,
+      "fireTokens": 0,
+      "giants": 0,
+      "knights": 3,
+      "name": "Alice",
+      "resources": 0,
+      "towers": 3,
+    },
+    {
+      "buildings": 2,
+      "cavemen": 0,
+      "fireTokens": 0,
+      "giants": 0,
+      "knights": 3,
+      "name": "Bob",
+      "resources": 0,
+      "towers": 0,
+    },
+    {
+      "buildings": 3,
+      "cavemen": 0,
+      "fireTokens": 0,
+      "giants": 0,
+      "knights": 3,
+      "name": "Carol",
+      "resources": 0,
+      "towers": 2,
+    },
+    {
+      "buildings": 2,
+      "cavemen": 0,
+      "fireTokens": 0,
+      "giants": 0,
+      "knights": 3,
+      "name": "Dave",
+      "resources": 0,
+      "towers": 0,
+    },
+  ],
+  "queenHolder": "Alice",
+  "results": [
+    {
+      "maxPropertiesSize": 8,
+      "name": "Alice",
+      "points": 118,
+      "position": 1,
+      "totalCrowns": 15,
+    },
+    {
+      "maxPropertiesSize": 5,
+      "name": "Carol",
+      "points": 63,
+      "position": 2,
+      "totalCrowns": 20,
+    },
+    {
+      "maxPropertiesSize": 5,
+      "name": "Dave",
+      "points": 43,
+      "position": 3,
+      "totalCrowns": 14,
+    },
+    {
+      "maxPropertiesSize": 4,
+      "name": "Bob",
+      "points": 43,
+      "position": 4,
+      "totalCrowns": 16,
+    },
+  ],
+}
+`;
