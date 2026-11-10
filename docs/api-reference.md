@@ -158,11 +158,13 @@ type CreateGameCommand = {
 ### `AddPlayersCommand`
 
 ```typescript
-type PlayerInput = string | { name: string; bot?: { strategyName: string } };
+type PlayerInput =
+  | string
+  | { id?: string; name: string; bot?: { strategyName: string } };
 
 type AddPlayersCommand = {
   game: GameState;
-  players: PlayerInput[];  // 1-4 players; strings for humans, objects for bots
+  players: PlayerInput[];  // 1-4 players; strings for humans, objects for bots or stable ids
 };
 ```
 
@@ -273,8 +275,11 @@ type DeserializeGameCommand = {
 ### `GetDynastyResultCommand`
 
 ```typescript
+type DynastyGroupBy = "playerId" | "playerName";
+
 type GetDynastyResultCommand = {
   games: GameWithResults[];
+  groupBy?: DynastyGroupBy;  // defaults to "playerId"
 };
 ```
 
@@ -614,10 +619,12 @@ type Player = {
 
 ### `PlayerInput`
 
-Used when adding players. A plain string creates a human player; an object can specify a bot strategy.
+Used when adding players. A plain string creates a human player; an object can specify a bot strategy and/or a stable `id` (non-empty, unique within the call — otherwise `INVALID_PLAYER_ID`). Without `id`, the engine generates one with `uuidMethod`.
 
 ```typescript
-type PlayerInput = string | { name: string; bot?: { strategyName: string } };
+type PlayerInput =
+  | string
+  | { id?: string; name: string; bot?: { strategyName: string } };
 ```
 
 ### `PlayerActions`
@@ -1051,6 +1058,12 @@ try {
 | `CAVEMAN_NOT_FOUND` | The specified caveman ID does not exist on the cave board. |
 | `NOT_TRIBE_MODE` | Caveman recruitment is only available in Tribe mode. |
 
+### Player Id Errors
+
+| Code | Description |
+|---|---|
+| `INVALID_PLAYER_ID` | A player id passed to `addPlayers` is empty or duplicated. |
+
 ### Exception Classes
 
 | Class | Base Code | Usage |
@@ -1180,6 +1193,52 @@ Events can be provided via `EngineConfig.events` or by wrapping an engine with `
 | `onCavemanRecruited` | After `recruitCaveman` (Origins Tribe) |
 | `onGiantPlaced` | After `placeGiant` (Age of Giants) |
 | `onGiantSent` | After `sendGiant` (Age of Giants) |
+| `onExtraRulesAdded` | After `addExtraRules` (receives `extraRules`) |
+| `onOptionalActionSkipped` | After `skipOptionalAction` (receives the `skippedAction`) |
+
+`onTurnEnd`/`onTurnStart` and `onGameEnd` are derived centrally from the state before and after **every** gameplay method: `onGameEnd` is emitted exactly once per game, whatever the action that reaches the `result` step (`placeDomino`, `discardDomino`, `skipOptionalAction`, `placeFireToken`, `recruitCaveman`, `useDragon`, `placeKnight`, `constructBuilding`, `placeGiant`, `sendGiant`…). The action-specific event is emitted first.
+
+### Action Log Replay, Seeds and Stable Ids
+
+`wrapWithActionLog` records **every** state-changing method, extension actions included: `createGame`, `addPlayers`, `addExtraRules`, `startGame`, `chooseDomino`, `placeDomino`, `discardDomino`, `placeGiant`, `sendGiant`, `placeKnight`, `constructBuilding`, `useDragon`, `placeFireToken`, `recruitCaveman`, `skipOptionalAction`.
+
+| Payload | Content |
+|---|---|
+| `createGame` | `{ mode, seed, gameId }` — the **effective** seed (generated when the caller gave none) and the generated game id |
+| `addPlayers` | `{ players: [{ id, name, bot? }] }` — players with the ids the engine assigned |
+| `startGame` | `{ lordIds }` — lord ids in `game.lords` order |
+| `placeKnight` / `placeFireToken` / `placeGiant` | `{ lordId, position }` |
+| `constructBuilding` | `{ lordId, buildingId, position }` |
+| `useDragon` | `{ lordId, buildingId }` |
+| `recruitCaveman` | `{ lordId, cavemanId, position, resourcePositions }` |
+| `sendGiant` | `{ lordId, giantIndex, targetPlayerId, targetCrownPosition? }` |
+| `skipOptionalAction` | `{ lordId }` |
+
+`placeGiant` may be recorded with the lord of the **targeted** player (a giant sent by an opponent, `ageOfGiants.pendingGiant`); the replay plays it the same way.
+
+**Strictly identical replay.** `replayActions(engine, log)` restores the recorded seed, game id, player ids and lord ids, so the replayed state deep-equals the original one — whatever the replay engine's `uuidMethod` or `shuffleMethod`. The log is plain JSON (`JSON.stringify` / `JSON.parse`).
+
+**Versioning.** `GameActionLog.version` is `ACTION_LOG_VERSION` (`2`). Legacy logs without `version` (v1: no seed, plain player names, empty `startGame` payload) remain replayable, with regenerated ids; a log with a newer version is refused.
+
+```typescript
+import { ACTION_LOG_VERSION, replayActions, wrapWithActionLog } from '@pompidup/kingdomino-engine';
+
+const { engine, getLog } = wrapWithActionLog(createGameEngine({}));
+// ... play a game ...
+const saved = JSON.stringify(getLog());
+const replayed = replayActions(createGameEngine({}), JSON.parse(saved)); // deep-equals the original
+```
+
+**Dynasty: recommended setup.** `getDynastyResults` groups players by `playerId`, and `addPlayers` generates new ids for every game. For a Dynasty, pass the same stable id for each person in every game:
+
+```typescript
+const players = [{ id: 'user-alice', name: 'Alice' }, { id: 'user-bob', name: 'Bob' }];
+game1 = engine.addPlayers({ game: game1, players });
+game2 = engine.addPlayers({ game: game2, players });
+engine.getDynastyResults({ games: [results1, results2, results3] });
+```
+
+For games created without stable ids, group by name instead (names must then be unique per game): `engine.getDynastyResults({ games, groupBy: 'playerName' })`. The returned `playerId` is then the one from the first game where the name appears.
 
 ### Undo/Redo History
 
