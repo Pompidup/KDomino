@@ -27,7 +27,12 @@ Extends Discovery with **wooden resources** and **totem majority** tiles.
 - Tiles with fire symbols get NO resource
 - Fire tokens landing on a resource destroy it
 
-**Totems**: 4 totem tiles (one per resource type). Player with the majority of a resource type holds that totem.
+**Totems**: 4 totem tiles (one per resource type), held by the player with the majority of that resource. Holders are re-evaluated during the game, after every `placeDomino` (new resources) and `placeFireToken` (destroyed resource), and once more by `getResults`:
+- a player takes a totem when they have **strictly more** resources of that type than every other player, taking it from its holder if needed;
+- on a tie for the majority, the current holder keeps the totem; if the holder lost the majority to several tied players, the totem goes to the first of them (player order);
+- a totem nobody holds stays unclaimed while the majority is tied, and returns to unclaimed when nobody has the resource anymore.
+
+`game.origins.totems` always reflects the current holders.
 
 **Scoring**: Discovery scoring + 1 point per remaining resource + totem bonuses (3 pts each)
 
@@ -73,6 +78,11 @@ placeDomino → [placeFireToken if volcano] → pickDomino
 ```
 placeDomino → [placeFireToken if volcano] → pickDomino → [recruitCaveman optional]
 ```
+
+Recruiting does not change the turn order: when the lord that completes a round recruits, the next round starts normally and that lord still places and picks in it.
+
+### Last turn
+During the last turn there is no domino left to pick: each lord only places (or discards) its domino, and places its fire token if it placed a volcano. The `result` step is reached only once **every** lord has played its last domino.
 
 ## API
 

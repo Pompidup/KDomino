@@ -3,21 +3,16 @@ import {
   takeCavemanFromDrawPile,
   takeCavemanFromVisible,
 } from "@core/domain/entities/caveman.js";
-import {
-  allLordsHavePlayed,
-  nextLordWithAction,
-} from "@core/domain/entities/lord.js";
+import { advanceToNextLordOrResult } from "@core/domain/entities/lord.js";
 import {
   canSpendResources,
   spendResources,
 } from "@core/domain/entities/resource.js";
 import { ErrorCode } from "@core/domain/errors/domainErrors.js";
-import {
-  type GameState,
-  type GameStateResult,
-  type GameWithNextAction,
-  gameSteps,
-  type NextAction,
+import type {
+  GameState,
+  GameStateResult,
+  GameWithNextAction,
 } from "@core/domain/types/game.js";
 import type { Position } from "@core/domain/types/kingdom.js";
 import { err, ok } from "@utils/result.js";
@@ -138,35 +133,14 @@ export const recruitCavemanUseCase: RecruitCavemanUseCase = (
     caveBoard: cavemanResult.updatedBoard,
   };
 
-  // Mark lord turn as ended and advance
-  const updatedLords = game.lords.map((lord) => {
-    if (lord.id === currentLord.id) {
-      return { ...lord, turnEnded: true };
-    }
-    return lord;
-  });
-
-  const isLastTurn = game.turn === game.rules.basic.maxTurns;
-
-  let nextGameAction: GameState;
-
-  if (isLastTurn && allLordsHavePlayed(updatedLords)) {
-    nextGameAction = {
-      ...game,
-      players: updatedPlayers,
-      lords: updatedLords,
-      origins: updatedOrigins,
-      nextAction: { type: "step", step: gameSteps.result },
-    };
-  } else {
-    nextGameAction = {
-      ...game,
-      players: updatedPlayers,
-      lords: updatedLords,
-      origins: updatedOrigins,
-      nextAction: nextLordWithAction(updatedLords) as NextAction,
-    };
-  }
+  // Recruitment happens after the lord picked its new domino: chooseDomino
+  // already ended this lord's turn. When that pick completed the round, the
+  // lords have been reset for the next turn and must stay untouched, otherwise
+  // this lord would lose its next placement and pick.
+  const nextGameAction: GameState = advanceToNextLordOrResult(
+    { ...game, players: updatedPlayers, origins: updatedOrigins },
+    game.lords,
+  );
 
   return ok(nextGameAction);
 };
