@@ -20,12 +20,20 @@ const mulberry32 = (seed: number): (() => number) => {
   };
 };
 
+/**
+ * Deterministic pseudo-random generator (values in [0, 1)) derived from a
+ * seed and a salt: the same seed and salt always give the same sequence.
+ */
+export const createSeededRandom = (
+  seed: string,
+  salt: string,
+): (() => number) => mulberry32(hashSeed(`${seed}|${salt}`));
+
 export const createSeededShuffle = (
   seed: string,
   salt: string,
 ): ShuffleMethod => {
-  const numericSeed = hashSeed(`${seed}|${salt}`);
-  const random = mulberry32(numericSeed);
+  const random = createSeededRandom(seed, salt);
 
   return <T>(array: T[]): T[] => {
     const result = [...array];

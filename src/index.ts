@@ -18,15 +18,27 @@ export * from "@core/portUserside/engine.js";
 // Bot / AI player
 export {
   advancedStrategy,
+  type BotExtensionChoices,
   type BotStrategy,
+  type BuildingChoice,
+  type BuildingContext,
+  type CavemanChoice,
+  type CavemanContext,
+  type DragonContext,
+  type ExtensionContext,
   expertStrategy,
+  type FireTokenContext,
+  type GiantPositionContext,
   greedyStrategy,
   isBotTurn,
+  type KnightContext,
   type PickContext,
   type PlaceContext,
   playBotTurn,
   playBotTurns,
   randomStrategy,
+  type SendGiantChoice,
+  type SendGiantContext,
 } from "@core/useCases/bot.js";
 // Bot strategy registry
 export {
