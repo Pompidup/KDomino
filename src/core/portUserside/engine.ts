@@ -1,5 +1,6 @@
 import type { AddExtraRulesCommand } from "@application/commands/addExtraRulesCommand.js";
 import type { AddPlayersCommand } from "@application/commands/addPlayersCommand.js";
+import type { CalculatePlayerScoreCommand } from "@application/commands/calculatePlayerScoreCommand.js";
 import type { CalculateScoreCommand } from "@application/commands/calculateScoreCommand.js";
 import type { CanPlaceDominoCommand } from "@application/commands/canPlaceDominoCommand.js";
 import type { ChooseDominoCommand } from "@application/commands/chooseDominoCommand.js";
@@ -42,6 +43,7 @@ import type {
   GameWithNextAction,
   GameWithNextStep,
   GameWithResults,
+  PlayerScore,
   Position,
   Score,
 } from "@core/domain/types/index.js";
@@ -341,4 +343,19 @@ export type GameEngine = {
    * @returns True if the current action can be skipped
    */
   canSkipOptionalAction: (command: CanSkipOptionalActionCommand) => boolean;
+
+  /**
+   * Calculates the mode-aware score of one player, with its breakdown
+   * (territories and every bonus of the game mode: Queen, buildings, fire
+   * tokens, resources, totems, cavemen, quests, optional rules...).
+   *
+   * During the game the score is live (`final: false`): it reflects the
+   * current state and end-of-game-only bonuses (Harmony, Homo Habilis,
+   * Harmony quest) are not included yet. Once the game is over it is final
+   * and identical to the score returned by `getResults`.
+   * @param command - Contains the game state (any stage) and the player id
+   * @returns The player's score with its breakdown
+   * @throws NotFoundError if the player is not in the game
+   */
+  calculatePlayerScore: (command: CalculatePlayerScoreCommand) => PlayerScore;
 };

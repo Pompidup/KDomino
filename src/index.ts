@@ -34,6 +34,8 @@ export {
   getStrategyNames,
   type StrategyName,
 } from "@core/useCases/botRegistry.js";
+// Score breakdown (mode-aware live / final score)
+export type { CalculatePlayerScoreUseCase } from "@core/useCases/calculatePlayerScore.js";
 export type { ConstructBuildingUseCase } from "@core/useCases/constructBuilding.js";
 // Action log (game history / replay)
 export {
@@ -162,6 +164,7 @@ export const createGameEngine = (config: Partial<EngineConfig>): GameEngine => {
     getValidGiantPositionsHandler,
     getValidGiantTargetsHandler,
     canSkipOptionalActionHandler,
+    calculatePlayerScoreHandler,
   } = configureEngine(config);
 
   let engine: GameEngine = {
@@ -201,6 +204,7 @@ export const createGameEngine = (config: Partial<EngineConfig>): GameEngine => {
     getValidGiantPositions: (command) => getValidGiantPositionsHandler(command),
     getValidGiantTargets: (command) => getValidGiantTargetsHandler(command),
     canSkipOptionalAction: (command) => canSkipOptionalActionHandler(command),
+    calculatePlayerScore: (command) => calculatePlayerScoreHandler(command),
   };
 
   if (config.events) {

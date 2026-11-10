@@ -18,6 +18,7 @@ Complete API reference for `@pompidup/kingdomino-engine`.
 10. [Utilities](#utilities)
 11. [Type Guards](#type-guards)
 12. [Valid targets for extension actions](#valid-targets-for-extension-actions)
+13. [Score Breakdown](#score-breakdown)
 
 ---
 
@@ -113,6 +114,7 @@ All methods are available on the `GameEngine` object returned by `createGameEngi
 | `getResults` | `GetResultCommand` | `GameWithResults` | Calculate final results after the game ends. |
 | `calculateScore` | `CalculateScoreCommand` | `Score` | Calculate the score for a single kingdom (live scoring). |
 | `getDynastyResults` | `GetDynastyResultCommand` | `DynastyResult[]` | Aggregate results from multiple completed games. |
+| `calculatePlayerScore` | `CalculatePlayerScoreCommand` | `PlayerScore` | Mode-aware score of one player with its breakdown, live during the game and final once it is over. See [Score Breakdown](#score-breakdown). |
 
 ### Query Methods
 
@@ -471,6 +473,7 @@ type ScoreResult = {
   playerId: string;
   playerName: string;
   details: Score;
+  breakdown?: ScoreBreakdown; // Always set by getResults (see Score Breakdown)
 };
 ```
 
@@ -1550,3 +1553,120 @@ import { isSkippableAction } from '@pompidup/kingdomino-engine';
 isSkippableAction('sendGiant');  // true
 isSkippableAction('placeGiant'); // false
 ```
+
+---
+
+## Score Breakdown
+
+`calculatePlayerScore` returns the **mode-aware** score of one player with a detailed breakdown (every territory and every bonus of the game mode). `getResults` uses exactly the same computation: each `FinalResult` carries the same `breakdown`, and `details.points === breakdown.total`.
+
+Unlike `calculateScore` (territories of a single kingdom only), it takes the game into account: Queen and buildings (Queendomino), fire tokens, resources, totems and cavemen (Origins), giants and quest tiles (Age of Giants) and the optional rules (The middle Kingdom, Harmony, Empire of Fire, Homo Habilis).
+
+### `calculatePlayerScore`
+
+```typescript
+calculatePlayerScore: (command: CalculatePlayerScoreCommand) => PlayerScore;
+```
+
+Throws a `NotFoundError` (`PLAYER_NOT_FOUND`) when the player is not in the game.
+
+```typescript
+const score = engine.calculatePlayerScore({ game, playerId });
+console.log(score.points, score.final ? 'final' : 'live');
+
+for (const territory of score.breakdown.territories) {
+  highlight(territory.cells, `${territory.cells.length} × ${territory.crowns}`);
+}
+for (const bonus of score.breakdown.bonuses) {
+  console.log(translator.t(bonus.label, bonus.labelParams), bonus.points);
+}
+```
+
+### `CalculatePlayerScoreCommand`
+
+```typescript
+type CalculatePlayerScoreCommand = {
+  game: Game;       // Any stage: in progress, over, or the state returned by getResults
+  playerId: string; // Player to score
+};
+```
+
+### `PlayerScore`
+
+```typescript
+type PlayerScore = {
+  playerId: string;
+  playerName: string;
+  points: number;            // Total score (= breakdown.total)
+  maxPropertiesSize: number; // Largest territory (tie-breaker)
+  totalCrowns: number;       // Crowns counted in the kingdom
+  final: boolean;            // true once the game is over (identical to getResults)
+  breakdown: ScoreBreakdown;
+};
+```
+
+### `ScoreBreakdown`
+
+```typescript
+type ScoreBreakdown = {
+  territories: ScoreTerritory[];
+  bonuses: ScoreBonus[];
+  territoryPoints: number; // Sum of the territory points
+  bonusPoints: number;     // Sum of the bonus points
+  total: number;           // territoryPoints + bonusPoints
+};
+```
+
+### `ScoreTerritory`
+
+```typescript
+type ScoreTerritory = {
+  terrain: Ground;
+  cells: Position[];     // Squares of the territory, sorted by row then column
+  crowns: number;        // Crowns counted (crowns covered by giants excluded)
+  coveredCrowns: number; // Crowns covered by Age of Giants giants
+  points: number;        // cells.length * crowns
+};
+```
+
+### `ScoreBonus`
+
+```typescript
+type ScoreBonus = {
+  type: ScoreBonusType;
+  label: TranslationKeyType;                       // translator.t(label, labelParams)
+  labelParams?: Record<string, string | number>;   // e.g. { name: 'The Sawmill' }
+  points: number;                                  // May be 0 when the condition is not met
+  provisional: boolean;                            // true while the game is in progress
+  buildingId?: number;   // building
+  questId?: number;      // quest
+  questType?: QuestType; // quest
+  terrain?: Ground;      // quest (Local Trade, Kingdom Borders)
+  resource?: ResourceType; // totem
+  cavemanId?: number;    // hunterGatherer
+  position?: Position;   // building, hunterGatherer
+};
+```
+
+| `type` | Mode | Label | Listed when |
+|---|---|---|---|
+| `middleKingdom` | Classic / Queendomino | `rule.middleKingdom` | "The middle Kingdom" rule is active (10 or 0) |
+| `empireOfFire` | Origins | `rule.empireOfFire` | "Empire of Fire" rule is active (10 or 0) |
+| `harmony` | Classic / Queendomino | `rule.harmony` | "Harmony" rule is active, **end of game only** (5 or 0) |
+| `homoHabilis` | Origins | `rule.homoHabilis` | "Homo Habilis" rule is active, **end of game only** (5 or 0) |
+| `queen` | Queendomino, AoG-QD | `score.queen` | The player hosts the Queen (size of the largest territory) |
+| `building` | Queendomino, AoG-QD | `score.building` (`{{name}}`) | One per constructed building with an end-game scoring |
+| `quest` | Age of Giants | `quest.<questType>` | One per quest tile; the Harmony quest at the end of game only |
+| `totem` | Origins Totem | `score.totem<Resource>` | One per totem held by the player |
+| `resources` | Origins Totem | `score.resources` | Always (1 point per resource left) |
+| `hunterGatherer` | Origins Tribe | `caveman.<hunterType>` | One per recruited hunter-gatherer |
+| `warriors` | Origins Tribe | `score.warriors` | The player has at least one warrior (all groups) |
+| `fire` | Origins | `score.fire` | The player placed at least one fire token |
+
+`scoreBonusTypes` lists every type; `questTypeToTranslationKey` and `totemToTranslationKey` map quest types and totems to their label. Every label exists in English and French.
+
+### Live score vs final score
+
+- **Game in progress** (`final: false`): the score reflects the current state. Territories, The middle Kingdom / Empire of Fire, the Queen (current host), buildings, fire tokens, resources, totems (current resource-majority holders), cavemen and every quest except Harmony are evaluated now and flagged `provisional: true`: they can still change before the end.
+- **End-of-game-only bonuses**: Harmony, Homo Habilis and the Harmony quest need the complete kingdom (every received domino placed). They are not part of the live score and only appear once the game is over.
+- **Game over** (`nextAction.step === "result"`, `final: true`): every bonus is final (`provisional: false`) and the score is identical to the one returned by `getResults`.

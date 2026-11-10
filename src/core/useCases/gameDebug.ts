@@ -366,5 +366,11 @@ export const wrapWithDebug = (
       logger,
       level,
     ),
+    calculatePlayerScore: wrapMethod(
+      "calculatePlayerScore",
+      engine.calculatePlayerScore,
+      logger,
+      level,
+    ),
   };
 };

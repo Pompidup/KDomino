@@ -9,5 +9,6 @@ export * from "./origins.js";
 export * from "./player.js";
 export * from "./queendomino.js";
 export * from "./rule.js";
+export * from "./score.js";
 export * from "./utils.js";
 export * from "./validation.js";

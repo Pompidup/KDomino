@@ -23,9 +23,6 @@ describe("getResultHandler", () => {
       getResultUseCase: () => {
         throw new Error("This should not be called");
       },
-      calculateScoreUseCase: () => {
-        throw new Error("This should not be called");
-      },
     };
 
     const handler = getResultHandler(logger, defaultTranslator, useCasesDeps);
@@ -51,9 +48,6 @@ describe("getResultHandler", () => {
       getResultUseCase: () => {
         throw new Error("This should not be called");
       },
-      calculateScoreUseCase: () => {
-        throw new Error("This should not be called");
-      },
     };
 
     const handler = getResultHandler(logger, defaultTranslator, useCasesDeps);
@@ -69,31 +63,28 @@ describe("getResultHandler", () => {
     expect(act).toThrowError("Invalid game step");
   });
 
-  test("should throw an error if the calculate score use case return an error", () => {
+  test("should score every player through the get result use case only", () => {
     // Arrange
     const game = createGameBuilder<NextStep>()
       .withAllDefaults()
       .withNextAction({ type: "step", step: "result" })
       .build();
 
+    const calls: unknown[] = [];
     const useCasesDeps = {
-      getResultUseCase: () => {
-        throw new Error("This should not be called");
+      getResultUseCase: (...args: unknown[]) => {
+        calls.push(args);
+        return ok({ ...game, result: [] });
       },
-      calculateScoreUseCase: () => err(ErrorCode.STEP_EXECUTION_FAILED),
     };
 
     const handler = getResultHandler(logger, defaultTranslator, useCasesDeps);
 
-    const command: GetResultCommand = {
-      game,
-    };
-
     // Act
-    const act = () => handler(command);
+    handler({ game });
 
     // Assert
-    expect(act).toThrowError("Step execution failed");
+    expect(calls).toEqual([[game]]);
   });
 
   test("should throw an error if get result use case returns an error", () => {
@@ -102,11 +93,8 @@ describe("getResultHandler", () => {
       .withNextAction({ type: "step", step: "result" })
       .build();
 
-    const score = { points: 0, maxPropertiesSize: 0, totalCrowns: 0 };
-
     const useCasesDeps = {
       getResultUseCase: () => err(ErrorCode.PLAYER_NOT_FOUND),
-      calculateScoreUseCase: () => ok(score),
     };
 
     const handler = getResultHandler(logger, defaultTranslator, useCasesDeps);
@@ -153,7 +141,6 @@ describe("getResultHandler", () => {
 
     const useCasesDeps = {
       getResultUseCase: () => ok(expectedResult),
-      calculateScoreUseCase: () => ok(score),
     };
 
     const handler = getResultHandler(logger, defaultTranslator, useCasesDeps);

@@ -9,6 +9,7 @@ import { shuffleMethod } from "@adapter/shuffle.js";
 import { uuidMethod } from "@adapter/uuid.js";
 import { addExtraRulesHandler } from "@application/handlers/addExtraRulesHandler.js";
 import { addPlayersHandler } from "@application/handlers/addPlayersHandler.js";
+import { calculatePlayerScoreHandler } from "@application/handlers/calculatePlayerScoreHandler.js";
 import { calculateScoreHandler } from "@application/handlers/calculateScoreHandler.js";
 import { canPlaceDominoHandler } from "@application/handlers/canPlaceDominoHandler.js";
 import { chooseDominoHandler } from "@application/handlers/chooseDominoHandler.js";
@@ -42,6 +43,7 @@ import type { UuidMethod } from "@core/portServerside/uuidMethod.js";
 import type { GameEngine } from "@core/portUserside/engine.js";
 import { addExtraRulesUseCase } from "@core/useCases/addExtraRules.js";
 import { addPlayersUseCase } from "@core/useCases/addPlayers.js";
+import { calculatePlayerScoreUseCase } from "@core/useCases/calculatePlayerScore.js";
 import { calculateScoreUseCase } from "@core/useCases/calculateScore.js";
 import { chooseDominoUseCase } from "@core/useCases/chooseDomino.js";
 import { constructBuildingUseCase } from "@core/useCases/constructBuilding.js";
@@ -130,6 +132,7 @@ export type ConfiguredHandlers = {
   getValidGiantPositionsHandler: GameEngine["getValidGiantPositions"];
   getValidGiantTargetsHandler: GameEngine["getValidGiantTargets"];
   canSkipOptionalActionHandler: GameEngine["canSkipOptionalAction"];
+  calculatePlayerScoreHandler: GameEngine["calculatePlayerScore"];
 };
 
 export const configureEngine = (
@@ -216,7 +219,6 @@ export const configureEngine = (
     ),
     getResultHandler: getResultHandler(logger, translator, {
       getResultUseCase,
-      calculateScoreUseCase,
     }),
     calculateScoreHandler: calculateScoreHandler(
       logger,
@@ -325,6 +327,11 @@ export const configureEngine = (
       "canSkipOptionalAction",
       canSkipOptionalActionUseCase,
       (canSkip) => `${canSkip}`,
+    ),
+    calculatePlayerScoreHandler: calculatePlayerScoreHandler(
+      logger,
+      translator,
+      calculatePlayerScoreUseCase,
     ),
   };
 };

@@ -1,5 +1,6 @@
 export * from "./addExtraRulesCommand.js";
 export * from "./addPlayersCommand.js";
+export * from "./calculatePlayerScoreCommand.js";
 export * from "./calculateScoreCommand.js";
 export * from "./canPlaceDominoCommand.js";
 export * from "./chooseDominoCommand.js";

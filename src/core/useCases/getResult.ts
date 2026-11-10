@@ -1,147 +1,22 @@
-import { isAgeOfGiantsMode } from "@core/domain/entities/ageOfGiantsHelpers.js";
-import { calculateTribeCavemanScore } from "@core/domain/entities/caveman.js";
-import {
-  checkCastleIsInMiddle,
-  countDominoes,
-} from "@core/domain/entities/kingdom.js";
-import {
-  isOriginsMode,
-  isTotemMode,
-  isTribeMode,
-} from "@core/domain/entities/originsHelpers.js";
-import { calculateOriginsFireBonus } from "@core/domain/entities/originsScore.js";
-import { calculateQueenDominoEndGameBonus } from "@core/domain/entities/queen.js";
-import { calculateQuestBonus } from "@core/domain/entities/questScore.js";
-import {
-  calculateTotemScore,
-  determineTotemHolders,
-} from "@core/domain/entities/totem.js";
+import { computePlayerScore } from "@core/domain/entities/scoreBreakdown.js";
 import type {
   FinalResult,
   GameWithNextStep,
   GameWithResults,
   ScoreResult,
 } from "@core/domain/types/index.js";
-import type { TotemState } from "@core/domain/types/origins.js";
 import { ok, type Result } from "@utils/result.js";
 
 export type GetResultUseCase = (
   game: GameWithNextStep,
-  scoreResult: ScoreResult[],
 ) => Result<GameWithResults>;
 
 /**
- * Totem mode: the totem holders at the end of the game, re-evaluated from the
- * resources left in every kingdom (resource majority, see determineTotemHolders).
+ * Ranks scored players: by points, then by largest territory (per official
+ * rules, no further tiebreaker). Players equal on both share the position.
  */
-const getFinalTotemHolders = (
-  game: GameWithNextStep,
-): TotemState | undefined => {
-  if (!isTotemMode(game.mode.name) || !game.origins?.totems) return undefined;
-  return determineTotemHolders(game.players, game.origins.totems);
-};
-
-export const getResultUseCase: GetResultUseCase = (game, scoreResult) => {
-  const { rules } = game;
-  const { basic, extra } = rules;
-  const finalTotems = getFinalTotemHolders(game);
-
-  const finalScoreResult = scoreResult.map((score): ScoreResult => {
-    let finalScore = score.details.points;
-
-    const player = game.players.find((p) => p.id === score.playerId);
-    if (!player) {
-      return score;
-    }
-
-    const { kingdom } = player;
-
-    // Queendomino (incl. AoG-QD): Queen bonus + buildings end-game scoring
-    if (game.queendomino) {
-      finalScore += calculateQueenDominoEndGameBonus(
-        player,
-        game.queendomino.queenHolderId,
-      );
-    }
-
-    // Origins fire token scoring bonus
-    if (
-      isOriginsMode(game.mode.name) &&
-      player.fireTokens &&
-      player.fireTokens.length > 0
-    ) {
-      finalScore += calculateOriginsFireBonus(kingdom, player.fireTokens);
-    }
-
-    // Totem mode: resource points + totem bonuses
-    if (finalTotems) {
-      finalScore += calculateTotemScore(player, finalTotems);
-    }
-
-    // Tribe mode: caveman bonuses (no resource points, no totems)
-    if (
-      isTribeMode(game.mode.name) &&
-      player.cavemen &&
-      player.cavemen.length > 0
-    ) {
-      finalScore += calculateTribeCavemanScore(
-        player.cavemen,
-        kingdom,
-        player.resources ?? [],
-        player.fireTokens ?? [],
-      );
-    }
-
-    // Age of Giants: quest tile bonuses
-    if (isAgeOfGiantsMode(game.mode.name) && game.ageOfGiants?.questTiles) {
-      const giants = player.giants ?? [];
-      for (const quest of game.ageOfGiants.questTiles) {
-        finalScore += calculateQuestBonus(
-          quest,
-          kingdom,
-          giants,
-          basic.lords * basic.maxTurns,
-        );
-      }
-    }
-
-    if (extra.length > 0) {
-      extra.forEach((extraRule) => {
-        // Castle in middle: "The middle Kingdom" (Classic/QD) or "Empire of Fire" (Origins)
-        if (
-          extraRule.name === "The middle Kingdom" ||
-          extraRule.name === "Empire of Fire"
-        ) {
-          const castleIsInMiddle = checkCastleIsInMiddle(kingdom);
-          if (castleIsInMiddle) {
-            finalScore += 10;
-          }
-        }
-
-        // Complete kingdom: "Harmony" (Classic/QD) or "Homo Habilis" (Origins)
-        // Every domino the player received (one per lord and per turn) must
-        // be in the kingdom, i.e. none was discarded.
-        if (extraRule.name === "Harmony" || extraRule.name === "Homo Habilis") {
-          const totalDominoes = countDominoes(kingdom);
-          const dominoesReceived = basic.lords * basic.maxTurns;
-          if (totalDominoes === dominoesReceived) {
-            finalScore += 5;
-          }
-        }
-      });
-    }
-
-    return {
-      ...score,
-      details: {
-        ...score.details,
-        points: finalScore,
-      },
-    };
-  });
-
-  // Order players by score, then by maxPropertiesSize (per official rules, no further tiebreaker)
-  finalScoreResult.sort((a, b) => {
+export const rankScoreResults = (scoreResult: ScoreResult[]): FinalResult[] => {
+  const sorted = [...scoreResult].sort((a, b) => {
     if (a.details.points !== b.details.points) {
       return b.details.points - a.details.points;
     }
@@ -149,45 +24,48 @@ export const getResultUseCase: GetResultUseCase = (game, scoreResult) => {
   });
 
   const result: FinalResult[] = [];
+  if (sorted.length === 0) return result;
 
-  let isTie = false;
-  result.push({
-    playerId: finalScoreResult[0]!.playerId,
-    playerName: finalScoreResult[0]!.playerName,
-    details: finalScoreResult[0]!.details,
-    position: 1,
-  });
+  result.push({ ...sorted[0]!, position: 1 });
 
-  for (let i = 1; i < finalScoreResult.length; i++) {
-    const currentScore = finalScoreResult[i];
-    const previousScore = finalScoreResult[i - 1];
-    if (
-      previousScore &&
-      currentScore &&
+  for (let i = 1; i < sorted.length; i++) {
+    const currentScore = sorted[i]!;
+    const previousScore = sorted[i - 1]!;
+    const isTie =
       currentScore.details.points === previousScore.details.points &&
       currentScore.details.maxPropertiesSize ===
-        previousScore.details.maxPropertiesSize
-    ) {
-      isTie = true;
-    }
+        previousScore.details.maxPropertiesSize;
 
-    if (isTie) {
-      result.push({
-        ...currentScore!,
-        position: result[i - 1]!.position,
-      });
-    } else {
-      result.push({
-        ...currentScore!,
-        position: i + 1,
-      });
-    }
-
-    isTie = false;
+    result.push({
+      ...currentScore,
+      position: isTie ? result[i - 1]!.position : i + 1,
+    });
   }
+
+  return result;
+};
+
+/**
+ * Final results: every player is scored with the mode-aware score breakdown
+ * (the same computation as `calculatePlayerScore`), then ranked.
+ */
+export const getResultUseCase: GetResultUseCase = (game) => {
+  const scoreResult = game.players.map((player): ScoreResult => {
+    const score = computePlayerScore(game, player, true);
+    return {
+      playerId: score.playerId,
+      playerName: score.playerName,
+      details: {
+        points: score.points,
+        maxPropertiesSize: score.maxPropertiesSize,
+        totalCrowns: score.totalCrowns,
+      },
+      breakdown: score.breakdown,
+    };
+  });
 
   return ok({
     ...game,
-    result: result,
+    result: rankScoreResults(scoreResult),
   });
 };
