@@ -4,15 +4,18 @@
  * decisions, performing the optional extension actions (buildings, knights,
  * fire tokens, cavemen, giants) whenever a valid one exists.
  */
+import { findCrownsNotCoveredByGiants } from "@core/domain/entities/giant.js";
+import { placeDomino } from "@core/domain/entities/kingdom.js";
+import type { Domino } from "@core/domain/types/domino.js";
 import type { GameState, GameWithNextAction } from "@core/domain/types/game.js";
 import { isGameWithNextAction } from "@core/domain/types/game.js";
-import type { Position } from "@core/domain/types/kingdom.js";
+import type { Kingdom, Position } from "@core/domain/types/kingdom.js";
 import type { GameEngine } from "@core/portUserside/engine.js";
-import {
-  type BotStrategy,
-  greedyStrategy,
-  playBotTurn,
-} from "@core/useCases/bot.js";
+import { type BotStrategy, playBotTurn } from "@core/useCases/bot.js";
+import { calculateScoreUseCase } from "@core/useCases/calculateScore.js";
+import type { ValidPlacement } from "@core/useCases/getValidPlacements.js";
+import { getValidPlacementsUseCase } from "@core/useCases/getValidPlacements.js";
+import { isOk } from "@utils/result.js";
 import { createGameEngine } from "../../index.js";
 
 // ─── Deterministic helpers ──────────────────────────────────────────
@@ -49,6 +52,95 @@ const seededStrategy = (rand: () => number): BotStrategy => ({
     return validPlacements[Math.floor(rand() * validPlacements.length)]!;
   },
 });
+
+/*
+ * Frozen copy of the original greedy bot (territory score only) and of the
+ * original giant placement (first free crown). The built-in bots evolve (they
+ * became mode-aware); the score characterization must only depend on the
+ * scoring rules, so this driver keeps playing exactly the same games.
+ */
+
+const territoryScore = (kingdom: Kingdom): number => {
+  const result = calculateScoreUseCase(kingdom);
+  return isOk(result) ? result.value.points : 0;
+};
+
+const bestTerritoryPlacement = (
+  kingdom: Kingdom,
+  domino: Domino,
+  placements: ValidPlacement[],
+  maxSize: number,
+): { placement: ValidPlacement; score: number } | null => {
+  let best: { placement: ValidPlacement; score: number } | null = null;
+  for (const placement of placements) {
+    const next = placeDomino(
+      kingdom,
+      placement.position,
+      placement.rotation,
+      domino,
+      maxSize,
+    );
+    if (!isOk(next)) continue;
+    const score = territoryScore(next.value);
+    if (!best || score > best.score) best = { placement, score };
+  }
+  return best;
+};
+
+export const legacyGreedyStrategy: BotStrategy = {
+  chooseDomino: ({ game, lordId, availableDominoes }) => {
+    const lord = game.lords.find((l) => l.id === lordId);
+    const player = game.players.find((p) => p.id === lord?.playerId);
+    if (!player) return availableDominoes[0]!.domino.number;
+    const maxSize = game.rules.basic.maxKingdomSize;
+    let bestScore = -1;
+    let bestPick = availableDominoes[0]!.domino.number;
+    for (const rd of availableDominoes) {
+      const placements = getValidPlacementsUseCase(
+        player.kingdom,
+        rd.domino,
+        maxSize,
+      );
+      const result = bestTerritoryPlacement(
+        player.kingdom,
+        rd.domino,
+        placements,
+        maxSize,
+      );
+      const score = result ? result.score : 0;
+      if (score > bestScore) {
+        bestScore = score;
+        bestPick = rd.domino.number;
+      }
+    }
+    return bestPick;
+  },
+  choosePlacement: ({ game, domino, kingdom, validPlacements }) => {
+    if (validPlacements.length === 0) return null;
+    const result = bestTerritoryPlacement(
+      kingdom,
+      domino,
+      validPlacements,
+      game.rules.basic.maxKingdomSize,
+    );
+    return result ? result.placement : validPlacements[0]!;
+  },
+};
+
+/** Original giant placement: first crown not covered yet. */
+const placeGiantOnFirstCrown = (
+  engine: GameEngine,
+  game: GameWithNextAction,
+): GameState => {
+  const lordId = game.nextAction.nextLord;
+  const player = currentPlayer(game);
+  const crown = player
+    ? findCrownsNotCoveredByGiants(player.kingdom, player.giants ?? [])[0]
+    : undefined;
+  return crown
+    ? engine.placeGiant({ game, lordId, position: crown })
+    : engine.skipOptionalAction({ game, lordId });
+};
 
 const allPositions = (): Position[] => {
   const positions: Position[] = [];
@@ -189,6 +281,8 @@ const playStep = (
       return firstSuccess(sendGiantAttempts(engine, game)) ?? skip();
     case "useDragon":
       return skip();
+    case "placeGiant":
+      return placeGiantOnFirstCrown(engine, game);
     default:
       return playBotTurn(engine, game, strategy);
   }
@@ -299,7 +393,7 @@ export const playSeededGame = (
     if (++steps > 5000) throw new Error("Game did not finish");
     const player = currentPlayer(game);
     // First player plays greedy, the others play seeded random
-    const strategy = player?.name === "Alice" ? greedyStrategy : random;
+    const strategy = player?.name === "Alice" ? legacyGreedyStrategy : random;
     game = playStep(engine, game, strategy);
     onStep?.(engine, game);
   }
