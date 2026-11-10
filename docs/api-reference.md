@@ -1107,17 +1107,99 @@ import {
 
 | Export | Description |
 |---|---|
-| `randomStrategy` | Picks and places dominoes randomly. |
-| `greedyStrategy` | Maximizes immediate crown-territory score. |
-| `advancedStrategy` | Uses heuristics for better long-term placement. |
-| `expertStrategy` | Most sophisticated strategy with look-ahead. |
+| `randomStrategy` | Seeded random choices: random domino, random placement, random valid target (or skip) for every extension action. |
+| `greedyStrategy` | Maximizes the immediate mode-aware score, for dominoes and extension actions. |
+| `advancedStrategy` | 1-turn look-ahead on dominoes; extension actions weigh the best opponent's score at ½. |
+| `expertStrategy` | Beam search over the next turns on dominoes; extension actions maximize the lead over the best opponent. |
 | `isBotTurn(game)` | Returns `true` if the current lord belongs to a bot player. |
-| `playBotTurn(engine, game)` | Plays a single bot turn, returns updated game state. |
-| `playBotTurns(engine, game)` | Plays all consecutive bot turns until a human must act. |
+| `playBotTurn(engine, game, strategy)` | Plays a single bot action (pick, placement, extension action), returns updated game state. |
+| `playBotTurns(engine, game, customStrategies?)` | Plays all consecutive bot turns until a human must act. |
 | `getStrategy(name)` | Look up a strategy by name from the registry. |
 | `getStrategyNames()` | Returns all registered strategy names. |
 
-**Types:** `BotStrategy`, `PickContext`, `PlaceContext`, `StrategyName`.
+**Types:** `BotStrategy`, `BotExtensionChoices`, `PickContext`, `PlaceContext`, `ExtensionContext`, `KnightContext`, `BuildingContext`, `BuildingChoice`, `DragonContext`, `FireTokenContext`, `CavemanContext`, `CavemanChoice`, `GiantPositionContext`, `SendGiantContext`, `SendGiantChoice`, `StrategyName`.
+
+#### Mode-aware evaluation
+
+The built-in bots (except `randomStrategy`) evaluate every decision with the **mode-aware live score** of the player (the score of `calculatePlayerScore`: territories plus every bonus of the mode — Queen, buildings, fire tokens, resources and totems, cavemen, quests, Middle Kingdom / Empire of Fire —, provisional bonuses included), plus a small value for the assets the score does not count yet:
+
+| Asset | Value per unit | Mode |
+|---|---|---|
+| Coin | 0.5 point | Queendomino, Age of Giants + Queendomino |
+| Knight not placed yet | 0.75 point | Queendomino, Age of Giants + Queendomino |
+| Resource | 0.5 point | Origins Tribe (resources pay cavemen; in Totem they already score) |
+
+Asset values decrease linearly with the turns left and are worth nothing during the last turn, so the bots spend their coins and resources before the end. With these values a knight is placed for a tax of 2 coins or more, and a building is bought when its points (crowns, end-game scoring, Queen) beat the value of the coins spent.
+
+For an extension action, a bot enumerates the valid targets of the action (`getValidKnightPositions`, `getValidBuildingPositions` × `getAffordableBuildings`, `getValidFireTokenPositions`, `getValidCavemanPlacements`, `getValidGiantPositions`, `getValidGiantTargets`), plus "skip" when `canSkipOptionalAction` allows it, simulates each target with the action itself and keeps the best evaluation ("skip" first: a target must be strictly better than doing nothing). The strategies differ by how much the best opponent's score counts: 0 for `greedyStrategy`, ½ for `advancedStrategy`, 1 for `expertStrategy` (maximize the lead); the opponents' total only breaks ties (e.g. which opponent receives a giant).
+
+| Action | Mode-aware choice |
+|---|---|
+| `placeKnight` | Square with the most taxes, when worth spending a knight. |
+| `constructBuilding` | Building and square with the best points (crowns, end-game scoring, Queen) against its cost. |
+| `useDragon` | Never used: burning a building costs coins and brings the player no points. |
+| `placeFireToken` | Square multiplying the largest region. |
+| `recruitCaveman` | Best visible caveman, square and payment. The face-down draw pile is not considered (simulating one of its cavemen would reveal it). The search is bounded: best square with the first payment of each caveman, then the best of its first 8 payments. |
+| `placeGiant` (mandatory) | Crown that costs the deciding player the least — including a giant sent by an opponent (`ageOfGiants.pendingGiant`), where the targeted bot chooses the crown of its own kingdom. |
+| `sendGiant` | Giant and opponent with the best evaluation; when the opponent must choose the crown, it is assumed to cover the crown that costs it the least. |
+
+Domino picks and placements are mode-aware too: a placement is simulated on the kingdom (and, in Totem and Tribe, the resources of its squares are collected) and scored with the same evaluation, so the bots aim at Middle Kingdom, quests, fire regions, resources and totem majorities, and avoid covering crowns with giants. In Classic without extra rules the evaluation is the territory score, as before.
+
+`randomStrategy` stays random: it picks uniformly among the valid targets, "skip" counting as one more option when the action is optional. Its choices are seeded by the game seed (or id) and the decision point, never by `Math.random`: the same game replayed with the same seed gets the same decisions. Every built-in bot is deterministic for a given seed.
+
+#### Custom strategies
+
+```typescript
+type BotStrategy = {
+  chooseDomino: (context: PickContext) => number;
+  choosePlacement: (context: PlaceContext) => ValidPlacement | null;
+  // Optional extension choices (null = skip the action)
+  chooseKnightPosition?: (context: KnightContext) => Position | null;
+  chooseBuilding?: (context: BuildingContext) => BuildingChoice | null;
+  chooseDragonTarget?: (context: DragonContext) => number | null; // building id
+  chooseFireTokenPosition?: (context: FireTokenContext) => Position | null;
+  chooseCavemanRecruitment?: (context: CavemanContext) => CavemanChoice | null;
+  chooseGiantPosition?: (context: GiantPositionContext) => Position | null;
+  chooseGiantToSend?: (context: SendGiantContext) => SendGiantChoice | null;
+};
+
+type ExtensionContext = {
+  game: GameWithNextAction;
+  lordId: string;     // lord whose action it is
+  playerId: string;   // deciding player (the targeted player for a sent giant)
+  canSkip: boolean;   // whether returning null is allowed
+};
+type KnightContext = ExtensionContext & { validPositions: Position[] };
+type BuildingContext = ExtensionContext & {
+  validPositions: Position[];
+  affordableBuildings: BuildingTile[];
+};
+type BuildingChoice = { buildingId: number; position: Position };
+type DragonContext = ExtensionContext & { targetBuildings: BuildingTile[] };
+type FireTokenContext = ExtensionContext & { validPositions: Position[] };
+type CavemanContext = ExtensionContext & { recruitment: ValidCavemanPlacements };
+type CavemanChoice = { cavemanId: number; position: Position; resourcePositions: Position[] };
+type GiantPositionContext = ExtensionContext & {
+  validPositions: Position[];
+  sentByOpponent: boolean; // giant sent by an opponent (pendingGiant)
+};
+type SendGiantContext = ExtensionContext & { targets: ValidGiantTargets };
+type SendGiantChoice = { giantIndex: number; targetPlayerId: string };
+```
+
+- Only `chooseDomino` and `choosePlacement` are required: a strategy written before the extension methods existed still compiles and works.
+- An extension method is only called when the action has at least one valid target; every target of its context is accepted by the action.
+- When a strategy has no method for an action, `playBotTurn` uses the choice of `greedyStrategy` (it exposes every method, as do the other built-in strategies, typed `BotStrategy & BotExtensionChoices`). To keep the former "skip everything" behaviour, define the methods and return `null`.
+- `placeGiant` is mandatory: `null` falls back to the greedy choice.
+
+```typescript
+// Reuse the built-in placement logic, never send a giant
+const cautious: BotStrategy = {
+  ...greedyStrategy,
+  chooseGiantToSend: () => null,
+};
+game = playBotTurns(engine, game, { cautious });
+```
 
 ### Action Log
 
