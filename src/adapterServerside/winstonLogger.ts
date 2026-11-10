@@ -4,21 +4,21 @@ import winston from "winston";
 /**
  * Creates a Winston-based logger for advanced logging needs.
  *
- * **Note:** Winston is an optional peer dependency. To use this logger,
- * you must install winston separately:
- *
- * ```bash
- * npm install winston
- * ```
+ * **Note:** This adapter is NOT part of the published bundle: nothing reachable
+ * from `src/index.ts` (nor the universal / WASM bundles) imports it, so the
+ * package has no dependency on winston, peer or otherwise, and stays
+ * browser-safe. It is kept in the repository (winston is a dev dependency)
+ * as a reference implementation of the `Logger` port. Server-side consumers
+ * who want winston install it themselves and pass an equivalent logger:
  *
  * @example
  * ```typescript
- * import { createGameEngine } from '@pompidup/kingdomino-engine';
- * import { winstonLogger } from '@pompidup/kingdomino-engine/adapters';
+ * import { createGameEngine, type Logger } from '@pompidup/kingdomino-engine';
+ * import winston from 'winston';
  *
- * const engine = createGameEngine({
- *   logger: winstonLogger(true)
- * });
+ * const w = winston.createLogger({ transports: [new winston.transports.Console()] });
+ * const logger: Logger = { info: (m) => w.info(m), error: (m) => w.error(m) };
+ * const engine = createGameEngine({ logger });
  * ```
  *
  * @param isLoggingEnabled - Whether logging is enabled
