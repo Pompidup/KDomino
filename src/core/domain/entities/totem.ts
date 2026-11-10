@@ -1,4 +1,8 @@
-import type { ResourceType, TotemState } from "@core/domain/types/origins.js";
+import type {
+  OriginsState,
+  ResourceType,
+  TotemState,
+} from "@core/domain/types/origins.js";
 import type { Player } from "@core/domain/types/player.js";
 import { countResourcesByType } from "./resource.js";
 
@@ -17,8 +21,17 @@ const RESOURCE_TYPES: ResourceType[] = ["mammoth", "fish", "mushroom", "flint"];
 
 /**
  * Determines which player holds each totem based on resource majority.
- * A player must have the strict majority (more than any other player).
- * In case of tie, the current holder keeps the totem. If no one holds it, it stays unclaimed.
+ *
+ * Official rules (Kingdomino Origins, Totem mode):
+ * - a player takes a totem when they have the majority ("the highest amount
+ *   only") of the corresponding resource, i.e. strictly more than every
+ *   other player;
+ * - when the holder loses the majority (another player collects resources,
+ *   or a fire destroys some), the totem goes to the new majority holder;
+ * - on a tie for the majority the holder chooses who gets it: the engine
+ *   keeps it with the current holder when they are among the tied players,
+ *   otherwise gives it to the first tied player in player order.
+ * A totem nobody holds stays unclaimed while the majority is tied.
  */
 export const determineTotemHolders = (
   players: Player[],
@@ -27,44 +40,47 @@ export const determineTotemHolders = (
   const result: TotemState = { ...currentTotems };
 
   for (const resourceType of RESOURCE_TYPES) {
-    let maxCount = 0;
-    let maxPlayerId: string | null = null;
-    let isTied = false;
-
-    for (const player of players) {
-      const resources = player.resources ?? [];
-      const counts = countResourcesByType(resources);
-      const count = counts[resourceType];
-
-      if (count > maxCount) {
-        maxCount = count;
-        maxPlayerId = player.id;
-        isTied = false;
-      } else if (count === maxCount && count > 0) {
-        isTied = true;
-      }
-    }
+    const counts = players.map(
+      (player) => countResourcesByType(player.resources ?? [])[resourceType],
+    );
+    const maxCount = Math.max(0, ...counts);
+    const leaders = players.filter((_, index) => counts[index] === maxCount);
+    const holder = result[resourceType];
 
     if (maxCount === 0) {
       // No one has this resource - totem stays unclaimed
       result[resourceType] = null;
-    } else if (isTied) {
-      // Tie: current holder keeps it, or stays with one of the tied players
-      // Per rules: "If there is a tie for the majority then you can choose which
-      // of the players to give the totem to" - we keep the current holder
-      // If no current holder, give to first tied player
-      if (
-        result[resourceType] === null ||
-        !players.some((p) => p.id === result[resourceType])
-      ) {
-        result[resourceType] = maxPlayerId;
-      }
+    } else if (leaders.length === 1) {
+      // Strict majority
+      result[resourceType] = leaders[0]!.id;
+    } else if (holder !== null && leaders.some((p) => p.id === holder)) {
+      // Tie including the current holder: they keep it
+      result[resourceType] = holder;
+    } else if (holder !== null && players.some((p) => p.id === holder)) {
+      // The holder lost the majority to tied players: pass it to one of them
+      result[resourceType] = leaders[0]!.id;
     } else {
-      result[resourceType] = maxPlayerId;
+      // Unclaimed totem and tied majority: nobody takes it
+      result[resourceType] = null;
     }
   }
 
   return result;
+};
+
+/**
+ * Re-evaluates the totem holders of an Origins state (Totem mode only).
+ * States without totems are returned unchanged.
+ */
+export const refreshTotemHolders = (
+  origins: OriginsState | undefined,
+  players: Player[],
+): OriginsState | undefined => {
+  if (!origins?.totems) return origins;
+  return {
+    ...origins,
+    totems: determineTotemHolders(players, origins.totems),
+  };
 };
 
 /**

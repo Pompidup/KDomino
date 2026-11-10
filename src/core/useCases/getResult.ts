@@ -11,13 +11,17 @@ import {
 } from "@core/domain/entities/originsHelpers.js";
 import { calculateOriginsFireBonus } from "@core/domain/entities/originsScore.js";
 import { calculateQuestBonus } from "@core/domain/entities/questScore.js";
-import { calculateTotemScore } from "@core/domain/entities/totem.js";
+import {
+  calculateTotemScore,
+  determineTotemHolders,
+} from "@core/domain/entities/totem.js";
 import type {
   FinalResult,
   GameWithNextStep,
   GameWithResults,
   ScoreResult,
 } from "@core/domain/types/index.js";
+import type { TotemState } from "@core/domain/types/origins.js";
 import { ok, type Result } from "@utils/result.js";
 
 export type GetResultUseCase = (
@@ -25,9 +29,21 @@ export type GetResultUseCase = (
   scoreResult: ScoreResult[],
 ) => Result<GameWithResults>;
 
+/**
+ * Totem mode: the totem holders at the end of the game, re-evaluated from the
+ * resources left in every kingdom (resource majority, see determineTotemHolders).
+ */
+const getFinalTotemHolders = (
+  game: GameWithNextStep,
+): TotemState | undefined => {
+  if (!isTotemMode(game.mode.name) || !game.origins?.totems) return undefined;
+  return determineTotemHolders(game.players, game.origins.totems);
+};
+
 export const getResultUseCase: GetResultUseCase = (game, scoreResult) => {
   const { rules } = game;
   const { basic, extra } = rules;
+  const finalTotems = getFinalTotemHolders(game);
 
   const finalScoreResult = scoreResult.map((score): ScoreResult => {
     let finalScore = score.details.points;
@@ -49,8 +65,8 @@ export const getResultUseCase: GetResultUseCase = (game, scoreResult) => {
     }
 
     // Totem mode: resource points + totem bonuses
-    if (isTotemMode(game.mode.name) && game.origins?.totems) {
-      finalScore += calculateTotemScore(player, game.origins.totems);
+    if (finalTotems) {
+      finalScore += calculateTotemScore(player, finalTotems);
     }
 
     // Tribe mode: caveman bonuses (no resource points, no totems)
