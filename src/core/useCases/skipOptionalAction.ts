@@ -14,50 +14,79 @@ import {
   gameSteps,
   type NextAction,
 } from "@core/domain/types/game.js";
-import { playerActions } from "@core/domain/types/player.js";
-import { err, ok } from "@utils/result.js";
+import {
+  type PlayerActions,
+  playerActions,
+} from "@core/domain/types/player.js";
+import { err, isErr, ok, type Result } from "@utils/result.js";
 
 export type SkipOptionalActionUseCase = (
   game: GameWithNextAction,
   lordId: string,
 ) => GameStateResult;
 
-export const skipOptionalActionUseCase: SkipOptionalActionUseCase = (
-  game,
-  lordId,
-) => {
+// Queendomino optional actions
+const isQueenDominoOptional = (action: PlayerActions): boolean =>
+  action === playerActions.placeKnight ||
+  action === playerActions.constructBuilding ||
+  action === playerActions.useDragon;
+
+// Origins optional actions
+const isOriginsOptional = (action: PlayerActions): boolean =>
+  action === playerActions.placeFireToken ||
+  action === playerActions.recruitCaveman;
+
+// Age of Giants optional action: only sendGiant. placeGiant is mandatory and
+// cannot be skipped (placeDomino never asks for it when no crown is free).
+const isAoGOptional = (action: PlayerActions): boolean =>
+  action === playerActions.sendGiant;
+
+/**
+ * Whether `action` is an optional action that `skipOptionalAction` accepts.
+ * `placeDomino`, `pickDomino`, `pass` and `placeGiant` cannot be skipped.
+ */
+export const isSkippableAction = (action: PlayerActions): boolean =>
+  isQueenDominoOptional(action) ||
+  isOriginsOptional(action) ||
+  isAoGOptional(action);
+
+/**
+ * Checks that `lordId` may skip the current action and returns that action.
+ * Shared with `canSkipOptionalAction` so both apply the same checks.
+ */
+export const resolveSkip = (
+  game: GameWithNextAction,
+  lordId: string,
+): Result<PlayerActions> => {
   const currentAction = game.nextAction;
 
   if (currentAction.nextLord !== lordId) {
     return err(ErrorCode.NOT_YOUR_TURN);
   }
 
-  const action = currentAction.nextAction;
-
-  // Queendomino optional actions
-  const isQueenDominoOptional =
-    action === playerActions.placeKnight ||
-    action === playerActions.constructBuilding ||
-    action === playerActions.useDragon;
-
-  // Origins optional actions
-  const isOriginsOptional =
-    action === playerActions.placeFireToken ||
-    action === playerActions.recruitCaveman;
-
-  // Age of Giants optional action: only sendGiant. placeGiant is mandatory and
-  // cannot be skipped (placeDomino never asks for it when no crown is free).
-  const isAoGOptional = action === playerActions.sendGiant;
-
-  if (!isQueenDominoOptional && !isOriginsOptional && !isAoGOptional) {
+  if (!isSkippableAction(currentAction.nextAction)) {
     return err(ErrorCode.INVALID_OPTIONAL_ACTION);
   }
 
-  if (isAoGOptional) {
+  return ok(currentAction.nextAction);
+};
+
+export const skipOptionalActionUseCase: SkipOptionalActionUseCase = (
+  game,
+  lordId,
+) => {
+  const skip = resolveSkip(game, lordId);
+  if (isErr(skip)) {
+    return skip;
+  }
+
+  const action = skip.value;
+
+  if (isAoGOptional(action)) {
     return handleAoGSkip(game, lordId, action);
   }
 
-  if (isOriginsOptional) {
+  if (isOriginsOptional(action)) {
     return handleOriginsSkip(game, lordId, action);
   }
 

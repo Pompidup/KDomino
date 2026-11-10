@@ -78,6 +78,13 @@ export {
   undo,
 } from "@core/useCases/gameHistory.js";
 export type { DynastyResult } from "@core/useCases/getDynastyResult.js";
+// Valid targets for extension actions
+export type {
+  CavemanRecruitmentOption,
+  ValidActionTargetsUseCase,
+  ValidCavemanPlacements,
+  ValidGiantTargets,
+} from "@core/useCases/getValidActionTargets.js";
 // Use cases (for advanced usage)
 export type { ValidPlacement } from "@core/useCases/getValidPlacements.js";
 export type { PlaceFireTokenUseCase } from "@core/useCases/placeFireToken.js";
@@ -93,6 +100,7 @@ export {
   serializeGame,
 } from "@core/useCases/serialization.js";
 export type { SkipOptionalActionUseCase } from "@core/useCases/skipOptionalAction.js";
+export { isSkippableAction } from "@core/useCases/skipOptionalAction.js";
 export type { UseDragonUseCase } from "@core/useCases/useDragon.js";
 // Configuration
 export type { EngineConfig };
@@ -146,6 +154,14 @@ export const createGameEngine = (config: Partial<EngineConfig>): GameEngine => {
     placeFireTokenHandler,
     recruitCavemanHandler,
     skipOptionalActionHandler,
+    getValidFireTokenPositionsHandler,
+    getValidKnightPositionsHandler,
+    getValidBuildingPositionsHandler,
+    getAffordableBuildingsHandler,
+    getValidCavemanPlacementsHandler,
+    getValidGiantPositionsHandler,
+    getValidGiantTargetsHandler,
+    canSkipOptionalActionHandler,
   } = configureEngine(config);
 
   let engine: GameEngine = {
@@ -173,6 +189,18 @@ export const createGameEngine = (config: Partial<EngineConfig>): GameEngine => {
     placeFireToken: (command) => placeFireTokenHandler(command),
     recruitCaveman: (command) => recruitCavemanHandler(command),
     skipOptionalAction: (command) => skipOptionalActionHandler(command),
+    getValidFireTokenPositions: (command) =>
+      getValidFireTokenPositionsHandler(command),
+    getValidKnightPositions: (command) =>
+      getValidKnightPositionsHandler(command),
+    getValidBuildingPositions: (command) =>
+      getValidBuildingPositionsHandler(command),
+    getAffordableBuildings: (command) => getAffordableBuildingsHandler(command),
+    getValidCavemanPlacements: (command) =>
+      getValidCavemanPlacementsHandler(command),
+    getValidGiantPositions: (command) => getValidGiantPositionsHandler(command),
+    getValidGiantTargets: (command) => getValidGiantTargetsHandler(command),
+    canSkipOptionalAction: (command) => canSkipOptionalActionHandler(command),
   };
 
   if (config.events) {

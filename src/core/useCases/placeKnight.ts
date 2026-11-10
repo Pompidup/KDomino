@@ -6,8 +6,8 @@ import type {
   GameWithNextAction,
 } from "@core/domain/types/game.js";
 import type { Position } from "@core/domain/types/kingdom.js";
-import { playerActions } from "@core/domain/types/player.js";
-import { err, ok } from "@utils/result.js";
+import { type Player, playerActions } from "@core/domain/types/player.js";
+import { err, isErr, ok, type Result } from "@utils/result.js";
 
 export type PlaceKnightUseCase = (
   game: GameWithNextAction,
@@ -15,11 +15,20 @@ export type PlaceKnightUseCase = (
   position: Position,
 ) => GameStateResult;
 
-export const placeKnightUseCase: PlaceKnightUseCase = (
-  game,
-  lordId,
-  position,
-) => {
+/**
+ * Everything `placeKnight` needs before checking the target square: the
+ * current player and the squares a knight may go on (the domino just placed).
+ * Shared with `getValidKnightPositions` so both apply the same checks.
+ */
+export type KnightPlacementContext = {
+  player: Player;
+  allowedPositions: Position[];
+};
+
+export const resolveKnightPlacement = (
+  game: GameWithNextAction,
+  lordId: string,
+): Result<KnightPlacementContext> => {
   const currentAction = game.nextAction;
 
   if (currentAction.nextLord !== lordId) {
@@ -38,6 +47,21 @@ export const placeKnightUseCase: PlaceKnightUseCase = (
 
   // Knights may only be placed on the domino the lord has just placed
   const allowedPositions = game.queendomino?.lastPlacedPositions ?? [];
+
+  return ok({ player: currentPlayer, allowedPositions });
+};
+
+export const placeKnightUseCase: PlaceKnightUseCase = (
+  game,
+  lordId,
+  position,
+) => {
+  const context = resolveKnightPlacement(game, lordId);
+  if (isErr(context)) {
+    return context;
+  }
+
+  const { player: currentPlayer, allowedPositions } = context.value;
 
   if (
     !canPlaceKnight(

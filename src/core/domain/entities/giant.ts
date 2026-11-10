@@ -96,6 +96,12 @@ export const placeGiantOnCrown = (
 };
 
 /**
+ * Whether the player has a giant at `giantIndex` in its giants array.
+ */
+export const hasGiantAtIndex = (player: Player, giantIndex: number): boolean =>
+  giantIndex >= 0 && giantIndex < (player.giants ?? []).length;
+
+/**
  * Removes one giant (by index) from a player's kingdom.
  */
 export const removeGiantFromPlayer = (
@@ -103,7 +109,7 @@ export const removeGiantFromPlayer = (
   giantIndex: number,
 ): Result<Player> => {
   const giants = player.giants ?? [];
-  if (giantIndex < 0 || giantIndex >= giants.length) {
+  if (!hasGiantAtIndex(player, giantIndex)) {
     return err(ErrorCode.GIANT_NOT_FOUND);
   }
   return ok({ ...player, giants: giants.filter((_, i) => i !== giantIndex) });
@@ -121,7 +127,7 @@ export const sendGiantToOpponent = (
 ): Result<{ source: Player; target: Player }> => {
   const sourceGiants = sourcePlayer.giants ?? [];
 
-  if (giantIndex < 0 || giantIndex >= sourceGiants.length) {
+  if (!hasGiantAtIndex(sourcePlayer, giantIndex)) {
     return err(ErrorCode.GIANT_NOT_FOUND);
   }
 

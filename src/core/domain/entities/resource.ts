@@ -97,6 +97,65 @@ export const canSpendResources = (
 };
 
 /**
+ * Whether `positions` is a valid payment: exactly `count` resources of the
+ * player, with at least `requiredDifferentTypes` different types.
+ */
+export const isValidResourcePayment = (
+  resources: Resource[],
+  positions: Position[],
+  count: number,
+  requiredDifferentTypes: number,
+): boolean =>
+  positions.length === count &&
+  canSpendResources(resources, positions, requiredDifferentTypes);
+
+/**
+ * Lists every valid payment (see `isValidResourcePayment`) as the positions of
+ * the resources to spend, each combination listed once in `resources` order.
+ *
+ * Combinations are enumerated exhaustively; a branch is only cut when it can
+ * no longer reach `requiredDifferentTypes` (each extra resource adds at most
+ * one new type), and every combination is confirmed by `isValidResourcePayment`.
+ */
+export const getValidResourcePayments = (
+  resources: Resource[],
+  count: number,
+  requiredDifferentTypes: number,
+): Position[][] => {
+  const payments: Position[][] = [];
+  const chosen: Resource[] = [];
+
+  const explore = (start: number): void => {
+    if (chosen.length === count) {
+      const positions = chosen.map((r) => r.position);
+      if (
+        isValidResourcePayment(
+          resources,
+          positions,
+          count,
+          requiredDifferentTypes,
+        )
+      ) {
+        payments.push(positions);
+      }
+      return;
+    }
+    const reachableTypes =
+      new Set(chosen.map((r) => r.type)).size + (count - chosen.length);
+    if (reachableTypes < requiredDifferentTypes) return;
+
+    for (let i = start; i <= resources.length - (count - chosen.length); i++) {
+      chosen.push(resources[i]!);
+      explore(i + 1);
+      chosen.pop();
+    }
+  };
+
+  if (count > 0) explore(0);
+  return payments;
+};
+
+/**
  * Removes resources at the given positions.
  */
 export const spendResources = (

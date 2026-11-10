@@ -400,6 +400,16 @@ export const wrapWithActionLog = (
       );
       return game;
     },
+
+    // Valid targets for extension actions — read-only, pass through
+    getValidFireTokenPositions: (cmd) => engine.getValidFireTokenPositions(cmd),
+    getValidKnightPositions: (cmd) => engine.getValidKnightPositions(cmd),
+    getValidBuildingPositions: (cmd) => engine.getValidBuildingPositions(cmd),
+    getAffordableBuildings: (cmd) => engine.getAffordableBuildings(cmd),
+    getValidCavemanPlacements: (cmd) => engine.getValidCavemanPlacements(cmd),
+    getValidGiantPositions: (cmd) => engine.getValidGiantPositions(cmd),
+    getValidGiantTargets: (cmd) => engine.getValidGiantTargets(cmd),
+    canSkipOptionalAction: (cmd) => engine.canSkipOptionalAction(cmd),
   };
 
   return {

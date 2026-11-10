@@ -14,8 +14,8 @@ import type {
   GameWithNextAction,
 } from "@core/domain/types/game.js";
 import type { Position } from "@core/domain/types/kingdom.js";
-import { playerActions } from "@core/domain/types/player.js";
-import { err, isErr, ok } from "@utils/result.js";
+import { type Player, playerActions } from "@core/domain/types/player.js";
+import { err, isErr, ok, type Result } from "@utils/result.js";
 
 export type SendGiantUseCase = (
   game: GameWithNextAction,
@@ -50,13 +50,14 @@ export const continueAfterSendGiant = (
   });
 };
 
-export const sendGiantUseCase: SendGiantUseCase = (
-  game,
-  lordId,
-  giantIndex,
-  targetPlayerId,
-  targetCrownPosition,
-) => {
+/**
+ * Checks that `lordId` may send a giant now and returns the sending player.
+ * Shared with `getValidGiantTargets` so both apply the same checks.
+ */
+export const resolveGiantSender = (
+  game: GameWithNextAction,
+  lordId: string,
+): Result<Player> => {
   const currentAction = game.nextAction;
 
   if (currentAction.nextAction !== playerActions.sendGiant) {
@@ -81,6 +82,27 @@ export const sendGiantUseCase: SendGiantUseCase = (
     return err(ErrorCode.PLAYER_NOT_FOUND);
   }
 
+  return ok(sourcePlayer);
+};
+
+/**
+ * A player who can receive a giant from `sourcePlayer`, with its crowns not
+ * yet covered by a giant.
+ */
+export type GiantTarget = {
+  targetPlayer: Player;
+  freeCrowns: Position[];
+};
+
+/**
+ * Checks that `targetPlayerId` is an opponent of `sourcePlayer` with at least
+ * one free crown. Shared with `getValidGiantTargets`.
+ */
+export const resolveGiantTarget = (
+  game: GameWithNextAction,
+  sourcePlayer: Player,
+  targetPlayerId: string,
+): Result<GiantTarget> => {
   const targetPlayer = game.players.find((p) => p.id === targetPlayerId);
   if (!targetPlayer) {
     return err(ErrorCode.PLAYER_NOT_FOUND);
@@ -97,6 +119,28 @@ export const sendGiantUseCase: SendGiantUseCase = (
   if (freeCrowns.length === 0) {
     return err(ErrorCode.INVALID_GIANT_PLACEMENT);
   }
+
+  return ok({ targetPlayer, freeCrowns });
+};
+
+export const sendGiantUseCase: SendGiantUseCase = (
+  game,
+  lordId,
+  giantIndex,
+  targetPlayerId,
+  targetCrownPosition,
+) => {
+  const sender = resolveGiantSender(game, lordId);
+  if (isErr(sender)) {
+    return sender;
+  }
+  const sourcePlayer = sender.value;
+
+  const target = resolveGiantTarget(game, sourcePlayer, targetPlayerId);
+  if (isErr(target)) {
+    return target;
+  }
+  const { targetPlayer, freeCrowns } = target.value;
 
   // Official rule: the targeted opponent chooses the crown. With a single
   // free crown there is no choice; with several, the opponent is asked
@@ -121,7 +165,7 @@ export const sendGiantUseCase: SendGiantUseCase = (
       players: game.players.map((p) =>
         p.id === sourcePlayer.id ? removed.value : p,
       ),
-      ageOfGiants: {
+      ageOfGiants: game.ageOfGiants && {
         ...game.ageOfGiants,
         pendingGiant: { fromLordId: lordId, targetPlayerId: targetPlayer.id },
       },

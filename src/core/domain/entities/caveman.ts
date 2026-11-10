@@ -74,6 +74,38 @@ export const takeCavemanFromDrawPile = (
   };
 };
 
+// ─── Recruitment Cost ────────────────────────────────────────────────
+
+/**
+ * Price of recruiting one caveman of the cave board.
+ */
+export type RecruitmentCost = {
+  /** Where the caveman is taken from */
+  source: "visible" | "drawPile";
+  /** Number of resources to spend */
+  resourceCount: number;
+  /** Number of different resource types among the spent resources */
+  differentTypes: number;
+};
+
+/**
+ * Returns the cost of recruiting `cavemanId`: 2 different resources for a
+ * visible caveman, 4 different resources for one taken from the draw pile.
+ * Returns undefined when the caveman is not on the cave board.
+ */
+export const getRecruitmentCost = (
+  board: CaveBoard,
+  cavemanId: number,
+): RecruitmentCost | undefined => {
+  if (board.visible.some((c) => c.id === cavemanId)) {
+    return { source: "visible", resourceCount: 2, differentTypes: 2 };
+  }
+  if (board.drawPile.some((c) => c.id === cavemanId)) {
+    return { source: "drawPile", resourceCount: 4, differentTypes: 4 };
+  }
+  return undefined;
+};
+
 // ─── Caveman Placement ───────────────────────────────────────────────
 
 /**

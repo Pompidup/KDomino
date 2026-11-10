@@ -10,6 +10,16 @@ import type { GetDynastyResultCommand } from "@application/commands/getDynastyRe
 import type { GetExtraRulesCommand } from "@application/commands/getExtraRulesCommand.js";
 import type { GetModesCommand } from "@application/commands/getModesCommand.js";
 import type { GetResultCommand } from "@application/commands/getResultCommand.js";
+import type {
+  CanSkipOptionalActionCommand,
+  GetAffordableBuildingsCommand,
+  GetValidBuildingPositionsCommand,
+  GetValidCavemanPlacementsCommand,
+  GetValidFireTokenPositionsCommand,
+  GetValidGiantPositionsCommand,
+  GetValidGiantTargetsCommand,
+  GetValidKnightPositionsCommand,
+} from "@application/commands/getValidActionTargetsCommand.js";
 import type { GetValidPlacementsCommand } from "@application/commands/getValidPlacementsCommand.js";
 import type { PlaceDominoCommand } from "@application/commands/placeDominoCommand.js";
 import type { PlaceFireTokenCommand } from "@application/commands/placeFireTokenCommand.js";
@@ -25,15 +35,21 @@ import type { SkipOptionalActionCommand } from "@application/commands/skipOption
 import type { StartGameCommand } from "@application/commands/startGameCommand.js";
 import type { UseDragonCommand } from "@application/commands/useDragonCommand.js";
 import type {
+  BuildingTile,
   ExtraRule,
   GameMode,
   GameState,
   GameWithNextAction,
   GameWithNextStep,
   GameWithResults,
+  Position,
   Score,
 } from "@core/domain/types/index.js";
 import type { DynastyResult } from "@core/useCases/getDynastyResult.js";
+import type {
+  ValidCavemanPlacements,
+  ValidGiantTargets,
+} from "@core/useCases/getValidActionTargets.js";
 import type { ValidPlacement } from "@core/useCases/getValidPlacements.js";
 
 /**
@@ -242,4 +258,87 @@ export type GameEngine = {
    * @returns Updated game state with next action
    */
   skipOptionalAction: (command: SkipOptionalActionCommand) => GameState;
+
+  // ─── Valid targets for extension actions ─────────────────────────────
+  // Read-only queries built on the same checks as the matching action: every
+  // returned target is accepted by the action. They take any game state and
+  // an optional lordId (default: the lord to play) and answer empty when the
+  // action does not apply.
+
+  /**
+   * Squares where `placeFireToken` accepts the pending fire token (Origins).
+   * @param command - Contains game state and optional lord ID
+   * @returns Valid positions, or [] when no fire token is pending for the lord
+   */
+  getValidFireTokenPositions: (
+    command: GetValidFireTokenPositionsCommand,
+  ) => Position[];
+
+  /**
+   * Squares where `placeKnight` accepts a knight: squares of the domino just
+   * placed, within the knight limit, one knight per territory (Queendomino).
+   * @param command - Contains game state and optional lord ID
+   * @returns Valid positions, or [] when placeKnight is not the current action
+   */
+  getValidKnightPositions: (
+    command: GetValidKnightPositionsCommand,
+  ) => Position[];
+
+  /**
+   * Construction squares where `constructBuilding` succeeds with any building
+   * of `getAffordableBuildings` (Queendomino).
+   * @param command - Contains game state and optional lord ID
+   * @returns Valid positions, or [] when no construction is possible
+   */
+  getValidBuildingPositions: (
+    command: GetValidBuildingPositionsCommand,
+  ) => Position[];
+
+  /**
+   * Buildings of the Builders Board the lord can pay for, buildable on any
+   * square of `getValidBuildingPositions` (Queendomino).
+   * @param command - Contains game state and optional lord ID
+   * @returns Buildings to pass to constructBuilding, or [] when none applies
+   */
+  getAffordableBuildings: (
+    command: GetAffordableBuildingsCommand,
+  ) => BuildingTile[];
+
+  /**
+   * Valid `recruitCaveman` arguments: recruitable cavemen with every valid
+   * resource payment, and the squares for the caveman (Origins Tribe).
+   * @param command - Contains game state and optional lord ID
+   * @returns Options and positions (any combination is valid), both empty when none applies
+   */
+  getValidCavemanPlacements: (
+    command: GetValidCavemanPlacementsCommand,
+  ) => ValidCavemanPlacements;
+
+  /**
+   * Crowns where `placeGiant` accepts the giant (Age of Giants), including a
+   * giant sent by an opponent: the targeted player's own crowns.
+   * @param command - Contains game state and optional lord ID
+   * @returns Valid crown positions, or [] when placeGiant is not the current action
+   */
+  getValidGiantPositions: (
+    command: GetValidGiantPositionsCommand,
+  ) => Position[];
+
+  /**
+   * Valid `sendGiant` arguments: the lord's giants that can be sent and the
+   * opponents that can receive one (Age of Giants). The opponent chooses the crown.
+   * @param command - Contains game state and optional lord ID
+   * @returns Giant indexes and target player IDs (any pair is valid), both empty when none applies
+   */
+  getValidGiantTargets: (
+    command: GetValidGiantTargetsCommand,
+  ) => ValidGiantTargets;
+
+  /**
+   * Whether `skipOptionalAction` can skip the current action for the lord
+   * (false for placeGiant, which is mandatory).
+   * @param command - Contains game state and optional lord ID
+   * @returns True if the current action can be skipped
+   */
+  canSkipOptionalAction: (command: CanSkipOptionalActionCommand) => boolean;
 };

@@ -10,6 +10,7 @@ export * from "./getDynastyResultCommand.js";
 export * from "./getExtraRulesCommand.js";
 export * from "./getModesCommand.js";
 export * from "./getResultCommand.js";
+export * from "./getValidActionTargetsCommand.js";
 export * from "./getValidPlacementsCommand.js";
 export * from "./placeDominoCommand.js";
 export * from "./placeFireTokenCommand.js";

@@ -12,8 +12,9 @@ import type {
   GameWithNextAction,
 } from "@core/domain/types/game.js";
 import type { Position } from "@core/domain/types/kingdom.js";
-import { playerActions } from "@core/domain/types/player.js";
-import { err, ok } from "@utils/result.js";
+import { type Player, playerActions } from "@core/domain/types/player.js";
+import type { QueenDominoState } from "@core/domain/types/queendomino.js";
+import { err, isErr, ok, type Result } from "@utils/result.js";
 
 export type ConstructBuildingUseCase = (
   game: GameWithNextAction,
@@ -22,12 +23,20 @@ export type ConstructBuildingUseCase = (
   position: Position,
 ) => GameStateResult;
 
-export const constructBuildingUseCase: ConstructBuildingUseCase = (
-  game,
-  lordId,
-  buildingId,
-  position,
-) => {
+/**
+ * Everything `constructBuilding` needs before checking the construction square
+ * and the purchase: the current player and the Queendomino state.
+ * Shared with `getValidBuildingPositions` / `getAffordableBuildings`.
+ */
+export type ConstructionContext = {
+  player: Player;
+  queendomino: QueenDominoState;
+};
+
+export const resolveConstruction = (
+  game: GameWithNextAction,
+  lordId: string,
+): Result<ConstructionContext> => {
   const currentAction = game.nextAction;
 
   if (currentAction.nextLord !== lordId) {
@@ -48,6 +57,22 @@ export const constructBuildingUseCase: ConstructBuildingUseCase = (
   const currentPlayer = game.players.find((p) => p.id === currentLord.playerId);
   if (!currentPlayer) return err(ErrorCode.PLAYER_NOT_FOUND);
 
+  return ok({ player: currentPlayer, queendomino: game.queendomino });
+};
+
+export const constructBuildingUseCase: ConstructBuildingUseCase = (
+  game,
+  lordId,
+  buildingId,
+  position,
+) => {
+  const context = resolveConstruction(game, lordId);
+  if (isErr(context)) {
+    return context;
+  }
+
+  const { player: currentPlayer, queendomino } = context.value;
+
   // Validate construction position
   if (
     !isValidConstructionPosition(
@@ -61,7 +86,7 @@ export const constructBuildingUseCase: ConstructBuildingUseCase = (
 
   // Purchase the building
   const purchaseResult = purchaseBuilding(
-    game.queendomino.buildersBoard,
+    queendomino.buildersBoard,
     currentPlayer,
     buildingId,
   );
@@ -93,7 +118,7 @@ export const constructBuildingUseCase: ConstructBuildingUseCase = (
   // Recalculate Queen holder
   const newQueenHolder = determineQueenHolder(
     updatedPlayers,
-    game.queendomino.queenHolderId,
+    queendomino.queenHolderId,
   );
 
   const nextAction = nextQueenDominoAction(playerActions.constructBuilding);
@@ -102,7 +127,7 @@ export const constructBuildingUseCase: ConstructBuildingUseCase = (
     ...game,
     players: updatedPlayers,
     queendomino: {
-      ...game.queendomino,
+      ...queendomino,
       buildersBoard: updatedBoard,
       queenHolderId: newQueenHolder,
     },
