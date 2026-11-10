@@ -86,7 +86,7 @@ All methods are available on the `GameEngine` object returned by `createGameEngi
 
 | Method | Command Type | Return Type | Description |
 |---|---|---|---|
-| `placeKnight` | `PlaceKnightCommand` | `GameState` | Place a knight on the lord's kingdom at the specified position. |
+| `placeKnight` | `PlaceKnightCommand` | `GameState` | Place a knight on one of the squares of the domino the lord has just placed (`queendomino.lastPlacedPositions`). |
 | `constructBuilding` | `ConstructBuildingCommand` | `GameState` | Construct a building on a construction square in the lord's kingdom. |
 | `useDragon` | `UseDragonCommand` | `GameState` | Use the dragon to destroy a building tile on the builders board. |
 | `skipOptionalAction` | `SkipOptionalActionCommand` | `GameState` | Skip the current optional action (knight, building, or dragon). |
@@ -583,6 +583,7 @@ type Player = {
   coins?: number;               // Queendomino
   towers?: number;              // Queendomino
   knights?: Knight[];           // Queendomino
+  bonusKnights?: number;        // Queendomino (extra knights from building bonuses)
   buildings?: PlacedBuilding[]; // Queendomino
   fireTokens?: PlacedFireToken[];  // Origins
   resources?: Resource[];          // Origins Totem/Tribe
@@ -683,7 +684,8 @@ type QueenDominoState = {
   buildersBoard: BuildersBoard;
   queenHolderId: string | null;
   dragonAvailable: boolean;
-  dragonUsedThisRound: boolean;
+  dragonUsedThisRound: boolean;     // reset to false at each new round
+  lastPlacedPositions?: Position[]; // squares of the domino just placed
 };
 ```
 
