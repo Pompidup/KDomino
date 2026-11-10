@@ -14,6 +14,7 @@ import {
   placeDomino,
 } from "@core/domain/entities/kingdom.js";
 import {
+  advanceToNextLordOrResult,
   allLordsHavePlayed,
   canPlaceAndDominoPickedIsDefined,
   nextLordWithAction,
@@ -23,6 +24,7 @@ import {
   isResourceMode,
 } from "@core/domain/entities/originsHelpers.js";
 import { createResourceForTile } from "@core/domain/entities/resource.js";
+import { refreshTotemHolders } from "@core/domain/entities/totem.js";
 import { ErrorCode } from "@core/domain/errors/domainErrors.js";
 import {
   type GameState,
@@ -221,91 +223,51 @@ export const placeDominoUseCase: PlaceDominoUseCase = (
       players: updatedPlayers,
     };
   } else if (isOrigins) {
+    // Origins: Totem mode re-evaluates totem holders as soon as resources change
+    let updatedOrigins = refreshTotemHolders(game.origins, updatedPlayers);
+
     // Origins: check for volcano to grant fire token
     const volcano = findVolcanoInDomino(game, position, rotation);
-    let updatedOrigins = game.origins;
+    const tokenResult =
+      volcano && updatedOrigins
+        ? takeFireToken(updatedOrigins.fireTokenPool, volcano.craters)
+        : undefined;
 
-    if (volcano && updatedOrigins) {
-      const tokenResult = takeFireToken(
-        updatedOrigins.fireTokenPool,
-        volcano.craters,
-      );
-      if (isOk(tokenResult)) {
-        // Grant fire token and set pending for placement
-        const pendingFireToken: PendingFireToken = {
-          fires: tokenResult.value.fires,
-          volcanoPosition: volcano.volcanoPosition,
-        };
-        updatedOrigins = {
-          ...updatedOrigins,
-          fireTokenPool: tokenResult.value.updatedPool,
-          pendingFireToken,
-        };
+    if (volcano && updatedOrigins && tokenResult && isOk(tokenResult)) {
+      // Grant fire token and set pending for placement
+      const pendingFireToken: PendingFireToken = {
+        fires: tokenResult.value.fires,
+        volcanoPosition: volcano.volcanoPosition,
+      };
+      updatedOrigins = {
+        ...updatedOrigins,
+        fireTokenPool: tokenResult.value.updatedPool,
+        pendingFireToken,
+      };
 
-        // Route to placeFireToken action
-        updatedGame = {
-          ...game,
-          lords: updatedLords,
-          players: updatedPlayers,
-          origins: updatedOrigins,
-          nextAction: {
-            type: "action",
-            nextLord: currentLord.id,
-            nextAction: playerActions.placeFireToken,
-          },
-        };
-      } else {
-        // Pool empty for this crater type - skip fire token, go to pickDomino
-        if (isLastTurn && allLordsHavePlayed(updatedLords)) {
-          updatedGame = {
-            ...game,
-            lords: updatedLords,
-            nextAction: resultStep,
-            players: updatedPlayers,
-            origins: updatedOrigins,
-          };
-        } else if (isLastTurn) {
-          updatedGame = {
-            ...game,
-            lords: updatedLords,
-            nextAction: resultStep,
-            players: updatedPlayers,
-            origins: updatedOrigins,
-          };
-        } else {
-          updatedGame = {
-            ...game,
-            lords: updatedLords,
-            nextAction: nextLordWithAction(updatedLords) as NextAction,
-            players: updatedPlayers,
-            origins: updatedOrigins,
-          };
-        }
-      }
+      // Route to placeFireToken action
+      updatedGame = {
+        ...game,
+        lords: updatedLords,
+        players: updatedPlayers,
+        origins: updatedOrigins,
+        nextAction: {
+          type: "action",
+          nextLord: currentLord.id,
+          nextAction: playerActions.placeFireToken,
+        },
+      };
     } else {
-      // No volcano placed - skip straight to next action
-      if (isLastTurn && allLordsHavePlayed(updatedLords)) {
-        updatedGame = {
+      // No volcano, or pool empty for this crater type: the game only ends
+      // once every lord has finished the last turn
+      updatedGame = advanceToNextLordOrResult(
+        {
           ...game,
-          lords: updatedLords,
-          nextAction: resultStep,
           players: updatedPlayers,
-        };
-      } else if (isLastTurn) {
-        updatedGame = {
-          ...game,
-          lords: updatedLords,
-          nextAction: resultStep,
-          players: updatedPlayers,
-        };
-      } else {
-        updatedGame = {
-          ...game,
-          lords: updatedLords,
-          nextAction: nextLordWithAction(updatedLords) as NextAction,
-          players: updatedPlayers,
-        };
-      }
+          ...(updatedOrigins !== undefined && { origins: updatedOrigins }),
+        },
+        updatedLords,
+      );
     }
   } else if (isAoG) {
     // Age of Giants: check for giant/footprint domino effects

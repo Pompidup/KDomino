@@ -1,4 +1,9 @@
-import type { NextAction } from "@core/domain/types/game.js";
+import {
+  type Game,
+  type GameState,
+  gameSteps,
+  type NextAction,
+} from "@core/domain/types/game.js";
 import type { Lord } from "@core/domain/types/lord.js";
 import {
   type PlayerActions,
@@ -75,6 +80,25 @@ const findNextLord = (lords: Lord[]): Lord => {
 
 export const allLordsHavePlayed = (lords: Lord[]): boolean => {
   return lords.every((lord) => lord.turnEnded);
+};
+
+/**
+ * Moves the game on once the current lord has finished its actions:
+ * to the `result` step when every lord has finished the last turn,
+ * otherwise to the next lord's action.
+ */
+export const advanceToNextLordOrResult = (
+  game: Game,
+  lords: Lord[],
+): GameState => {
+  if (game.turn === game.rules.basic.maxTurns && allLordsHavePlayed(lords)) {
+    return {
+      ...game,
+      lords,
+      nextAction: { type: "step", step: gameSteps.result },
+    };
+  }
+  return { ...game, lords, nextAction: nextLordWithAction(lords) };
 };
 
 /**

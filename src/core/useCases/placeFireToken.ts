@@ -1,15 +1,11 @@
 import { isValidFireTokenPosition } from "@core/domain/entities/fireToken.js";
-import {
-  allLordsHavePlayed,
-  nextLordWithAction,
-} from "@core/domain/entities/lord.js";
+import { advanceToNextLordOrResult } from "@core/domain/entities/lord.js";
+import { refreshTotemHolders } from "@core/domain/entities/totem.js";
 import { ErrorCode } from "@core/domain/errors/domainErrors.js";
-import {
-  type GameState,
-  type GameStateResult,
-  type GameWithNextAction,
-  gameSteps,
-  type NextAction,
+import type {
+  GameState,
+  GameStateResult,
+  GameWithNextAction,
 } from "@core/domain/types/game.js";
 import type { Position } from "@core/domain/types/kingdom.js";
 import type { PlacedFireToken } from "@core/domain/types/origins.js";
@@ -98,39 +94,23 @@ export const placeFireTokenUseCase: PlaceFireTokenUseCase = (
     return player;
   });
 
-  // Clear pending fire token
-  const updatedOrigins = {
-    ...game.origins,
-    pendingFireToken: undefined,
-  };
+  // Clear pending fire token and re-evaluate totems (a destroyed resource
+  // may cost the majority in Totem mode)
+  const updatedOrigins = refreshTotemHolders(
+    { ...game.origins, pendingFireToken: undefined },
+    updatedPlayers,
+  );
 
-  // Determine next action
-  const isLastTurn = game.turn === game.rules.basic.maxTurns;
-
-  let nextGameAction: GameState;
-
-  if (isLastTurn && allLordsHavePlayed(game.lords)) {
-    nextGameAction = {
+  // Determine next action: the game only ends once every lord has
+  // finished the last turn
+  const nextGameAction: GameState = advanceToNextLordOrResult(
+    {
       ...game,
       players: updatedPlayers,
-      origins: updatedOrigins,
-      nextAction: { type: "step", step: gameSteps.result },
-    };
-  } else if (isLastTurn) {
-    nextGameAction = {
-      ...game,
-      players: updatedPlayers,
-      origins: updatedOrigins,
-      nextAction: { type: "step", step: gameSteps.result },
-    };
-  } else {
-    nextGameAction = {
-      ...game,
-      players: updatedPlayers,
-      origins: updatedOrigins,
-      nextAction: nextLordWithAction(game.lords) as NextAction,
-    };
-  }
+      ...(updatedOrigins !== undefined && { origins: updatedOrigins }),
+    },
+    game.lords,
+  );
 
   return ok(nextGameAction);
 };
