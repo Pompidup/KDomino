@@ -126,7 +126,9 @@ describe("Mixed Human/Bot Game", () => {
     expect(results.result).toHaveLength(3);
   });
 
-  test("all bots: 4 bots complete a full game automatically", { timeout: 30_000 }, () => {
+  test("all bots: 4 bots complete a full game automatically", {
+    timeout: 30_000,
+  }, () => {
     let game: GameState = engine.createGame({
       mode: "Classic",
       seed: "all-bots",
