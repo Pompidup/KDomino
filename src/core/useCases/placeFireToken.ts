@@ -8,8 +8,12 @@ import type {
   GameWithNextAction,
 } from "@core/domain/types/game.js";
 import type { Position } from "@core/domain/types/kingdom.js";
-import type { PlacedFireToken } from "@core/domain/types/origins.js";
-import { err, ok } from "@utils/result.js";
+import type {
+  PendingFireToken,
+  PlacedFireToken,
+} from "@core/domain/types/origins.js";
+import type { Player } from "@core/domain/types/player.js";
+import { err, isErr, ok, type Result } from "@utils/result.js";
 
 export type PlaceFireTokenUseCase = (
   game: GameWithNextAction,
@@ -17,11 +21,21 @@ export type PlaceFireTokenUseCase = (
   position: Position,
 ) => GameStateResult;
 
-export const placeFireTokenUseCase: PlaceFireTokenUseCase = (
-  game,
-  lordId,
-  position,
-) => {
+/**
+ * Everything `placeFireToken` needs before checking the target square: the
+ * current player, the pending fire token and the fire tokens already placed.
+ * Shared with `getValidFireTokenPositions` so both apply the same checks.
+ */
+export type FireTokenPlacementContext = {
+  player: Player;
+  pending: PendingFireToken;
+  existingTokens: PlacedFireToken[];
+};
+
+export const resolveFireTokenPlacement = (
+  game: GameWithNextAction,
+  lordId: string,
+): Result<FireTokenPlacementContext> => {
   const currentLord = game.lords.find(
     (lord) => lord.id === game.nextAction.nextLord,
   );
@@ -38,7 +52,7 @@ export const placeFireTokenUseCase: PlaceFireTokenUseCase = (
     return err(ErrorCode.NO_PENDING_FIRE_TOKEN);
   }
 
-  const { fires, volcanoPosition } = game.origins.pendingFireToken;
+  const pending = game.origins.pendingFireToken;
 
   const currentPlayer = game.players.find(
     (player) => player.id === currentLord.playerId,
@@ -48,7 +62,25 @@ export const placeFireTokenUseCase: PlaceFireTokenUseCase = (
     return err(ErrorCode.PLAYER_NOT_FOUND);
   }
 
-  const existingTokens = currentPlayer.fireTokens ?? [];
+  return ok({
+    player: currentPlayer,
+    pending,
+    existingTokens: currentPlayer.fireTokens ?? [],
+  });
+};
+
+export const placeFireTokenUseCase: PlaceFireTokenUseCase = (
+  game,
+  lordId,
+  position,
+) => {
+  const context = resolveFireTokenPlacement(game, lordId);
+  if (isErr(context)) {
+    return context;
+  }
+
+  const { player: currentPlayer, pending, existingTokens } = context.value;
+  const { fires, volcanoPosition } = pending;
 
   if (
     !isValidFireTokenPosition(
@@ -97,7 +129,7 @@ export const placeFireTokenUseCase: PlaceFireTokenUseCase = (
   // Clear pending fire token and re-evaluate totems (a destroyed resource
   // may cost the majority in Totem mode)
   const updatedOrigins = refreshTotemHolders(
-    { ...game.origins, pendingFireToken: undefined },
+    game.origins && { ...game.origins, pendingFireToken: undefined },
     updatedPlayers,
   );
 

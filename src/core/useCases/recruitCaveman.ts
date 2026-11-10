@@ -1,11 +1,12 @@
 import {
+  getRecruitmentCost,
   isValidCavemanPosition,
   takeCavemanFromDrawPile,
   takeCavemanFromVisible,
 } from "@core/domain/entities/caveman.js";
 import { advanceToNextLordOrResult } from "@core/domain/entities/lord.js";
 import {
-  canSpendResources,
+  isValidResourcePayment,
   spendResources,
 } from "@core/domain/entities/resource.js";
 import { ErrorCode } from "@core/domain/errors/domainErrors.js";
@@ -15,7 +16,15 @@ import type {
   GameWithNextAction,
 } from "@core/domain/types/game.js";
 import type { Position } from "@core/domain/types/kingdom.js";
-import { err, ok } from "@utils/result.js";
+import type {
+  CaveBoard,
+  OriginsState,
+  PlacedCaveman,
+  PlacedFireToken,
+  Resource,
+} from "@core/domain/types/origins.js";
+import type { Player } from "@core/domain/types/player.js";
+import { err, isErr, ok, type Result } from "@utils/result.js";
 
 export type RecruitCavemanUseCase = (
   game: GameWithNextAction,
@@ -25,13 +34,24 @@ export type RecruitCavemanUseCase = (
   resourcePositions: Position[],
 ) => GameStateResult;
 
-export const recruitCavemanUseCase: RecruitCavemanUseCase = (
-  game,
-  lordId,
-  cavemanId,
-  position,
-  resourcePositions,
-) => {
+/**
+ * Everything `recruitCaveman` needs before checking the recruited caveman, the
+ * payment and the square: the current player, its Origins pieces and the cave
+ * board. Shared with `getValidCavemanPlacements` so both apply the same checks.
+ */
+export type RecruitmentContext = {
+  player: Player;
+  origins: OriginsState;
+  caveBoard: CaveBoard;
+  resources: Resource[];
+  fireTokens: PlacedFireToken[];
+  cavemen: PlacedCaveman[];
+};
+
+export const resolveRecruitment = (
+  game: GameWithNextAction,
+  lordId: string,
+): Result<RecruitmentContext> => {
   const currentLord = game.lords.find(
     (lord) => lord.id === game.nextAction.nextLord,
   );
@@ -54,31 +74,52 @@ export const recruitCavemanUseCase: RecruitCavemanUseCase = (
     return err(ErrorCode.PLAYER_NOT_FOUND);
   }
 
-  const resources = currentPlayer.resources ?? [];
-  const fireTokens = currentPlayer.fireTokens ?? [];
-  const cavemen = currentPlayer.cavemen ?? [];
+  return ok({
+    player: currentPlayer,
+    origins: game.origins,
+    caveBoard: game.origins.caveBoard,
+    resources: currentPlayer.resources ?? [],
+    fireTokens: currentPlayer.fireTokens ?? [],
+    cavemen: currentPlayer.cavemen ?? [],
+  });
+};
 
-  // Determine if taking from visible (2 different resources) or draw pile (4 different)
-  const isFromVisible = game.origins.caveBoard.visible.some(
-    (c) => c.id === cavemanId,
-  );
-  const isFromDrawPile = game.origins.caveBoard.drawPile.some(
-    (c) => c.id === cavemanId,
-  );
+export const recruitCavemanUseCase: RecruitCavemanUseCase = (
+  game,
+  lordId,
+  cavemanId,
+  position,
+  resourcePositions,
+) => {
+  const context = resolveRecruitment(game, lordId);
+  if (isErr(context)) {
+    return context;
+  }
 
-  if (!isFromVisible && !isFromDrawPile) {
+  const {
+    player: currentPlayer,
+    origins,
+    caveBoard,
+    resources,
+    fireTokens,
+    cavemen,
+  } = context.value;
+
+  // Taking a visible caveman costs 2 different resources, one from the draw
+  // pile costs 4 different resources
+  const cost = getRecruitmentCost(caveBoard, cavemanId);
+
+  if (!cost) {
     return err(ErrorCode.CAVEMAN_NOT_FOUND);
   }
 
-  const requiredDifferentTypes = isFromVisible ? 2 : 4;
-  const requiredResourceCount = isFromVisible ? 2 : 4;
-
-  if (resourcePositions.length !== requiredResourceCount) {
-    return err(ErrorCode.INSUFFICIENT_RESOURCES);
-  }
-
   if (
-    !canSpendResources(resources, resourcePositions, requiredDifferentTypes)
+    !isValidResourcePayment(
+      resources,
+      resourcePositions,
+      cost.resourceCount,
+      cost.differentTypes,
+    )
   ) {
     return err(ErrorCode.INSUFFICIENT_RESOURCES);
   }
@@ -97,12 +138,10 @@ export const recruitCavemanUseCase: RecruitCavemanUseCase = (
   }
 
   // Take caveman from board
-  let cavemanResult: ReturnType<typeof takeCavemanFromVisible>;
-  if (isFromVisible) {
-    cavemanResult = takeCavemanFromVisible(game.origins.caveBoard, cavemanId);
-  } else {
-    cavemanResult = takeCavemanFromDrawPile(game.origins.caveBoard, cavemanId);
-  }
+  const cavemanResult =
+    cost.source === "visible"
+      ? takeCavemanFromVisible(caveBoard, cavemanId)
+      : takeCavemanFromDrawPile(caveBoard, cavemanId);
 
   if (!cavemanResult) {
     return err(ErrorCode.CAVEMAN_NOT_FOUND);
@@ -129,7 +168,7 @@ export const recruitCavemanUseCase: RecruitCavemanUseCase = (
   });
 
   const updatedOrigins = {
-    ...game.origins,
+    ...origins,
     caveBoard: cavemanResult.updatedBoard,
   };
 

@@ -9,6 +9,10 @@ import {
   nextLordWithAction,
 } from "@core/domain/entities/lord.js";
 import { ErrorCode } from "@core/domain/errors/domainErrors.js";
+import type {
+  AgeOfGiantsState,
+  PendingGiant,
+} from "@core/domain/types/ageOfGiants.js";
 import {
   type GameStateResult,
   type GameWithNextAction,
@@ -16,8 +20,8 @@ import {
   type NextAction,
 } from "@core/domain/types/game.js";
 import type { Position } from "@core/domain/types/kingdom.js";
-import { playerActions } from "@core/domain/types/player.js";
-import { err, isErr, ok } from "@utils/result.js";
+import { type Player, playerActions } from "@core/domain/types/player.js";
+import { err, isErr, ok, type Result } from "@utils/result.js";
 import { continueAfterSendGiant } from "./sendGiant.js";
 
 export type PlaceGiantUseCase = (
@@ -26,11 +30,27 @@ export type PlaceGiantUseCase = (
   position: Position,
 ) => GameStateResult;
 
-export const placeGiantUseCase: PlaceGiantUseCase = (
-  game,
-  lordId,
-  position,
-) => {
+/**
+ * Everything `placeGiant` needs before checking the crown: the player whose
+ * kingdom receives the giant (the current player, or the targeted player of a
+ * giant sent by an opponent) and, in that case, the pending giant.
+ * Shared with `getValidGiantPositions` so both apply the same checks.
+ */
+export type GiantPlacementContext = {
+  player: Player;
+  /** Set when the giant was sent by an opponent (not taken from the pool) */
+  pendingGiant?: PendingGiant;
+  /**
+   * Age of Giants state once the giant is taken: one giant less in the pool,
+   * or the pending giant resolved.
+   */
+  updatedAgeOfGiants: AgeOfGiantsState;
+};
+
+export const resolveGiantPlacement = (
+  game: GameWithNextAction,
+  lordId: string,
+): Result<GiantPlacementContext> => {
   const currentAction = game.nextAction;
 
   if (currentAction.nextAction !== playerActions.placeGiant) {
@@ -57,21 +77,8 @@ export const placeGiantUseCase: PlaceGiantUseCase = (
     if (!target) {
       return err(ErrorCode.PLAYER_NOT_FOUND);
     }
-    const placed = placeGiantOnCrown(target, position);
-    if (isErr(placed)) {
-      return placed;
-    }
-    const { pendingGiant: _resolved, ...ageOfGiants } = game.ageOfGiants;
-    return continueAfterSendGiant(
-      {
-        ...game,
-        players: game.players.map((p) =>
-          p.id === target.id ? placed.value : p,
-        ),
-        ageOfGiants,
-      },
-      pendingGiant.fromLordId,
-    );
+    const { pendingGiant: _resolved, ...updatedAgeOfGiants } = game.ageOfGiants;
+    return ok({ player: target, pendingGiant, updatedAgeOfGiants });
   }
 
   // Take from giant pool
@@ -90,20 +97,52 @@ export const placeGiantUseCase: PlaceGiantUseCase = (
     return err(ErrorCode.PLAYER_NOT_FOUND);
   }
 
+  return ok({
+    player: currentPlayer,
+    updatedAgeOfGiants: { ...game.ageOfGiants, giantPool: poolResult.value },
+  });
+};
+
+export const placeGiantUseCase: PlaceGiantUseCase = (
+  game,
+  lordId,
+  position,
+) => {
+  const context = resolveGiantPlacement(game, lordId);
+  if (isErr(context)) {
+    return context;
+  }
+
+  const {
+    player: currentPlayer,
+    pendingGiant,
+    updatedAgeOfGiants: updatedAoG,
+  } = context.value;
+
   // Place giant on the chosen crown
   const placeResult = placeGiantOnCrown(currentPlayer, position);
   if (isErr(placeResult)) {
     return placeResult;
   }
 
+  // A giant sent by an opponent: the targeted player chose the crown, then
+  // the sender's turn resumes.
+  if (pendingGiant) {
+    return continueAfterSendGiant(
+      {
+        ...game,
+        players: game.players.map((p) =>
+          p.id === currentPlayer.id ? placeResult.value : p,
+        ),
+        ageOfGiants: updatedAoG,
+      },
+      pendingGiant.fromLordId,
+    );
+  }
+
   const updatedPlayers = game.players.map((p) =>
     p.id === currentPlayer.id ? placeResult.value : p,
   );
-
-  const updatedAoG = {
-    ...game.ageOfGiants,
-    giantPool: poolResult.value,
-  };
 
   // Determine next action
   const isAoGQD = isAgeOfGiantsQueenDominoMode(game.mode.name);
