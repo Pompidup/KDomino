@@ -80,7 +80,7 @@ All methods are available on the `GameEngine` object returned by `createGameEngi
 
 | Method | Command Type | Return Type | Description |
 |---|---|---|---|
-| `chooseDomino` | `ChooseDominoCommand` | `GameWithNextAction` | A lord picks a domino from the revealed set. |
+| `chooseDomino` | `ChooseDominoCommand` | `GameWithNextAction` | A lord picks a domino from the revealed set (Origins "Neolithic": the first pick of a line chooses the pair 1 & 4 or 2 & 3, see [Neolithic pair choice](#neolithic-pair-choice)). |
 | `placeDomino` | `PlaceDominoCommand` | `GameState` | Place a domino on the lord's kingdom at the given position and rotation. |
 | `discardDomino` | `DiscardDominoCommand` | `GameState` | Discard a domino when no valid placement exists. |
 
@@ -122,6 +122,7 @@ All methods are available on the `GameEngine` object returned by `createGameEngi
 |---|---|---|---|
 | `getValidPlacements` | `GetValidPlacementsCommand` | `ValidPlacement[]` | Find all valid placements for a domino on a kingdom. |
 | `canPlaceDomino` | `CanPlaceDominoCommand` | `boolean` | Check if a domino can be placed anywhere on a kingdom. |
+| `getValidDominoPicks` | `GetValidDominoPicksCommand` | `number[]` | Numbers of the revealed dominoes `chooseDomino` accepts for the lord (default: the lord to play): not picked and, with Neolithic, not reserved for the other player. `[]` when the game does not wait for this lord to pick. |
 
 ### Serialization Methods
 
@@ -200,6 +201,30 @@ type ChooseDominoCommand = {
   game: GameState;
   dominoPick: number;  // Domino number to pick
   lordId: string;      // ID of the lord picking
+};
+```
+
+#### Neolithic pair choice
+
+With the Kingdomino Origins "Neolithic" rule (2 players), the official rulebook says that each turn the first player "chooses to take dominos 1 and 4 OR 2 and 3 (in the column, from the top). The other player takes the 2 remaining dominoes." The engine keeps the usual `chooseDomino` flow:
+
+- the **first pick of each line** of 4 dominoes chooses the pair: picking the domino at `position` 1 or 4 takes the pair 1 & 4, position 2 or 3 the pair 2 & 3;
+- the whole line is then reserved (`RevealsDomino.reservedFor`): the pair for the picking lord's player, the two other dominoes for the opponent;
+- every lord then picks, in the usual order, one domino reserved for its player; picking a domino reserved for the other player fails with `DOMINO_RESERVED`.
+
+`getValidDominoPicks({ game })` lists the dominoes the lord to play may pick, and the `onNeolithicPairChosen` event reports the pair choice. The action log records the picks as usual (`chooseDomino`), so a replay reproduces the reservations.
+
+```typescript
+const picks = engine.getValidDominoPicks({ game }); // e.g. [12, 31] after the pair choice
+game = engine.chooseDomino({ game, lordId: game.nextAction.nextLord, dominoPick: picks[0] });
+```
+
+### `GetValidDominoPicksCommand`
+
+```typescript
+type GetValidDominoPicksCommand = {
+  game: GameState;   // any state is accepted
+  lordId?: string;   // default: the lord to play (game.nextAction.nextLord)
 };
 ```
 
@@ -564,7 +589,8 @@ type RevealsDomino = {
   domino: Domino;
   picked: boolean;
   lordId: string | null;
-  position: number;       // Display position in the revealed set
+  position: number;       // Display position in the revealed set (1 = lowest number)
+  reservedFor?: string;   // Neolithic: id of the player who may pick it
 };
 ```
 
@@ -1018,6 +1044,7 @@ try {
 | `CANNOT_PICK` | The lord cannot pick a domino at this time. |
 | `CANNOT_PLACE` | The lord cannot place a domino at this time. |
 | `DOMINO_ALREADY_PICKED` | The selected domino has already been picked by another lord. |
+| `DOMINO_RESERVED` | Neolithic (Origins): the selected domino is reserved for the other player (pairs 1 & 4 and 2 & 3). |
 
 ### History Errors
 
@@ -1116,6 +1143,8 @@ import {
 | `playBotTurns(engine, game, customStrategies?)` | Plays all consecutive bot turns until a human must act. |
 | `getStrategy(name)` | Look up a strategy by name from the registry. |
 | `getStrategyNames()` | Returns all registered strategy names. |
+
+`PickContext.availableDominoes` only holds the dominoes `chooseDomino` accepts for the lord (the same list as `getValidDominoPicks`): with Origins "Neolithic", the dominoes reserved for the other player are left out, and the bot's first pick of a line chooses the pair.
 
 **Types:** `BotStrategy`, `BotExtensionChoices`, `PickContext`, `PlaceContext`, `ExtensionContext`, `KnightContext`, `BuildingContext`, `BuildingChoice`, `DragonContext`, `FireTokenContext`, `CavemanContext`, `CavemanChoice`, `GiantPositionContext`, `SendGiantContext`, `SendGiantChoice`, `StrategyName`.
 
@@ -1267,6 +1296,7 @@ Events can be provided via `EngineConfig.events` or by wrapping an engine with `
 | `onPlayersAdded` | After `addPlayers` |
 | `onGameStarted` | After `startGame` |
 | `onDominoPicked` | After `chooseDomino` |
+| `onNeolithicPairChosen` | After the `chooseDomino` that chose a Neolithic pair (receives `playerId`, `dominoNumbers`, `opponentDominoNumbers`), after `onDominoPicked` |
 | `onDominoPlaced` | After `placeDomino` |
 | `onDominoDiscarded` | After `discardDomino` |
 | `onTurnStart` | When a new turn begins (derived) |
