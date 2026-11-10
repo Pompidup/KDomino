@@ -410,5 +410,196 @@ describe("GameEvents", () => {
       expect(result).toEqual([{ name: "Classic" }]);
       expect(engine.getModes).toHaveBeenCalledOnce();
     });
+
+    test("should call onExtraRulesAdded after addExtraRules", () => {
+      const onExtraRulesAdded = vi.fn();
+      const engine = createMockEngine();
+      const wrapped = wrapWithEvents(engine, { onExtraRulesAdded });
+
+      wrapped.addExtraRules({
+        game: stepGame("options"),
+        extraRules: ["Harmony"],
+      });
+
+      expect(onExtraRulesAdded).toHaveBeenCalledOnce();
+      expect(onExtraRulesAdded).toHaveBeenCalledWith({
+        game: stepGame("start"),
+        extraRules: ["Harmony"],
+      });
+    });
+
+    test("should call onOptionalActionSkipped with the skipped action", () => {
+      const onOptionalActionSkipped = vi.fn();
+      const engine = createMockEngine({
+        skipOptionalAction: vi
+          .fn()
+          .mockReturnValue(actionGame("constructBuilding", 1)),
+      });
+      const wrapped = wrapWithEvents(engine, { onOptionalActionSkipped });
+
+      wrapped.skipOptionalAction({
+        game: actionGame("placeKnight", 1),
+        lordId: "lord1",
+      });
+
+      expect(onOptionalActionSkipped).toHaveBeenCalledWith({
+        game: actionGame("constructBuilding", 1),
+        lordId: "lord1",
+        skippedAction: "placeKnight",
+      });
+    });
+
+    // Every gameplay method that can end the game must emit onGameEnd
+    const endingCalls: [
+      keyof GameEngine,
+      (wrapped: GameEngine, game: GameWithNextAction) => GameState,
+    ][] = [
+      [
+        "chooseDomino",
+        (w, game) => w.chooseDomino({ game, lordId: "lord1", dominoPick: 1 }),
+      ],
+      [
+        "placeDomino",
+        (w, game) =>
+          w.placeDomino({
+            game,
+            lordId: "lord1",
+            position: { x: 1, y: 1 },
+            rotation: 0,
+          }),
+      ],
+      [
+        "discardDomino",
+        (w, game) => w.discardDomino({ game, lordId: "lord1" }),
+      ],
+      [
+        "skipOptionalAction",
+        (w, game) => w.skipOptionalAction({ game, lordId: "lord1" }),
+      ],
+      [
+        "placeKnight",
+        (w, game) =>
+          w.placeKnight({ game, lordId: "lord1", position: { x: 1, y: 1 } }),
+      ],
+      [
+        "constructBuilding",
+        (w, game) =>
+          w.constructBuilding({
+            game,
+            lordId: "lord1",
+            buildingId: 1,
+            position: { x: 1, y: 1 },
+          }),
+      ],
+      [
+        "useDragon",
+        (w, game) => w.useDragon({ game, lordId: "lord1", buildingId: 1 }),
+      ],
+      [
+        "placeFireToken",
+        (w, game) =>
+          w.placeFireToken({ game, lordId: "lord1", position: { x: 1, y: 1 } }),
+      ],
+      [
+        "recruitCaveman",
+        (w, game) =>
+          w.recruitCaveman({
+            game,
+            lordId: "lord1",
+            cavemanId: 1,
+            position: { x: 1, y: 1 },
+            resourcePositions: [],
+          }),
+      ],
+      [
+        "placeGiant",
+        (w, game) =>
+          w.placeGiant({ game, lordId: "lord1", position: { x: 1, y: 1 } }),
+      ],
+      [
+        "sendGiant",
+        (w, game) =>
+          w.sendGiant({
+            game,
+            lordId: "lord1",
+            giantIndex: 0,
+            targetPlayerId: "player2",
+          }),
+      ],
+    ];
+
+    test.each(
+      endingCalls,
+    )("should call onGameEnd once when %s transitions to result", (method, call) => {
+      const onGameEnd = vi.fn();
+      const engine = createMockEngine({
+        [method]: vi.fn().mockReturnValue(resultGame()),
+      });
+      const wrapped = wrapWithEvents(engine, { onGameEnd });
+
+      call(wrapped, actionGame("pickDomino", 6));
+
+      expect(onGameEnd).toHaveBeenCalledOnce();
+      expect(onGameEnd).toHaveBeenCalledWith({ game: resultGame() });
+    });
+
+    test.each(
+      endingCalls,
+    )("should NOT call onGameEnd when %s does not reach result", (method, call) => {
+      const onGameEnd = vi.fn();
+      const engine = createMockEngine({
+        [method]: vi.fn().mockReturnValue(actionGame("pickDomino", 6)),
+      });
+      const wrapped = wrapWithEvents(engine, { onGameEnd });
+
+      call(wrapped, actionGame("pickDomino", 6));
+
+      expect(onGameEnd).not.toHaveBeenCalled();
+    });
+
+    test("should emit the action event before onGameEnd", () => {
+      const calls: string[] = [];
+      const engine = createMockEngine({
+        placeFireToken: vi.fn().mockReturnValue(resultGame()),
+      });
+      const wrapped = wrapWithEvents(engine, {
+        onFireTokenPlaced: () => calls.push("onFireTokenPlaced"),
+        onGameEnd: () => calls.push("onGameEnd"),
+      });
+
+      wrapped.placeFireToken({
+        game: actionGame("placeFireToken", 6),
+        lordId: "lord1",
+        position: { x: 1, y: 1 },
+      });
+
+      expect(calls).toEqual(["onFireTokenPlaced", "onGameEnd"]);
+    });
+
+    test("should detect turn changes caused by any gameplay method", () => {
+      const onTurnEnd = vi.fn();
+      const onTurnStart = vi.fn();
+      const engine = createMockEngine({
+        recruitCaveman: vi.fn().mockReturnValue(actionGame("placeDomino", 3)),
+      });
+      const wrapped = wrapWithEvents(engine, { onTurnEnd, onTurnStart });
+
+      wrapped.recruitCaveman({
+        game: actionGame("recruitCaveman", 2),
+        lordId: "lord1",
+        cavemanId: 1,
+        position: { x: 1, y: 1 },
+        resourcePositions: [],
+      });
+
+      expect(onTurnEnd).toHaveBeenCalledWith({
+        game: actionGame("placeDomino", 3),
+        turn: 2,
+      });
+      expect(onTurnStart).toHaveBeenCalledWith({
+        game: actionGame("placeDomino", 3),
+        turn: 3,
+      });
+    });
   });
 });

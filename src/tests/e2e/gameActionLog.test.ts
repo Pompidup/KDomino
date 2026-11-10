@@ -77,7 +77,11 @@ describe("GameActionLog e2e", () => {
 
     // First action must be createGame
     expect(actions[0]?.action).toBe("createGame");
-    expect(actions[0]?.payload).toEqual({ mode: "Classic", seed: "e2e-log" });
+    expect(actions[0]?.payload).toEqual({
+      mode: "Classic",
+      seed: "e2e-log",
+      gameId: log.gameId,
+    });
 
     // Should contain setup actions
     expect(getActionsByType(log, "createGame")).toHaveLength(1);
@@ -183,13 +187,15 @@ describe("GameActionLog e2e", () => {
     const { engine, getLog } = wrapWithActionLog(baseEngine);
 
     const game = engine.createGame({ mode: "Classic" });
-    engine.addPlayers({ game, players: ["Alice", "Bob"] });
+    const withPlayers = engine.addPlayers({ game, players: ["Alice", "Bob"] });
 
     const log = getLog();
     const addPlayersEntry = getActionsByType(log, "addPlayers")[0];
 
-    // Payload should only contain players, NOT the game state
-    expect(addPlayersEntry?.payload).toEqual({ players: ["Alice", "Bob"] });
+    // Payload should only contain players (with their assigned ids), NOT the game state
+    expect(addPlayersEntry?.payload).toEqual({
+      players: withPlayers.players.map((p) => ({ id: p.id, name: p.name })),
+    });
     expect(addPlayersEntry?.payload).not.toHaveProperty("game");
   });
 });

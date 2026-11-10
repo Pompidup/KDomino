@@ -1,6 +1,7 @@
 import type { NextAction, NextStep } from "@core/domain/types/game.js";
 import type { GameEngine } from "@core/portUserside/engine.js";
 import {
+  ACTION_LOG_VERSION,
   appendAction,
   createActionLog,
   getActions,
@@ -237,14 +238,15 @@ describe("GameActionLog", () => {
     test("should record createGame action", () => {
       const { engine, getLog } = wrapWithActionLog(mockEngine);
 
-      engine.createGame({ mode: "Classic", seed: "test-seed" });
+      const game = engine.createGame({ mode: "Classic", seed: "test-seed" });
 
       const log = getLog();
       expect(log.entries).toHaveLength(1);
       expect(log.entries[0]?.action).toBe("createGame");
       expect(log.entries[0]?.payload).toEqual({
         mode: "Classic",
-        seed: "test-seed",
+        seed: game.seed ?? "test-seed",
+        gameId: game.id,
       });
     });
 
@@ -267,7 +269,7 @@ describe("GameActionLog", () => {
       const { engine, getLog } = wrapWithActionLog(mockEngine);
 
       engine.createGame({ mode: "Classic" });
-      engine.addPlayers({
+      const game = engine.addPlayers({
         game: buildGameWithStep(stepAddPlayers),
         players: ["Alice", "Bob"],
       });
@@ -275,7 +277,10 @@ describe("GameActionLog", () => {
       const log = getLog();
       expect(log.entries).toHaveLength(2);
       expect(log.entries[1]?.action).toBe("addPlayers");
-      expect(log.entries[1]?.payload).toEqual({ players: ["Alice", "Bob"] });
+      // Players are recorded with the ids the engine assigned
+      expect(log.entries[1]?.payload).toEqual({
+        players: game.players.map((p) => ({ id: p.id, name: p.name })),
+      });
     });
 
     test("should record addExtraRules action", () => {
@@ -298,11 +303,14 @@ describe("GameActionLog", () => {
       const { engine, getLog } = wrapWithActionLog(mockEngine);
 
       engine.createGame({ mode: "Classic" });
-      engine.startGame({ game: buildGameWithStep(stepStart) });
+      const game = engine.startGame({ game: buildGameWithStep(stepStart) });
 
       const log = getLog();
       expect(log.entries[1]?.action).toBe("startGame");
-      expect(log.entries[1]?.payload).toEqual({});
+      // Lord ids are recorded so a replay reproduces them
+      expect(log.entries[1]?.payload).toEqual({
+        lordIds: game.lords.map((l) => l.id),
+      });
     });
 
     test("should record chooseDomino action", () => {
@@ -591,6 +599,191 @@ describe("GameActionLog", () => {
       expect(mockEngine.addExtraRules).toHaveBeenCalledWith({
         game: gameStep,
         extraRules: ["Harmony"],
+      });
+    });
+  });
+
+  // ─── Extension actions, ids and versions ───────────────────────────
+
+  describe("extension actions", () => {
+    const actionGame = buildGameWithAction(actionPick, 1);
+    const makeEngine = (): GameEngine =>
+      ({
+        createGame: vi.fn().mockReturnValue(buildGameWithStep(stepAddPlayers)),
+        placeKnight: vi.fn().mockReturnValue(actionGame),
+        constructBuilding: vi.fn().mockReturnValue(actionGame),
+        useDragon: vi.fn().mockReturnValue(actionGame),
+        placeFireToken: vi.fn().mockReturnValue(actionGame),
+        recruitCaveman: vi.fn().mockReturnValue(actionGame),
+        skipOptionalAction: vi.fn().mockReturnValue(actionGame),
+        placeGiant: vi.fn().mockReturnValue(actionGame),
+        sendGiant: vi.fn().mockReturnValue(actionGame),
+        // biome-ignore lint/suspicious/noExplicitAny: test mock
+      }) as any;
+
+    const position = { x: 3, y: 4 };
+    const cases = [
+      ["placeKnight", { lordId: "l1", position }],
+      ["constructBuilding", { lordId: "l1", buildingId: 7, position }],
+      ["useDragon", { lordId: "l1", buildingId: 7 }],
+      ["placeFireToken", { lordId: "l1", position }],
+      [
+        "recruitCaveman",
+        {
+          lordId: "l1",
+          cavemanId: 2,
+          position,
+          resourcePositions: [
+            { x: 1, y: 1 },
+            { x: 2, y: 2 },
+          ],
+        },
+      ],
+      ["skipOptionalAction", { lordId: "l1" }],
+      ["placeGiant", { lordId: "l1", position }],
+      ["sendGiant", { lordId: "l1", giantIndex: 0, targetPlayerId: "p2" }],
+      [
+        "sendGiant",
+        {
+          lordId: "l1",
+          giantIndex: 0,
+          targetPlayerId: "p2",
+          targetCrownPosition: position,
+        },
+      ],
+    ] as const;
+
+    test.each(cases)("should record and replay %s", (action, payload) => {
+      const engine = makeEngine();
+      const { engine: logged, getLog } = wrapWithActionLog(engine);
+      logged.createGame({ mode: "QueenDomino" });
+      // biome-ignore lint/suspicious/noExplicitAny: dynamic dispatch in test
+      (logged[action] as any)({ game: actionGame, ...payload });
+
+      const log = getLog();
+      expect(log.entries[1]?.action).toBe(action);
+      expect(log.entries[1]?.payload).toStrictEqual(payload);
+
+      const replayEngine = makeEngine();
+      const created = buildGameWithStep(stepAddPlayers);
+      (replayEngine.createGame as ReturnType<typeof vi.fn>).mockReturnValue(
+        created,
+      );
+      replayActions(replayEngine, log);
+      expect(replayEngine[action]).toHaveBeenCalledWith({
+        game: { ...created, id: log.gameId },
+        ...payload,
+      });
+    });
+  });
+
+  describe("ids and versions", () => {
+    test("should create logs with the current version", () => {
+      expect(createActionLog("g").version).toBe(ACTION_LOG_VERSION);
+    });
+
+    test("should refuse logs from a newer version", () => {
+      const log = {
+        ...appendAction(createActionLog("g"), {
+          action: "createGame",
+          payload: { mode: "Classic" },
+          turn: 0,
+        }),
+        version: ACTION_LOG_VERSION + 1,
+      };
+      const engine = {
+        createGame: vi.fn(),
+        // biome-ignore lint/suspicious/noExplicitAny: test mock
+      } as any;
+
+      expect(() => replayActions(engine, log)).toThrow(
+        "Unsupported action log version",
+      );
+    });
+
+    test("should replay legacy (version 1) logs without ids", () => {
+      const gameStep = buildGameWithStep(stepAddPlayers);
+      const engine = {
+        createGame: vi.fn().mockReturnValue(gameStep),
+        addPlayers: vi.fn().mockReturnValue(buildGameWithStep(stepOptions)),
+        startGame: vi.fn().mockReturnValue(buildGameWithAction(actionPick)),
+        // biome-ignore lint/suspicious/noExplicitAny: test mock
+      } as any;
+      const legacy = {
+        gameId: "old-game",
+        entries: [
+          {
+            id: 0,
+            timestamp: 0,
+            action: "createGame",
+            payload: { mode: "Classic" },
+            turn: 0,
+          },
+          {
+            id: 1,
+            timestamp: 0,
+            action: "addPlayers",
+            payload: { players: ["Alice", "Bob"] },
+            turn: 0,
+          },
+          { id: 2, timestamp: 0, action: "startGame", payload: {}, turn: 0 },
+        ],
+      } as const;
+
+      const game = replayActions(
+        engine,
+        legacy as unknown as Parameters<typeof replayActions>[1],
+      );
+
+      expect(engine.addPlayers).toHaveBeenCalledWith({
+        game: gameStep,
+        players: ["Alice", "Bob"],
+      });
+      expect(game.lords).toEqual(buildGameWithAction(actionPick).lords);
+    });
+
+    test("should restore the recorded game id and lord ids on replay", () => {
+      const started = buildGameWithAction(
+        { type: "action", nextLord: "new-lord-2", nextAction: "pickDomino" },
+        0,
+      );
+      started.lords = [
+        { ...started.lords[0]!, id: "new-lord-1" },
+        { ...started.lords[1]!, id: "new-lord-2" },
+      ];
+      const engine = {
+        createGame: vi
+          .fn()
+          .mockReturnValue({ ...buildGameWithStep(stepStart), id: "new-game" }),
+        startGame: vi
+          .fn()
+          .mockImplementation(({ game }: { game: { id: string } }) => ({
+            ...started,
+            id: game.id,
+          })),
+        // biome-ignore lint/suspicious/noExplicitAny: test mock
+      } as any;
+
+      let log = createActionLog("original-game");
+      log = appendAction(log, {
+        action: "createGame",
+        payload: { mode: "Classic", seed: "s", gameId: "original-game" },
+        turn: 0,
+      });
+      log = appendAction(log, {
+        action: "startGame",
+        payload: { lordIds: ["lord-a", "lord-b"] },
+        turn: 0,
+      });
+
+      const game = replayActions(engine, log);
+
+      expect(game.id).toBe("original-game");
+      expect(game.lords.map((l) => l.id)).toEqual(["lord-a", "lord-b"]);
+      expect(game.nextAction).toEqual({
+        type: "action",
+        nextLord: "lord-b",
+        nextAction: "pickDomino",
       });
     });
   });

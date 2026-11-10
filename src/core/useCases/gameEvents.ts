@@ -4,6 +4,7 @@ import type {
   GameWithNextAction,
   GameWithNextStep,
 } from "@core/domain/types/index.js";
+import type { PlayerActions } from "@core/domain/types/player.js";
 import type { GameEngine } from "@core/portUserside/engine.js";
 
 // ─── Event Types ─────────────────────────────────────────────────────
@@ -48,7 +49,7 @@ export type GameEventCallbacks = {
   onTurnStart?: (event: { game: GameState; turn: number }) => void;
   /** Called when a turn ends (all lords have played) */
   onTurnEnd?: (event: { game: GameState; turn: number }) => void;
-  /** Called when the game reaches the result phase */
+  /** Called once when the game reaches the result phase, whatever the action that ended it */
   onGameEnd?: (event: { game: GameState }) => void;
   /** Called after a lord places a knight on their kingdom (QueenDomino) */
   onKnightPlaced?: (event: { game: GameState; lordId: string }) => void;
@@ -80,6 +81,18 @@ export type GameEventCallbacks = {
     lordId: string;
     targetPlayerId: string;
   }) => void;
+  /** Called after extra rules are added to the game (setup) */
+  onExtraRulesAdded?: (event: {
+    game: GameWithNextStep;
+    extraRules: string[];
+  }) => void;
+  /** Called after a lord skips an optional action (QueenDomino, Origins, Age of Giants) */
+  onOptionalActionSkipped?: (event: {
+    game: GameState;
+    lordId: string;
+    /** The optional action that was skipped (e.g. `"placeKnight"`, `"sendGiant"`) */
+    skippedAction: PlayerActions;
+  }) => void;
 };
 
 // ─── Wrapper ─────────────────────────────────────────────────────────
@@ -91,9 +104,14 @@ const isGameEnded = (game: GameState): boolean =>
  * Wraps a GameEngine to emit event callbacks after each state-changing method.
  * Read-only methods (getModes, calculateScore, etc.) are passed through unchanged.
  *
- * Derived events:
- * - `onTurnEnd` + `onTurnStart`: emitted when `chooseDomino` causes a turn increment
- * - `onGameEnd`: emitted when `placeDomino` or `discardDomino` transitions to the "result" step
+ * Derived events are detected centrally, by comparing the game state before
+ * and after every gameplay method (whatever the method that caused it):
+ * - `onTurnEnd` + `onTurnStart`: emitted when the turn number changes
+ * - `onGameEnd`: emitted exactly once, when the game transitions to the
+ *   "result" step (placeDomino, discardDomino, skipOptionalAction,
+ *   placeFireToken, recruitCaveman, useDragon, placeGiant, sendGiant…)
+ *
+ * The action-specific event is always emitted before the derived ones.
  *
  * @param engine - The base game engine to wrap
  * @param callbacks - Optional event callbacks
@@ -102,140 +120,163 @@ const isGameEnded = (game: GameState): boolean =>
 export const wrapWithEvents = (
   engine: GameEngine,
   callbacks: GameEventCallbacks,
-): GameEngine => ({
-  // Read-only methods — pass through
-  getModes: (cmd) => engine.getModes(cmd),
-  getExtraRules: (cmd) => engine.getExtraRules(cmd),
-  calculateScore: (cmd) => engine.calculateScore(cmd),
-  getValidPlacements: (cmd) => engine.getValidPlacements(cmd),
-  canPlaceDomino: (cmd) => engine.canPlaceDomino(cmd),
-  serialize: (cmd) => engine.serialize(cmd),
-  deserialize: (cmd) => engine.deserialize(cmd),
-  getResults: (cmd) => engine.getResults(cmd),
-  getDynastyResults: (cmd) => engine.getDynastyResults(cmd),
+): GameEngine => {
+  /**
+   * Emits the derived events for a gameplay transition `before → after`.
+   */
+  const emitDerived = (before: GameState, after: GameState): void => {
+    if (after.turn !== before.turn) {
+      callbacks.onTurnEnd?.({ game: after, turn: before.turn });
+      callbacks.onTurnStart?.({ game: after, turn: after.turn });
+    }
+    if (!isGameEnded(before) && isGameEnded(after)) {
+      callbacks.onGameEnd?.({ game: after });
+    }
+  };
 
-  // State-changing methods — emit events after execution
-  createGame: (cmd) => {
-    const game = engine.createGame(cmd);
-    callbacks.onGameCreated?.({ game });
-    return game;
-  },
+  /**
+   * Wraps a gameplay method: runs it, emits its specific event, then the
+   * derived turn / game-end events.
+   */
+  const gameplay =
+    <C extends { game: GameState }, R extends GameState>(
+      run: (cmd: C) => R,
+      emit: (game: R, cmd: C) => void,
+    ) =>
+    (cmd: C): R => {
+      const game = run(cmd);
+      emit(game, cmd);
+      emitDerived(cmd.game, game);
+      return game;
+    };
 
-  addPlayers: (cmd) => {
-    const game = engine.addPlayers(cmd);
-    callbacks.onPlayersAdded?.({ game });
-    return game;
-  },
+  return {
+    // Read-only methods — pass through
+    getModes: (cmd) => engine.getModes(cmd),
+    getExtraRules: (cmd) => engine.getExtraRules(cmd),
+    calculateScore: (cmd) => engine.calculateScore(cmd),
+    getValidPlacements: (cmd) => engine.getValidPlacements(cmd),
+    canPlaceDomino: (cmd) => engine.canPlaceDomino(cmd),
+    serialize: (cmd) => engine.serialize(cmd),
+    deserialize: (cmd) => engine.deserialize(cmd),
+    getResults: (cmd) => engine.getResults(cmd),
+    getDynastyResults: (cmd) => engine.getDynastyResults(cmd),
 
-  addExtraRules: (cmd) => engine.addExtraRules(cmd),
+    // Setup methods — emit events after execution
+    createGame: (cmd) => {
+      const game = engine.createGame(cmd);
+      callbacks.onGameCreated?.({ game });
+      return game;
+    },
 
-  startGame: (cmd) => {
-    const game = engine.startGame(cmd);
-    callbacks.onGameStarted?.({ game });
-    callbacks.onTurnStart?.({ game, turn: game.turn });
-    return game;
-  },
+    addPlayers: (cmd) => {
+      const game = engine.addPlayers(cmd);
+      callbacks.onPlayersAdded?.({ game });
+      return game;
+    },
 
-  chooseDomino: (cmd) => {
-    const turnBefore = cmd.game.turn;
-    const game = engine.chooseDomino(cmd);
-    callbacks.onDominoPicked?.({
-      game,
-      lordId: cmd.lordId,
-      dominoNumber: cmd.dominoPick,
-    });
+    addExtraRules: (cmd) => {
+      const game = engine.addExtraRules(cmd);
+      callbacks.onExtraRulesAdded?.({ game, extraRules: cmd.extraRules });
+      return game;
+    },
 
-    // Detect turn transition
-    if (game.turn !== turnBefore) {
-      callbacks.onTurnEnd?.({ game, turn: turnBefore });
+    startGame: (cmd) => {
+      const game = engine.startGame(cmd);
+      callbacks.onGameStarted?.({ game });
       callbacks.onTurnStart?.({ game, turn: game.turn });
-    }
+      return game;
+    },
 
-    return game;
-  },
+    // Gameplay methods — specific event, then derived turn / game-end events
+    chooseDomino: gameplay(
+      (cmd) => engine.chooseDomino(cmd),
+      (game, cmd) =>
+        callbacks.onDominoPicked?.({
+          game,
+          lordId: cmd.lordId,
+          dominoNumber: cmd.dominoPick,
+        }),
+    ),
 
-  placeDomino: (cmd) => {
-    const game = engine.placeDomino(cmd);
-    callbacks.onDominoPlaced?.({ game, lordId: cmd.lordId });
+    placeDomino: gameplay(
+      (cmd) => engine.placeDomino(cmd),
+      (game, cmd) => callbacks.onDominoPlaced?.({ game, lordId: cmd.lordId }),
+    ),
 
-    if (isGameEnded(game)) {
-      callbacks.onGameEnd?.({ game });
-    }
+    discardDomino: gameplay(
+      (cmd) => engine.discardDomino(cmd),
+      (game, cmd) =>
+        callbacks.onDominoDiscarded?.({ game, lordId: cmd.lordId }),
+    ),
 
-    return game;
-  },
+    // Queendomino methods
+    placeKnight: gameplay(
+      (cmd) => engine.placeKnight(cmd),
+      (game, cmd) => callbacks.onKnightPlaced?.({ game, lordId: cmd.lordId }),
+    ),
 
-  discardDomino: (cmd) => {
-    const game = engine.discardDomino(cmd);
-    callbacks.onDominoDiscarded?.({ game, lordId: cmd.lordId });
+    constructBuilding: gameplay(
+      (cmd) => engine.constructBuilding(cmd),
+      (game, cmd) =>
+        callbacks.onBuildingConstructed?.({
+          game,
+          lordId: cmd.lordId,
+          buildingId: cmd.buildingId,
+        }),
+    ),
 
-    if (isGameEnded(game)) {
-      callbacks.onGameEnd?.({ game });
-    }
+    useDragon: gameplay(
+      (cmd) => engine.useDragon(cmd),
+      (game, cmd) =>
+        callbacks.onDragonUsed?.({
+          game,
+          lordId: cmd.lordId,
+          buildingId: cmd.buildingId,
+        }),
+    ),
 
-    return game;
-  },
+    skipOptionalAction: gameplay(
+      (cmd) => engine.skipOptionalAction(cmd),
+      (game, cmd) =>
+        callbacks.onOptionalActionSkipped?.({
+          game,
+          lordId: cmd.lordId,
+          skippedAction: cmd.game.nextAction.nextAction,
+        }),
+    ),
 
-  // Queendomino methods — emit events after execution
-  placeKnight: (cmd) => {
-    const game = engine.placeKnight(cmd);
-    callbacks.onKnightPlaced?.({ game, lordId: cmd.lordId });
-    return game;
-  },
+    // Origins methods
+    placeFireToken: gameplay(
+      (cmd) => engine.placeFireToken(cmd),
+      (game, cmd) =>
+        callbacks.onFireTokenPlaced?.({ game, lordId: cmd.lordId }),
+    ),
 
-  constructBuilding: (cmd) => {
-    const game = engine.constructBuilding(cmd);
-    callbacks.onBuildingConstructed?.({
-      game,
-      lordId: cmd.lordId,
-      buildingId: cmd.buildingId,
-    });
-    return game;
-  },
+    recruitCaveman: gameplay(
+      (cmd) => engine.recruitCaveman(cmd),
+      (game, cmd) =>
+        callbacks.onCavemanRecruited?.({
+          game,
+          lordId: cmd.lordId,
+          cavemanId: cmd.cavemanId,
+        }),
+    ),
 
-  useDragon: (cmd) => {
-    const game = engine.useDragon(cmd);
-    callbacks.onDragonUsed?.({
-      game,
-      lordId: cmd.lordId,
-      buildingId: cmd.buildingId,
-    });
-    return game;
-  },
+    // Age of Giants methods
+    placeGiant: gameplay(
+      (cmd) => engine.placeGiant(cmd),
+      (game, cmd) => callbacks.onGiantPlaced?.({ game, lordId: cmd.lordId }),
+    ),
 
-  skipOptionalAction: (cmd) => engine.skipOptionalAction(cmd),
-
-  // Origins methods — emit events after execution
-  placeFireToken: (cmd) => {
-    const game = engine.placeFireToken(cmd);
-    callbacks.onFireTokenPlaced?.({ game, lordId: cmd.lordId });
-    return game;
-  },
-
-  recruitCaveman: (cmd) => {
-    const game = engine.recruitCaveman(cmd);
-    callbacks.onCavemanRecruited?.({
-      game,
-      lordId: cmd.lordId,
-      cavemanId: cmd.cavemanId,
-    });
-    return game;
-  },
-
-  // Age of Giants methods — emit events after execution
-  placeGiant: (cmd) => {
-    const game = engine.placeGiant(cmd);
-    callbacks.onGiantPlaced?.({ game, lordId: cmd.lordId });
-    return game;
-  },
-
-  sendGiant: (cmd) => {
-    const game = engine.sendGiant(cmd);
-    callbacks.onGiantSent?.({
-      game,
-      lordId: cmd.lordId,
-      targetPlayerId: cmd.targetPlayerId,
-    });
-    return game;
-  },
-});
+    sendGiant: gameplay(
+      (cmd) => engine.sendGiant(cmd),
+      (game, cmd) =>
+        callbacks.onGiantSent?.({
+          game,
+          lordId: cmd.lordId,
+          targetPlayerId: cmd.targetPlayerId,
+        }),
+    ),
+  };
+};

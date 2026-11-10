@@ -37,6 +37,7 @@ export {
 export type { ConstructBuildingUseCase } from "@core/useCases/constructBuilding.js";
 // Action log (game history / replay)
 export {
+  ACTION_LOG_VERSION,
   type ActionEntry,
   type ActionPayloadMap,
   type ActionType,

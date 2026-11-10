@@ -33,11 +33,27 @@ export type AddPlayersUseCase = (
 
 const normalizePlayerInput = (
   input: PlayerInput,
-): { name: string; bot?: { strategyName: string } } => {
+): { id?: string; name: string; bot?: { strategyName: string } } => {
   if (typeof input === "string") {
     return { name: input };
   }
-  return { name: input.name, bot: input.bot };
+  return { id: input.id, name: input.name, bot: input.bot };
+};
+
+/**
+ * Caller-provided ids must be non-empty strings, unique within the call.
+ */
+const hasValidPlayerIds = (players: PlayerInput[]): boolean => {
+  const seen = new Set<string>();
+  for (const player of players) {
+    if (typeof player === "string" || player.id === undefined) continue;
+    if (typeof player.id !== "string" || player.id.trim().length === 0) {
+      return false;
+    }
+    if (seen.has(player.id)) return false;
+    seen.add(player.id);
+  }
+  return true;
 };
 
 export const addPlayersUseCase =
@@ -61,13 +77,17 @@ export const addPlayersUseCase =
       return err(ErrorCode.INVALID_PLAYER_COUNT);
     }
 
+    if (!hasValidPlayerIds(players)) {
+      return err(ErrorCode.INVALID_PLAYER_ID);
+    }
+
     const newPlayers: Players = [];
 
     for (const player of players) {
-      const { name, bot } = normalizePlayerInput(player);
+      const { id: providedId, name, bot } = normalizePlayerInput(player);
       let kingdom = createEmptyKingdom();
       kingdom = placeCastle(kingdom);
-      const id = uuidMethod();
+      const id = providedId ?? uuidMethod();
       const newPlayer = createPlayer(name, id, kingdom, bot);
 
       if (isErr(newPlayer)) {

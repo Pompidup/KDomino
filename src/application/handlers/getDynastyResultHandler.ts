@@ -19,7 +19,7 @@ export const getDynastyResultHandler = (
     logger.info(
       `Calculating dynasty results for ${command.games.length} games`,
     );
-    const results = useCase(command.games);
+    const results = useCase(command.games, command.groupBy);
     logger.info(`Dynasty results calculated`);
     return results;
   };
