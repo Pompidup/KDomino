@@ -139,6 +139,7 @@ export const TranslationKey = {
   ERROR_INVALID_CAVEMAN_PLACEMENT: "error.invalidCavemanPlacement",
   ERROR_CAVEMAN_NOT_FOUND: "error.cavemanNotFound",
   ERROR_NOT_TRIBE_MODE: "error.notTribeMode",
+  ERROR_INVALID_PLAYER_ID: "error.invalidPlayerId",
 } as const;
 
 export type TranslationKeyType =
@@ -293,6 +294,8 @@ export const defaultTranslations: Record<TranslationKeyType, string> = {
     "Invalid position for caveman placement",
   [TranslationKey.ERROR_CAVEMAN_NOT_FOUND]: "Caveman not found",
   [TranslationKey.ERROR_NOT_TRIBE_MODE]: "Tribe mode is not enabled",
+  [TranslationKey.ERROR_INVALID_PLAYER_ID]:
+    "Player ids must be non-empty and unique",
 };
 
 /** English translations (alias of `defaultTranslations`). */
@@ -453,6 +456,8 @@ export const frenchTranslations: Record<TranslationKeyType, string> = {
     "Position invalide pour l'homme préhistorique",
   [TranslationKey.ERROR_CAVEMAN_NOT_FOUND]: "Homme préhistorique introuvable",
   [TranslationKey.ERROR_NOT_TRIBE_MODE]: "Le mode Tribu n'est pas activé",
+  [TranslationKey.ERROR_INVALID_PLAYER_ID]:
+    "Les identifiants des joueurs doivent être non vides et uniques",
 };
 
 /** Locales shipped with the engine. */
@@ -668,6 +673,7 @@ export const errorCodeToTranslationKey: Record<
     TranslationKey.ERROR_INVALID_CAVEMAN_PLACEMENT,
   [ErrorCode.CAVEMAN_NOT_FOUND]: TranslationKey.ERROR_CAVEMAN_NOT_FOUND,
   [ErrorCode.NOT_TRIBE_MODE]: TranslationKey.ERROR_NOT_TRIBE_MODE,
+  [ErrorCode.INVALID_PLAYER_ID]: TranslationKey.ERROR_INVALID_PLAYER_ID,
 };
 
 /**

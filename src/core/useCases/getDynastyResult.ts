@@ -1,6 +1,11 @@
+import type { DynastyGroupBy } from "@application/commands/getDynastyResultCommand.js";
 import type { GameWithResults } from "@core/domain/types/index.js";
 
 export type DynastyResult = {
+  /**
+   * Player id. With `groupBy: "playerName"`, the id the player had in the
+   * first game where that name appears.
+   */
   playerId: string;
   playerName: string;
   totalPoints: number;
@@ -10,19 +15,29 @@ export type DynastyResult = {
 
 export type GetDynastyResultUseCase = (
   games: GameWithResults[],
+  groupBy?: DynastyGroupBy,
 ) => DynastyResult[];
 
-export const getDynastyResultUseCase: GetDynastyResultUseCase = (games) => {
+export const getDynastyResultUseCase: GetDynastyResultUseCase = (
+  games,
+  groupBy = "playerId",
+) => {
   // Collect all unique players
-  const playerMap = new Map<string, { name: string; points: number[] }>();
+  const playerMap = new Map<
+    string,
+    { playerId: string; name: string; points: number[] }
+  >();
 
   for (const game of games) {
     for (const result of game.result) {
-      const existing = playerMap.get(result.playerId);
+      const key =
+        groupBy === "playerName" ? result.playerName : result.playerId;
+      const existing = playerMap.get(key);
       if (existing) {
         existing.points.push(result.details.points);
       } else {
-        playerMap.set(result.playerId, {
+        playerMap.set(key, {
+          playerId: result.playerId,
           name: result.playerName,
           points: [result.details.points],
         });
@@ -32,9 +47,9 @@ export const getDynastyResultUseCase: GetDynastyResultUseCase = (games) => {
 
   // Calculate totals and sort
   const results: Omit<DynastyResult, "position">[] = [];
-  for (const [playerId, data] of playerMap) {
+  for (const data of playerMap.values()) {
     results.push({
-      playerId,
+      playerId: data.playerId,
       playerName: data.name,
       totalPoints: data.points.reduce((sum, p) => sum + p, 0),
       gamesPoints: data.points,

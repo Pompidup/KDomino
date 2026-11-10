@@ -93,4 +93,47 @@ describe("getDynastyResult", () => {
     expect(result[0]!.totalPoints).toBe(42);
     expect(result[0]!.position).toBe(1);
   });
+
+  test("should aggregate by playerId by default (regenerated ids split players)", () => {
+    const games = [
+      makeGameResult([{ playerId: "a1", playerName: "Alice", points: 10 }]),
+      makeGameResult([{ playerId: "a2", playerName: "Alice", points: 15 }]),
+    ];
+
+    const result = getDynastyResultUseCase(games);
+
+    expect(result).toHaveLength(2);
+  });
+
+  test("should aggregate by player name with groupBy playerName", () => {
+    const games = [
+      makeGameResult([
+        { playerId: "a1", playerName: "Alice", points: 10 },
+        { playerId: "b1", playerName: "Bob", points: 30 },
+      ]),
+      makeGameResult([
+        { playerId: "b2", playerName: "Bob", points: 5 },
+        { playerId: "a2", playerName: "Alice", points: 15 },
+      ]),
+    ];
+
+    const result = getDynastyResultUseCase(games, "playerName");
+
+    expect(result).toEqual([
+      {
+        playerId: "b1",
+        playerName: "Bob",
+        totalPoints: 35,
+        gamesPoints: [30, 5],
+        position: 1,
+      },
+      {
+        playerId: "a1",
+        playerName: "Alice",
+        totalPoints: 25,
+        gamesPoints: [10, 15],
+        position: 2,
+      },
+    ]);
+  });
 });

@@ -321,4 +321,63 @@ describe("Add players", () => {
     expect(unwrapResult.players[1]!.name).toBe("Player 2");
     expect(unwrapResult.players[1]!.bot).toBeUndefined();
   });
+
+  describe("stable player ids", () => {
+    const makeGame = () =>
+      createGameBuilder<NextStep>()
+        .withId("game")
+        .withMode({ name: "Classic", description: "Classic mode" })
+        .build();
+    let counter = 0;
+    const dependencies = {
+      uuidMethod: () => `generated-${++counter}`,
+      // biome-ignore lint/suspicious/noExplicitAny: test mock
+      shuffleMethod: (dominoes: any[]) => dominoes,
+      ruleRepository: inMemoryRepo,
+    };
+
+    test("should keep the ids provided by the caller", () => {
+      const result = addPlayersUseCase(dependencies)(makeGame(), [
+        { id: "user-1", name: "Alice" },
+        { id: "user-2", name: "Bob", bot: { strategyName: "greedy" } },
+      ]);
+
+      const game = unwrap(result);
+      expect(game.players.map((p) => p.id)).toEqual(["user-1", "user-2"]);
+      expect(game.players[1]?.bot).toEqual({ strategyName: "greedy" });
+    });
+
+    test("should generate ids for players without one (mixed forms)", () => {
+      counter = 0;
+      const result = addPlayersUseCase(dependencies)(makeGame(), [
+        "Alice",
+        { id: "user-2", name: "Bob" },
+        { name: "Carol" },
+      ]);
+
+      expect(unwrap(result).players.map((p) => p.id)).toEqual([
+        "generated-1",
+        "user-2",
+        "generated-2",
+      ]);
+    });
+
+    test("should reject duplicated ids", () => {
+      const result = addPlayersUseCase(dependencies)(makeGame(), [
+        { id: "same", name: "Alice" },
+        { id: "same", name: "Bob" },
+      ]);
+
+      expect(result).toEqual(err(ErrorCode.INVALID_PLAYER_ID));
+    });
+
+    test("should reject empty ids", () => {
+      const result = addPlayersUseCase(dependencies)(makeGame(), [
+        { id: "  ", name: "Alice" },
+        { name: "Bob" },
+      ]);
+
+      expect(result).toEqual(err(ErrorCode.INVALID_PLAYER_ID));
+    });
+  });
 });

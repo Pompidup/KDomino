@@ -61,6 +61,9 @@ export const ErrorCode = {
   INVALID_CAVEMAN_PLACEMENT: "INVALID_CAVEMAN_PLACEMENT",
   CAVEMAN_NOT_FOUND: "CAVEMAN_NOT_FOUND",
   NOT_TRIBE_MODE: "NOT_TRIBE_MODE",
+
+  // Player id errors
+  INVALID_PLAYER_ID: "INVALID_PLAYER_ID",
 } as const;
 
 export type ErrorCodeType = (typeof ErrorCode)[keyof typeof ErrorCode];
