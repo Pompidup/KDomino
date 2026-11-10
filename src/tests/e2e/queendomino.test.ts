@@ -25,13 +25,24 @@ describe("Queendomino Full Game Simulation", () => {
     expect(game.players[0]?.knights).toEqual([]);
     expect(game.players[0]?.buildings).toEqual([]);
 
-    // Start game
+    // Official 2-player setup: 7x7 kingdom, every domino, 12 rounds
+    expect(game.rules.basic).toMatchObject({
+      maxKingdomSize: 7,
+      maxDominoes: 48,
+      maxTurns: 12,
+    });
+    expect(game.dominoes).toHaveLength(48);
+
+    // Start game: the official Builders' Board has 6 spots costing 5 to 0
     game = engine.startGame({ game });
-    expect(game.queendomino?.buildersBoard.slots.length).toBe(4);
+    expect(game.queendomino?.buildersBoard.slots.length).toBe(6);
+    expect(game.queendomino?.buildersBoard.slotCosts).toEqual([
+      5, 4, 3, 2, 1, 0,
+    ]);
 
     // Game loop
     const _turnCount = 0;
-    const maxIterations = 500;
+    const maxIterations = 1000;
     let iterations = 0;
 
     while (isGameWithNextAction(game) && iterations < maxIterations) {
@@ -55,6 +66,7 @@ describe("Queendomino Full Game Simulation", () => {
         const placements = engine.getValidPlacements({
           kingdom: player.kingdom,
           domino: lord.dominoPicked,
+          maxKingdomSize: game.rules.basic.maxKingdomSize,
         });
 
         if (placements.length > 0) {
@@ -157,6 +169,7 @@ describe("Queendomino Full Game Simulation", () => {
     const placements = engine.getValidPlacements({
       kingdom: player.kingdom,
       domino: lord.dominoPicked,
+      maxKingdomSize: game.rules.basic.maxKingdomSize,
     });
 
     if (placements.length > 0) {

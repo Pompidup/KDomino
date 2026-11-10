@@ -5,7 +5,7 @@
  *
  * Live (game in progress) vs final (game over):
  * - territories, Middle Kingdom / Empire of Fire, the Queen (current holder),
- *   buildings, fire tokens, resources and totems (current majority holders),
+ *   buildings, Queendomino wealth (current coins), fire tokens, resources and totems (current majority holders),
  *   cavemen and every quest except Harmony are evaluated on the current state
  *   during the game and flagged `provisional: true`;
  * - Harmony, Homo Habilis and the Harmony quest require the complete kingdom
@@ -35,6 +35,7 @@ import {
   calculateHunterGathererScore,
   calculateWarriorGroupScore,
 } from "./caveman.js";
+import { getWealthPoints } from "./economy.js";
 import { checkCastleIsInMiddle, countDominoes } from "./kingdom.js";
 import { isOriginsMode, isTotemMode, isTribeMode } from "./originsHelpers.js";
 import { calculateOriginsFireBonus } from "./originsScore.js";
@@ -155,6 +156,14 @@ const queendominoBonuses = (
       provisional,
     });
   }
+
+  // Wealth: 1 point for every 3 unused coins (official "End of the Game")
+  bonuses.push({
+    type: "wealth",
+    label: TranslationKey.SCORE_WEALTH,
+    points: getWealthPoints(player),
+    provisional,
+  });
 
   // Buildings with an end-game scoring condition
   for (const placed of player.buildings ?? []) {

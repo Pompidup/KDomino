@@ -84,7 +84,20 @@ export const placeKnightUseCase: PlaceKnightUseCase = (
     p.id === currentPlayer.id ? updatedPlayer : p,
   );
 
-  const nextAction = nextQueenDominoAction(playerActions.placeKnight);
+  // Official rule: "You may place up to 2 Knights during your turn, one for
+  // each square on the domino you just added". The action stays on
+  // placeKnight while another knight can still be placed (skippable).
+  const canPlaceAnother = allowedPositions.some((square) =>
+    canPlaceKnight(
+      updatedPlayer,
+      updatedPlayer.kingdom,
+      square,
+      allowedPositions,
+    ),
+  );
+  const nextAction = canPlaceAnother
+    ? playerActions.placeKnight
+    : nextQueenDominoAction(playerActions.placeKnight);
 
   return ok({
     ...game,

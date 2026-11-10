@@ -71,6 +71,29 @@
       "dominoesDiscardedPerTurn": 0
     }
   ],
+  "modes": {
+    "QueenDomino": [
+      {
+        "playersLimit": 2,
+        "lordsPerPlayer": 2,
+        "maxDominoes": 48,
+        "dominoesPerTurn": 4,
+        "maxTurns": 12,
+        "maxKingdomSize": 7
+      }
+    ],
+    "AgeOfGiants-QueenDomino": [
+      {
+        "playersLimit": 2,
+        "lordsPerPlayer": 2,
+        "maxDominoes": 60,
+        "dominoesPerTurn": 5,
+        "maxTurns": 12,
+        "maxKingdomSize": 7,
+        "dominoesDiscardedPerTurn": 1
+      }
+    ]
+  },
   "extra": [
     {
       "name": "The middle Kingdom",

@@ -57,6 +57,9 @@ const gridPositions = (size: number) => {
   return positions;
 };
 
+/** sendGiant calls made by `tryOptionalAction`, to alternate its two forms */
+let sendGiantAttempts = 0;
+
 /**
  * Tries to play the current optional action. Returns undefined when it cannot
  * be played (the caller then skips it).
@@ -81,10 +84,8 @@ const tryOptionalAction = (
         : undefined;
     }
     case playerActions.constructBuilding: {
-      const board = game.queendomino?.buildersBoard;
-      const building = board?.slots.find(
-        (b) => b !== null && b.cost <= (player.coins ?? 0),
-      );
+      // Price of a building = cost of its spot (minus the Queen's discount)
+      const [building] = engine.getAffordableBuildings({ game, lordId });
       if (!building) return undefined;
       const position = gridPositions(player.kingdom.length).find((p) =>
         isValidConstructionPosition(player.kingdom, player.buildings ?? [], p),
@@ -170,13 +171,14 @@ const tryOptionalAction = (
       if (!target) return undefined;
       // Alternate between letting the engine/opponent choose the crown
       // (pendingGiant → placeGiant by the targeted player) and the legacy
-      // form passing the crown directly.
+      // form passing the crown directly (one send in three).
+      const legacyForm = sendGiantAttempts++ % 3 === 2;
       return engine.sendGiant({
         game,
         lordId,
         giantIndex: 0,
         targetPlayerId: target.p.id,
-        ...(counter % 3 === 0 && { targetCrownPosition: target.free[0] }),
+        ...(legacyForm && { targetCrownPosition: target.free[0] }),
       });
     }
     default:

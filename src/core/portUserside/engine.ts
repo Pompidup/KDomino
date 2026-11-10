@@ -16,6 +16,7 @@ import type {
   GetAffordableBuildingsCommand,
   GetValidBuildingPositionsCommand,
   GetValidCavemanPlacementsCommand,
+  GetValidDragonTargetsCommand,
   GetValidFireTokenPositionsCommand,
   GetValidGiantPositionsCommand,
   GetValidGiantTargetsCommand,
@@ -289,7 +290,8 @@ export type GameEngine = {
 
   /**
    * Squares where `placeKnight` accepts a knight: squares of the domino just
-   * placed, within the knight limit, one knight per territory (Queendomino).
+   * placed holding no knight yet, while the player still has a knight
+   * available (Queendomino).
    * @param command - Contains game state and optional lord ID
    * @returns Valid positions, or [] when placeKnight is not the current action
    */
@@ -315,6 +317,18 @@ export type GameEngine = {
    */
   getAffordableBuildings: (
     command: GetAffordableBuildingsCommand,
+  ) => BuildingTile[];
+
+  /**
+   * Buildings of the Builders Board that `useDragon` accepts to burn
+   * (Queendomino): every building of the board when the Dragon is still in
+   * its cave this round, the lord does not host the Queen and can pay its
+   * 1 coin.
+   * @param command - Contains game state and optional lord ID
+   * @returns Buildings to pass to useDragon, or [] when the Dragon cannot be used
+   */
+  getValidDragonTargets: (
+    command: GetValidDragonTargetsCommand,
   ) => BuildingTile[];
 
   /**

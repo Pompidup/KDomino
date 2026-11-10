@@ -174,9 +174,12 @@ const currentPlayer = (game: GameWithNextAction) => {
 function* buildingAttempts(engine: GameEngine, game: GameWithNextAction) {
   const lordId = game.nextAction.nextLord;
   const player = currentPlayer(game);
-  const slots = game.queendomino?.buildersBoard.slots ?? [];
-  for (const building of slots) {
-    if (!building || building.cost > (player?.coins ?? 0)) continue;
+  const board = game.queendomino?.buildersBoard;
+  const slots = board?.slots ?? [];
+  for (const [slotIndex, building] of slots.entries()) {
+    // Price of the spot (official board), or the tile's cost (legacy board)
+    const price = board?.slotCosts?.[slotIndex] ?? building?.cost ?? 0;
+    if (!building || price > (player?.coins ?? 0)) continue;
     for (const position of allPositions()) {
       yield () =>
         engine.constructBuilding({

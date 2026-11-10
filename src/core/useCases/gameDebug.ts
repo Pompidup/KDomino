@@ -348,6 +348,12 @@ export const wrapWithDebug = (
       logger,
       level,
     ),
+    getValidDragonTargets: wrapMethod(
+      "getValidDragonTargets",
+      engine.getValidDragonTargets,
+      logger,
+      level,
+    ),
     getValidCavemanPlacements: wrapMethod(
       "getValidCavemanPlacements",
       engine.getValidCavemanPlacements,

@@ -8,6 +8,7 @@ import {
 import {
   localeTranslations,
   supportedLocales,
+  TranslationKey,
 } from "@core/i18n/translations.js";
 import type { GameEngine } from "@core/portUserside/engine.js";
 import { describe, expect, test } from "vitest";
@@ -143,10 +144,22 @@ describe("calculatePlayerScore", () => {
       game,
       playerId: game.players[0]!.id,
     });
+    // No territory yet: only the Wealth of the 7 starting coins (7 / 3 = 2)
     expect(score).toMatchObject({
-      points: 0,
+      points: 2,
       final: false,
-      breakdown: { territories: [], bonuses: [], total: 0 },
+      breakdown: {
+        territories: [],
+        bonuses: [
+          {
+            type: "wealth",
+            label: TranslationKey.SCORE_WEALTH,
+            points: 2,
+            provisional: true,
+          },
+        ],
+        total: 2,
+      },
     });
   });
 });

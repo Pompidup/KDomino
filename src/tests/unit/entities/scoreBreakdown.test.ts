@@ -174,7 +174,7 @@ describe("computeScoreBreakdown", () => {
     ]);
   });
 
-  test("Queendomino: Queen for her host and one bonus per building", () => {
+  test("Queendomino: Queen for her host, wealth and one bonus per building", () => {
     const sawmill: BuildingTile = {
       id: 3,
       name: "The Sawmill",
@@ -196,6 +196,7 @@ describe("computeScoreBreakdown", () => {
       { x: 7, y: 4, type: "forest", crowns: 0 },
     ]);
     const host = playerWith(kingdom, {
+      coins: 8,
       buildings: [
         { building: sawmill, position: { x: 6, y: 4 } },
         { building: bakery, position: { x: 7, y: 4 } },
@@ -226,6 +227,13 @@ describe("computeScoreBreakdown", () => {
         provisional: true,
       },
       {
+        // 1 point per 3 unused coins: 8 coins = 2 points
+        type: "wealth",
+        label: TranslationKey.SCORE_WEALTH,
+        points: 2,
+        provisional: true,
+      },
+      {
         type: "building",
         label: TranslationKey.SCORE_BUILDING,
         labelParams: { name: "The Sawmill" },
@@ -235,8 +243,15 @@ describe("computeScoreBreakdown", () => {
         position: { x: 6, y: 4 },
       },
     ]);
-    expect(score.points).toBe(3 + 3 + 3);
-    expect(computePlayerScore(game, other).breakdown.bonuses).toEqual([]);
+    expect(score.points).toBe(3 + 3 + 2 + 3);
+    expect(computePlayerScore(game, other).breakdown.bonuses).toEqual([
+      {
+        type: "wealth",
+        label: TranslationKey.SCORE_WEALTH,
+        points: 0,
+        provisional: true,
+      },
+    ]);
   });
 
   test("Totem: resources and the totems held by resource majority", () => {

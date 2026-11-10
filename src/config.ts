@@ -60,6 +60,7 @@ import {
   getAffordableBuildingsUseCase,
   getValidBuildingPositionsUseCase,
   getValidCavemanPlacementsUseCase,
+  getValidDragonTargetsUseCase,
   getValidFireTokenPositionsUseCase,
   getValidGiantPositionsUseCase,
   getValidGiantTargetsUseCase,
@@ -130,6 +131,7 @@ export type ConfiguredHandlers = {
   getValidKnightPositionsHandler: GameEngine["getValidKnightPositions"];
   getValidBuildingPositionsHandler: GameEngine["getValidBuildingPositions"];
   getAffordableBuildingsHandler: GameEngine["getAffordableBuildings"];
+  getValidDragonTargetsHandler: GameEngine["getValidDragonTargets"];
   getValidCavemanPlacementsHandler: GameEngine["getValidCavemanPlacements"];
   getValidGiantPositionsHandler: GameEngine["getValidGiantPositions"];
   getValidGiantTargetsHandler: GameEngine["getValidGiantTargets"];
@@ -305,6 +307,13 @@ export const configureEngine = (
       translator,
       "getAffordableBuildings",
       getAffordableBuildingsUseCase,
+      (buildings) => `${buildings.length} buildings`,
+    ),
+    getValidDragonTargetsHandler: getValidActionTargetsHandler(
+      logger,
+      translator,
+      "getValidDragonTargets",
+      getValidDragonTargetsUseCase,
       (buildings) => `${buildings.length} buildings`,
     ),
     getValidCavemanPlacementsHandler: getValidActionTargetsHandler(

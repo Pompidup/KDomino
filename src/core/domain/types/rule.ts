@@ -40,6 +40,12 @@ export type Rules = {
   basic: Record<number, BasicRules>;
   /** Age of Giants basic rules indexed by player count (2-5) */
   aogBasic?: Record<number, BasicRules>;
+  /**
+   * Basic rules specific to one game mode, indexed by mode name then player
+   * count. They take precedence over `basic` / `aogBasic` for that mode and
+   * player count (e.g. Queendomino at 2 players: 7x7 kingdom, 48 dominoes).
+   */
+  modeBasic?: Record<string, Record<number, BasicRules>>;
   /** Available extra rules */
   extraRules: ExtraRule[];
 };

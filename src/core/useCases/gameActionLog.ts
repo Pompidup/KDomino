@@ -408,6 +408,7 @@ export const wrapWithActionLog = (
     getValidKnightPositions: (cmd) => engine.getValidKnightPositions(cmd),
     getValidBuildingPositions: (cmd) => engine.getValidBuildingPositions(cmd),
     getAffordableBuildings: (cmd) => engine.getAffordableBuildings(cmd),
+    getValidDragonTargets: (cmd) => engine.getValidDragonTargets(cmd),
     getValidCavemanPlacements: (cmd) => engine.getValidCavemanPlacements(cmd),
     getValidGiantPositions: (cmd) => engine.getValidGiantPositions(cmd),
     getValidGiantTargets: (cmd) => engine.getValidGiantTargets(cmd),

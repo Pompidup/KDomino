@@ -57,7 +57,11 @@ export const addExtraRulesUseCase =
     // the 2-player setup: all 48 dominoes, 12 turns and a 7x7 kingdom.
     let updatedBasic = game.rules.basic;
     let updatedDominoes = game.dominoes;
-    const hasLargeKingdomRule = newExtraRules.some(isLargeKingdomExtraRule);
+    // Queendomino already plays 7x7 with every domino at 2 players: the rule
+    // is then accepted without any further effect.
+    const hasLargeKingdomRule =
+      newExtraRules.some(isLargeKingdomExtraRule) &&
+      game.rules.basic.maxKingdomSize < 7;
     if (hasLargeKingdomRule) {
       updatedBasic = {
         ...updatedBasic,

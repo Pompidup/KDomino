@@ -147,6 +147,7 @@ export const TranslationKey = {
   // hunter-gatherers reuse the CAVEMAN_* keys)
   SCORE_QUEEN: "score.queen",
   SCORE_BUILDING: "score.building",
+  SCORE_WEALTH: "score.wealth",
   SCORE_TOTEM_MAMMOTH: "score.totemMammoth",
   SCORE_TOTEM_FISH: "score.totemFish",
   SCORE_TOTEM_MUSHROOM: "score.totemMushroom",
@@ -323,6 +324,7 @@ export const defaultTranslations: Record<TranslationKeyType, string> = {
   // Score breakdown labels
   [TranslationKey.SCORE_QUEEN]: "Queen",
   [TranslationKey.SCORE_BUILDING]: "Building: {{name}}",
+  [TranslationKey.SCORE_WEALTH]: "Wealth",
   [TranslationKey.SCORE_TOTEM_MAMMOTH]: "Mammoth totem",
   [TranslationKey.SCORE_TOTEM_FISH]: "Fish totem",
   [TranslationKey.SCORE_TOTEM_MUSHROOM]: "Mushroom totem",
@@ -505,6 +507,7 @@ export const frenchTranslations: Record<TranslationKeyType, string> = {
   // Score breakdown labels
   [TranslationKey.SCORE_QUEEN]: "Reine",
   [TranslationKey.SCORE_BUILDING]: "Bâtiment : {{name}}",
+  [TranslationKey.SCORE_WEALTH]: "Richesse",
   [TranslationKey.SCORE_TOTEM_MAMMOTH]: "Totem mammouth",
   [TranslationKey.SCORE_TOTEM_FISH]: "Totem poisson",
   [TranslationKey.SCORE_TOTEM_MUSHROOM]: "Totem champignon",
