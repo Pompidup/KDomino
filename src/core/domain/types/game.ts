@@ -151,3 +151,15 @@ export type FinalResult = ScoreResult & {
 
 /** Game state with final results calculated */
 export type GameWithResults = Game & { result: FinalResult[] };
+
+/**
+ * Type guard to check if final results have been computed for the game
+ * (i.e. the state returned by `getResults`).
+ * @param game - The game state to check
+ * @returns True if the game carries a `result` array
+ */
+export const isGameWithResults = (
+  game: Game | GameWithResults,
+): game is GameWithResults => {
+  return "result" in game && Array.isArray(game.result);
+};
