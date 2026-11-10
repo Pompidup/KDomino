@@ -1,4 +1,5 @@
 import {
+  discardFromAgeOfGiantsLine,
   isAgeOfGiantsMode,
   isAgeOfGiantsQueenDominoMode,
   isFootprintDomino,
@@ -101,5 +102,36 @@ describe("isFootprintDomino", () => {
       right: { type: "forest", crowns: 1, hasGiant: true },
     });
     expect(isFootprintDomino(domino)).toBe(false);
+  });
+});
+
+describe("discardFromAgeOfGiantsLine (official discard positions)", () => {
+  // Sorted line: letter dominoes A (0.01) and B (0.02) come first
+  const line = [0.01, 0.02, 7, 21, 51];
+
+  it("5 players: nothing is discarded", () => {
+    expect(discardFromAgeOfGiantsLine(line, 0)).toEqual(line);
+  });
+
+  it("2 or 4 players: the middle (3rd) domino is discarded", () => {
+    expect(discardFromAgeOfGiantsLine(line, 1)).toEqual([0.01, 0.02, 21, 51]);
+  });
+
+  it("3 players: the 2nd and 4th dominoes are discarded", () => {
+    expect(discardFromAgeOfGiantsLine(line, 2)).toEqual([0.01, 7, 51]);
+  });
+
+  it("giant dominoes at the head of the line are kept", () => {
+    const giants = [0.01, 0.02, 0.03, 0.04, 30];
+    expect(discardFromAgeOfGiantsLine(giants, 1)).toEqual([
+      0.01, 0.02, 0.04, 30,
+    ]);
+    expect(discardFromAgeOfGiantsLine(giants, 2)).toEqual([0.01, 0.03, 30]);
+  });
+
+  it("does not mutate the input line", () => {
+    const copy = [...line];
+    discardFromAgeOfGiantsLine(line, 2);
+    expect(line).toEqual(copy);
   });
 });

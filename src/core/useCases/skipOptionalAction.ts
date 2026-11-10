@@ -45,9 +45,9 @@ export const skipOptionalActionUseCase: SkipOptionalActionUseCase = (
     action === playerActions.placeFireToken ||
     action === playerActions.recruitCaveman;
 
-  // Age of Giants optional actions (sendGiant is optional; placeGiant is mandatory but auto-skipped when no crowns)
-  const isAoGOptional =
-    action === playerActions.sendGiant || action === playerActions.placeGiant;
+  // Age of Giants optional action: only sendGiant. placeGiant is mandatory and
+  // cannot be skipped (placeDomino never asks for it when no crown is free).
+  const isAoGOptional = action === playerActions.sendGiant;
 
   if (!isQueenDominoOptional && !isOriginsOptional && !isAoGOptional) {
     return err(ErrorCode.INVALID_OPTIONAL_ACTION);
@@ -134,7 +134,7 @@ const handleAoGSkip = (
 ): GameStateResult => {
   const isAoGQD = isAgeOfGiantsQueenDominoMode(game.mode.name);
   const nextAction = nextAgeOfGiantsAction(
-    action as typeof playerActions.placeGiant | typeof playerActions.sendGiant,
+    action as typeof playerActions.sendGiant,
     isAoGQD,
   );
 

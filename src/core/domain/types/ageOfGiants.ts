@@ -59,6 +59,18 @@ export type QuestTile = {
 // ─── Age of Giants Game State ───────────────────────────────────────
 
 /**
+ * A giant sent with `sendGiant` that the targeted opponent must now place on
+ * one of their own crowns (official rule: the opponent chooses the crown).
+ * While it is set, `nextAction` is `placeGiant` for a lord of the target.
+ */
+export type PendingGiant = {
+  /** Lord who sent the giant; their turn resumes once the giant is placed */
+  fromLordId: string;
+  /** Player who received the giant and must choose the crown */
+  targetPlayerId: string;
+};
+
+/**
  * Complete Age of Giants-specific game state.
  * Stored as an optional field on Game and only present in AoG modes.
  */
@@ -67,4 +79,6 @@ export type AgeOfGiantsState = {
   giantPool: number;
   /** The 2 quest tiles drawn for this game */
   questTiles: QuestTile[];
+  /** Giant sent to an opponent, waiting for that opponent to choose a crown */
+  pendingGiant?: PendingGiant;
 };

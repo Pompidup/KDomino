@@ -1,4 +1,7 @@
-import { isAgeOfGiantsQueenDominoMode } from "@core/domain/entities/ageOfGiantsHelpers.js";
+import {
+  discardFromAgeOfGiantsLine,
+  isAgeOfGiantsQueenDominoMode,
+} from "@core/domain/entities/ageOfGiantsHelpers.js";
 import { createBuildersBoard } from "@core/domain/entities/building.js";
 import { createCaveBoard } from "@core/domain/entities/caveman.js";
 import { createLord } from "@core/domain/entities/lord";
@@ -50,14 +53,15 @@ export const startGameUseCase =
       : shuffleMethod;
     const shuffledLords = shuffle(newLords);
     const dominoesCopy = [...dominoes];
-    const dominoesDrawn = dominoesCopy.splice(0, dominoesPerTurn);
-    dominoesDrawn.sort((a, b) => a.number - b.number);
+    const sortedLine = dominoesCopy.splice(0, dominoesPerTurn);
+    sortedLine.sort((a, b) => a.number - b.number);
 
-    // Age of Giants: discard some dominos from the sorted line before selection
-    const discardCount = game.rules.basic.dominoesDiscardedPerTurn ?? 0;
-    if (discardCount > 0) {
-      dominoesDrawn.splice(0, discardCount);
-    }
+    // Age of Giants: discard the dominos at the official positions of the
+    // sorted line (middle one at 2/4 players, 2nd and 4th at 3 players)
+    const dominoesDrawn = discardFromAgeOfGiantsLine(
+      sortedLine,
+      game.rules.basic.dominoesDiscardedPerTurn ?? 0,
+    );
 
     const nextAction: NextAction = {
       type: "action",

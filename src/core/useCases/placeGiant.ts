@@ -18,6 +18,7 @@ import {
 import type { Position } from "@core/domain/types/kingdom.js";
 import { playerActions } from "@core/domain/types/player.js";
 import { err, isErr, ok } from "@utils/result.js";
+import { continueAfterSendGiant } from "./sendGiant.js";
 
 export type PlaceGiantUseCase = (
   game: GameWithNextAction,
@@ -42,6 +43,35 @@ export const placeGiantUseCase: PlaceGiantUseCase = (
 
   if (!game.ageOfGiants) {
     return err(ErrorCode.NOT_AOG_MODE);
+  }
+
+  // A giant sent by an opponent: the targeted player chooses the crown, the
+  // giant does not come from the pool, then the sender's turn resumes.
+  const pendingGiant = game.ageOfGiants.pendingGiant;
+  if (pendingGiant) {
+    const lord = game.lords.find((l) => l.id === lordId);
+    if (!lord || lord.playerId !== pendingGiant.targetPlayerId) {
+      return err(ErrorCode.NOT_YOUR_TURN);
+    }
+    const target = game.players.find((p) => p.id === lord.playerId);
+    if (!target) {
+      return err(ErrorCode.PLAYER_NOT_FOUND);
+    }
+    const placed = placeGiantOnCrown(target, position);
+    if (isErr(placed)) {
+      return placed;
+    }
+    const { pendingGiant: _resolved, ...ageOfGiants } = game.ageOfGiants;
+    return continueAfterSendGiant(
+      {
+        ...game,
+        players: game.players.map((p) =>
+          p.id === target.id ? placed.value : p,
+        ),
+        ageOfGiants,
+      },
+      pendingGiant.fromLordId,
+    );
   }
 
   // Take from giant pool

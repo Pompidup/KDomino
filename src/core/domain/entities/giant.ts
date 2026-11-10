@@ -96,6 +96,20 @@ export const placeGiantOnCrown = (
 };
 
 /**
+ * Removes one giant (by index) from a player's kingdom.
+ */
+export const removeGiantFromPlayer = (
+  player: Player,
+  giantIndex: number,
+): Result<Player> => {
+  const giants = player.giants ?? [];
+  if (giantIndex < 0 || giantIndex >= giants.length) {
+    return err(ErrorCode.GIANT_NOT_FOUND);
+  }
+  return ok({ ...player, giants: giants.filter((_, i) => i !== giantIndex) });
+};
+
+/**
  * Sends a giant from the source player to the target player.
  * Removes the giant from the source and places it on a crown of the target.
  */
