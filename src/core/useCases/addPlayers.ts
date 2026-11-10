@@ -130,10 +130,13 @@ export const addPlayersUseCase =
 
     // set rules
     const rules = ruleRepository.getAll();
+    // Mode-specific setup first (e.g. Queendomino at 2 players: 7x7 kingdom
+    // with every domino), then the Age of Giants or common setup
     const basicRules =
-      isAoG && rules.aogBasic
+      rules.modeBasic?.[game.mode.name]?.[newPlayers.length] ??
+      (isAoG && rules.aogBasic
         ? rules.aogBasic[newPlayers.length]
-        : rules.basic[newPlayers.length];
+        : rules.basic[newPlayers.length]);
 
     if (!basicRules) {
       return err(ErrorCode.STEP_EXECUTION_FAILED);

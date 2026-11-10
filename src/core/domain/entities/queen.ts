@@ -1,17 +1,36 @@
 import type { PlacedBuilding } from "@core/domain/types/building.js";
 import type { Kingdom, Position } from "@core/domain/types/kingdom.js";
 import type { Player } from "@core/domain/types/player.js";
-import { getTowerCount } from "./economy.js";
+import { getTowerCount, getWealthPoints } from "./economy.js";
 
 /**
- * Determine which player should hold the Queen.
- * The player with the most towers gets the Queen.
- * If tied, the Queen doesn't move (returns current holder).
+ * Determine which player hosts the Queen after a change of tower counts.
+ *
+ * Official rule (Building Bonuses, towers): "As soon as your kingdom has
+ * acquired the most Towers (even in the case of a tie with another player),
+ * it hosts the Queen." Only the acting player's towers change, so:
+ * - when `actingPlayerId` is given, that player takes the Queen as soon as
+ *   they have at least one tower and no other player has more towers (a tie
+ *   is enough); otherwise the Queen stays with her current host;
+ * - without `actingPlayerId` (legacy behaviour), the player with strictly the
+ *   most towers hosts her and a tie leaves her with the current host.
+ * Nobody hosts her while no player has a tower.
  */
 export const determineQueenHolder = (
   players: Player[],
   currentHolderId: string | null,
+  actingPlayerId?: string,
 ): string | null => {
+  if (actingPlayerId !== undefined) {
+    const acting = players.find((p) => p.id === actingPlayerId);
+    if (!acting) return currentHolderId;
+    const towers = getTowerCount(acting);
+    const others = players.filter((p) => p.id !== actingPlayerId);
+    const reachesMost =
+      towers > 0 && others.every((p) => getTowerCount(p) <= towers);
+    return reachesMost ? actingPlayerId : currentHolderId;
+  }
+
   let maxTowers = 0;
   let leaderId: string | null = null;
   let isTied = false;
@@ -192,8 +211,8 @@ const countKingdomCrowns = (
 
 /**
  * End-game Queendomino bonus for one player: Queen bonus (if the player hosts
- * the Queen at the end of the game) plus the end-game scoring of every
- * building constructed in their kingdom.
+ * the Queen at the end of the game), the end-game scoring of every building
+ * constructed in their kingdom and the Wealth (1 point per 3 unused coins).
  */
 export const calculateQueenDominoEndGameBonus = (
   player: Player,
@@ -203,7 +222,9 @@ export const calculateQueenDominoEndGameBonus = (
     queenHolderId !== null && queenHolderId === player.id
       ? getQueenBonus(player.kingdom)
       : 0;
-  return queenBonus + calculateBuildingEndGameBonus(player);
+  return (
+    queenBonus + calculateBuildingEndGameBonus(player) + getWealthPoints(player)
+  );
 };
 
 const countTerrainTiles = (kingdom: Kingdom, terrain: string): number => {

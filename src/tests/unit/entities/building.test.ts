@@ -1,7 +1,10 @@
 import {
+  BUILDERS_BOARD_SLOT_COSTS,
   createBuildersBoard,
   destroyWithDragon,
   findBuildingOnBoard,
+  getConstructionCost,
+  getSlotCost,
   hasOpenConstructionSquare,
   isValidConstructionPosition,
   placeBuildingOnKingdom,
@@ -46,24 +49,117 @@ const noShuffle = <T>(arr: T[]): T[] => [...arr];
 
 describe("building", () => {
   describe("createBuildersBoard", () => {
-    it("should create board with 4 visible slots and draw pile", () => {
+    it("should create the official board: 6 spots costing 5 to 0 and a draw pile", () => {
       const tiles = Array.from({ length: 10 }, (_, i) => makeTile(i + 1));
       const board = createBuildersBoard(tiles, noShuffle);
 
-      expect(board.slots).toHaveLength(4);
-      expect(board.drawPile).toHaveLength(6);
+      expect(BUILDERS_BOARD_SLOT_COSTS).toEqual([5, 4, 3, 2, 1, 0]);
+      expect(board.slots.map((s) => s?.id)).toEqual([1, 2, 3, 4, 5, 6]);
+      expect(board.slotCosts).toEqual([5, 4, 3, 2, 1, 0]);
+      expect(board.drawPile.map((t) => t.id)).toEqual([7, 8, 9, 10]);
     });
 
-    it("should handle fewer than 4 tiles", () => {
+    it("should leave the missing spots empty with fewer than 6 tiles", () => {
       const tiles = [makeTile(1), makeTile(2)];
       const board = createBuildersBoard(tiles, noShuffle);
 
-      expect(board.slots).toHaveLength(2);
+      expect(board.slots.map((s) => s?.id ?? null)).toEqual([
+        1,
+        2,
+        null,
+        null,
+        null,
+        null,
+      ]);
       expect(board.drawPile).toHaveLength(0);
     });
   });
 
-  describe("refillBuildersBoard", () => {
+  describe("refillBuildersBoard (official board: slide then fill)", () => {
+    const officialBoard = (
+      slots: (BuildingTile | null)[],
+      drawPile: BuildingTile[],
+    ): BuildersBoard => ({
+      slots,
+      drawPile,
+      slotCosts: [...BUILDERS_BOARD_SLOT_COSTS],
+    });
+
+    it("slides the remaining tiles to the cheapest spots, then fills the freed spots", () => {
+      const board = officialBoard(
+        [makeTile(1), null, makeTile(3), null, makeTile(5), null],
+        [makeTile(7), makeTile(8), makeTile(9), makeTile(10)],
+      );
+
+      const refilled = refillBuildersBoard(board);
+      // 1, 3, 5 keep their order on the 3 cheapest spots (2, 1, 0 coins);
+      // the draw pile fills the freed spots, cheapest first
+      expect(refilled.slots.map((s) => s?.id)).toEqual([9, 8, 7, 1, 3, 5]);
+      expect(refilled.drawPile.map((t) => t.id)).toEqual([10]);
+      expect(refilled.slotCosts).toEqual([5, 4, 3, 2, 1, 0]);
+    });
+
+    it("leaves the most expensive spots empty once the draw pile is exhausted", () => {
+      const board = officialBoard(
+        [makeTile(1), null, null, makeTile(4), null, null],
+        [makeTile(7)],
+      );
+
+      const refilled = refillBuildersBoard(board);
+      expect(refilled.slots.map((s) => s?.id ?? null)).toEqual([
+        null,
+        null,
+        null,
+        7,
+        1,
+        4,
+      ]);
+      expect(refilled.drawPile).toHaveLength(0);
+    });
+
+    it("does not mutate the original board", () => {
+      const board = officialBoard(
+        [null, makeTile(2), null, null, null, null],
+        [makeTile(7)],
+      );
+      refillBuildersBoard(board);
+      expect(board.slots[1]?.id).toBe(2);
+      expect(board.drawPile).toHaveLength(1);
+    });
+  });
+
+  describe("getSlotCost / getConstructionCost", () => {
+    const board: BuildersBoard = {
+      slots: [makeTile(1, 2), null, null, null, makeTile(5, 4), makeTile(6, 3)],
+      drawPile: [],
+      slotCosts: [...BUILDERS_BOARD_SLOT_COSTS],
+    };
+
+    it("prices a building by its spot, not by its own cost", () => {
+      expect(getSlotCost(board, 0)).toBe(5);
+      expect(getSlotCost(board, 4)).toBe(1);
+      expect(getSlotCost(board, 5)).toBe(0);
+      expect(getSlotCost(board, 1)).toBeNull();
+    });
+
+    it("lowers the price by 1 for the Queen's host, never below 0", () => {
+      expect(getConstructionCost(board, 0, true)).toBe(4);
+      expect(getConstructionCost(board, 4, true)).toBe(0);
+      expect(getConstructionCost(board, 5, true)).toBe(0);
+      expect(getConstructionCost(board, 0, false)).toBe(5);
+    });
+
+    it("falls back to the tile cost on a legacy board without spot costs", () => {
+      const legacy: BuildersBoard = {
+        slots: [makeTile(1, 2), null, null, null],
+        drawPile: [],
+      };
+      expect(getSlotCost(legacy, 0)).toBe(2);
+      expect(getConstructionCost(legacy, 0, true)).toBe(1);
+    });
+  });
+
+  describe("refillBuildersBoard (legacy board without spot costs)", () => {
     it("should fill empty slots from draw pile", () => {
       const board: BuildersBoard = {
         slots: [makeTile(1), null, makeTile(3), null],
@@ -183,6 +279,53 @@ describe("building", () => {
       expect(result?.updatedPlayer.towers).toBe(2);
     });
 
+    it("should charge the spot price on the official board", () => {
+      const board: BuildersBoard = {
+        slots: [
+          makeTile(1, 1),
+          null,
+          null,
+          makeTile(4, 5),
+          null,
+          makeTile(6, 5),
+        ],
+        drawPile: [],
+        slotCosts: [...BUILDERS_BOARD_SLOT_COSTS],
+      };
+
+      // Tile 1 (own cost 1) sits on the 5-coin spot
+      expect(purchaseBuilding(board, makePlayer(4), 1)).toBeNull();
+      expect(
+        purchaseBuilding(board, makePlayer(5), 1)?.updatedPlayer.coins,
+      ).toBe(0);
+      // Tile 4 (own cost 5) sits on the 2-coin spot
+      const bought = purchaseBuilding(board, makePlayer(2), 4);
+      expect(bought?.cost).toBe(2);
+      expect(bought?.updatedPlayer.coins).toBe(0);
+      // Tile 6 sits on the free spot
+      expect(
+        purchaseBuilding(board, makePlayer(0), 6)?.updatedPlayer.coins,
+      ).toBe(0);
+    });
+
+    it("should apply the Queen's 1-coin discount to her host only", () => {
+      const board: BuildersBoard = {
+        slots: [makeTile(1), null, null, null, makeTile(5), makeTile(6)],
+        drawPile: [],
+        slotCosts: [...BUILDERS_BOARD_SLOT_COSTS],
+      };
+      const player = makePlayer(4);
+
+      expect(purchaseBuilding(board, player, 1)).toBeNull();
+      expect(purchaseBuilding(board, player, 1, "someone-else")).toBeNull();
+      const discounted = purchaseBuilding(board, player, 1, player.id);
+      expect(discounted?.cost).toBe(4);
+      expect(discounted?.updatedPlayer.coins).toBe(0);
+      // The 1-coin spot becomes free, the free spot stays free
+      expect(purchaseBuilding(board, player, 5, player.id)?.cost).toBe(0);
+      expect(purchaseBuilding(board, player, 6, player.id)?.cost).toBe(0);
+    });
+
     it("should apply immediate tower bonus", () => {
       const tile: BuildingTile = {
         ...makeTile(1, 1, 0, 1),
@@ -211,7 +354,7 @@ describe("building", () => {
       expect(result?.updatedPlayer.bonusKnights).toBe(1);
       expect(result?.updatedPlayer.coins).toBe(3);
 
-      // A player who already placed the 3 base knights can place a 4th one
+      // A player who already placed all their knights can place one more
       const kingdom: Kingdom = Array.from({ length: 9 }, () =>
         Array.from({ length: 9 }, () => ({
           type: "empty" as const,
@@ -226,13 +369,19 @@ describe("building", () => {
         playerId: "p1",
         position: { x: 0, y },
       }));
-      const withThreeKnights: Player = { ...makePlayer(5), kingdom, knights };
+      // 3 knights placed: the starting one and 2 bonus knights
+      const withThreeKnights: Player = {
+        ...makePlayer(5),
+        kingdom,
+        knights,
+        bonusKnights: 2,
+      };
 
       expect(canPlaceKnight(withThreeKnights, kingdom, { x: 0, y: 6 })).toBe(
         false,
       );
       expect(
-        canPlaceKnight({ ...withThreeKnights, bonusKnights: 1 }, kingdom, {
+        canPlaceKnight({ ...withThreeKnights, bonusKnights: 3 }, kingdom, {
           x: 0,
           y: 6,
         }),
@@ -366,25 +515,33 @@ describe("building", () => {
   });
 
   describe("destroyWithDragon", () => {
-    it("should destroy building and charge player", () => {
+    it("should destroy building and charge the player 1 coin, whatever the building", () => {
       const board: BuildersBoard = {
-        slots: [makeTile(1, 3), null, null, null],
+        slots: [makeTile(1, 3), makeTile(2, 10), null, null, null, null],
         drawPile: [],
+        slotCosts: [...BUILDERS_BOARD_SLOT_COSTS],
       };
 
       const result = destroyWithDragon(board, 1, makePlayer(5));
       expect(result).not.toBeNull();
-      expect(result?.updatedPlayer.coins).toBe(2);
+      expect(result?.updatedPlayer.coins).toBe(4);
       expect(result?.updatedBoard.slots[0]).toBeNull();
+      // The spot stays empty: no immediate refill
+      expect(result?.updatedBoard.drawPile).toHaveLength(0);
+
+      expect(
+        destroyWithDragon(board, 2, makePlayer(1))?.updatedPlayer.coins,
+      ).toBe(0);
     });
 
-    it("should return null if cannot afford", () => {
+    it("should return null if the player has no coin", () => {
       const board: BuildersBoard = {
         slots: [makeTile(1, 10), null, null, null],
         drawPile: [],
       };
 
-      expect(destroyWithDragon(board, 1, makePlayer(5))).toBeNull();
+      expect(destroyWithDragon(board, 1, makePlayer(0))).toBeNull();
+      expect(destroyWithDragon(board, 1, makePlayer(1))).not.toBeNull();
     });
 
     it("should return null if building not found", () => {

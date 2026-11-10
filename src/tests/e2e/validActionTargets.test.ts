@@ -15,6 +15,9 @@ import { createGameEngine } from "../../index.js";
  *   the kingdom grid, the Builders Board and the giants/players, and on
  *   samples for the resource payments of a recruitment);
  * - `canSkipOptionalAction` matches what `skipOptionalAction` does.
+ * Builders Board buildings are checked against `constructBuilding` (prices of
+ * the spots, Queen's discount) and `useDragon` (1 coin, not for the Queen's
+ * host, once per round).
  * The simulations play the returned targets themselves, so later states
  * contain knights, buildings, fire tokens, cavemen and (sent) giants.
  */
@@ -98,6 +101,8 @@ const checkScoping = (game: GameState): void => {
       expect(engine.getValidBuildingPositions(command)).toEqual([]);
       expect(engine.getAffordableBuildings(command)).toEqual([]);
     }
+    if (isOther || action !== playerActions.useDragon)
+      expect(engine.getValidDragonTargets(command)).toEqual([]);
     if (isOther || action !== playerActions.recruitCaveman)
       expect(engine.getValidCavemanPlacements(command)).toEqual({
         options: [],
@@ -200,6 +205,35 @@ const checkBuilding = (game: GameWithNextAction, coverage: Coverage) => {
   }
   if (buildings.length > 0) bump(coverage, "building");
   return { positions, buildings };
+};
+
+/** useDragon succeeds exactly for the returned buildings. */
+const checkDragon = (game: GameWithNextAction, coverage: Coverage) => {
+  const lordId = game.nextAction.nextLord;
+  const targets = engine.getValidDragonTargets({ game });
+  expect(engine.getValidDragonTargets({ game, lordId })).toEqual(targets);
+
+  const validIds = new Set(targets.map((b) => b.id));
+  expect(validIds.size).toBe(targets.length);
+  const board = game.queendomino?.buildersBoard;
+  const candidateIds = [
+    ...(board?.slots ?? []).flatMap((slot) => (slot ? [slot.id] : [])),
+    ...(board?.drawPile.slice(0, 1) ?? []).map((b) => b.id),
+    9999,
+  ];
+  for (const buildingId of candidateIds) {
+    expect(
+      succeeds(() => engine.useDragon({ game, lordId, buildingId })),
+      `dragon on building ${buildingId}`,
+    ).toBe(validIds.has(buildingId));
+  }
+
+  if (targets.length > 0) bump(coverage, "dragon");
+  if (game.queendomino?.queenHolderId === currentPlayer(game).id) {
+    expect(targets).toEqual([]);
+    bump(coverage, "dragonQueenHost");
+  }
+  return targets;
 };
 
 const checkCaveman = (
@@ -516,8 +550,20 @@ const simulate = (
             : skip();
         break;
       }
+      case playerActions.useDragon: {
+        const targets = checkDragon(g, coverage);
+        // Burn rarely, so the Builders Board keeps buildings to construct
+        game =
+          targets.length > 0 && random() < 0.25
+            ? engine.useDragon({
+                game: g,
+                lordId,
+                buildingId: pick(random, targets).id,
+              })
+            : skip();
+        break;
+      }
       default:
-        // useDragon (no target query)
         game = skip();
     }
   }
@@ -535,7 +581,7 @@ const PLAYERS = [
 
 describe("valid targets for extension actions (property tests)", () => {
   test.each([
-    ["QueenDomino", ["knight", "building"]],
+    ["QueenDomino", ["knight", "building", "dragon", "dragonQueenHost"]],
     ["KingdominoOrigins-Discovery", ["fireToken"]],
     ["KingdominoOrigins-Totem", ["fireToken"]],
     ["KingdominoOrigins-Tribe", ["fireToken", "caveman"]],
@@ -545,7 +591,7 @@ describe("valid targets for extension actions (property tests)", () => {
     ],
     [
       "AgeOfGiants-QueenDomino",
-      ["placeGiant", "sendGiant", "knight", "building"],
+      ["placeGiant", "sendGiant", "knight", "building", "dragon"],
     ],
   ])("%s: returned targets succeed, others fail", (mode, expected) => {
     const coverage: Coverage = {};

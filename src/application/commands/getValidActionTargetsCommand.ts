@@ -28,6 +28,9 @@ export type GetValidBuildingPositionsCommand = GetValidActionTargetsCommand;
 /** Command for `getAffordableBuildings` (Queendomino `constructBuilding`). */
 export type GetAffordableBuildingsCommand = GetValidActionTargetsCommand;
 
+/** Command for `getValidDragonTargets` (Queendomino `useDragon`). */
+export type GetValidDragonTargetsCommand = GetValidActionTargetsCommand;
+
 /** Command for `getValidCavemanPlacements` (Origins Tribe `recruitCaveman`). */
 export type GetValidCavemanPlacementsCommand = GetValidActionTargetsCommand;
 

@@ -84,11 +84,12 @@ export const constructBuildingUseCase: ConstructBuildingUseCase = (
     return err(ErrorCode.NO_CONSTRUCTION_SQUARE);
   }
 
-  // Purchase the building
+  // Purchase the building: spot price, minus 1 coin for the Queen's host
   const purchaseResult = purchaseBuilding(
     queendomino.buildersBoard,
     currentPlayer,
     buildingId,
+    queendomino.queenHolderId,
   );
 
   if (!purchaseResult) {
@@ -115,10 +116,12 @@ export const constructBuildingUseCase: ConstructBuildingUseCase = (
     p.id === currentPlayer.id ? finalPlayer : p,
   );
 
-  // Recalculate Queen holder
+  // The builder hosts the Queen as soon as they have the most towers, even
+  // on a tie
   const newQueenHolder = determineQueenHolder(
     updatedPlayers,
     queendomino.queenHolderId,
+    currentPlayer.id,
   );
 
   const nextAction = nextQueenDominoAction(playerActions.constructBuilding);

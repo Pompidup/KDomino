@@ -47,6 +47,7 @@ import {
   getAffordableBuildingsUseCase,
   getValidBuildingPositionsUseCase,
   getValidCavemanPlacementsUseCase,
+  getValidDragonTargetsUseCase,
   getValidFireTokenPositionsUseCase,
   getValidGiantPositionsUseCase,
   getValidGiantTargetsUseCase,
@@ -60,7 +61,6 @@ import { placeGiantUseCase } from "./placeGiant.js";
 import { placeKnightUseCase } from "./placeKnight.js";
 import { recruitCavemanUseCase } from "./recruitCaveman.js";
 import { sendGiantUseCase } from "./sendGiant.js";
-import { useDragonUseCase } from "./useDragon.js";
 
 // ─── Contexts and choices (public) ──────────────────────────────────
 
@@ -166,23 +166,14 @@ export const buildingContext = (
   affordableBuildings: getAffordableBuildingsUseCase(game, lordId),
 });
 
-/**
- * Buildings the dragon can burn: there is no valid-target query for the
- * dragon, so every building of the board is tried with the use case itself.
- */
+/** Buildings the dragon can burn (`getValidDragonTargets`). */
 export const dragonContext = (
   game: GameWithNextAction,
   lordId: string,
-): DragonContext => {
-  const slots = game.queendomino?.buildersBoard.slots ?? [];
-  return {
-    ...baseContext(game, lordId),
-    targetBuildings: slots.filter(
-      (slot): slot is BuildingTile =>
-        slot !== null && isOk(useDragonUseCase(game, lordId, slot.id)),
-    ),
-  };
-};
+): DragonContext => ({
+  ...baseContext(game, lordId),
+  targetBuildings: getValidDragonTargetsUseCase(game, lordId),
+});
 
 export const fireTokenContext = (
   game: GameWithNextAction,
@@ -219,13 +210,15 @@ export const sendGiantContext = (
 
 // ─── Evaluation ─────────────────────────────────────────────────────
 
-/** Value of one coin while coins can still be spent (Queendomino). */
+/**
+ * Value of one coin while coins can still be spent (Queendomino), on top of
+ * the Wealth the live score already counts (1 point per 3 unused coins).
+ */
 export const COIN_VALUE = 0.5;
 /**
  * Value of one knight not placed yet while it can still collect taxes (one
- * coin per construction square of the territory): with `COIN_VALUE` 0.5, a
- * knight is placed for 2 coins of tax or more, kept for a better territory
- * otherwise.
+ * coin per square of the territory): with `COIN_VALUE` 0.5, a knight is
+ * placed for 2 coins of tax or more, kept for a better territory otherwise.
  */
 export const KNIGHT_VALUE = 0.75;
 /** Value of one resource while it can still pay a caveman (Tribe). */

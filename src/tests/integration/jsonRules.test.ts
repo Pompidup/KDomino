@@ -91,6 +91,33 @@ describe("jsonRules", () => {
     });
   });
 
+  test("should return the mode-specific 2-player setups of Queendomino", () => {
+    const result = jsonRules().getAll();
+
+    // Official Queendomino rule: 7x7 kingdom at 2 players, every domino used
+    expect(result.modeBasic).toEqual({
+      QueenDomino: {
+        "2": {
+          lords: 2,
+          maxDominoes: 48,
+          dominoesPerTurn: 4,
+          maxTurns: 12,
+          maxKingdomSize: 7,
+        },
+      },
+      "AgeOfGiants-QueenDomino": {
+        "2": {
+          lords: 2,
+          maxDominoes: 60,
+          dominoesPerTurn: 5,
+          maxTurns: 12,
+          maxKingdomSize: 7,
+          dominoesDiscardedPerTurn: 1,
+        },
+      },
+    });
+  });
+
   test("should return all extra rules", () => {
     // Arrange
     const repository = jsonRules();

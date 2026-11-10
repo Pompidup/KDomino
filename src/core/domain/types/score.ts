@@ -41,6 +41,8 @@ export const scoreBonusTypes = {
   queen: "queen",
   /** Queendomino: end-game scoring of one constructed building */
   building: "building",
+  /** Queendomino: Wealth, 1 point per 3 unused coins */
+  wealth: "wealth",
   /** Age of Giants: one quest tile */
   quest: "quest",
   /** Origins Totem: one totem held by the player */

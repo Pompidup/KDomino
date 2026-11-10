@@ -16,7 +16,9 @@ The base Age of Giants mode, built on Classic Kingdomino rules.
 
 ### AgeOfGiants-QueenDomino
 
-Age of Giants combined with QueenDomino. Includes all QueenDomino mechanics (buildings, knights, coins, Queen, Dragon) plus giants and quest tiles.
+Age of Giants combined with QueenDomino. Includes all QueenDomino mechanics (buildings, knights, coins, Queen, Dragon), with the same official Queendomino rules (see [queendomino.md](./queendomino.md)), plus giants and quest tiles.
+
+- **2 players: 7x7 kingdom with all 60 dominos.** The Age of Giants rulebook only changes the lines of dominos (5 per line, discards) and adds the giants: selecting and connecting dominos "is done exactly the same way as in both Kingdomino and Queendomino games". The engine therefore keeps the Queendomino 2-player setup (7x7 kingdom, every domino used, 12 turns) with the Age of Giants lines: 60 dominos, 5 drawn per turn, the middle one discarded. At 3-4 players the kingdom is 5x5, as in the AgeOfGiants mode.
 
 ## Giants
 
@@ -50,7 +52,7 @@ Age of Giants always draws 5 dominos per turn. The line is sorted with the lette
 
 | Players | Dominos Drawn | Discarded positions (sorted line) | Dominos Presented |
 |---------|:------------:|:---------------------------------:|:-----------------:|
-| 2       | 5            | 3rd (middle)                      | 4                 |
+| 2       | 5            | 3rd (middle)                      | 4 (6 turns, 30 dominos; AgeOfGiants-QueenDomino: 12 turns, 60 dominos, 7x7) |
 | 3       | 5            | 2nd and 4th                       | 3                 |
 | 4       | 5            | 3rd (middle)                      | 4                 |
 | 5       | 5            | none                              | 5                 |

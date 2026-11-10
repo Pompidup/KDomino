@@ -52,6 +52,42 @@ describe("queen", () => {
       const players = [makePlayer("p1", 1), makePlayer("p2", 0)];
       expect(determineQueenHolder(players, null)).toBe("p1");
     });
+
+    describe("with the acting player (official rule: even on a tie)", () => {
+      it("gives the Queen to the player who reaches a tie", () => {
+        const players = [makePlayer("p1", 2), makePlayer("p2", 2)];
+        expect(determineQueenHolder(players, "p1", "p2")).toBe("p2");
+      });
+
+      it("gives the Queen to the player who gets strictly the most towers", () => {
+        const players = [makePlayer("p1", 2), makePlayer("p2", 3)];
+        expect(determineQueenHolder(players, "p1", "p2")).toBe("p2");
+      });
+
+      it("keeps the Queen with her host while the acting player has fewer towers", () => {
+        const players = [
+          makePlayer("p1", 3),
+          makePlayer("p2", 2),
+          makePlayer("p3", 3),
+        ];
+        expect(determineQueenHolder(players, "p1", "p2")).toBe("p1");
+      });
+
+      it("keeps the Queen with her host when the host builds", () => {
+        const players = [makePlayer("p1", 3), makePlayer("p2", 2)];
+        expect(determineQueenHolder(players, "p1", "p1")).toBe("p1");
+      });
+
+      it("nobody hosts the Queen without a tower", () => {
+        const players = [makePlayer("p1", 0), makePlayer("p2", 0)];
+        expect(determineQueenHolder(players, null, "p1")).toBeNull();
+      });
+
+      it("the first tower of the game brings the Queen", () => {
+        const players = [makePlayer("p1", 0), makePlayer("p2", 1)];
+        expect(determineQueenHolder(players, null, "p2")).toBe("p2");
+      });
+    });
   });
 
   describe("getQueenBonus", () => {
@@ -298,6 +334,16 @@ describe("queen", () => {
       };
       // Queen: largest territory (3 squares) + Guard Tower flat 2
       expect(calculateQueenDominoEndGameBonus(player, "p1")).toBe(5);
+    });
+
+    it("should add 1 point per 3 unused coins (Wealth)", () => {
+      const player = {
+        ...makePlayer("p1", 1, [guardTower]),
+        kingdom: buildKingdom(),
+        coins: 11,
+      };
+      // Guard Tower flat 2 + 11 coins / 3 = 3
+      expect(calculateQueenDominoEndGameBonus(player, null)).toBe(5);
     });
 
     it("should not add the Queen bonus for other players", () => {

@@ -1,4 +1,5 @@
 import {
+  destroyWithDragon,
   isValidConstructionPosition,
   purchaseBuilding,
 } from "@core/domain/entities/building.js";
@@ -33,6 +34,7 @@ import { resolveKnightPlacement } from "./placeKnight.js";
 import { resolveRecruitment } from "./recruitCaveman.js";
 import { resolveGiantSender, resolveGiantTarget } from "./sendGiant.js";
 import { resolveSkip } from "./skipOptionalAction.js";
+import { resolveDragon } from "./useDragon.js";
 
 /*
  * Valid targets of the extension actions (Queendomino, Origins, Age of Giants).
@@ -133,7 +135,8 @@ export const getValidFireTokenPositionsUseCase: ValidActionTargetsUseCase<
 
 /**
  * Squares where `placeKnight` accepts a knight: squares of the domino just
- * placed, within the knight limit, one knight per territory (Queendomino).
+ * placed that hold no knight yet, while the player still has a knight
+ * available (Queendomino).
  */
 export const getValidKnightPositionsUseCase: ValidActionTargetsUseCase<
   Position[]
@@ -179,7 +182,9 @@ const getConstructionOptions = (
   );
   const buildings = board.slots.filter(
     (slot): slot is BuildingTile =>
-      slot !== null && purchaseBuilding(board, player, slot.id) !== null,
+      slot !== null &&
+      purchaseBuilding(board, player, slot.id, queendomino.queenHolderId) !==
+        null,
   );
 
   // A construction needs both a free construction square and a building
@@ -197,12 +202,35 @@ export const getValidBuildingPositionsUseCase: ValidActionTargetsUseCase<
 
 /**
  * Buildings of the Builders Board that `constructBuilding` accepts (the player
- * can pay for them), on any square of `getValidBuildingPositions`
- * (Queendomino). Empty when no construction square is free.
+ * can pay the price of their spot, minus the Queen's discount for her host),
+ * on any square of `getValidBuildingPositions` (Queendomino). Empty when no
+ * construction square is free.
  */
 export const getAffordableBuildingsUseCase: ValidActionTargetsUseCase<
   BuildingTile[]
 > = (game, lordId) => getConstructionOptions(game, lordId).buildings;
+
+/**
+ * Buildings of the Builders Board that `useDragon` accepts to burn: every
+ * building still on the board when the Dragon is in its cave, the lord does
+ * not host the Queen and can pay its 1 coin (Queendomino). Empty otherwise.
+ */
+export const getValidDragonTargetsUseCase: ValidActionTargetsUseCase<
+  BuildingTile[]
+> = (game, lordId) => {
+  const turn = turnFor(game, playerActions.useDragon, lordId);
+  if (!turn) return [];
+
+  const context = resolveDragon(turn.game, turn.lordId);
+  if (isErr(context)) return [];
+
+  const { player, queendomino } = context.value;
+  const board = queendomino.buildersBoard;
+  return board.slots.filter(
+    (slot): slot is BuildingTile =>
+      slot !== null && destroyWithDragon(board, slot.id, player) !== null,
+  );
+};
 
 const noRecruitment = (): ValidCavemanPlacements => ({
   options: [],

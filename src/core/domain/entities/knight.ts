@@ -5,6 +5,9 @@ import { addCoins, getMaxKnights } from "./economy.js";
 /**
  * Count construction squares in the contiguous territory containing the given position.
  * Uses BFS flood-fill on same terrain type.
+ *
+ * No longer used for the knight tax, which counts every square of the
+ * territory (see `calculateKnightTax`).
  */
 export const countConstructionSquaresInTerritory = (
   kingdom: Kingdom,
@@ -65,35 +68,29 @@ export const countConstructionSquaresInTerritory = (
 };
 
 /**
- * Get the terrain type at a position to identify the territory.
+ * Number of squares of the territory containing `position` (the contiguous
+ * group of same-terrain squares, BFS flood-fill), the castle excluded.
+ *
+ * Official rule (action B): the knight "immediately collect[s] a Coin value
+ * equal to the number of connecting squares in the territory your Knight was
+ * placed on".
  */
-const getTerritoryTerrain = (
+export const countTerritorySquares = (
   kingdom: Kingdom,
   position: Position,
-): string | null => {
-  const tile = kingdom[position.y]?.[position.x];
-  if (!tile || tile.type === "empty" || tile.type === "castle") return null;
-  return tile.type;
-};
+): number => {
+  const startTile = kingdom[position.y]?.[position.x];
+  if (!startTile || startTile.type === "empty" || startTile.type === "castle") {
+    return 0;
+  }
 
-/**
- * Check if a territory (identified by BFS from position) already has a knight.
- */
-const territoryHasKnight = (
-  kingdom: Kingdom,
-  position: Position,
-  knights: Knight[],
-): boolean => {
-  const terrain = getTerritoryTerrain(kingdom, position);
-  if (!terrain) return false;
-
-  // BFS to find all positions in this territory
   const rows = kingdom.length;
   const cols = kingdom[0]?.length ?? 0;
+  const terrain = startTile.type;
   const visited: boolean[][] = kingdom.map((row) => row.map(() => false));
   const queue: [number, number][] = [[position.x, position.y]];
   visited[position.y]![position.x] = true;
-  const territoryPositions = new Set<string>();
+  let count = 0;
 
   const directions = [
     [-1, 0],
@@ -104,7 +101,7 @@ const territoryHasKnight = (
 
   while (queue.length > 0) {
     const [cx, cy] = queue.pop()!;
-    territoryPositions.add(`${cx},${cy}`);
+    count++;
 
     for (const [dx, dy] of directions) {
       const nx = cx + (dx as number);
@@ -123,17 +120,31 @@ const territoryHasKnight = (
     }
   }
 
-  return knights.some((k) =>
-    territoryPositions.has(`${k.position.x},${k.position.y}`),
-  );
+  return count;
 };
+
+/**
+ * Tax collected by a knight placed at `position`: the size of its territory.
+ */
+export const calculateKnightTax = (
+  kingdom: Kingdom,
+  position: Position,
+): number => countTerritorySquares(kingdom, position);
 
 /**
  * Whether a knight can be placed at `position`.
  *
- * Official Queendomino rule (action B): the knight must be placed on the
- * domino the player has just added to their kingdom. When `allowedPositions`
- * is given (the squares of that domino), the position must be one of them.
+ * Official Queendomino rule (action B, "Have 1 or 2 Knights collect tax on
+ * the domino you just placed"):
+ * - the player must still have a knight available: the starting knight plus
+ *   the knights granted by building bonuses (`getMaxKnights`), minus the
+ *   knights already placed;
+ * - the knight goes on the domino just added: when `allowedPositions` is given
+ *   (the squares of that domino), the position must be one of them;
+ * - one knight per square of that domino ("up to 2 Knights during your turn,
+ *   one for each square on the domino"): a square holding a knight is refused;
+ * - several knights may tax the same territory ("You may place a Knight on a
+ *   territory where other Knights have been placed in previous rounds").
  */
 export const canPlaceKnight = (
   player: Player,
@@ -154,7 +165,13 @@ export const canPlaceKnight = (
   const tile = kingdom[position.y]?.[position.x];
   if (!tile || tile.type === "empty" || tile.type === "castle") return false;
 
-  if (territoryHasKnight(kingdom, position, knights)) return false;
+  if (
+    knights.some(
+      (k) => k.position.x === position.x && k.position.y === position.y,
+    )
+  ) {
+    return false;
+  }
 
   return true;
 };
@@ -166,7 +183,7 @@ export const placeKnight = (
 ): Player => {
   const knight: Knight = { playerId: player.id, position };
   const knights = [...(player.knights ?? []), knight];
-  const taxAmount = countConstructionSquaresInTerritory(kingdom, position);
+  const taxAmount = calculateKnightTax(kingdom, position);
   const updatedPlayer = addCoins({ ...player, knights }, taxAmount);
 
   return updatedPlayer;

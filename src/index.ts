@@ -173,6 +173,7 @@ export const createGameEngine = (config: Partial<EngineConfig>): GameEngine => {
     getValidKnightPositionsHandler,
     getValidBuildingPositionsHandler,
     getAffordableBuildingsHandler,
+    getValidDragonTargetsHandler,
     getValidCavemanPlacementsHandler,
     getValidGiantPositionsHandler,
     getValidGiantTargetsHandler,
@@ -213,6 +214,7 @@ export const createGameEngine = (config: Partial<EngineConfig>): GameEngine => {
     getValidBuildingPositions: (command) =>
       getValidBuildingPositionsHandler(command),
     getAffordableBuildings: (command) => getAffordableBuildingsHandler(command),
+    getValidDragonTargets: (command) => getValidDragonTargetsHandler(command),
     getValidCavemanPlacements: (command) =>
       getValidCavemanPlacementsHandler(command),
     getValidGiantPositions: (command) => getValidGiantPositionsHandler(command),

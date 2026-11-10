@@ -42,7 +42,12 @@ export type BuildingTile = {
   id: number;
   /** Display name */
   name: string;
-  /** Cost in coins to purchase */
+  /**
+   * Intrinsic cost of the tile. On a Builders Board with `slotCosts` (every
+   * game started since the official 6-spot board), the price is carried by
+   * the spot the tile occupies instead (see `BuildersBoard.slotCosts`); this
+   * value is only used by boards without `slotCosts` (older saved games).
+   */
   cost: number;
   /** Immediate bonus when constructed (optional) */
   immediateBonus?: ImmediateBonus;
@@ -61,12 +66,26 @@ export type BuildingSlot = BuildingTile | null;
 
 /**
  * The Builders Board holding available building tiles for purchase.
+ *
+ * Official board: 6 spots whose construction cost is printed below them
+ * (5, 4, 3, 2, 1 and 0 coins, from the draw pile to the cheapest spot). At
+ * each new round the remaining tiles slide to the cheapest spots and the
+ * empty spots are filled from the draw pile.
  */
 export type BuildersBoard = {
-  /** Visible building tiles available for purchase (4 slots) */
+  /**
+   * Visible building tiles available for purchase, one per spot (6 spots; 4 in
+   * games started before the official board). `null` is an empty spot.
+   */
   slots: BuildingSlot[];
   /** Remaining building tiles in the draw pile */
   drawPile: BuildingTile[];
+  /**
+   * Construction cost of each spot, aligned with `slots` (`[5, 4, 3, 2, 1, 0]`).
+   * Absent in games started before the official board: the price is then the
+   * tile's own `cost`.
+   */
+  slotCosts?: number[];
 };
 
 /**

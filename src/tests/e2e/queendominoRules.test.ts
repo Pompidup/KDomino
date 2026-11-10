@@ -1,3 +1,4 @@
+import { getWealthPoints } from "@core/domain/entities/economy.js";
 import {
   calculateBuildingEndGameBonus,
   getQueenBonus,
@@ -54,11 +55,23 @@ const openConstructionSquares = (player: Player): Position[] => {
   return squares;
 };
 
+/** Price paid by `player` for a building: the cost of its spot (Queen −1). */
+const priceOf = (game: GameState, player: Player, building: BuildingTile) => {
+  const board = game.queendomino!.buildersBoard;
+  const slot = board.slots.findIndex((s) => s?.id === building.id);
+  const discount = game.queendomino!.queenHolderId === player.id ? 1 : 0;
+  return Math.max(0, board.slotCosts![slot]! - discount);
+};
+
+/** Buildings the player can pay for, cheapest first. */
 const affordableBuildings = (game: GameState, player: Player) =>
   (game.queendomino?.buildersBoard.slots ?? [])
     .filter((s): s is BuildingTile => s !== null)
-    .filter((b) => b.cost <= (player.coins ?? 0))
-    .sort((a, b) => a.cost - b.cost || a.id - b.id);
+    .filter((b) => priceOf(game, player, b) <= (player.coins ?? 0))
+    .sort(
+      (a, b) =>
+        priceOf(game, player, a) - priceOf(game, player, b) || a.id - b.id,
+    );
 
 const startQueenDomino = (engine: Engine, seed: string): GameState => {
   let game: GameState = engine.createGame({ mode: "QueenDomino", seed });
@@ -103,6 +116,7 @@ const playAction = (
       const placements = engine.getValidPlacements({
         kingdom: player.kingdom,
         domino: lord.dominoPicked!,
+        maxKingdomSize: game.rules.basic.maxKingdomSize,
       });
       if (placements.length > 0) {
         return engine.placeDomino({
@@ -159,7 +173,11 @@ const playAction = (
     }
     case playerActions.useDragon: {
       const qd = game.queendomino!;
-      const target = affordableBuildings(game, player)[0];
+      // Any building of the board: the Dragon always costs 1 coin
+      const target =
+        (player.coins ?? 0) >= 1
+          ? qd.buildersBoard.slots.find((s) => s !== null)
+          : undefined;
       if (
         policy.dragon &&
         target &&
@@ -258,7 +276,7 @@ const errorCodeOf = (fn: () => unknown): string | undefined => {
 
 describe("Queendomino rules", () => {
   describe("GitHub #3 - getResults applies the Queen and building bonuses", () => {
-    test("final score = territories + Queen bonus + buildings end-game scoring (seeded game)", () => {
+    test("final score = territories + Queen bonus + buildings end-game scoring + wealth (seeded game)", () => {
       const engine = createGameEngine({});
       const { game, stats } = playFullGame(engine, "qd-results-seed", {
         knights: true,
@@ -279,9 +297,11 @@ describe("Queendomino rules", () => {
           player.id === queenHolderId ? getQueenBonus(player.kingdom) : 0;
         const buildings = calculateBuildingEndGameBonus(player);
         if (buildings > 0) someBuildingBonus = true;
+        // Wealth: 1 point per 3 unused coins
+        const wealth = getWealthPoints(player);
 
         const result = results.result.find((r) => r.playerId === player.id)!;
-        expect(result.details.points).toBe(base + queen + buildings);
+        expect(result.details.points).toBe(base + queen + buildings + wealth);
       }
       expect(someBuildingBonus).toBe(true);
 
@@ -295,13 +315,13 @@ describe("Queendomino rules", () => {
       ).toMatchInlineSnapshot(`
         [
           {
-            "name": "Bobby",
-            "points": 65,
+            "name": "Alice",
+            "points": 163,
             "position": 1,
           },
           {
-            "name": "Alice",
-            "points": 52,
+            "name": "Bobby",
+            "points": 125,
             "position": 2,
           },
         ]
@@ -320,11 +340,11 @@ describe("Queendomino rules", () => {
 
       const board = game.queendomino!.buildersBoard;
       const removed = stats.constructions + stats.dragonRounds.length;
-      expect(removed).toBeGreaterThan(4);
+      expect(removed).toBeGreaterThan(6);
       // 18 buildings in total: whatever left the board was replaced from the pile
       const onBoard = board.slots.filter((s) => s !== null).length;
       expect(onBoard + board.drawPile.length + removed).toBe(18);
-      expect(board.drawPile.length).toBeLessThan(14);
+      expect(board.drawPile.length).toBeLessThan(12);
     });
 
     test("a built spot stays empty until the end of the round, then is refilled", () => {
@@ -454,7 +474,10 @@ describe("Queendomino rules", () => {
       });
       const updated = next.players.find((p) => p.id === player.id)!;
       expect(updated.bonusKnights).toBe(1);
-      expect(updated.coins).toBe((player.coins ?? 0) - 2);
+      // The price is the cost of the spot (5 for the first spot), not the
+      // tile's own cost
+      const price = g.queendomino!.queenHolderId === player.id ? 4 : 5;
+      expect(updated.coins).toBe((player.coins ?? 0) - price);
     });
 
     test("a knight can only be placed on the domino just placed", () => {
