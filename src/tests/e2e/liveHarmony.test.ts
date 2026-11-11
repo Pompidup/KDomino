@@ -16,7 +16,7 @@ import { GRIDSIZE, type Kingdom } from "@core/domain/types/kingdom.js";
 import { type Player, playerActions } from "@core/domain/types/player.js";
 import type { ScoreBonus } from "@core/domain/types/score.js";
 import { describe, expect, test } from "vitest";
-import { createGameEngine, expertStrategy, playBotTurn } from "../../index.js";
+import { createGameEngine, greedyStrategy, playBotTurn } from "../../index.js";
 
 const engine = createGameEngine({});
 
@@ -231,7 +231,7 @@ describe("Live Harmony in calculatePlayerScore", () => {
         .breakdown.bonuses.find(isHarmonyBonus)!;
     let game: GameState = engine.createGame({
       mode: "Classic",
-      seed: "live-harmony-complete",
+      seed: "s2",
     });
     game = engine.addPlayers({
       game,
@@ -242,7 +242,7 @@ describe("Live Harmony in calculatePlayerScore", () => {
 
     const live = new Map<string, number[]>();
     for (let i = 0; i < 1000 && isGameWithNextAction(game); i++) {
-      game = playBotTurn(engine, game, expertStrategy);
+      game = playBotTurn(engine, game, greedyStrategy);
       if (!isGameWithNextAction(game)) break;
       for (const player of game.players) {
         const bonus = harmonyOf(game, player.id);
@@ -262,5 +262,5 @@ describe("Live Harmony in calculatePlayerScore", () => {
       }
     }
     expect(completed).toBeGreaterThan(0);
-  }, 30_000);
+  });
 });
