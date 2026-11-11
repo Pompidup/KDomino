@@ -249,7 +249,7 @@ See [API Reference](docs/api-reference.md) for complete method signatures, types
 
 ## Additional Features
 
-- **Bot / AI**: 4 built-in strategies (`randomStrategy`, `greedyStrategy`, `advancedStrategy`, `expertStrategy`) with `playBotTurn()` helper; mode-aware (they evaluate with the mode-aware score and play the Queendomino, Origins and Age of Giants actions — see [Bot Strategies](docs/api-reference.md#bot-strategies))
+- **Bot / AI**: 4 built-in strategies (`randomStrategy`, `greedyStrategy`, `advancedStrategy`, `expertStrategy`) with `playBotTurn()` helper; mode-aware (they evaluate with the mode-aware score and play the Queendomino, Origins and Age of Giants actions) and reproducible: the same seed, players and moves give the same bot decisions — see [Bot Strategies](docs/api-reference.md#bot-strategies)
 - **Mixed games**: Human and bot players in the same game via `bot: { strategyName }` on player input
 - **Undo / Redo**: Snapshot-based history with `createGameHistory()`, `pushState()`, `undo()`, `redo()`
 - **Action Log**: Immutable log via `wrapWithActionLog(engine)` for replay with `replayActions()`; format v2 records the seed and the game, player and lord ids, so a replay gives a strictly identical state (v1 logs remain replayable)

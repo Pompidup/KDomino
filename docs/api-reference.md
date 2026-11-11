@@ -1180,7 +1180,7 @@ For an extension action, a bot enumerates the valid targets of the action (`getV
 
 Domino picks and placements are mode-aware too: a placement is simulated on the kingdom (and, in Totem and Tribe, the resources of its squares are collected) and scored with the same evaluation, so the bots aim at Middle Kingdom, quests, fire regions, resources and totem majorities, and avoid covering crowns with giants. In Classic without extra rules the evaluation is the territory score, as before.
 
-`randomStrategy` stays random: it picks uniformly among the valid targets, "skip" counting as one more option when the action is optional. Its choices are seeded by the game seed (or id) and the decision point, never by `Math.random`: the same game replayed with the same seed gets the same decisions. Every built-in bot is deterministic for a given seed.
+`randomStrategy` stays random: it picks uniformly among the valid targets, "skip" counting as one more option when the action is optional. Its choices are seeded by the game seed (or id) and the decision point, never by `Math.random`. The decision point identifies the lord by its position in `game.lords` (the turn order), never by its id: lord ids (like the game id and the ids of players added without one) are random uuids that change from one game to the next. So two games with the same seed, the same players and the same moves get the same bot decisions — with every built-in strategy, in every mode, extension actions included — whatever the engine's `uuidMethod`. Every built-in bot is deterministic for a given seed.
 
 #### Custom strategies
 
