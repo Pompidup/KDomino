@@ -1419,6 +1419,13 @@ import {
 
 The engine also provides `serialize` and `deserialize` methods directly on the `GameEngine` interface (see [Core Methods](#serialization-methods)).
 
+#### State validation
+
+`validateGameState(game)` checks the integrity of a game state, typically after `deserialize` or before resuming a persisted game, and returns a `ValidationIssue[]` (`{ path, code, message, severity }`, `severity` being `"error"` or `"warning"`); an empty array means the state is valid. Every state the engine produces is valid, in every mode, from `createGame` to the `result` step, before and after a serialize / deserialize round trip. In particular:
+
+- a domino number (draw pile, revealed line, `lord.dominoPicked`) is a positive integer, or exactly `0.01` to `0.06` for the Age of Giants letter dominos A-F (`INVALID_DOMINO_NUMBER` otherwise); a letter domino carries the letter of its number, and a numbered domino no letter (`INVALID_DOMINO_LETTER`);
+- a lord whose turn ended (`turnEnded`) has placed, and has picked — except on the last turn, where there is no domino left to pick (`INCONSISTENT_LORD_FLAGS`, warning).
+
 ### Internationalization (i18n)
 
 The engine ships translation dictionaries for error messages, game modes, extra rules, terrains, resources, cavemen, game phases and player actions.
