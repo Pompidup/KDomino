@@ -61,6 +61,18 @@ export const discardDominoUseCase: DiscardDominoUseCase = (game, lordId) => {
   const currentTurn = game.turn;
   const isLastTurn = currentTurn === maxTurns;
 
+  // A received domino left out of the kingdom: Harmony is no longer reachable
+  const players = currentLord.dominoPicked
+    ? game.players.map((player) =>
+        player.id === currentLord.playerId
+          ? {
+              ...player,
+              discardedDominoes: (player.discardedDominoes ?? 0) + 1,
+            }
+          : player,
+      )
+    : game.players;
+
   const updatedLord = game.lords.map((lord) => {
     if (lord.id === currentLord.id) {
       if (isLastTurn) {
@@ -85,6 +97,7 @@ export const discardDominoUseCase: DiscardDominoUseCase = (game, lordId) => {
   if (game.queendomino) {
     return ok({
       ...game,
+      players,
       lords: updatedLord,
       queendomino: { ...game.queendomino, lastPlacedPositions: [] },
       nextAction: {
@@ -105,12 +118,14 @@ export const discardDominoUseCase: DiscardDominoUseCase = (game, lordId) => {
   if (isLastTurn && allLordsHavePlayed(updatedLord)) {
     updatedGame = {
       ...game,
+      players,
       lords: updatedLord,
       nextAction: resultStep,
     };
   } else {
     updatedGame = {
       ...game,
+      players,
       lords: updatedLord,
       nextAction: <NextAction>nextLordWithAction(updatedLord),
     };
