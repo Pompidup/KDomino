@@ -226,6 +226,7 @@ const engine = createGameEngine({
 | `constructBuilding` | Buy and place a building |
 | `useDragon` | Destroy a building tile from the board (1 coin) |
 | `skipOptionalAction` | Skip the current optional action |
+| `getMaxKnights` | Knight limit of a player (1 starting knight + building bonus knights) |
 
 ### Origins Methods
 

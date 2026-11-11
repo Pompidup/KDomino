@@ -92,6 +92,7 @@ All methods are available on the `GameEngine` object returned by `createGameEngi
 | `constructBuilding` | `ConstructBuildingCommand` | `GameState` | Construct a building on a construction square in the lord's kingdom, for the price of its spot on the Builders Board (−1 coin for the Queen's host). |
 | `useDragon` | `UseDragonCommand` | `GameState` | Bribe the dragon (1 coin) to destroy a building tile on the builders board. |
 | `skipOptionalAction` | `SkipOptionalActionCommand` | `GameState` | Skip the current optional action (knight, building, or dragon). |
+| `getMaxKnights` | `GetMaxKnightsCommand` | `number` | Knight limit of a player: the starting knight (1) plus the knights granted by building bonuses (`bonusKnights`). Knights still available: `getMaxKnights(...) - (player.knights?.length ?? 0)`. 0 in the modes without knights. Read-only, throws `NotFoundError` (`PLAYER_NOT_FOUND`) for an unknown player. |
 
 ### Origins Methods
 
@@ -340,6 +341,20 @@ type UseDragonCommand = {
   lordId: string;
   buildingId: number;
 };
+```
+
+### `GetMaxKnightsCommand`
+
+```typescript
+type GetMaxKnightsCommand = {
+  game: Game;       // Any stage
+  playerId: string; // Player whose knight limit is read
+};
+```
+
+```typescript
+const max = engine.getMaxKnights({ game, playerId: player.id });
+const available = max - (player.knights?.length ?? 0);
 ```
 
 ### `SkipOptionalActionCommand`
@@ -1598,7 +1613,7 @@ if (game.nextAction.nextAction === 'placeFireToken') {
 
 ### `getValidKnightPositions`
 
-Squares where `placeKnight` accepts a knight: the squares of the domino the lord has just placed (`queendomino.lastPlacedPositions`) that hold no knight yet, while the player still has a knight available (1 starting knight + `bonusKnights`, minus the knights placed). Several knights may tax the same territory; after a first knight, the query lists the other square of the domino when a second knight can be placed.
+Squares where `placeKnight` accepts a knight: the squares of the domino the lord has just placed (`queendomino.lastPlacedPositions`) that hold no knight yet, while the player still has a knight available (`getMaxKnights`: 1 starting knight + `bonusKnights`, minus the knights placed). Several knights may tax the same territory; after a first knight, the query lists the other square of the domino when a second knight can be placed.
 
 ### `getValidBuildingPositions` / `getAffordableBuildings`
 
