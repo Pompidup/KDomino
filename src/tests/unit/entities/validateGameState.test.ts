@@ -172,6 +172,75 @@ describe("validateGameState - dominoes", () => {
     }
   });
 
+  test("accepts the letter domino numbers 0.01 to 0.06 (A-F) everywhere", () => {
+    const game = validGame();
+    const letterDomino = (number: number, letter: string) => ({
+      left: { type: "wheat" as const, crowns: 0 as const },
+      right: { type: "forest" as const, crowns: 0 as const },
+      number,
+      letter,
+    });
+    // Draw pile: A-D, revealed line and lord: E-F
+    game.dominoes = [
+      letterDomino(0.01, "A"),
+      letterDomino(0.02, "B"),
+      letterDomino(0.03, "C"),
+      letterDomino(0.04, "D"),
+    ];
+    game.currentDominoes = [
+      {
+        domino: letterDomino(0.05, "E"),
+        picked: true,
+        lordId: "lord1-id",
+        position: 1,
+      },
+      {
+        domino: letterDomino(0.06, "F"),
+        picked: false,
+        lordId: null,
+        position: 2,
+      },
+    ];
+    game.lords[0]!.dominoPicked = letterDomino(0.05, "E");
+    expect(validateGameState(game)).toEqual([]);
+  });
+
+  test.each([
+    0.07, 0.5, 1.5, 0.015, -0.01,
+  ])("rejects any other fractional domino number (%s)", (number) => {
+    const game = validGame();
+    game.dominoes[0]!.number = number;
+    expect(
+      findByCode(validateGameState(game), "INVALID_DOMINO_NUMBER"),
+    ).toEqual([expect.objectContaining({ path: "dominoes[0].number" })]);
+  });
+
+  test("detects a letter that does not match the domino number", () => {
+    const game = validGame();
+    game.dominoes[0]!.number = 0.02;
+    game.dominoes[0]!.letter = "A";
+    expect(
+      findByCode(validateGameState(game), "INVALID_DOMINO_LETTER"),
+    ).toEqual([expect.objectContaining({ path: "dominoes[0].letter" })]);
+  });
+
+  test("detects a letter domino number without its letter", () => {
+    const game = validGame();
+    game.dominoes[0]!.number = 0.03;
+    delete game.dominoes[0]!.letter;
+    expect(
+      findByCode(validateGameState(game), "INVALID_DOMINO_LETTER"),
+    ).toHaveLength(1);
+  });
+
+  test("detects a letter on a numbered domino", () => {
+    const game = validGame();
+    game.dominoes[0]!.letter = "A";
+    expect(
+      findByCode(validateGameState(game), "INVALID_DOMINO_LETTER"),
+    ).toHaveLength(1);
+  });
+
   test("detects picked domino without lordId", () => {
     const game = validGame();
     game.currentDominoes = [
@@ -263,6 +332,28 @@ describe("validateGameState - lords", () => {
     const flagIssues = findByCode(issues, "INCONSISTENT_LORD_FLAGS");
     expect(flagIssues).toHaveLength(1);
     expect(flagIssues[0]!.severity).toBe("warning");
+  });
+
+  test("accepts turnEnded=true with hasPick=false on the last turn (nothing left to pick)", () => {
+    const game = validGame();
+    game.turn = game.rules.basic.maxTurns;
+    game.lords[0]!.turnEnded = true;
+    game.lords[0]!.hasPick = false;
+    game.lords[0]!.hasPlace = true;
+    expect(
+      findByCode(validateGameState(game), "INCONSISTENT_LORD_FLAGS"),
+    ).toHaveLength(0);
+  });
+
+  test("warns when turnEnded=true but hasPlace=false, even on the last turn", () => {
+    const game = validGame();
+    game.turn = game.rules.basic.maxTurns;
+    game.lords[0]!.turnEnded = true;
+    game.lords[0]!.hasPick = false;
+    game.lords[0]!.hasPlace = false;
+    expect(
+      findByCode(validateGameState(game), "INCONSISTENT_LORD_FLAGS"),
+    ).toHaveLength(1);
   });
 });
 

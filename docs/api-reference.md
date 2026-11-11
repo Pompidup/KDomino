@@ -579,8 +579,11 @@ type Domino = {
   left: Tile;      // Left tile of the domino
   right: Tile;     // Right tile of the domino
   number: number;  // Unique identifier (1-48 in Classic)
+  letter?: string; // Age of Giants letter dominos only: "A" to "F"
 };
 ```
+
+The Age of Giants letter dominos (A-F) use the fractional numbers `0.01` (A) to `0.06` (F), so they sort before every numbered domino. Every other domino number is a positive integer.
 
 ### `RevealsDomino`
 
@@ -1180,7 +1183,7 @@ For an extension action, a bot enumerates the valid targets of the action (`getV
 
 Domino picks and placements are mode-aware too: a placement is simulated on the kingdom (and, in Totem and Tribe, the resources of its squares are collected) and scored with the same evaluation, so the bots aim at Middle Kingdom, quests, fire regions, resources and totem majorities, and avoid covering crowns with giants. In Classic without extra rules the evaluation is the territory score, as before.
 
-`randomStrategy` stays random: it picks uniformly among the valid targets, "skip" counting as one more option when the action is optional. Its choices are seeded by the game seed (or id) and the decision point, never by `Math.random`: the same game replayed with the same seed gets the same decisions. Every built-in bot is deterministic for a given seed.
+`randomStrategy` stays random: it picks uniformly among the valid targets, "skip" counting as one more option when the action is optional. Its choices are seeded by the game seed (or id) and the decision point, never by `Math.random`. The decision point identifies the lord by its position in `game.lords` (the turn order), never by its id: lord ids (like the game id and the ids of players added without one) are random uuids that change from one game to the next. So two games with the same seed, the same players and the same moves get the same bot decisions — with every built-in strategy, in every mode, extension actions included — whatever the engine's `uuidMethod`. Every built-in bot is deterministic for a given seed.
 
 #### Custom strategies
 
@@ -1415,6 +1418,13 @@ import {
 **Type:** `GameSavePoint`.
 
 The engine also provides `serialize` and `deserialize` methods directly on the `GameEngine` interface (see [Core Methods](#serialization-methods)).
+
+#### State validation
+
+`validateGameState(game)` checks the integrity of a game state, typically after `deserialize` or before resuming a persisted game, and returns a `ValidationIssue[]` (`{ path, code, message, severity }`, `severity` being `"error"` or `"warning"`); an empty array means the state is valid. Every state the engine produces is valid, in every mode, from `createGame` to the `result` step, before and after a serialize / deserialize round trip. In particular:
+
+- a domino number (draw pile, revealed line, `lord.dominoPicked`) is a positive integer, or exactly `0.01` to `0.06` for the Age of Giants letter dominos A-F (`INVALID_DOMINO_NUMBER` otherwise); a letter domino carries the letter of its number, and a numbered domino no letter (`INVALID_DOMINO_LETTER`);
+- a lord whose turn ended (`turnEnded`) has placed, and has picked — except on the last turn, where there is no domino left to pick (`INCONSISTENT_LORD_FLAGS`, warning).
 
 ### Internationalization (i18n)
 

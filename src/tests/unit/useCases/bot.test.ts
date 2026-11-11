@@ -17,8 +17,10 @@ import {
   playBotTurn,
   randomStrategy,
 } from "@core/useCases/bot.js";
+import { decisionRandom } from "@core/useCases/botExtensions.js";
 import type { ValidPlacement } from "@core/useCases/getValidPlacements.js";
 import { describe, expect, test, vi } from "vitest";
+import { createGameEngine } from "../../../index.js";
 import { createGameBuilder } from "../../builder/game.js";
 import { createLordBuilder } from "../../builder/lord.js";
 import { createPlayerBuilder } from "../../builder/player.js";
@@ -140,6 +142,55 @@ const makePlaceContext = (
     ...overrides,
   };
 };
+
+// ─── decisionRandom ──────────────────────────────────────────────────
+
+describe("decisionRandom", () => {
+  const startedGame = (seed: string): GameWithNextAction => {
+    const engine = createGameEngine({});
+    let game = engine.createGame({ mode: "Classic", seed });
+    game = engine.addPlayers({ game, players: ["Alice", "Bobby"] });
+    return engine.startGame({ game }) as GameWithNextAction;
+  };
+
+  /** The same game with other lord ids (another engine, another uuid). */
+  const withRenamedLords = (game: GameWithNextAction): GameWithNextAction => {
+    let json = JSON.stringify(game);
+    game.lords.forEach((lord, index) => {
+      json = json.replaceAll(lord.id, `renamed-lord-${index}`);
+    });
+    return JSON.parse(json) as GameWithNextAction;
+  };
+
+  const draws = (random: () => number) => [random(), random(), random()];
+
+  test("does not depend on the generated lord ids (#34)", () => {
+    const game = startedGame("decision-seed");
+    const renamed = withRenamedLords(game);
+    expect(renamed.nextAction.nextLord).not.toBe(game.nextAction.nextLord);
+    expect(draws(decisionRandom(renamed, "pick"))).toEqual(
+      draws(decisionRandom(game, "pick")),
+    );
+  });
+
+  test("differs from one lord to the next and from one salt to the next", () => {
+    const game = startedGame("decision-seed");
+    const otherLord: GameWithNextAction = {
+      ...game,
+      nextAction: { ...game.nextAction, nextLord: game.lords[1]!.id },
+    };
+    const reference = draws(decisionRandom(game, "pick"));
+    expect(draws(decisionRandom(otherLord, "pick"))).not.toEqual(reference);
+    expect(draws(decisionRandom(game, "place"))).not.toEqual(reference);
+  });
+
+  test("depends on the seed", () => {
+    const game = startedGame("decision-seed");
+    expect(
+      draws(decisionRandom({ ...game, seed: "another-seed" }, "pick")),
+    ).not.toEqual(draws(decisionRandom(game, "pick")));
+  });
+});
 
 // ─── randomStrategy ──────────────────────────────────────────────────
 
