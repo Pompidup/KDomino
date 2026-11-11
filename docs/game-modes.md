@@ -36,6 +36,8 @@ property score = number of tiles in group x number of crowns in group
 
 A group with no crowns scores 0 regardless of size. The total score is the sum of all property scores, plus any bonus points from extra rules.
 
+**Tie-break** (official rule): on equal points, the player with the largest property wins (crowns or not), then the player with the most crowns; players still tied share the position. Age of Giants and Origins (most fire symbols, printed and on fire tokens) use the same order; Queendomino only compares the largest territory. `getResults` reports the deciding criterion in `tiebreaker` and `tied` (see [`FinalResult`](./api-reference.md#finalresult)).
+
 ### Turn Flow
 
 During active gameplay, the engine cycles through player actions via `NextAction`:

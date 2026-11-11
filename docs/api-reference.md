@@ -112,7 +112,7 @@ All methods are available on the `GameEngine` object returned by `createGameEngi
 
 | Method | Command Type | Return Type | Description |
 |---|---|---|---|
-| `getResults` | `GetResultCommand` | `GameWithResults` | Calculate final results after the game ends. |
+| `getResults` | `GetResultCommand` | `GameWithResults` | Calculate final results after the game ends, ranked with the official tie-break of the mode (see [`FinalResult`](#finalresult)). |
 | `calculateScore` | `CalculateScoreCommand` | `Score` | Calculate the score for a single kingdom (live scoring). |
 | `getDynastyResults` | `GetDynastyResultCommand` | `DynastyResult[]` | Aggregate results from multiple completed games. |
 | `calculatePlayerScore` | `CalculatePlayerScoreCommand` | `PlayerScore` | Mode-aware score of one player with its breakdown, live during the game and final once it is over. See [Score Breakdown](#score-breakdown). |
@@ -503,6 +503,7 @@ type Score = {
   points: number;            // Total points earned
   maxPropertiesSize: number; // Size of the largest contiguous property
   totalCrowns: number;       // Total number of crowns in the kingdom
+  fireSymbols?: number;      // Origins only (getResults, calculatePlayerScore): fire symbols printed on the tiles + fires of the tokens placed
 };
 ```
 
@@ -521,9 +522,23 @@ type ScoreResult = {
 
 ```typescript
 type FinalResult = ScoreResult & {
-  position: number;  // Final ranking (1 = winner)
+  position: number;  // Final ranking (1 = winner); tied players share it
+  tiebreaker?: TiebreakCriterion | null; // Criterion that ranked the player among the players with the same points (null: nobody else has them)
+  tied?: boolean;    // true when another player is equal on points and every tie-break criterion
 };
+
+type TiebreakCriterion = "largestTerritory" | "crowns"; // tiebreakCriteria
 ```
+
+`getResults` ranks the players by points, then by the tie-break criteria of the game mode (official rules), then gives the same position to the players still tied:
+
+| Mode | Tie-break order |
+|---|---|
+| `Classic` (Mighty Duel, solo included), `AgeOfGiants` | Largest territory (`maxPropertiesSize`), then most crowns (`totalCrowns`: crowns covered by a giant are not counted), then shared |
+| `KingdominoOrigins-*` | Largest region (`maxPropertiesSize`, with or without fire), then most fire symbols (`fireSymbols`: printed on the tiles and on the fire tokens), then shared |
+| `QueenDomino`, `AgeOfGiants-QueenDomino` | Largest territory, then shared (no crowns criterion) |
+
+`tiebreaker` is the last criterion compared for the player: with three players at 50 points, A (largest territory 10), B (8, 5 crowns) and C (8, 3 crowns), A gets `largestTerritory`, B and C `crowns`. When a tie remains, `tiebreaker` is the last criterion of the mode and `tied` is `true`. A client can explain the ranking from these two fields and `details`. `getTiebreakCriteria(modeName)` returns the criteria of a mode (`KINGDOMINO_TIEBREAK_CRITERIA`, `QUEENDOMINO_TIEBREAK_CRITERIA`). Results computed by an earlier version of the engine have neither field.
 
 ### `DynastyResult`
 
@@ -1757,6 +1772,7 @@ type PlayerScore = {
   points: number;            // Total score (= breakdown.total)
   maxPropertiesSize: number; // Largest territory (tie-breaker)
   totalCrowns: number;       // Crowns counted in the kingdom
+  fireSymbols?: number;      // Origins only: printed fires + fires of the tokens placed (tie-break)
   final: boolean;            // true once the game is over (identical to getResults)
   breakdown: ScoreBreakdown;
 };

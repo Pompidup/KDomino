@@ -2359,17 +2359,17 @@ exports[`Score characterization (final results must never change) > Classic 4p /
     },
     {
       "maxPropertiesSize": 5,
-      "name": "Bob",
-      "points": 15,
-      "position": 2,
-      "totalCrowns": 8,
-    },
-    {
-      "maxPropertiesSize": 5,
       "name": "Dave",
       "points": 15,
       "position": 2,
       "totalCrowns": 9,
+    },
+    {
+      "maxPropertiesSize": 5,
+      "name": "Bob",
+      "points": 15,
+      "position": 3,
+      "totalCrowns": 8,
     },
     {
       "maxPropertiesSize": 5,

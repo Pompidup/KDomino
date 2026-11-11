@@ -7,7 +7,7 @@ import type { OriginsState } from "./origins.js";
 import type { Player, PlayerActions } from "./player.js";
 import type { QueenDominoState } from "./queendomino.js";
 import type { SelectedRules } from "./rule.js";
-import type { ScoreBreakdown } from "./score.js";
+import type { ScoreBreakdown, TiebreakCriterion } from "./score.js";
 import type { ObjectValues } from "./utils.js";
 
 /**
@@ -128,6 +128,13 @@ export type Score = {
   maxPropertiesSize: number;
   /** Total number of crowns in the kingdom */
   totalCrowns: number;
+  /**
+   * Kingdomino Origins only: fire symbols of the kingdom, printed on the
+   * tiles (`totalCrowns`) and on the fire tokens placed. Compared instead of
+   * `totalCrowns` by the crowns tie-break ("the player with the most Fire
+   * symbols wins"). Set by `getResults` and `calculatePlayerScore`.
+   */
+  fireSymbols?: number;
 };
 
 /**
@@ -152,8 +159,24 @@ export type ScoreResult = {
  * Final result including ranking position.
  */
 export type FinalResult = ScoreResult & {
-  /** Player's final position (1 = winner) */
+  /**
+   * Player's final position (1 = winner). Players equal on points and on
+   * every tie-break criterion of the mode share the same position.
+   */
   position: number;
+  /**
+   * Last tie-break criterion compared to rank the player among the players
+   * with the same points: the criterion that separated them, or the last
+   * criterion of the mode when the tie remains (`tied: true`). `null` when no
+   * other player has the same points. Always set by `getResults`.
+   */
+  tiebreaker?: TiebreakCriterion | null;
+  /**
+   * `true` when another player is equal on points and on every tie-break
+   * criterion of the mode: they share the position. Always set by
+   * `getResults`.
+   */
+  tied?: boolean;
 };
 
 /** Game state with final results calculated */

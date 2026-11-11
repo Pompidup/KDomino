@@ -58,6 +58,10 @@ Extends Discovery with **resources** (like Totem) and a **cave board** for recru
 
 **Scoring**: Discovery scoring + caveman bonuses (NO resource points, NO totems)
 
+## Tie-break
+
+Official rule ("End of the Game"): "In the event of a tie, the player who has the biggest region, whether it contains fires or not, wins. If there is still a tie, the player with the most Fire symbols wins. If there is still a tie after this, the players who are tied share the victory." `getResults` compares the largest region (`maxPropertiesSize`), then the fire symbols printed on the tiles **and** on the fire tokens placed (`details.fireSymbols`), and reports the deciding criterion in `tiebreaker` (`"largestTerritory"` or `"crowns"`, i.e. fire symbols) and `tied`.
+
 ## Extra Rules (Origins equivalents)
 
 | Origins Rule | Classic Equivalent | Effect |

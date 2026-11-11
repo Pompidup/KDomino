@@ -37,12 +37,16 @@ describe("Get result of a game", () => {
         playerName: "player1",
         details: { points: 24, maxPropertiesSize: 5, totalCrowns: 6 },
         position: 1,
+        tiebreaker: null,
+        tied: false,
       },
       {
         playerId: "player2-id",
         playerName: "player2",
         details: { points: 0, maxPropertiesSize: 0, totalCrowns: 0 },
         position: 2,
+        tiebreaker: null,
+        tied: false,
       },
     ]);
   });
@@ -73,19 +77,58 @@ describe("Get result of a game", () => {
         playerName: "player1",
         details: { points: 24, maxPropertiesSize: 5, totalCrowns: 6 },
         position: 1,
+        tiebreaker: "largestTerritory",
+        tied: false,
       },
       {
         playerId: "player2-id",
         playerName: "player2",
         details: { points: 24, maxPropertiesSize: 4, totalCrowns: 7 },
         position: 2,
+        tiebreaker: "largestTerritory",
+        tied: false,
       },
     ]);
   });
 
-  test("should return shared victory when points and maxPropertiesSize are equal", async () => {
-    // Arrange
+  test("should decide on crowns when points and maxPropertiesSize are equal (Kingdomino)", () => {
+    const scoreResult = [
+      {
+        playerId: "player1-id",
+        playerName: "player1",
+        details: { points: 4, maxPropertiesSize: 2, totalCrowns: 2 },
+      },
+      {
+        playerId: "player2-id",
+        playerName: "player2",
+        details: { points: 4, maxPropertiesSize: 2, totalCrowns: 3 },
+      },
+    ];
 
+    const result = rankScoreResults(scoreResult);
+
+    // Official Kingdomino rule: largest territory, then most crowns
+    expect(result).toEqual([
+      {
+        playerId: "player2-id",
+        playerName: "player2",
+        details: { points: 4, maxPropertiesSize: 2, totalCrowns: 3 },
+        position: 1,
+        tiebreaker: "crowns",
+        tied: false,
+      },
+      {
+        playerId: "player1-id",
+        playerName: "player1",
+        details: { points: 4, maxPropertiesSize: 2, totalCrowns: 2 },
+        position: 2,
+        tiebreaker: "crowns",
+        tied: false,
+      },
+    ]);
+  });
+
+  test("should share the position when points, maxPropertiesSize and crowns are equal", () => {
     const scoreResult = [
       {
         playerId: "player2-id",
@@ -95,27 +138,96 @@ describe("Get result of a game", () => {
       {
         playerId: "player1-id",
         playerName: "player1",
-        details: { points: 4, maxPropertiesSize: 2, totalCrowns: 2 },
+        details: { points: 4, maxPropertiesSize: 2, totalCrowns: 3 },
+      },
+      {
+        playerId: "player3-id",
+        playerName: "player3",
+        details: { points: 1, maxPropertiesSize: 1, totalCrowns: 1 },
       },
     ];
 
-    // Act
     const result = rankScoreResults(scoreResult);
 
-    // Assert — per official rules, tied players share the victory
-    expect(result).toEqual([
-      {
-        playerId: "player2-id",
-        playerName: "player2",
-        details: { points: 4, maxPropertiesSize: 2, totalCrowns: 3 },
-        position: 1,
-      },
+    expect(
+      result.map(({ playerId, position, tiebreaker, tied }) => ({
+        playerId,
+        position,
+        tiebreaker,
+        tied,
+      })),
+    ).toEqual([
+      { playerId: "player2-id", position: 1, tiebreaker: "crowns", tied: true },
+      { playerId: "player1-id", position: 1, tiebreaker: "crowns", tied: true },
+      { playerId: "player3-id", position: 3, tiebreaker: null, tied: false },
+    ]);
+  });
+
+  test("should share the position on equal largest territory with the Queendomino criteria", () => {
+    const scoreResult = [
       {
         playerId: "player1-id",
         playerName: "player1",
         details: { points: 4, maxPropertiesSize: 2, totalCrowns: 2 },
-        position: 1,
       },
+      {
+        playerId: "player2-id",
+        playerName: "player2",
+        details: { points: 4, maxPropertiesSize: 2, totalCrowns: 3 },
+      },
+    ];
+
+    // Official Queendomino rule: largest territory, then shared victory
+    const result = rankScoreResults(scoreResult, ["largestTerritory"]);
+
+    expect(
+      result.map(({ playerId, position, tiebreaker, tied }) => ({
+        playerId,
+        position,
+        tiebreaker,
+        tied,
+      })),
+    ).toEqual([
+      {
+        playerId: "player1-id",
+        position: 1,
+        tiebreaker: "largestTerritory",
+        tied: true,
+      },
+      {
+        playerId: "player2-id",
+        position: 1,
+        tiebreaker: "largestTerritory",
+        tied: true,
+      },
+    ]);
+  });
+
+  test("should report the deepest criterion compared against every player with the same points", () => {
+    const scoreResult = [
+      {
+        playerId: "a",
+        playerName: "a",
+        details: { points: 10, maxPropertiesSize: 4, totalCrowns: 1 },
+      },
+      {
+        playerId: "b",
+        playerName: "b",
+        details: { points: 10, maxPropertiesSize: 3, totalCrowns: 5 },
+      },
+      {
+        playerId: "c",
+        playerName: "c",
+        details: { points: 10, maxPropertiesSize: 3, totalCrowns: 2 },
+      },
+    ];
+
+    const result = rankScoreResults(scoreResult);
+
+    expect(result.map((r) => [r.playerId, r.position, r.tiebreaker])).toEqual([
+      ["a", 1, "largestTerritory"],
+      ["b", 2, "crowns"],
+      ["c", 3, "crowns"],
     ]);
   });
 

@@ -1,9 +1,16 @@
+import {
+  compareScores,
+  firstDifferingCriterion,
+  getTiebreakCriteria,
+  KINGDOMINO_TIEBREAK_CRITERIA,
+} from "@core/domain/entities/ranking.js";
 import { computePlayerScore } from "@core/domain/entities/scoreBreakdown.js";
 import type {
   FinalResult,
   GameWithNextStep,
   GameWithResults,
   ScoreResult,
+  TiebreakCriterion,
 } from "@core/domain/types/index.js";
 import { ok, type Result } from "@utils/result.js";
 
@@ -12,33 +19,57 @@ export type GetResultUseCase = (
 ) => Result<GameWithResults>;
 
 /**
- * Ranks scored players: by points, then by largest territory (per official
- * rules, no further tiebreaker). Players equal on both share the position.
+ * Ranks scored players: by points, then by the tie-break criteria of the game
+ * mode (`getTiebreakCriteria`; default: Kingdomino, largest territory then
+ * crowns). Players equal on points and on every criterion share the
+ * position. Each result tells which criterion ranked it among the players
+ * with the same points (`tiebreaker`) and whether it shares its position
+ * (`tied`).
  */
-export const rankScoreResults = (scoreResult: ScoreResult[]): FinalResult[] => {
-  const sorted = [...scoreResult].sort((a, b) => {
-    if (a.details.points !== b.details.points) {
-      return b.details.points - a.details.points;
-    }
-    return b.details.maxPropertiesSize - a.details.maxPropertiesSize;
-  });
+export const rankScoreResults = (
+  scoreResult: ScoreResult[],
+  criteria: readonly TiebreakCriterion[] = KINGDOMINO_TIEBREAK_CRITERIA,
+): FinalResult[] => {
+  const sorted = [...scoreResult].sort((a, b) =>
+    compareScores(a.details, b.details, criteria),
+  );
 
+  const lastCriterion = criteria.length - 1;
   const result: FinalResult[] = [];
-  if (sorted.length === 0) return result;
 
-  result.push({ ...sorted[0]!, position: 1 });
+  for (let i = 0; i < sorted.length; i++) {
+    const current = sorted[i]!;
+    const previous = result[i - 1];
+    const position =
+      previous &&
+      compareScores(previous.details, current.details, criteria) === 0
+        ? previous.position
+        : i + 1;
 
-  for (let i = 1; i < sorted.length; i++) {
-    const currentScore = sorted[i]!;
-    const previousScore = sorted[i - 1]!;
-    const isTie =
-      currentScore.details.points === previousScore.details.points &&
-      currentScore.details.maxPropertiesSize ===
-        previousScore.details.maxPropertiesSize;
+    // Deepest criterion compared against the players with the same points
+    let deepest = -1;
+    let tied = false;
+    for (const other of sorted) {
+      if (
+        other === current ||
+        other.details.points !== current.details.points
+      ) {
+        continue;
+      }
+      const index = firstDifferingCriterion(
+        current.details,
+        other.details,
+        criteria,
+      );
+      if (index === -1) tied = true;
+      deepest = Math.max(deepest, index === -1 ? lastCriterion : index);
+    }
 
     result.push({
-      ...currentScore,
-      position: isTie ? result[i - 1]!.position : i + 1,
+      ...current,
+      position,
+      tiebreaker: criteria[deepest] ?? null,
+      tied,
     });
   }
 
@@ -59,6 +90,9 @@ export const getResultUseCase: GetResultUseCase = (game) => {
         points: score.points,
         maxPropertiesSize: score.maxPropertiesSize,
         totalCrowns: score.totalCrowns,
+        ...(score.fireSymbols !== undefined && {
+          fireSymbols: score.fireSymbols,
+        }),
       },
       breakdown: score.breakdown,
     };
@@ -66,6 +100,6 @@ export const getResultUseCase: GetResultUseCase = (game) => {
 
   return ok({
     ...game,
-    result: rankScoreResults(scoreResult),
+    result: rankScoreResults(scoreResult, getTiebreakCriteria(game.mode.name)),
   });
 };
