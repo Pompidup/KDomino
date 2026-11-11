@@ -579,8 +579,11 @@ type Domino = {
   left: Tile;      // Left tile of the domino
   right: Tile;     // Right tile of the domino
   number: number;  // Unique identifier (1-48 in Classic)
+  letter?: string; // Age of Giants letter dominos only: "A" to "F"
 };
 ```
+
+The Age of Giants letter dominos (A-F) use the fractional numbers `0.01` (A) to `0.06` (F), so they sort before every numbered domino. Every other domino number is a positive integer.
 
 ### `RevealsDomino`
 

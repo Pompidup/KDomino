@@ -1,4 +1,8 @@
-import { GROUND } from "@core/domain/types/domino.js";
+import {
+  hasConsistentDominoLetter,
+  isValidDominoNumber,
+} from "@core/domain/entities/domino.js";
+import { type Domino, GROUND } from "@core/domain/types/domino.js";
 import type { Game } from "@core/domain/types/game.js";
 import { gameSteps } from "@core/domain/types/game.js";
 import { GRIDSIZE } from "@core/domain/types/kingdom.js";
@@ -263,6 +267,39 @@ const validatePlayers = (game: Game): ValidationIssue[] => {
   return issues;
 };
 
+/**
+ * Number and letter of one domino: a positive integer, or exactly the
+ * fractional number of an Age of Giants letter domino (A=0.01 ... F=0.06)
+ * carrying the matching letter. Returns whether the number can be checked
+ * for duplicates.
+ */
+const validateDominoNumber = (
+  domino: Domino,
+  path: string,
+  issues: ValidationIssue[],
+): boolean => {
+  if (!isValidDominoNumber(domino.number)) {
+    issues.push(
+      issue(
+        `${path}.number`,
+        "INVALID_DOMINO_NUMBER",
+        `Domino number must be a positive integer, or 0.01 to 0.06 for the letter dominoes A-F`,
+      ),
+    );
+    return false;
+  }
+  if (!hasConsistentDominoLetter(domino)) {
+    issues.push(
+      issue(
+        `${path}.letter`,
+        "INVALID_DOMINO_LETTER",
+        `Domino letter ${String(domino.letter)} does not match number ${domino.number}`,
+      ),
+    );
+  }
+  return true;
+};
+
 const validateDominoes = (game: Game): ValidationIssue[] => {
   const issues: ValidationIssue[] = [];
   const allNumbers = new Set<number>();
@@ -273,24 +310,18 @@ const validateDominoes = (game: Game): ValidationIssue[] => {
       const domino = game.dominoes[i]!;
       const path = `dominoes[${i}]`;
 
-      if (!isPositiveInteger(domino.number)) {
-        issues.push(
-          issue(
-            `${path}.number`,
-            "INVALID_DOMINO_NUMBER",
-            `Domino number must be a positive integer`,
-          ),
-        );
-      } else if (allNumbers.has(domino.number)) {
-        issues.push(
-          issue(
-            `${path}.number`,
-            "DUPLICATE_DOMINO_NUMBER",
-            `Duplicate domino number: ${domino.number}`,
-          ),
-        );
-      } else {
-        allNumbers.add(domino.number);
+      if (validateDominoNumber(domino, path, issues)) {
+        if (allNumbers.has(domino.number)) {
+          issues.push(
+            issue(
+              `${path}.number`,
+              "DUPLICATE_DOMINO_NUMBER",
+              `Duplicate domino number: ${domino.number}`,
+            ),
+          );
+        } else {
+          allNumbers.add(domino.number);
+        }
       }
       issues.push(...validateTile(domino.left, `${path}.left`));
       issues.push(...validateTile(domino.right, `${path}.right`));
@@ -315,24 +346,18 @@ const validateDominoes = (game: Game): ValidationIssue[] => {
       }
 
       const domino = revealed.domino;
-      if (!isPositiveInteger(domino.number)) {
-        issues.push(
-          issue(
-            `${path}.domino.number`,
-            "INVALID_DOMINO_NUMBER",
-            `Domino number must be a positive integer`,
-          ),
-        );
-      } else if (allNumbers.has(domino.number)) {
-        issues.push(
-          issue(
-            `${path}.domino.number`,
-            "DUPLICATE_DOMINO_NUMBER",
-            `Duplicate domino number: ${domino.number}`,
-          ),
-        );
-      } else {
-        allNumbers.add(domino.number);
+      if (validateDominoNumber(domino, `${path}.domino`, issues)) {
+        if (allNumbers.has(domino.number)) {
+          issues.push(
+            issue(
+              `${path}.domino.number`,
+              "DUPLICATE_DOMINO_NUMBER",
+              `Duplicate domino number: ${domino.number}`,
+            ),
+          );
+        } else {
+          allNumbers.add(domino.number);
+        }
       }
       issues.push(...validateTile(domino.left, `${path}.domino.left`));
       issues.push(...validateTile(domino.right, `${path}.domino.right`));
@@ -385,24 +410,18 @@ const validateDominoes = (game: Game): ValidationIssue[] => {
       if (lord.dominoPicked) {
         const path = `lords[${i}].dominoPicked`;
         const domino = lord.dominoPicked;
-        if (!isPositiveInteger(domino.number)) {
-          issues.push(
-            issue(
-              `${path}.number`,
-              "INVALID_DOMINO_NUMBER",
-              `Domino number must be a positive integer`,
-            ),
-          );
-        } else if (lordPickedNumbers.has(domino.number)) {
-          issues.push(
-            issue(
-              `${path}.number`,
-              "DUPLICATE_DOMINO_NUMBER",
-              `Duplicate domino number among lords: ${domino.number}`,
-            ),
-          );
-        } else {
-          lordPickedNumbers.add(domino.number);
+        if (validateDominoNumber(domino, path, issues)) {
+          if (lordPickedNumbers.has(domino.number)) {
+            issues.push(
+              issue(
+                `${path}.number`,
+                "DUPLICATE_DOMINO_NUMBER",
+                `Duplicate domino number among lords: ${domino.number}`,
+              ),
+            );
+          } else {
+            lordPickedNumbers.add(domino.number);
+          }
         }
         issues.push(...validateTile(domino.left, `${path}.left`));
         issues.push(...validateTile(domino.right, `${path}.right`));

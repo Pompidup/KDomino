@@ -48,7 +48,7 @@ After placing a domino that has a **footprint symbol**, the player **may** send 
 
 ## Dominos Per Turn
 
-Age of Giants always draws 5 dominos per turn. The line is sorted with the letter dominos (A-F, giants) first in alphabetical order, then by number. With fewer than 5 players, dominos are then discarded **at fixed positions of that line**, as shown in the official rulebook ("Setting up lines of dominoes"):
+Age of Giants always draws 5 dominos per turn. The line is sorted with the letter dominos (A-F, giants) first in alphabetical order, then by number: their `number` is `0.01` (A) to `0.06` (F), and `domino.letter` holds the letter to display (`validateGameState` accepts exactly these fractional numbers). With fewer than 5 players, dominos are then discarded **at fixed positions of that line**, as shown in the official rulebook ("Setting up lines of dominoes"):
 
 | Players | Dominos Drawn | Discarded positions (sorted line) | Dominos Presented |
 |---------|:------------:|:---------------------------------:|:-----------------:|
