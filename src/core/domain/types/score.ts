@@ -156,8 +156,9 @@ export type PlayerScore = {
   /**
    * `true` when the game is over: the score is the final score, identical
    * to the one returned by `getResults`. `false` during the game: the score
-   * is a live estimate of the current state (end-of-game-only bonuses such
-   * as Harmony are not included yet).
+   * is a live estimate of the current state (provisional bonuses; Harmony,
+   * Homo Habilis and the Harmony quest count their points while the complete
+   * kingdom is still reachable).
    */
   final: boolean;
   /** Detailed score */

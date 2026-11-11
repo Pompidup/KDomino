@@ -32,6 +32,64 @@ describe("Game Pass", () => {
     });
   });
 
+  test("should count the discarded domino of the lord's player", () => {
+    const base = createGameBuilder()
+      .withAllDefaults()
+      .withNextAction({
+        type: "action",
+        nextLord: "lord1-id",
+        nextAction: "pass",
+      })
+      .build();
+    const lord = base.lords[0]!;
+    const domino = {
+      number: 1,
+      left: { type: "wheat" as const, crowns: 0 },
+      right: { type: "wheat" as const, crowns: 0 },
+    };
+    // A full kingdom: the domino cannot be placed anywhere
+    const full = base.players.find((p) => p.id === lord.playerId)!;
+    const kingdom = full.kingdom.map((row) =>
+      row.map((tile) =>
+        tile.type === "empty" ? { type: "sea" as const, crowns: 0 } : tile,
+      ),
+    );
+    const game = {
+      ...base,
+      lords: base.lords.map((l) =>
+        l.id === lord.id ? { ...l, dominoPicked: domino } : l,
+      ),
+      players: base.players.map((p) =>
+        p.id === lord.playerId ? { ...p, kingdom } : p,
+      ),
+    };
+
+    const result = unwrap(discardDominoUseCase(game, "lord1-id"));
+
+    for (const player of result.players) {
+      expect(player.discardedDominoes ?? 0).toBe(
+        player.id === lord.playerId ? 1 : 0,
+      );
+    }
+  });
+
+  test("should not count a discard when the lord holds no domino", () => {
+    const initialGame = createGameBuilder()
+      .withAllDefaults()
+      .withNextAction({
+        type: "action",
+        nextLord: "lord1-id",
+        nextAction: "placeDomino",
+      })
+      .build();
+
+    const result = unwrap(discardDominoUseCase(initialGame, "lord1-id"));
+
+    for (const player of result.players) {
+      expect(player.discardedDominoes).toBeUndefined();
+    }
+  });
+
   test("should pass turn for last game turn", () => {
     // Arrange
     const initialGame = createGameBuilder()

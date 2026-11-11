@@ -47,6 +47,13 @@ export type Player = {
   cavemen?: PlacedCaveman[];
   /** Giants placed on the kingdom covering crowns (Age of Giants) */
   giants?: PlacedGiant[];
+  /**
+   * Dominoes the player had to discard (`discardDomino`) so far. Any discard
+   * makes Harmony / Homo Habilis / the Harmony quest unreachable. Absent
+   * (0) until the first discard; games saved before this field existed
+   * count only the discards made after they are loaded.
+   */
+  discardedDominoes?: number;
 };
 
 /**

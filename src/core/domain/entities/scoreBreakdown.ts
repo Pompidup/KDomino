@@ -6,11 +6,13 @@
  * Live (game in progress) vs final (game over):
  * - territories, Middle Kingdom / Empire of Fire, the Queen (current holder),
  *   buildings, Queendomino wealth (current coins), fire tokens, resources and totems (current majority holders),
- *   cavemen and every quest except Harmony are evaluated on the current state
- *   during the game and flagged `provisional: true`;
+ *   cavemen and the quests are evaluated on the current state during the game
+ *   and flagged `provisional: true`;
  * - Harmony, Homo Habilis and the Harmony quest require the complete kingdom
- *   (every received domino placed): they are only granted at the end of the
- *   game and are left out of the live breakdown.
+ *   (every received domino placed). During the game they are granted
+ *   provisionally while still reachable (`isHarmonyReachable`: no discard so
+ *   far and room left for the dominoes to come), 0 otherwise; at the end of
+ *   the game they require the complete kingdom.
  */
 import type { QuestTile } from "@core/domain/types/ageOfGiants.js";
 import { questTypes } from "@core/domain/types/ageOfGiants.js";
@@ -36,7 +38,12 @@ import {
   calculateWarriorGroupScore,
 } from "./caveman.js";
 import { getWealthPoints } from "./economy.js";
-import { checkCastleIsInMiddle, countDominoes } from "./kingdom.js";
+import {
+  dominoesReceivedPerPlayer,
+  isHarmonyReachable,
+  isKingdomComplete,
+} from "./harmony.js";
+import { checkCastleIsInMiddle } from "./kingdom.js";
 import { isOriginsMode, isTotemMode, isTribeMode } from "./originsHelpers.js";
 import { calculateOriginsFireBonus } from "./originsScore.js";
 import { calculateBuildingEndGameScore, getQueenBonus } from "./queen.js";
@@ -131,10 +138,6 @@ export const computeTerritories = (
  */
 export const isGameOver = (game: Pick<Game, "nextAction">): boolean =>
   game.nextAction.type === "step" && game.nextAction.step === "result";
-
-/** Every domino a player receives over the game (one per lord and turn). */
-const dominoesReceivedPerPlayer = (game: Game): number =>
-  game.rules.basic.lords * game.rules.basic.maxTurns;
 
 const queendominoBonuses = (
   game: Game,
@@ -269,25 +272,32 @@ const questBonuses = (
     return [];
   }
   const giants = player.giants ?? [];
+  // Live Harmony quest: its points while the complete kingdom is reachable
+  const livePoints = (quest: QuestTile): number | null =>
+    !final && quest.type === questTypes.harmony
+      ? isHarmonyReachable(game, player)
+        ? quest.points
+        : 0
+      : null;
 
-  return game.ageOfGiants.questTiles
-    .filter((quest: QuestTile) => final || quest.type !== questTypes.harmony)
-    .map(
-      (quest): ScoreBonus => ({
-        type: "quest",
-        label: questTypeToTranslationKey[quest.type],
-        points: calculateQuestBonus(
+  return game.ageOfGiants.questTiles.map(
+    (quest): ScoreBonus => ({
+      type: "quest",
+      label: questTypeToTranslationKey[quest.type],
+      points:
+        livePoints(quest) ??
+        calculateQuestBonus(
           quest,
           player.kingdom,
           giants,
           dominoesReceivedPerPlayer(game),
         ),
-        provisional: !final,
-        questId: quest.id,
-        questType: quest.type,
-        ...(quest.terrain && { terrain: quest.terrain }),
-      }),
-    );
+      provisional: !final,
+      questId: quest.id,
+      questType: quest.type,
+      ...(quest.terrain && { terrain: quest.terrain }),
+    }),
+  );
 };
 
 const extraRuleBonuses = (
@@ -319,22 +329,23 @@ const extraRuleBonuses = (
     }
 
     // Complete kingdom: "Harmony" (Classic/QD) or "Homo Habilis" (Origins).
-    // Every domino the player received must be in the kingdom (none was
-    // discarded): only decidable at the end of the game.
-    if (
-      final &&
-      (extraRule.name === "Harmony" || extraRule.name === "Homo Habilis")
-    ) {
+    // At the end of the game every domino the player received must be in the
+    // kingdom (none was discarded); during the game, the bonus is granted
+    // provisionally while it is still reachable.
+    if (extraRule.name === "Harmony" || extraRule.name === "Homo Habilis") {
       const isHarmony = extraRule.name === "Harmony";
       bonuses.push({
         type: isHarmony ? "harmony" : "homoHabilis",
         label: isHarmony
           ? TranslationKey.RULE_HARMONY
           : TranslationKey.RULE_HOMO_HABILIS,
-        points:
-          countDominoes(player.kingdom) === dominoesReceivedPerPlayer(game)
-            ? HARMONY_POINTS
-            : 0,
+        points: (
+          final
+            ? isKingdomComplete(game, player)
+            : isHarmonyReachable(game, player)
+        )
+          ? HARMONY_POINTS
+          : 0,
         provisional,
       });
     }

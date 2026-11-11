@@ -167,6 +167,8 @@ The castle tile must be at the exact center of the grid for the bonus to apply. 
 
 Every domino the player received must be in their kingdom: the bonus applies when the kingdom holds `lords × maxTurns` dominoes (12 dominoes for a 5x5 kingdom at any player count, solo included; 24 for a 7x7 kingdom with The Mighty Duel or in QueenDomino at 2 players). If the player ever had to pass/discard, the kingdom cannot be complete. The same check is used by "Homo Habilis" (Origins) and the Age of Giants *harmony* quest tile.
 
+During the game, `calculatePlayerScore` lists the bonus as provisional with its 5 points while it is still reachable (no discard so far, counted in `player.discardedDominoes`, and room left in the kingdom frame for the dominoes to come), 0 otherwise.
+
 ### The Mighty Duel
 
 > Use all **48 dominoes** and build a **7x7 kingdom**. For 2 players only.

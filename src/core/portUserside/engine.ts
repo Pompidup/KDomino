@@ -387,9 +387,11 @@ export type GameEngine = {
    * tokens, resources, totems, cavemen, quests, optional rules...).
    *
    * During the game the score is live (`final: false`): it reflects the
-   * current state and end-of-game-only bonuses (Harmony, Homo Habilis,
-   * Harmony quest) are not included yet. Once the game is over it is final
-   * and identical to the score returned by `getResults`.
+   * current state and every bonus is provisional. Harmony, Homo Habilis and
+   * the Harmony quest count their points while the complete kingdom is still
+   * reachable (no domino discarded, room left for the dominoes to come), 0
+   * otherwise. Once the game is over it is final and identical to the score
+   * returned by `getResults`.
    * @param command - Contains the game state (any stage) and the player id
    * @returns The player's score with its breakdown
    * @throws NotFoundError if the player is not in the game
