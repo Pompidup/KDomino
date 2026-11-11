@@ -466,6 +466,7 @@ describe("Queendomino rules", () => {
         },
       };
 
+      expect(engine.getMaxKnights({ game, playerId: player.id })).toBe(1);
       const next = engine.constructBuilding({
         game,
         lordId: g.nextAction.nextLord,
@@ -474,6 +475,7 @@ describe("Queendomino rules", () => {
       });
       const updated = next.players.find((p) => p.id === player.id)!;
       expect(updated.bonusKnights).toBe(1);
+      expect(engine.getMaxKnights({ game: next, playerId: player.id })).toBe(2);
       // The price is the cost of the spot (5 for the first spot), not the
       // tile's own cost
       const price = g.queendomino!.queenHolderId === player.id ? 4 : 5;

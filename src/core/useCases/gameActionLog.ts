@@ -413,6 +413,7 @@ export const wrapWithActionLog = (
     getValidGiantPositions: (cmd) => engine.getValidGiantPositions(cmd),
     getValidGiantTargets: (cmd) => engine.getValidGiantTargets(cmd),
     canSkipOptionalAction: (cmd) => engine.canSkipOptionalAction(cmd),
+    getMaxKnights: (cmd) => engine.getMaxKnights(cmd),
   };
 
   return {

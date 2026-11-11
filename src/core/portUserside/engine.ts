@@ -9,6 +9,7 @@ import type { CreateGameCommand } from "@application/commands/createGameCommand.
 import type { DiscardDominoCommand } from "@application/commands/discardDominoCommand.js";
 import type { GetDynastyResultCommand } from "@application/commands/getDynastyResultCommand.js";
 import type { GetExtraRulesCommand } from "@application/commands/getExtraRulesCommand.js";
+import type { GetMaxKnightsCommand } from "@application/commands/getMaxKnightsCommand.js";
 import type { GetModesCommand } from "@application/commands/getModesCommand.js";
 import type { GetResultCommand } from "@application/commands/getResultCommand.js";
 import type {
@@ -368,6 +369,17 @@ export type GameEngine = {
    * @returns True if the current action can be skipped
    */
   canSkipOptionalAction: (command: CanSkipOptionalActionCommand) => boolean;
+
+  /**
+   * Knight limit of one player (Queendomino): the starting knight plus the
+   * knights granted by building bonuses (`player.bonusKnights`). It counts
+   * every knight the player owns, placed or not: the knights still available
+   * are `getMaxKnights(...) - (player.knights?.length ?? 0)`.
+   * @param command - Contains the game state (any stage) and the player id
+   * @returns The knight limit, 0 in the modes without knights
+   * @throws NotFoundError if the player is not in the game
+   */
+  getMaxKnights: (command: GetMaxKnightsCommand) => number;
 
   /**
    * Calculates the mode-aware score of one player, with its breakdown

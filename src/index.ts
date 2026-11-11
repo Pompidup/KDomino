@@ -92,6 +92,7 @@ export {
   undo,
 } from "@core/useCases/gameHistory.js";
 export type { DynastyResult } from "@core/useCases/getDynastyResult.js";
+export type { GetMaxKnightsUseCase } from "@core/useCases/getMaxKnights.js";
 // Valid targets for extension actions
 export type {
   CavemanRecruitmentOption,
@@ -178,6 +179,7 @@ export const createGameEngine = (config: Partial<EngineConfig>): GameEngine => {
     getValidGiantPositionsHandler,
     getValidGiantTargetsHandler,
     canSkipOptionalActionHandler,
+    getMaxKnightsHandler,
     calculatePlayerScoreHandler,
   } = configureEngine(config);
 
@@ -220,6 +222,7 @@ export const createGameEngine = (config: Partial<EngineConfig>): GameEngine => {
     getValidGiantPositions: (command) => getValidGiantPositionsHandler(command),
     getValidGiantTargets: (command) => getValidGiantTargetsHandler(command),
     canSkipOptionalAction: (command) => canSkipOptionalActionHandler(command),
+    getMaxKnights: (command) => getMaxKnightsHandler(command),
     calculatePlayerScore: (command) => calculatePlayerScoreHandler(command),
   };
 
