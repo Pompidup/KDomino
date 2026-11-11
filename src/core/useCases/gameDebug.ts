@@ -378,6 +378,12 @@ export const wrapWithDebug = (
       logger,
       level,
     ),
+    getMaxKnights: wrapMethod(
+      "getMaxKnights",
+      engine.getMaxKnights,
+      logger,
+      level,
+    ),
     calculatePlayerScore: wrapMethod(
       "calculatePlayerScore",
       engine.calculatePlayerScore,

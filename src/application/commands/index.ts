@@ -9,6 +9,7 @@ export * from "./createGameCommand.js";
 export * from "./discardDominoCommand.js";
 export * from "./getDynastyResultCommand.js";
 export * from "./getExtraRulesCommand.js";
+export * from "./getMaxKnightsCommand.js";
 export * from "./getModesCommand.js";
 export * from "./getResultCommand.js";
 export * from "./getValidActionTargetsCommand.js";

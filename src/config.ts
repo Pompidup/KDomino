@@ -18,6 +18,7 @@ import { createGameHandler } from "@application/handlers/createGameHandler.js";
 import { discardDominoHandler } from "@application/handlers/discardDominoHandler.js";
 import { getDynastyResultHandler } from "@application/handlers/getDynastyResultHandler.js";
 import { getExtraRulesHandler } from "@application/handlers/getExtraRulesHandler.js";
+import { getMaxKnightsHandler } from "@application/handlers/getMaxKnightsHandler.js";
 import { getModesHandler } from "@application/handlers/getModesHandler.js";
 import { getResultHandler } from "@application/handlers/getResultHandler.js";
 import { getValidActionTargetsHandler } from "@application/handlers/getValidActionTargetsHandler.js";
@@ -53,6 +54,7 @@ import type { DebugOptions } from "@core/useCases/gameDebug.js";
 import type { GameEventCallbacks } from "@core/useCases/gameEvents.js";
 import { getDynastyResultUseCase } from "@core/useCases/getDynastyResult.js";
 import { getExtraRulesUseCase } from "@core/useCases/getExtraRules.js";
+import { getMaxKnightsUseCase } from "@core/useCases/getMaxKnights.js";
 import { getModesUseCase } from "@core/useCases/getModes.js";
 import { getResultUseCase } from "@core/useCases/getResult.js";
 import {
@@ -136,6 +138,7 @@ export type ConfiguredHandlers = {
   getValidGiantPositionsHandler: GameEngine["getValidGiantPositions"];
   getValidGiantTargetsHandler: GameEngine["getValidGiantTargets"];
   canSkipOptionalActionHandler: GameEngine["canSkipOptionalAction"];
+  getMaxKnightsHandler: GameEngine["getMaxKnights"];
   calculatePlayerScoreHandler: GameEngine["calculatePlayerScore"];
 };
 
@@ -345,6 +348,11 @@ export const configureEngine = (
       "canSkipOptionalAction",
       canSkipOptionalActionUseCase,
       (canSkip) => `${canSkip}`,
+    ),
+    getMaxKnightsHandler: getMaxKnightsHandler(
+      logger,
+      translator,
+      getMaxKnightsUseCase,
     ),
     calculatePlayerScoreHandler: calculatePlayerScoreHandler(
       logger,

@@ -331,7 +331,7 @@ The engine ships 18 building tiles (`src/datasources/buildings.json`). They are 
 
 A knight can only be placed on one of the two squares of the **domino you have just placed** (official rule: "Take a Knight and place it on the domino you just added"). These squares are exposed as `game.queendomino.lastPlacedPositions`. Other rules (official rulebook, action B):
 
-- Each player starts with **1 knight**; the `knight` immediate bonus of a building grants more (`player.bonusKnights`). A player can place at most `1 + bonusKnights` knights over the game.
+- Each player starts with **1 knight**; the `knight` immediate bonus of a building grants more (`player.bonusKnights`). A player can place at most `1 + bonusKnights` knights over the game: `engine.getMaxKnights({ game, playerId })` returns this limit (0 outside Queendomino), so a client does not need to hard-code the starting knight count.
 - **Up to 2 knights per turn**, one on each square of the domino just placed ("You may place up to 2 Knights during your turn, one for each square on the domino you just added"): after a knight is placed, `placeKnight` stays the next action while the other square can receive one; `skipOptionalAction` moves on to `constructBuilding`.
 - **Several knights may tax the same territory** ("You may place a Knight on a territory where other Knights have been placed in previous rounds"); a square holds at most one knight.
 - No knight can be placed after discarding a domino.
@@ -547,6 +547,8 @@ Read-only queries listing what these actions accept (same checks as the actions,
 | `getValidBuildingPositions` | `Position[]` | `constructBuilding` |
 | `getAffordableBuildings` | `BuildingTile[]` | `constructBuilding` |
 | `getValidDragonTargets` | `BuildingTile[]` | `useDragon` |
+
+`getMaxKnights({ game, playerId })` returns the knight limit of a player (`1 + bonusKnights`, any stage of the game; 0 outside Queendomino); the knights still available are `getMaxKnights(...) - (player.knights?.length ?? 0)`. It throws `NotFoundError` (`PLAYER_NOT_FOUND`) for an unknown player.
 
 ## New Types
 
