@@ -393,6 +393,10 @@ export const computePlayerScore = (
 ): PlayerScore => {
   const breakdown = computeScoreBreakdown(game, player, final);
   const { territories } = breakdown;
+  const totalCrowns = territories.reduce(
+    (total, territory) => total + territory.crowns,
+    0,
+  );
 
   return {
     playerId: player.id,
@@ -402,10 +406,12 @@ export const computePlayerScore = (
       (max, territory) => Math.max(max, territory.cells.length),
       0,
     ),
-    totalCrowns: territories.reduce(
-      (total, territory) => total + territory.crowns,
-      0,
-    ),
+    totalCrowns,
+    ...(isOriginsMode(game.mode.name) && {
+      fireSymbols:
+        totalCrowns +
+        (player.fireTokens ?? []).reduce((total, t) => total + t.fires, 0),
+    }),
     final,
     breakdown,
   };

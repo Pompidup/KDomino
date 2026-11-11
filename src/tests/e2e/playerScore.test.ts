@@ -97,8 +97,19 @@ describe("calculatePlayerScore", () => {
           points: final.points,
           maxPropertiesSize: final.maxPropertiesSize,
           totalCrowns: final.totalCrowns,
+          ...(final.fireSymbols !== undefined && {
+            fireSymbols: final.fireSymbols,
+          }),
         });
         expect(result.details.points).toBe(result.breakdown?.total);
+        // Origins: fire symbols = printed fires + fires of the tokens placed
+        const player = game.players.find((p) => p.id === result.playerId)!;
+        expect(final.fireSymbols).toBe(
+          game.mode.name.startsWith("KingdominoOrigins")
+            ? final.totalCrowns +
+                (player.fireTokens ?? []).reduce((n, t) => n + t.fires, 0)
+            : undefined,
+        );
 
         // The state returned by getResults can be scored as well
         expect(

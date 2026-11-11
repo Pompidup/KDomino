@@ -5,6 +5,12 @@ import { configureEngine, type EngineConfig } from "./config.js";
 
 // Commands
 export * from "@application/commands/index.js";
+// End-of-game tie-break criteria of a mode
+export {
+  getTiebreakCriteria,
+  KINGDOMINO_TIEBREAK_CRITERIA,
+  QUEENDOMINO_TIEBREAK_CRITERIA,
+} from "@core/domain/entities/ranking.js";
 export { validateGameState } from "@core/domain/entities/validateGameState.js";
 // Domain errors
 export * from "@core/domain/errors/domainErrors.js";

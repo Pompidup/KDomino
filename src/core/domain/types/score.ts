@@ -117,6 +117,24 @@ export type ScoreBreakdown = {
 };
 
 /**
+ * Criteria that break a tie on points at the end of the game, compared in the
+ * order of the game mode's official rules (see `getTiebreakCriteria`).
+ */
+export const tiebreakCriteria = {
+  /** Largest territory (`details.maxPropertiesSize`), crowns or not */
+  largestTerritory: "largestTerritory",
+  /**
+   * Most crowns counted for scoring (`details.totalCrowns`; Age of Giants:
+   * crowns covered by a giant excluded). Origins: most fire symbols, printed
+   * on the tiles and on the fire tokens (`details.fireSymbols`)
+   */
+  crowns: "crowns",
+} as const;
+
+/** Union of every tie-break criterion */
+export type TiebreakCriterion = ObjectValues<typeof tiebreakCriteria>;
+
+/**
  * Mode-aware score of one player, as returned by `calculatePlayerScore`.
  */
 export type PlayerScore = {
@@ -130,6 +148,11 @@ export type PlayerScore = {
   maxPropertiesSize: number;
   /** Total crowns counted in the kingdom */
   totalCrowns: number;
+  /**
+   * Kingdomino Origins only: fire symbols printed on the tiles
+   * (`totalCrowns`) plus the fires of the fire tokens placed (tie-break).
+   */
+  fireSymbols?: number;
   /**
    * `true` when the game is over: the score is the final score, identical
    * to the one returned by `getResults`. `false` during the game: the score

@@ -12,7 +12,9 @@
  *
  * Deliberate rule changes regenerate only the scenarios of the modes they
  * touch: the Queendomino rules aligned on the official rulebook (issue #26)
- * regenerated the QueenDomino and AgeOfGiants-QueenDomino scenarios only.
+ * regenerated the QueenDomino and AgeOfGiants-QueenDomino scenarios only; the
+ * crowns tie-break of Kingdomino (issue #31) reordered the two players tied
+ * on points and largest territory of "Classic 4p / seed bravo" only.
  */
 import { describe, expect, test } from "vitest";
 import {
