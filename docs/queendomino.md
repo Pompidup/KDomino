@@ -417,6 +417,8 @@ Queendomino scoring builds on the base Kingdomino scoring (territory size multip
 
 The final score returned by `getResults` (in `QueenDomino` and `AgeOfGiants-QueenDomino`) is: `base territory score + queen bonus + end-game building bonuses + wealth` (+ extra rules / Age of Giants quests when applicable).
 
+**Tie-break** (official rule, "End of the Game": "In the event of a tie, the player with the largest territory [...] wins. If there is still a tie, the players share the victory."): on equal points `getResults` compares the largest territory only, never the crowns (unlike Kingdomino), then gives the tied players the same position (`tiebreaker: "largestTerritory"`, `tied: true`).
+
 ## Complete Game Loop Example
 
 ```typescript
@@ -637,6 +639,7 @@ The engine follows the official Queendomino rulebook (Blue Orange, 2017, see [So
 - **Dragon** -- 1 coin, any building of the board, once per round for all players, back in its cave at each new round; the Queen's host cannot use it.
 - **Queen** -- hosted by the player who reaches the most towers, even on a tie; −1 coin on her host's construction costs (never below 0); at the end of the game, +1 crown on the host's largest territory.
 - **Wealth** -- 1 point per 3 unused coins at the end of the game.
+- **Tie-break** -- largest territory, then shared victory (no crowns criterion).
 
 Decisions and remaining differences:
 

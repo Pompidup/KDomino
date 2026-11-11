@@ -134,6 +134,10 @@ game.ageOfGiants?: {
 player.giants?: PlacedGiant[];  // Giants placed on the kingdom covering crowns
 ```
 
+## Tie-break
+
+The Age of Giants rulebook keeps the end of game of the base game. `AgeOfGiants` follows Kingdomino: largest territory, then most crowns, where a crown covered by a giant does not count (`totalCrowns`), then shared. `AgeOfGiants-QueenDomino` follows Queendomino: largest territory, then shared.
+
 ## Extra Rules
 
 Age of Giants modes (`AgeOfGiants` and `AgeOfGiants-QueenDomino`) support a **single** optional rule (see `src/datasources/rules.json`, `getExtraRules`):
