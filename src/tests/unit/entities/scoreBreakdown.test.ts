@@ -121,7 +121,7 @@ describe("computeTerritories", () => {
 });
 
 describe("computeScoreBreakdown", () => {
-  test("Harmony is only granted at the end of the game", () => {
+  test("Harmony is provisional during the game, final at the end", () => {
     const player = playerWith(completeKingdom());
     const extra = [rule("The middle Kingdom"), rule("Harmony")];
 
@@ -137,8 +137,14 @@ describe("computeScoreBreakdown", () => {
         points: 10,
         provisional: true,
       },
+      {
+        type: "harmony",
+        label: TranslationKey.RULE_HARMONY,
+        points: 5,
+        provisional: true,
+      },
     ]);
-    expect(live.total).toBe(24 + 10);
+    expect(live.total).toBe(24 + 10 + 5);
 
     const final = computeScoreBreakdown(
       buildGame({ players: [player], extra }),
@@ -152,6 +158,69 @@ describe("computeScoreBreakdown", () => {
       ],
     );
     expect(final.total).toBe(24 + 10 + 5);
+  });
+
+  test("live Harmony is 5 while reachable, 0 after a discard or without room left", () => {
+    const extra = [rule("Harmony")];
+    const harmonyOf = (player: Player) =>
+      computeScoreBreakdown(
+        buildGame({ players: [player], extra, over: false }),
+        player,
+        false,
+      ).bonuses.find((b) => b.type === "harmony");
+
+    // Early game: 1 domino placed, 11 to come
+    const early = kingdomWith([
+      { x: 5, y: 4, type: "wheat" },
+      { x: 6, y: 4, type: "wheat" },
+    ]);
+    expect(harmonyOf(playerWith(early))).toMatchObject({
+      points: 5,
+      provisional: true,
+    });
+
+    // A forced discard makes it unreachable for the rest of the game
+    expect(
+      harmonyOf(playerWith(early, { discardedDominoes: 1 })),
+    ).toMatchObject({ points: 0, provisional: true });
+
+    // A complete kingdom but one isolated empty square: the last domino can
+    // never be placed in the 5x5 frame
+    const holed = completeKingdom();
+    holed[2]![2] = { type: "empty", crowns: 0 };
+    holed[2]![3] = { type: "empty", crowns: 0 };
+    holed[6]![6] = { type: "empty", crowns: 0 };
+    holed[6]![5] = { type: "empty", crowns: 0 };
+    // Two separate holes of 2 squares: still room for the last 2 dominoes
+    expect(harmonyOf(playerWith(holed))).toMatchObject({ points: 5 });
+    // Holes of 1 and 3 squares: 4 empty squares but only one domino fits
+    holed[2]![3] = { type: "wheat", crowns: 0 };
+    holed[6]![4] = { type: "empty", crowns: 0 };
+    expect(harmonyOf(playerWith(holed))).toMatchObject({ points: 0 });
+  });
+
+  test("final Harmony needs the complete kingdom, whatever the discards", () => {
+    const extra = [rule("Harmony")];
+    const incomplete = playerWith(
+      kingdomWith([
+        { x: 5, y: 4, type: "wheat" },
+        { x: 6, y: 4, type: "wheat" },
+      ]),
+    );
+
+    const final = computeScoreBreakdown(
+      buildGame({ players: [incomplete], extra }),
+      incomplete,
+      true,
+    );
+    expect(final.bonuses).toEqual([
+      {
+        type: "harmony",
+        label: TranslationKey.RULE_HARMONY,
+        points: 0,
+        provisional: false,
+      },
+    ]);
   });
 
   test("Origins rules use their own bonus types and labels", () => {
@@ -343,7 +412,7 @@ describe("computeScoreBreakdown", () => {
     ]);
   });
 
-  test("Age of Giants: the Harmony quest only counts at the end", () => {
+  test("Age of Giants: the Harmony quest is provisional during the game", () => {
     const quests: QuestTile[] = [
       {
         id: 1,
@@ -384,7 +453,31 @@ describe("computeScoreBreakdown", () => {
         questType: "localTrade",
         terrain: "wheat",
       },
+      {
+        type: "quest",
+        label: TranslationKey.QUEST_HARMONY,
+        points: 5,
+        provisional: true,
+        questId: 9,
+        questType: "harmony",
+      },
     ]);
+
+    // A discard makes the Harmony quest unreachable
+    const discarded = { ...player, discardedDominoes: 1 };
+    const afterDiscard = computeScoreBreakdown(
+      buildGame({
+        players: [discarded],
+        mode: "AgeOfGiants",
+        over: false,
+        extension,
+      }),
+      discarded,
+      false,
+    );
+    expect(
+      afterDiscard.bonuses.find((b) => b.questType === "harmony"),
+    ).toMatchObject({ points: 0, provisional: true });
 
     const final = computeScoreBreakdown(
       buildGame({ players: [player], mode: "AgeOfGiants", extension }),
