@@ -644,6 +644,7 @@ type Player = {
   resources?: Resource[];          // Origins Totem/Tribe
   cavemen?: PlacedCaveman[];       // Origins Tribe
   giants?: PlacedGiant[];          // Age of Giants
+  discardedDominoes?: number;      // Dominoes discarded so far (discardDomino); any discard makes Harmony unreachable
 };
 ```
 
@@ -1178,7 +1179,7 @@ For an extension action, a bot enumerates the valid targets of the action (`getV
 | `placeGiant` (mandatory) | Crown that costs the deciding player the least — including a giant sent by an opponent (`ageOfGiants.pendingGiant`), where the targeted bot chooses the crown of its own kingdom. |
 | `sendGiant` | Giant and opponent with the best evaluation; when the opponent must choose the crown, it is assumed to cover the crown that costs it the least. |
 
-Domino picks and placements are mode-aware too: a placement is simulated on the kingdom (and, in Totem and Tribe, the resources of its squares are collected) and scored with the same evaluation, so the bots aim at Middle Kingdom, quests, fire regions, resources and totem majorities, and avoid covering crowns with giants. In Classic without extra rules the evaluation is the territory score, as before.
+Domino picks and placements are mode-aware too: a placement is simulated on the kingdom (and, in Totem and Tribe, the resources of its squares are collected) and scored with the same evaluation, so the bots aim at Middle Kingdom, quests, fire regions, resources and totem majorities, avoid covering crowns with giants, and avoid placements that leave no room for the dominoes to come when Harmony / Homo Habilis / the Harmony quest is in play (the live score counts these bonuses while still reachable). In Classic without extra rules the evaluation is the territory score, as before.
 
 `randomStrategy` stays random: it picks uniformly among the valid targets, "skip" counting as one more option when the action is optional. Its choices are seeded by the game seed (or id) and the decision point, never by `Math.random`: the same game replayed with the same seed gets the same decisions. Every built-in bot is deterministic for a given seed.
 
@@ -1784,12 +1785,12 @@ type ScoreBonus = {
 |---|---|---|---|
 | `middleKingdom` | Classic / Queendomino | `rule.middleKingdom` | "The middle Kingdom" rule is active (10 or 0) |
 | `empireOfFire` | Origins | `rule.empireOfFire` | "Empire of Fire" rule is active (10 or 0) |
-| `harmony` | Classic / Queendomino | `rule.harmony` | "Harmony" rule is active, **end of game only** (5 or 0) |
-| `homoHabilis` | Origins | `rule.homoHabilis` | "Homo Habilis" rule is active, **end of game only** (5 or 0) |
+| `harmony` | Classic / Queendomino | `rule.harmony` | "Harmony" rule is active (5 or 0; during the game: 5 while still reachable) |
+| `homoHabilis` | Origins | `rule.homoHabilis` | "Homo Habilis" rule is active (5 or 0; during the game: 5 while still reachable) |
 | `queen` | Queendomino, AoG-QD | `score.queen` | The player hosts the Queen (size of the largest territory) |
 | `building` | Queendomino, AoG-QD | `score.building` (`{{name}}`) | One per constructed building with an end-game scoring |
 | `wealth` | Queendomino, AoG-QD | `score.wealth` | Always (1 point per 3 unused coins) |
-| `quest` | Age of Giants | `quest.<questType>` | One per quest tile; the Harmony quest at the end of game only |
+| `quest` | Age of Giants | `quest.<questType>` | One per quest tile (the Harmony quest: its points while still reachable during the game) |
 | `totem` | Origins Totem | `score.totem<Resource>` | One per totem held by the player |
 | `resources` | Origins Totem | `score.resources` | Always (1 point per resource left) |
 | `hunterGatherer` | Origins Tribe | `caveman.<hunterType>` | One per recruited hunter-gatherer |
@@ -1800,6 +1801,6 @@ type ScoreBonus = {
 
 ### Live score vs final score
 
-- **Game in progress** (`final: false`): the score reflects the current state. Territories, The middle Kingdom / Empire of Fire, the Queen (current host), buildings, fire tokens, resources, totems (current resource-majority holders), cavemen and every quest except Harmony are evaluated now and flagged `provisional: true`: they can still change before the end.
-- **End-of-game-only bonuses**: Harmony, Homo Habilis and the Harmony quest need the complete kingdom (every received domino placed). They are not part of the live score and only appear once the game is over.
+- **Game in progress** (`final: false`): the score reflects the current state. Territories, The middle Kingdom / Empire of Fire, the Queen (current host), buildings, fire tokens, resources, totems (current resource-majority holders), cavemen and the quests are evaluated now and flagged `provisional: true`: they can still change before the end.
+- **Complete-kingdom bonuses** (Harmony, Homo Habilis, Harmony quest): at the end of the game they need the complete kingdom (every received domino placed). During the game they are listed as provisional with their points (5) **while still reachable**, 0 otherwise: reachable means the player has not discarded any domino (`player.discardedDominoes`, kept in the game state and serialized) **and** the dominoes still to come fit in the kingdom (some square frame of the kingdom size around the placed squares has room for that many dominoes; their terrains are unknown, so a later forced discard can still cost the bonus). Once lost, the bonus stays at 0. A client no longer needs to track the discards itself.
 - **Game over** (`nextAction.step === "result"`, `final: true`): every bonus is final (`provisional: false`) and the score is identical to the one returned by `getResults`.
