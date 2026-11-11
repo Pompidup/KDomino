@@ -440,6 +440,11 @@ const validateLords = (game: Game): ValidationIssue[] => {
     Array.isArray(game.players) ? game.players.map((p) => p.id) : [],
   );
   const lordIds = new Set<string>();
+  // On the last turn there is no domino left to pick: a lord ends its turn
+  // after its placement only.
+  const isLastTurn =
+    typeof game.rules?.basic?.maxTurns === "number" &&
+    game.turn === game.rules.basic.maxTurns;
 
   for (let i = 0; i < game.lords.length; i++) {
     const lord = game.lords[i]!;
@@ -483,7 +488,7 @@ const validateLords = (game: Game): ValidationIssue[] => {
       );
     }
 
-    if (lord.turnEnded && (!lord.hasPick || !lord.hasPlace)) {
+    if (lord.turnEnded && (!lord.hasPlace || (!lord.hasPick && !isLastTurn))) {
       issues.push(
         issue(
           path,

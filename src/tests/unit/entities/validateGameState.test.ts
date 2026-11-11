@@ -333,6 +333,28 @@ describe("validateGameState - lords", () => {
     expect(flagIssues).toHaveLength(1);
     expect(flagIssues[0]!.severity).toBe("warning");
   });
+
+  test("accepts turnEnded=true with hasPick=false on the last turn (nothing left to pick)", () => {
+    const game = validGame();
+    game.turn = game.rules.basic.maxTurns;
+    game.lords[0]!.turnEnded = true;
+    game.lords[0]!.hasPick = false;
+    game.lords[0]!.hasPlace = true;
+    expect(
+      findByCode(validateGameState(game), "INCONSISTENT_LORD_FLAGS"),
+    ).toHaveLength(0);
+  });
+
+  test("warns when turnEnded=true but hasPlace=false, even on the last turn", () => {
+    const game = validGame();
+    game.turn = game.rules.basic.maxTurns;
+    game.lords[0]!.turnEnded = true;
+    game.lords[0]!.hasPick = false;
+    game.lords[0]!.hasPlace = false;
+    expect(
+      findByCode(validateGameState(game), "INCONSISTENT_LORD_FLAGS"),
+    ).toHaveLength(1);
+  });
 });
 
 // ─── Tâche 6: Game flow ──────────────────────────────────────────
