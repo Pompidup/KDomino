@@ -1,0 +1,6 @@
+# pnpm settings for this single-package repository.
+# esbuild (used by tsup and vite) ships a postinstall script that pnpm blocks
+# unless it is allowed explicitly; without this file, every `pnpm install`
+# generates an untracked pnpm-workspace.yaml asking for a decision.
+allowBuilds:
+  esbuild: true
