@@ -7,6 +7,7 @@ export * from "./chooseDominoCommand.js";
 export * from "./constructBuildingCommand.js";
 export * from "./createGameCommand.js";
 export * from "./discardDominoCommand.js";
+export * from "./getBuildingPriceCommand.js";
 export * from "./getDynastyResultCommand.js";
 export * from "./getExtraRulesCommand.js";
 export * from "./getMaxKnightsCommand.js";

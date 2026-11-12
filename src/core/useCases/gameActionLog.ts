@@ -414,6 +414,9 @@ export const wrapWithActionLog = (
     getValidGiantTargets: (cmd) => engine.getValidGiantTargets(cmd),
     canSkipOptionalAction: (cmd) => engine.canSkipOptionalAction(cmd),
     getMaxKnights: (cmd) => engine.getMaxKnights(cmd),
+    getBuildingPrice: (cmd) => engine.getBuildingPrice(cmd),
+    getDragonPrice: (cmd) => engine.getDragonPrice(cmd),
+    getBuildersBoardPrices: (cmd) => engine.getBuildersBoardPrices(cmd),
   };
 
   return {

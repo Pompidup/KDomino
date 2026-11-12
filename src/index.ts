@@ -97,6 +97,13 @@ export {
   redo,
   undo,
 } from "@core/useCases/gameHistory.js";
+// Prices of the Queendomino actions
+export type {
+  BuildersBoardPrice,
+  GetBuildersBoardPricesUseCase,
+  GetBuildingPriceUseCase,
+  GetDragonPriceUseCase,
+} from "@core/useCases/getBuildingPrices.js";
 export type { DynastyResult } from "@core/useCases/getDynastyResult.js";
 export type { GetMaxKnightsUseCase } from "@core/useCases/getMaxKnights.js";
 // Valid targets for extension actions
@@ -186,6 +193,9 @@ export const createGameEngine = (config: Partial<EngineConfig>): GameEngine => {
     getValidGiantTargetsHandler,
     canSkipOptionalActionHandler,
     getMaxKnightsHandler,
+    getBuildingPriceHandler,
+    getDragonPriceHandler,
+    getBuildersBoardPricesHandler,
     calculatePlayerScoreHandler,
   } = configureEngine(config);
 
@@ -229,6 +239,9 @@ export const createGameEngine = (config: Partial<EngineConfig>): GameEngine => {
     getValidGiantTargets: (command) => getValidGiantTargetsHandler(command),
     canSkipOptionalAction: (command) => canSkipOptionalActionHandler(command),
     getMaxKnights: (command) => getMaxKnightsHandler(command),
+    getBuildingPrice: (command) => getBuildingPriceHandler(command),
+    getDragonPrice: (command) => getDragonPriceHandler(command),
+    getBuildersBoardPrices: (command) => getBuildersBoardPricesHandler(command),
     calculatePlayerScore: (command) => calculatePlayerScoreHandler(command),
   };
 

@@ -384,6 +384,24 @@ export const wrapWithDebug = (
       logger,
       level,
     ),
+    getBuildingPrice: wrapMethod(
+      "getBuildingPrice",
+      engine.getBuildingPrice,
+      logger,
+      level,
+    ),
+    getDragonPrice: wrapMethod(
+      "getDragonPrice",
+      engine.getDragonPrice,
+      logger,
+      level,
+    ),
+    getBuildersBoardPrices: wrapMethod(
+      "getBuildersBoardPrices",
+      engine.getBuildersBoardPrices,
+      logger,
+      level,
+    ),
     calculatePlayerScore: wrapMethod(
       "calculatePlayerScore",
       engine.calculatePlayerScore,

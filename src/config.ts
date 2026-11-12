@@ -16,6 +16,11 @@ import { chooseDominoHandler } from "@application/handlers/chooseDominoHandler.j
 import { constructBuildingHandler } from "@application/handlers/constructBuildingHandler.js";
 import { createGameHandler } from "@application/handlers/createGameHandler.js";
 import { discardDominoHandler } from "@application/handlers/discardDominoHandler.js";
+import {
+  getBuildersBoardPricesHandler,
+  getBuildingPriceHandler,
+  getDragonPriceHandler,
+} from "@application/handlers/getBuildingPriceHandler.js";
 import { getDynastyResultHandler } from "@application/handlers/getDynastyResultHandler.js";
 import { getExtraRulesHandler } from "@application/handlers/getExtraRulesHandler.js";
 import { getMaxKnightsHandler } from "@application/handlers/getMaxKnightsHandler.js";
@@ -52,6 +57,11 @@ import { createGameUseCase } from "@core/useCases/createGame.js";
 import { discardDominoUseCase } from "@core/useCases/discardDomino.js";
 import type { DebugOptions } from "@core/useCases/gameDebug.js";
 import type { GameEventCallbacks } from "@core/useCases/gameEvents.js";
+import {
+  getBuildersBoardPricesUseCase,
+  getBuildingPriceUseCase,
+  getDragonPriceUseCase,
+} from "@core/useCases/getBuildingPrices.js";
 import { getDynastyResultUseCase } from "@core/useCases/getDynastyResult.js";
 import { getExtraRulesUseCase } from "@core/useCases/getExtraRules.js";
 import { getMaxKnightsUseCase } from "@core/useCases/getMaxKnights.js";
@@ -139,6 +149,9 @@ export type ConfiguredHandlers = {
   getValidGiantTargetsHandler: GameEngine["getValidGiantTargets"];
   canSkipOptionalActionHandler: GameEngine["canSkipOptionalAction"];
   getMaxKnightsHandler: GameEngine["getMaxKnights"];
+  getBuildingPriceHandler: GameEngine["getBuildingPrice"];
+  getDragonPriceHandler: GameEngine["getDragonPrice"];
+  getBuildersBoardPricesHandler: GameEngine["getBuildersBoardPrices"];
   calculatePlayerScoreHandler: GameEngine["calculatePlayerScore"];
 };
 
@@ -353,6 +366,21 @@ export const configureEngine = (
       logger,
       translator,
       getMaxKnightsUseCase,
+    ),
+    getBuildingPriceHandler: getBuildingPriceHandler(
+      logger,
+      translator,
+      getBuildingPriceUseCase,
+    ),
+    getDragonPriceHandler: getDragonPriceHandler(
+      logger,
+      translator,
+      getDragonPriceUseCase,
+    ),
+    getBuildersBoardPricesHandler: getBuildersBoardPricesHandler(
+      logger,
+      translator,
+      getBuildersBoardPricesUseCase,
     ),
     calculatePlayerScoreHandler: calculatePlayerScoreHandler(
       logger,
