@@ -132,6 +132,14 @@ export const calculateKnightTax = (
 ): number => countTerritorySquares(kingdom, position);
 
 /**
+ * Whether the player still has a knight to place: fewer knights placed than
+ * the knights they own (`getMaxKnights`: the starting knight plus the knights
+ * granted by building bonuses).
+ */
+export const hasKnightAvailable = (player: Player): boolean =>
+  (player.knights ?? []).length < getMaxKnights(player);
+
+/**
  * Whether a knight can be placed at `position`.
  *
  * Official Queendomino rule (action B, "Have 1 or 2 Knights collect tax on
@@ -152,8 +160,8 @@ export const canPlaceKnight = (
   position: Position,
   allowedPositions?: Position[],
 ): boolean => {
+  if (!hasKnightAvailable(player)) return false;
   const knights = player.knights ?? [];
-  if (knights.length >= getMaxKnights(player)) return false;
 
   if (
     allowedPositions !== undefined &&

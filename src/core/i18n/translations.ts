@@ -118,6 +118,7 @@ export const TranslationKey = {
   // Queendomino errors
   ERROR_CANNOT_PLACE_KNIGHT: "error.cannotPlaceKnight",
   ERROR_MAX_KNIGHTS_REACHED: "error.maxKnightsReached",
+  /** @deprecated `KNIGHT_TERRITORY_OCCUPIED` is no longer returned (3.7.0). */
   ERROR_KNIGHT_TERRITORY_OCCUPIED: "error.knightTerritoryOccupied",
   ERROR_CANNOT_AFFORD_BUILDING: "error.cannotAffordBuilding",
   ERROR_NO_CONSTRUCTION_SQUARE: "error.noConstructionSquare",
@@ -281,7 +282,7 @@ export const defaultTranslations: Record<TranslationKeyType, string> = {
   // Queendomino errors
   [TranslationKey.ERROR_CANNOT_PLACE_KNIGHT]: "Cannot place knight here",
   [TranslationKey.ERROR_MAX_KNIGHTS_REACHED]:
-    "Maximum number of knights reached (3)",
+    "Maximum number of knights reached: every knight you own is already placed",
   [TranslationKey.ERROR_KNIGHT_TERRITORY_OCCUPIED]:
     "This territory already has a knight",
   [TranslationKey.ERROR_CANNOT_AFFORD_BUILDING]:
@@ -462,7 +463,7 @@ export const frenchTranslations: Record<TranslationKeyType, string> = {
   [TranslationKey.ERROR_CANNOT_PLACE_KNIGHT]:
     "Impossible de placer un chevalier ici",
   [TranslationKey.ERROR_MAX_KNIGHTS_REACHED]:
-    "Nombre maximal de chevaliers atteint (3)",
+    "Nombre maximal de chevaliers atteint : tous vos chevaliers sont déjà placés",
   [TranslationKey.ERROR_KNIGHT_TERRITORY_OCCUPIED]:
     "Ce territoire a déjà un chevalier",
   [TranslationKey.ERROR_CANNOT_AFFORD_BUILDING]:

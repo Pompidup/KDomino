@@ -1,4 +1,8 @@
-import { canPlaceKnight, placeKnight } from "@core/domain/entities/knight.js";
+import {
+  canPlaceKnight,
+  hasKnightAvailable,
+  placeKnight,
+} from "@core/domain/entities/knight.js";
 import { nextQueenDominoAction } from "@core/domain/entities/lord.js";
 import { ErrorCode } from "@core/domain/errors/domainErrors.js";
 import type {
@@ -62,6 +66,12 @@ export const placeKnightUseCase: PlaceKnightUseCase = (
   }
 
   const { player: currentPlayer, allowedPositions } = context.value;
+
+  // Every knight the player owns is already placed: the limit is the cause,
+  // whatever the square
+  if (!hasKnightAvailable(currentPlayer)) {
+    return err(ErrorCode.MAX_KNIGHTS_REACHED);
+  }
 
   if (
     !canPlaceKnight(

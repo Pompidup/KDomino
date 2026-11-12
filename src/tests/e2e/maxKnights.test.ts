@@ -2,7 +2,11 @@
  * `getMaxKnights` (GitHub #30): the knight limit of a player is exported, so
  * a client no longer copies the starting knight count of the rulebook.
  */
-import { ErrorCode, NotFoundError } from "@core/domain/errors/domainErrors.js";
+import {
+  ActionExecutionError,
+  ErrorCode,
+  NotFoundError,
+} from "@core/domain/errors/domainErrors.js";
 import {
   type GameState,
   type GameWithNextAction,
@@ -13,7 +17,11 @@ import { wrapWithActionLog } from "@core/useCases/gameActionLog.js";
 import { wrapWithDebug } from "@core/useCases/gameDebug.js";
 import { wrapWithEvents } from "@core/useCases/gameEvents.js";
 import { describe, expect, test } from "vitest";
-import { createGameEngine } from "../../index.js";
+import {
+  createGameEngine,
+  createTranslator,
+  frenchTranslations,
+} from "../../index.js";
 
 const engine = createGameEngine({});
 
@@ -120,6 +128,63 @@ describe("getMaxKnights", () => {
       // No knight left: the second square of the domino is refused
       expect(engine.getValidKnightPositions({ game: next })).toEqual([]);
     });
+
+    test("placeKnight throws MAX_KNIGHTS_REACHED once every knight is placed", () => {
+      const g = advanceTo(start(mode, "max-knights-reached"), "placeKnight");
+      const player = currentPlayer(g);
+      const [square] = engine.getValidKnightPositions({ game: g });
+      // Every knight the player owns is already placed elsewhere
+      const exhausted: GameWithNextAction = {
+        ...g,
+        players: g.players.map((p) =>
+          p.id === player.id
+            ? {
+                ...p,
+                knights: Array.from(
+                  { length: engine.getMaxKnights({ game: g, playerId: p.id }) },
+                  () => ({ playerId: p.id, position: { x: 4, y: 4 } }),
+                ),
+              }
+            : p,
+        ),
+      };
+      // Consistent with the query: no square is offered
+      expect(engine.getValidKnightPositions({ game: exhausted })).toEqual([]);
+
+      const act = () =>
+        engine.placeKnight({
+          game: exhausted,
+          lordId: g.nextAction.nextLord,
+          position: square!,
+        });
+      expect(act).toThrowError(ActionExecutionError);
+      try {
+        act();
+      } catch (error) {
+        expect((error as ActionExecutionError).code).toBe(
+          ErrorCode.MAX_KNIGHTS_REACHED,
+        );
+        // The message no longer hard-codes a knight count
+        expect((error as Error).message).not.toMatch(/\d/);
+      }
+    });
+
+    test("an invalid square with a knight available is still CANNOT_PLACE_KNIGHT", () => {
+      const g = advanceTo(start(mode, "max-knights-square"), "placeKnight");
+      try {
+        engine.placeKnight({
+          game: g,
+          lordId: g.nextAction.nextLord,
+          // The castle never accepts a knight
+          position: { x: 4, y: 4 },
+        });
+        expect.unreachable();
+      } catch (error) {
+        expect((error as ActionExecutionError).code).toBe(
+          ErrorCode.CANNOT_PLACE_KNIGHT,
+        );
+      }
+    });
   });
 
   test.each([
@@ -130,6 +195,17 @@ describe("getMaxKnights", () => {
     const game = start(mode, "max-knights-none");
     for (const player of game.players) {
       expect(engine.getMaxKnights({ game, playerId: player.id })).toBe(0);
+    }
+  });
+
+  test("the MAX_KNIGHTS_REACHED messages do not hard-code a knight count", () => {
+    for (const translator of [
+      createTranslator(),
+      createTranslator(frenchTranslations),
+    ]) {
+      const message = translator.t("error.maxKnightsReached");
+      expect(message).not.toBe("error.maxKnightsReached");
+      expect(message).not.toMatch(/\d/);
     }
   });
 
