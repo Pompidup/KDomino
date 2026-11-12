@@ -215,6 +215,7 @@ const engine = createGameEngine({
 | `canPlaceDomino` | Check if any placement exists |
 | `getValidDominoPicks` | Dominoes the lord to play may pick (Neolithic reservations included) |
 | `calculatePlayerScore` | Mode-aware live (or final) score of one player, with its breakdown |
+| `getLiveRanking` | Ranking of the players at any stage, as `getResults` would rank them now |
 | `serialize` / `deserialize` | Save and restore game state |
 | `getDynastyResults` | Aggregate scores from multiple games |
 

@@ -10,6 +10,7 @@ export * from "./discardDominoCommand.js";
 export * from "./getBuildingPriceCommand.js";
 export * from "./getDynastyResultCommand.js";
 export * from "./getExtraRulesCommand.js";
+export * from "./getLiveRankingCommand.js";
 export * from "./getMaxKnightsCommand.js";
 export * from "./getModesCommand.js";
 export * from "./getResultCommand.js";

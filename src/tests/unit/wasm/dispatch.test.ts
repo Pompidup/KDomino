@@ -50,6 +50,18 @@ describe("WASM dispatch", () => {
     }
   });
 
+  it("should rank the players with getLiveRanking", () => {
+    let game = engine.createGame({ mode: "Classic" });
+    game = engine.addPlayers({ game, players: ["Alice", "Bobby"] });
+
+    const response = dispatch(engine, {
+      method: "getLiveRanking",
+      params: { game },
+    });
+
+    expect(response).toEqual({ result: engine.getLiveRanking({ game }) });
+  });
+
   it("should return error for unknown method", () => {
     const response = dispatch(engine, {
       method: "unknownMethod",

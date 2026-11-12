@@ -81,6 +81,7 @@ The WASM module uses a **JSON RPC protocol** over stdin/stdout.
 | `serialize` | `{ game }` | `string` |
 | `deserialize` | `{ json }` | `GameState` |
 | `getDynastyResults` | `{ games }` | `DynastyResult[]` |
+| `getLiveRanking` | `{ game }` | `FinalResult[]` |
 
 ## Usage examples
 

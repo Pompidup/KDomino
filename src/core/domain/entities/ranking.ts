@@ -1,6 +1,8 @@
 /**
- * End-of-game ranking: points first, then the tie-break criteria of the game
- * mode's official rules, then a shared position.
+ * Ranking of the players: points first, then the tie-break criteria of the
+ * game mode's official rules, then a shared position. The single ranking code
+ * of the engine: `getResults` ranks the final scores, `getLiveRanking` the
+ * live scores (provisional during the game, final once it is over).
  *
  * - Kingdomino (Classic, Mighty Duel, solo) and Age of Giants: "In case of a
  *   tie, the player with the most extended property (whether he owns any
@@ -16,11 +18,18 @@
  *   player with the largest territory [...] wins. If there is still a tie,
  *   the players share the victory." (no crowns criterion).
  */
-import type { Score } from "@core/domain/types/game.js";
+import type {
+  FinalResult,
+  Game,
+  Score,
+  ScoreResult,
+} from "@core/domain/types/game.js";
 import {
+  type PlayerScore,
   type TiebreakCriterion,
   tiebreakCriteria,
 } from "@core/domain/types/score.js";
+import { computePlayerScore, isGameOver } from "./scoreBreakdown.js";
 
 /** Kingdomino, Age of Giants and Origins: largest territory, then crowns */
 export const KINGDOMINO_TIEBREAK_CRITERIA: readonly TiebreakCriterion[] = [
@@ -89,3 +98,100 @@ export const compareScores = (
   const criterion = criteria[index]!;
   return tiebreakValue(b, criterion) - tiebreakValue(a, criterion);
 };
+
+/**
+ * Ranks scored players: by points, then by the tie-break criteria of the game
+ * mode (`getTiebreakCriteria`; default: Kingdomino, largest territory then
+ * crowns). Players equal on points and on every criterion share the
+ * position. Each result tells which criterion ranked it among the players
+ * with the same points (`tiebreaker`) and whether it shares its position
+ * (`tied`).
+ */
+export const rankScoreResults = (
+  scoreResult: ScoreResult[],
+  criteria: readonly TiebreakCriterion[] = KINGDOMINO_TIEBREAK_CRITERIA,
+): FinalResult[] => {
+  const sorted = [...scoreResult].sort((a, b) =>
+    compareScores(a.details, b.details, criteria),
+  );
+
+  const lastCriterion = criteria.length - 1;
+  const result: FinalResult[] = [];
+
+  for (let i = 0; i < sorted.length; i++) {
+    const current = sorted[i]!;
+    const previous = result[i - 1];
+    const position =
+      previous &&
+      compareScores(previous.details, current.details, criteria) === 0
+        ? previous.position
+        : i + 1;
+
+    // Deepest criterion compared against the players with the same points
+    let deepest = -1;
+    let tied = false;
+    for (const other of sorted) {
+      if (
+        other === current ||
+        other.details.points !== current.details.points
+      ) {
+        continue;
+      }
+      const index = firstDifferingCriterion(
+        current.details,
+        other.details,
+        criteria,
+      );
+      if (index === -1) tied = true;
+      deepest = Math.max(deepest, index === -1 ? lastCriterion : index);
+    }
+
+    result.push({
+      ...current,
+      position,
+      tiebreaker: criteria[deepest] ?? null,
+      tied,
+    });
+  }
+
+  return result;
+};
+
+/**
+ * Ranking entry of a scored player: the tie-break values of its score
+ * (`details`) and its breakdown.
+ */
+export const toScoreResult = (score: PlayerScore): ScoreResult => ({
+  playerId: score.playerId,
+  playerName: score.playerName,
+  details: {
+    points: score.points,
+    maxPropertiesSize: score.maxPropertiesSize,
+    totalCrowns: score.totalCrowns,
+    ...(score.fireSymbols !== undefined && {
+      fireSymbols: score.fireSymbols,
+    }),
+  },
+  breakdown: score.breakdown,
+});
+
+/**
+ * Ranks every player of a game: each player is scored with the mode-aware
+ * score breakdown (`computePlayerScore`, the computation of
+ * `calculatePlayerScore`), then ranked by `rankScoreResults` with the
+ * tie-break criteria of the mode.
+ *
+ * @param final - `true` to rank the final scores (end of the game), `false`
+ * for the live scores; default: final once the game is over (`isGameOver`),
+ * like `calculatePlayerScore`.
+ */
+export const rankPlayers = (
+  game: Game,
+  final: boolean = isGameOver(game),
+): FinalResult[] =>
+  rankScoreResults(
+    game.players.map((player) =>
+      toScoreResult(computePlayerScore(game, player, final)),
+    ),
+    getTiebreakCriteria(game.mode.name),
+  );

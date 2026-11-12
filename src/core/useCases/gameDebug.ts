@@ -408,5 +408,11 @@ export const wrapWithDebug = (
       logger,
       level,
     ),
+    getLiveRanking: wrapMethod(
+      "getLiveRanking",
+      engine.getLiveRanking,
+      logger,
+      level,
+    ),
   };
 };

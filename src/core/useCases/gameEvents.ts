@@ -218,6 +218,7 @@ export const wrapWithEvents = (
     getDragonPrice: (cmd) => engine.getDragonPrice(cmd),
     getBuildersBoardPrices: (cmd) => engine.getBuildersBoardPrices(cmd),
     calculatePlayerScore: (cmd) => engine.calculatePlayerScore(cmd),
+    getLiveRanking: (cmd) => engine.getLiveRanking(cmd),
 
     // Setup methods — emit events after execution
     createGame: (cmd) => {
