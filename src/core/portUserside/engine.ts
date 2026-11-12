@@ -14,6 +14,7 @@ import type {
 } from "@application/commands/getBuildingPriceCommand.js";
 import type { GetDynastyResultCommand } from "@application/commands/getDynastyResultCommand.js";
 import type { GetExtraRulesCommand } from "@application/commands/getExtraRulesCommand.js";
+import type { GetLiveRankingCommand } from "@application/commands/getLiveRankingCommand.js";
 import type { GetMaxKnightsCommand } from "@application/commands/getMaxKnightsCommand.js";
 import type { GetModesCommand } from "@application/commands/getModesCommand.js";
 import type { GetResultCommand } from "@application/commands/getResultCommand.js";
@@ -46,6 +47,7 @@ import type { UseDragonCommand } from "@application/commands/useDragonCommand.js
 import type {
   BuildingTile,
   ExtraRule,
+  FinalResult,
   GameMode,
   GameState,
   GameWithNextAction,
@@ -439,4 +441,22 @@ export type GameEngine = {
    * @throws NotFoundError if the player is not in the game
    */
   calculatePlayerScore: (command: CalculatePlayerScoreCommand) => PlayerScore;
+
+  /**
+   * Ranking of the players at any stage of the game: the ranking `getResults`
+   * would give if the game ended now. Same shape and same ranking code as
+   * the `result` of `getResults` (points, then the tie-break criteria of the
+   * mode, `tiebreaker`, `tied`, shared positions), computed on the scores of
+   * `calculatePlayerScore`: live during the game (provisional bonuses
+   * included), final once it is over — then strictly identical to the
+   * `result` of `getResults`.
+   *
+   * Before `startGame` it does not throw: [] without players, otherwise every
+   * player has the same score (castle only: 0 points plus the provisional
+   * bonuses of the mode and options, e.g. Queendomino Wealth, Harmony) and
+   * they all share position 1 (`tied: true` with 2+ players).
+   * @param command - Contains the game state (any stage)
+   * @returns One entry per player, sorted by position
+   */
+  getLiveRanking: (command: GetLiveRankingCommand) => FinalResult[];
 };

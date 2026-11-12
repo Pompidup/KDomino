@@ -23,6 +23,7 @@ import {
 } from "@application/handlers/getBuildingPriceHandler.js";
 import { getDynastyResultHandler } from "@application/handlers/getDynastyResultHandler.js";
 import { getExtraRulesHandler } from "@application/handlers/getExtraRulesHandler.js";
+import { getLiveRankingHandler } from "@application/handlers/getLiveRankingHandler.js";
 import { getMaxKnightsHandler } from "@application/handlers/getMaxKnightsHandler.js";
 import { getModesHandler } from "@application/handlers/getModesHandler.js";
 import { getResultHandler } from "@application/handlers/getResultHandler.js";
@@ -64,6 +65,7 @@ import {
 } from "@core/useCases/getBuildingPrices.js";
 import { getDynastyResultUseCase } from "@core/useCases/getDynastyResult.js";
 import { getExtraRulesUseCase } from "@core/useCases/getExtraRules.js";
+import { getLiveRankingUseCase } from "@core/useCases/getLiveRanking.js";
 import { getMaxKnightsUseCase } from "@core/useCases/getMaxKnights.js";
 import { getModesUseCase } from "@core/useCases/getModes.js";
 import { getResultUseCase } from "@core/useCases/getResult.js";
@@ -153,6 +155,7 @@ export type ConfiguredHandlers = {
   getDragonPriceHandler: GameEngine["getDragonPrice"];
   getBuildersBoardPricesHandler: GameEngine["getBuildersBoardPrices"];
   calculatePlayerScoreHandler: GameEngine["calculatePlayerScore"];
+  getLiveRankingHandler: GameEngine["getLiveRanking"];
 };
 
 export const configureEngine = (
@@ -386,6 +389,11 @@ export const configureEngine = (
       logger,
       translator,
       calculatePlayerScoreUseCase,
+    ),
+    getLiveRankingHandler: getLiveRankingHandler(
+      logger,
+      translator,
+      getLiveRankingUseCase,
     ),
   };
 };

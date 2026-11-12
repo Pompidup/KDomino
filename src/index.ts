@@ -105,6 +105,8 @@ export type {
   GetDragonPriceUseCase,
 } from "@core/useCases/getBuildingPrices.js";
 export type { DynastyResult } from "@core/useCases/getDynastyResult.js";
+// Live ranking (ranking of getResults on the live scores)
+export type { GetLiveRankingUseCase } from "@core/useCases/getLiveRanking.js";
 export type { GetMaxKnightsUseCase } from "@core/useCases/getMaxKnights.js";
 // Valid targets for extension actions
 export type {
@@ -197,6 +199,7 @@ export const createGameEngine = (config: Partial<EngineConfig>): GameEngine => {
     getDragonPriceHandler,
     getBuildersBoardPricesHandler,
     calculatePlayerScoreHandler,
+    getLiveRankingHandler,
   } = configureEngine(config);
 
   let engine: GameEngine = {
@@ -243,6 +246,7 @@ export const createGameEngine = (config: Partial<EngineConfig>): GameEngine => {
     getDragonPrice: (command) => getDragonPriceHandler(command),
     getBuildersBoardPrices: (command) => getBuildersBoardPricesHandler(command),
     calculatePlayerScore: (command) => calculatePlayerScoreHandler(command),
+    getLiveRanking: (command) => getLiveRankingHandler(command),
   };
 
   if (config.events) {

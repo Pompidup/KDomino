@@ -119,6 +119,7 @@ All methods are available on the `GameEngine` object returned by `createGameEngi
 | `calculateScore` | `CalculateScoreCommand` | `Score` | Calculate the score for a single kingdom (live scoring). |
 | `getDynastyResults` | `GetDynastyResultCommand` | `DynastyResult[]` | Aggregate results from multiple completed games. |
 | `calculatePlayerScore` | `CalculatePlayerScoreCommand` | `PlayerScore` | Mode-aware score of one player with its breakdown, live during the game and final once it is over. See [Score Breakdown](#score-breakdown). |
+| `getLiveRanking` | `GetLiveRankingCommand` | `FinalResult[]` | Ranking of the players at any stage of the game: the ranking `getResults` would give if the game ended now, on the live scores of `calculatePlayerScore`. Identical to the `result` of `getResults` once the game is over. See [Live ranking](#live-ranking-getliveranking). |
 
 ### Query Methods
 
@@ -257,6 +258,14 @@ type DiscardDominoCommand = {
 ```typescript
 type GetResultCommand = {
   game: GameState;
+};
+```
+
+### `GetLiveRankingCommand`
+
+```typescript
+type GetLiveRankingCommand = {
+  game: Game; // Any stage: not started, in progress, over, or the state returned by getResults
 };
 ```
 
@@ -577,6 +586,8 @@ type TiebreakCriterion = "largestTerritory" | "crowns"; // tiebreakCriteria
 | `QueenDomino`, `AgeOfGiants-QueenDomino` | Largest territory, then shared (no crowns criterion) |
 
 `tiebreaker` is the last criterion compared for the player: with three players at 50 points, A (largest territory 10), B (8, 5 crowns) and C (8, 3 crowns), A gets `largestTerritory`, B and C `crowns`. When a tie remains, `tiebreaker` is the last criterion of the mode and `tied` is `true`. A client can explain the ranking from these two fields and `details`. `getTiebreakCriteria(modeName)` returns the criteria of a mode (`KINGDOMINO_TIEBREAK_CRITERIA`, `QUEENDOMINO_TIEBREAK_CRITERIA`). Results computed by an earlier version of the engine have neither field.
+
+`getLiveRanking` applies the same ranking (same code, same fields) at any stage of the game, on the live scores: see [Live ranking](#live-ranking-getliveranking).
 
 ### `DynastyResult`
 
@@ -1882,3 +1893,24 @@ type ScoreBonus = {
 - **Game in progress** (`final: false`): the score reflects the current state. Territories, The middle Kingdom / Empire of Fire, the Queen (current host), buildings, fire tokens, resources, totems (current resource-majority holders), cavemen and the quests are evaluated now and flagged `provisional: true`: they can still change before the end.
 - **Complete-kingdom bonuses** (Harmony, Homo Habilis, Harmony quest): at the end of the game they need the complete kingdom (every received domino placed). During the game they are listed as provisional with their points (5) **while still reachable**, 0 otherwise: reachable means the player has not discarded any domino (`player.discardedDominoes`, kept in the game state and serialized) **and** the dominoes still to come fit in the kingdom (some square frame of the kingdom size around the placed squares has room for that many dominoes; their terrains are unknown, so a later forced discard can still cost the bonus). Once lost, the bonus stays at 0. A client no longer needs to track the discards itself.
 - **Game over** (`nextAction.step === "result"`, `final: true`): every bonus is final (`provisional: false`) and the score is identical to the one returned by `getResults`.
+
+### Live ranking (`getLiveRanking`)
+
+```typescript
+getLiveRanking: (command: GetLiveRankingCommand) => FinalResult[];
+```
+
+The ranking `getResults` would give if the game ended now, to display a scoreboard during the game without re-implementing the ranking of the mode. `getResults` and `getLiveRanking` share the same code: every player is scored by `calculatePlayerScore`'s computation, then ranked by points and by the [tie-break criteria of the mode](#finalresult) (largest territory then crowns in Kingdomino / Age of Giants, largest region then fire symbols — printed and on fire tokens — in Origins, largest territory only in Queendomino / Age of Giants + Queendomino), players still tied sharing the position. Only the scores differ:
+
+- **During the game**: live scores (`breakdown` and `details` equal to `calculatePlayerScore` for each player, every bonus `provisional: true`, Harmony / Homo Habilis / Harmony quest counted while still reachable). The ranking can change until the end.
+- **Game over** (`result` step, or the state returned by `getResults`): final scores; the array is strictly identical to the `result` of `getResults`.
+- **Before `startGame`**: it does not throw. Without players (after `createGame`) it returns `[]`. Once players are added, every kingdom is the castle alone, so every player has the same score — 0 points in most modes, plus the provisional bonuses of the mode and of the options already chosen (e.g. Queendomino Wealth of the 7 starting coins: 2 points; The middle Kingdom: 10; Harmony, Homo Habilis or the Age of Giants Harmony quest: 5) — and they all share position 1 (`tied: true`, `tiebreaker` = last criterion of the mode). A solo player is first with `tiebreaker: null`, `tied: false`.
+
+Entries are sorted by position (`FinalResult`: `position`, `tiebreaker`, `tied`, `details`, `breakdown`).
+
+```typescript
+const ranking = engine.getLiveRanking({ game });
+for (const { position, playerName, details, tied } of ranking) {
+  console.log(`${position}${tied ? ' (tie)' : ''}. ${playerName}: ${details.points}`);
+}
+```
