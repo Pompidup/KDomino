@@ -93,6 +93,9 @@ All methods are available on the `GameEngine` object returned by `createGameEngi
 | `useDragon` | `UseDragonCommand` | `GameState` | Bribe the dragon (1 coin) to destroy a building tile on the builders board. |
 | `skipOptionalAction` | `SkipOptionalActionCommand` | `GameState` | Skip the current optional action (knight, building, or dragon). |
 | `getMaxKnights` | `GetMaxKnightsCommand` | `number` | Knight limit of a player: the starting knight (1) plus the knights granted by building bonuses (`bonusKnights`). Knights still available: `getMaxKnights(...) - (player.knights?.length ?? 0)`. 0 in the modes without knights. Read-only, throws `NotFoundError` (`PLAYER_NOT_FOUND`) for an unknown player. |
+| `getBuildingPrice` | `GetBuildingPriceCommand` | `number \| null` | Coins the player pays to construct one building of the Builders Board: the cost of its spot (`slotCosts`, or the tile's own `cost` on a board without `slotCosts`), −1 coin (never below 0) for the Queen's host. Exactly what `constructBuilding` debits. `null` when the building is not on the board (or outside Queendomino). Read-only, any stage, throws `NotFoundError` (`PLAYER_NOT_FOUND`) for an unknown player. |
+| `getDragonPrice` | `GetDragonPriceCommand` | `number` | Coins the player pays to bribe the Dragon (1, `DRAGON_COST`, whatever the building). Exactly what `useDragon` debits; availability is given by `getValidDragonTargets`. Read-only, throws `NotFoundError` (`PLAYER_NOT_FOUND`) for an unknown player. |
+| `getBuildersBoardPrices` | `GetBuildersBoardPricesCommand` | `BuildersBoardPrice[]` | Price of every building of the Builders Board for the player (`{ buildingId, slotIndex, price }`, empty spots left out), as `getBuildingPrice` computes it. `[]` outside Queendomino. Read-only, throws `NotFoundError` (`PLAYER_NOT_FOUND`) for an unknown player. |
 
 ### Origins Methods
 
@@ -356,6 +359,41 @@ type GetMaxKnightsCommand = {
 const max = engine.getMaxKnights({ game, playerId: player.id });
 const available = max - (player.knights?.length ?? 0);
 ```
+
+### `GetBuildingPriceCommand` / `GetDragonPriceCommand` / `GetBuildersBoardPricesCommand`
+
+```typescript
+type GetBuildingPriceCommand = {
+  game: Game;         // Any stage
+  playerId: string;   // Player who would construct the building
+  buildingId: number; // BuildingTile.id on the Builders Board
+};
+
+type GetDragonPriceCommand = {
+  game: Game;       // Any stage
+  playerId: string; // Player who would use the Dragon
+};
+
+type GetBuildersBoardPricesCommand = {
+  game: Game;       // Any stage
+  playerId: string; // Player whose prices are read
+};
+
+type BuildersBoardPrice = {
+  buildingId: number; // Building to pass to constructBuilding
+  slotIndex: number;  // Index of its spot in buildersBoard.slots / slotCosts
+  price: number;      // Coins debited by constructBuilding for this player
+};
+```
+
+```typescript
+// Price of each building of the board, for the player who must play
+const prices = engine.getBuildersBoardPrices({ game, playerId: player.id });
+const price = engine.getBuildingPrice({ game, playerId: player.id, buildingId });
+const dragon = engine.getDragonPrice({ game, playerId: player.id }); // 1
+```
+
+The prices are computed by the very functions `constructBuilding` and `useDragon` use to debit the coins (`getBuildingPrice` / `getDragonPrice` of the building entity): a client displays them without mirroring the spot costs or the Queen's discount.
 
 ### `SkipOptionalActionCommand`
 
@@ -1097,9 +1135,8 @@ try {
 
 | Code | Description |
 |---|---|
-| `CANNOT_PLACE_KNIGHT` | Knight placement is not allowed at this time. |
-| `MAX_KNIGHTS_REACHED` | The player has reached the maximum number of knights. |
-| `KNIGHT_TERRITORY_OCCUPIED` | The target territory already has a knight (not returned by the engine: several knights may tax the same territory, and `placeKnight` refuses an invalid square with `CANNOT_PLACE_KNIGHT`). |
+| `CANNOT_PLACE_KNIGHT` | `placeKnight` refused the square (not on the domino just placed, already holding a knight, castle...) while the player still has a knight available. |
+| `MAX_KNIGHTS_REACHED` | `placeKnight` refused because the player has already placed every knight they own (`getMaxKnights`: 1 starting knight + building bonus knights), whatever the square. |
 | `CANNOT_AFFORD_BUILDING` | The player does not have enough coins for the building. |
 | `NO_CONSTRUCTION_SQUARE` | No construction square is available at the target position. |
 | `DRAGON_UNAVAILABLE` | The dragon is not available (already used this round or not unlocked). |
@@ -1643,7 +1680,7 @@ Squares where `placeKnight` accepts a knight: the squares of the domino the lord
 
 ### `getValidBuildingPositions` / `getAffordableBuildings`
 
-`getValidBuildingPositions` returns the free construction squares of the player and `getAffordableBuildings` the buildings of the Builders Board the player can pay for (price of the spot, minus 1 coin for the Queen's host). **Any** building of the second list can be built on **any** square of the first one. Both are empty as soon as one of them is (a construction needs a square and a building).
+`getValidBuildingPositions` returns the free construction squares of the player and `getAffordableBuildings` the buildings of the Builders Board the player can pay for (price of the spot, minus 1 coin for the Queen's host). Its return type is unchanged (`BuildingTile[]`): the price of each building is given by `getBuildersBoardPrices` (join on `buildingId`) or `getBuildingPrice`, computed by the same function. **Any** building of the second list can be built on **any** square of the first one. Both are empty as soon as one of them is (a construction needs a square and a building).
 
 ```typescript
 const squares = engine.getValidBuildingPositions({ game });
