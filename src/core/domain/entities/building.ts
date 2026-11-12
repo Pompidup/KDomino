@@ -135,6 +135,41 @@ export const getConstructionCost = (
   return Math.max(0, cost - (isQueenHost ? QUEEN_DISCOUNT : 0));
 };
 
+/**
+ * Single source of truth for the price of a building: the coins `player`
+ * pays to construct the building `buildingId` of the Builders Board, i.e. the
+ * cost of its spot (`slotCosts`, or the tile's own cost on a board without
+ * spot costs), lowered by 1 coin (never below 0) when the player hosts the
+ * Queen (`queenHolderId`). `null` when the building is not on the board.
+ *
+ * Used by `purchaseBuilding` (hence `constructBuilding` and
+ * `getAffordableBuildings`) and by the `getBuildingPrice` /
+ * `getBuildersBoardPrices` queries.
+ */
+export const getBuildingPrice = (
+  board: BuildersBoard,
+  player: Player,
+  buildingId: number,
+  queenHolderId: string | null = null,
+): number | null => {
+  const found = findBuildingOnBoard(board, buildingId);
+  if (!found) return null;
+  return getConstructionCost(
+    board,
+    found.slotIndex,
+    queenHolderId !== null && queenHolderId === player.id,
+  );
+};
+
+/**
+ * Single source of truth for the price of the Dragon: the coins `player` pays
+ * to burn a building (official rule, action D: "Pay the bank 1 Coin",
+ * `DRAGON_COST`), whatever the building and the player. Used by
+ * `destroyWithDragon` (hence `useDragon` and `getValidDragonTargets`) and by
+ * the `getDragonPrice` query.
+ */
+export const getDragonPrice = (_player: Player): number => DRAGON_COST;
+
 export const findBuildingOnBoard = (
   board: BuildersBoard,
   buildingId: number,
@@ -159,7 +194,7 @@ export const removeBuildingFromBoard = (
 
 /**
  * Buy the building `buildingId` of the Builders Board for `player`: pay its
- * construction cost (`getConstructionCost`, with the Queen's discount when
+ * construction cost (`getBuildingPrice`, with the Queen's discount when
  * `queenHolderId` is the player), apply its immediate bonus and its towers,
  * and empty its spot. `null` when the building is not on the board or the
  * player cannot pay for it.
@@ -180,11 +215,7 @@ export const purchaseBuilding = (
   if (!found) return null;
 
   const { building, slotIndex } = found;
-  const cost = getConstructionCost(
-    board,
-    slotIndex,
-    queenHolderId !== null && queenHolderId === player.id,
-  );
+  const cost = getBuildingPrice(board, player, buildingId, queenHolderId);
   if (cost === null || !canAfford(player, cost)) return null;
 
   let updatedPlayer = removeCoins(player, cost);
@@ -285,7 +316,7 @@ export const placeBuildingOnKingdom = (
  * Burn the building `buildingId` of the Builders Board with the Dragon.
  *
  * Official rule (action D): "Choose any Building Tile that is still available
- * on the Builders' Board", "Pay the bank 1 Coin" (`DRAGON_COST`, whatever the
+ * on the Builders' Board", "Pay the bank 1 Coin" (`getDragonPrice`, whatever the
  * building) and discard the tile for the rest of the game. `null` when the
  * building is not on the board or the player cannot pay the coin.
  */
@@ -301,9 +332,10 @@ export const destroyWithDragon = (
   if (!found) return null;
 
   const { slotIndex } = found;
-  if (!canAfford(player, DRAGON_COST)) return null;
+  const cost = getDragonPrice(player);
+  if (!canAfford(player, cost)) return null;
 
-  const updatedPlayer = removeCoins(player, DRAGON_COST);
+  const updatedPlayer = removeCoins(player, cost);
   const updatedBoard = removeBuildingFromBoard(board, slotIndex);
 
   return { updatedBoard, updatedPlayer };

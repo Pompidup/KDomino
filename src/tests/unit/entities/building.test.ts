@@ -3,7 +3,9 @@ import {
   createBuildersBoard,
   destroyWithDragon,
   findBuildingOnBoard,
+  getBuildingPrice,
   getConstructionCost,
+  getDragonPrice,
   getSlotCost,
   hasOpenConstructionSquare,
   isValidConstructionPosition,
@@ -156,6 +158,59 @@ describe("building", () => {
       };
       expect(getSlotCost(legacy, 0)).toBe(2);
       expect(getConstructionCost(legacy, 0, true)).toBe(1);
+    });
+  });
+
+  describe("getBuildingPrice / getDragonPrice (single source of truth)", () => {
+    const board: BuildersBoard = {
+      slots: [
+        makeTile(1, 9),
+        null,
+        makeTile(3, 9),
+        null,
+        makeTile(5),
+        makeTile(6),
+      ],
+      drawPile: [makeTile(7)],
+      slotCosts: [5, 4, 3, 2, 1, 0],
+    };
+
+    it("is the spot cost, minus 1 coin (never below 0) for the Queen's host", () => {
+      const player = makePlayer();
+      expect(getBuildingPrice(board, player, 1)).toBe(5);
+      expect(getBuildingPrice(board, player, 3, "other")).toBe(3);
+      expect(getBuildingPrice(board, player, 1, player.id)).toBe(4);
+      expect(getBuildingPrice(board, player, 6)).toBe(0);
+      expect(getBuildingPrice(board, player, 6, player.id)).toBe(0);
+    });
+
+    it("uses the tile's own cost on a board without slotCosts", () => {
+      const { slotCosts: _, ...legacy } = board;
+      expect(getBuildingPrice(legacy, makePlayer(), 1)).toBe(9);
+      expect(getBuildingPrice(legacy, makePlayer(), 1, "p1")).toBe(8);
+    });
+
+    it("is null for a building not on the board", () => {
+      expect(getBuildingPrice(board, makePlayer(), 7)).toBeNull();
+      expect(getBuildingPrice(board, makePlayer(), 42)).toBeNull();
+    });
+
+    it("is what purchaseBuilding and destroyWithDragon debit", () => {
+      for (const queenHolderId of [null, "p1"]) {
+        for (const id of [1, 3, 5, 6]) {
+          const player = makePlayer(7);
+          const result = purchaseBuilding(board, player, id, queenHolderId);
+          const price = getBuildingPrice(board, player, id, queenHolderId);
+          expect(result?.cost).toBe(price);
+          expect(7 - (result?.updatedPlayer.coins ?? 0)).toBe(price);
+        }
+      }
+      const player = makePlayer(7);
+      const dragon = destroyWithDragon(board, 1, player);
+      expect(getDragonPrice(player)).toBe(1);
+      expect(7 - (dragon?.updatedPlayer.coins ?? 0)).toBe(
+        getDragonPrice(player),
+      );
     });
   });
 

@@ -265,6 +265,25 @@ When a building is purchased:
 5. If the player now has the most towers — even on a tie — they **host the Queen**.
 6. The spot on the Builders Board is emptied (and refilled at the start of the next round).
 
+### Prices
+
+A client never recomputes a price: the engine exposes the coins each action debits, computed by the very function the action uses (`getBuildingPrice` / `getDragonPrice` of the building entity, the single source of truth shared by `constructBuilding`, `useDragon`, `getAffordableBuildings` and `getValidDragonTargets`).
+
+```typescript
+// Price of one building for one player: spot cost, -1 coin for the Queen's
+// host (never below 0); null when the building is not on the board
+const price = engine.getBuildingPrice({ game, playerId, buildingId: 8 });
+
+// Price of every building of the board, spot by spot (empty spots left out)
+const prices = engine.getBuildersBoardPrices({ game, playerId });
+// [{ buildingId: 8, slotIndex: 0, price: 5 }, ..., { buildingId: 3, slotIndex: 5, price: 0 }]
+
+// Price of the Dragon: always 1 coin
+const dragon = engine.getDragonPrice({ game, playerId });
+```
+
+A board without `slotCosts` (game saved before the official board) prices each building at its own `cost`, Queen's discount included. `getAffordableBuildings` keeps returning `BuildingTile[]` (no new field, so existing clients and deep comparisons are unaffected): join it with `getBuildersBoardPrices` on `buildingId` to display the price of each affordable building. The three queries read any stage of the game and throw `NotFoundError` (`PLAYER_NOT_FOUND`) for an unknown player; outside Queendomino, `getBuildingPrice` returns `null` and `getBuildersBoardPrices` returns `[]`.
+
 ### Building Properties
 
 Each `BuildingTile` has the following structure:
@@ -336,7 +355,7 @@ A knight can only be placed on one of the two squares of the **domino you have j
 - **Several knights may tax the same territory** ("You may place a Knight on a territory where other Knights have been placed in previous rounds"); a square holds at most one knight.
 - No knight can be placed after discarding a domino.
 
-Any other position is rejected with `CANNOT_PLACE_KNIGHT`. `getValidKnightPositions` lists the accepted squares.
+Once every knight the player owns is placed (`player.knights.length === getMaxKnights(...)`), `placeKnight` is rejected with `MAX_KNIGHTS_REACHED`, whatever the square. While a knight is available, any other position is rejected with `CANNOT_PLACE_KNIGHT`. `getValidKnightPositions` lists the accepted squares (`[]` once the limit is reached).
 
 ```typescript
 const [square] = engine.getValidKnightPositions({ game });
@@ -391,7 +410,7 @@ game = engine.useDragon({
 
 ### Cost
 
-Bribing the Dragon costs **1 coin**, whatever the building burnt (official rule: "Pay the bank 1 Coin").
+Bribing the Dragon costs **1 coin**, whatever the building burnt (official rule: "Pay the bank 1 Coin"). `engine.getDragonPrice({ game, playerId })` returns this price, exactly what `useDragon` debits (see [Prices](#prices)).
 
 ### Restrictions
 
@@ -549,6 +568,14 @@ Read-only queries listing what these actions accept (same checks as the actions,
 | `getValidBuildingPositions` | `Position[]` | `constructBuilding` |
 | `getAffordableBuildings` | `BuildingTile[]` | `constructBuilding` |
 | `getValidDragonTargets` | `BuildingTile[]` | `useDragon` |
+
+Prices of these actions (any stage of the game, see [Prices](#prices)):
+
+| Query | Returns | Price of |
+|-------|---------|----------|
+| `getBuildingPrice({ game, playerId, buildingId })` | `number \| null` | `constructBuilding` (`null`: building not on the board) |
+| `getBuildersBoardPrices({ game, playerId })` | `BuildersBoardPrice[]` | `constructBuilding`, every building of the board |
+| `getDragonPrice({ game, playerId })` | `number` | `useDragon` |
 
 `getMaxKnights({ game, playerId })` returns the knight limit of a player (`1 + bonusKnights`, any stage of the game; 0 outside Queendomino); the knights still available are `getMaxKnights(...) - (player.knights?.length ?? 0)`. It throws `NotFoundError` (`PLAYER_NOT_FOUND`) for an unknown player.
 

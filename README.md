@@ -227,6 +227,9 @@ const engine = createGameEngine({
 | `useDragon` | Destroy a building tile from the board (1 coin) |
 | `skipOptionalAction` | Skip the current optional action |
 | `getMaxKnights` | Knight limit of a player (1 starting knight + building bonus knights) |
+| `getBuildingPrice` | Coins a player pays to construct a building of the Builders Board |
+| `getBuildersBoardPrices` | Price of every building of the Builders Board for a player |
+| `getDragonPrice` | Coins a player pays to bribe the Dragon |
 
 ### Origins Methods
 

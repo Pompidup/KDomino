@@ -7,6 +7,11 @@ import type { ChooseDominoCommand } from "@application/commands/chooseDominoComm
 import type { ConstructBuildingCommand } from "@application/commands/constructBuildingCommand.js";
 import type { CreateGameCommand } from "@application/commands/createGameCommand.js";
 import type { DiscardDominoCommand } from "@application/commands/discardDominoCommand.js";
+import type {
+  GetBuildersBoardPricesCommand,
+  GetBuildingPriceCommand,
+  GetDragonPriceCommand,
+} from "@application/commands/getBuildingPriceCommand.js";
 import type { GetDynastyResultCommand } from "@application/commands/getDynastyResultCommand.js";
 import type { GetExtraRulesCommand } from "@application/commands/getExtraRulesCommand.js";
 import type { GetMaxKnightsCommand } from "@application/commands/getMaxKnightsCommand.js";
@@ -50,6 +55,7 @@ import type {
   Position,
   Score,
 } from "@core/domain/types/index.js";
+import type { BuildersBoardPrice } from "@core/useCases/getBuildingPrices.js";
 import type { DynastyResult } from "@core/useCases/getDynastyResult.js";
 import type {
   ValidCavemanPlacements,
@@ -380,6 +386,42 @@ export type GameEngine = {
    * @throws NotFoundError if the player is not in the game
    */
   getMaxKnights: (command: GetMaxKnightsCommand) => number;
+
+  /**
+   * Coins a player pays to construct one building of the Builders Board
+   * (Queendomino): the cost of its spot (`buildersBoard.slotCosts`, or the
+   * tile's own `cost` on a board without spot costs), lowered by 1 coin
+   * (never below 0) when the player hosts the Queen. It is exactly what
+   * `constructBuilding` debits. Read-only, at any stage of the game.
+   * @param command - Contains the game state, the player id and the building id
+   * @returns The price, or null when the building is not on the Builders Board
+   * (or outside Queendomino)
+   * @throws NotFoundError if the player is not in the game
+   */
+  getBuildingPrice: (command: GetBuildingPriceCommand) => number | null;
+
+  /**
+   * Coins a player pays to bribe the Dragon (Queendomino): 1 coin, whatever
+   * the building burnt. It is exactly what `useDragon` debits. Whether the
+   * Dragon can be used now is answered by `getValidDragonTargets`.
+   * @param command - Contains the game state (any stage) and the player id
+   * @returns The price of the Dragon
+   * @throws NotFoundError if the player is not in the game
+   */
+  getDragonPrice: (command: GetDragonPriceCommand) => number;
+
+  /**
+   * Price of every building of the Builders Board for one player
+   * (Queendomino), spot by spot (empty spots left out), as `getBuildingPrice`
+   * computes it. Complements `getAffordableBuildings`, whose return type is
+   * unchanged: join both on `buildingId`.
+   * @param command - Contains the game state (any stage) and the player id
+   * @returns One entry per building of the board, [] outside Queendomino
+   * @throws NotFoundError if the player is not in the game
+   */
+  getBuildersBoardPrices: (
+    command: GetBuildersBoardPricesCommand,
+  ) => BuildersBoardPrice[];
 
   /**
    * Calculates the mode-aware score of one player, with its breakdown

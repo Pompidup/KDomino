@@ -38,7 +38,16 @@ export const ErrorCode = {
 
   // Queendomino errors
   CANNOT_PLACE_KNIGHT: "CANNOT_PLACE_KNIGHT",
+  /**
+   * `placeKnight` refused: the player has already placed every knight they own
+   * (`getMaxKnights`: 1 starting knight + building bonus knights).
+   */
   MAX_KNIGHTS_REACHED: "MAX_KNIGHTS_REACHED",
+  /**
+   * @deprecated Never returned by the engine since 3.7.0: several knights may
+   * tax the same territory, and `placeKnight` refuses an invalid square with
+   * `CANNOT_PLACE_KNIGHT`. Kept for backward compatibility.
+   */
   KNIGHT_TERRITORY_OCCUPIED: "KNIGHT_TERRITORY_OCCUPIED",
   CANNOT_AFFORD_BUILDING: "CANNOT_AFFORD_BUILDING",
   NO_CONSTRUCTION_SQUARE: "NO_CONSTRUCTION_SQUARE",
